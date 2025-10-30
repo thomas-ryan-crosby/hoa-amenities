@@ -1,0 +1,93 @@
+/* Tailwind CSS temporarily disabled to fix build issues */
+
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  padding: 20px;
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Custom styles for the HOA Amenities app */
+.amenity-card {
+  transition: transform 0.2s ease-in-out;
+}
+
+.amenity-card:hover {
+  transform: translateY(-2px);
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  background-color: #e5e7eb;
+}
+
+.calendar-day {
+  background-color: white;
+  min-height: 120px;
+  padding: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.calendar-day:hover {
+  background-color: #f9fafb;
+}
+
+.reservation-slot {
+  background-color: #3b82f6;
+  color: white;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-size: 12px;
+  margin-bottom: 2px;
+}
+
+.setup-time {
+  background-color: #10b981;
+}
+
+.party-time {
+  background-color: #3b82f6;
+}
+
+.cleaning-time {
+  background-color: #f59e0b;
+}
+
+/* FORCE WHITE BACKGROUND - OVERRIDE EVERYTHING */
+.force-white-cell {
+  background-color: white !important;
+  background: white !important;
+  background-image: none !important;
+  background-size: auto !important;
+  background-repeat: no-repeat !important;
+  background-position: initial !important;
+}
