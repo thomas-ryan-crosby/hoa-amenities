@@ -77,6 +77,9 @@ dist
 # Gatsby files
 .cache/
 public
+# But do NOT ignore our React app's public assets
+!frontend/public/
+!frontend/public/**
 
 # Storybook build outputs
 .out
