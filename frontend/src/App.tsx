@@ -33,7 +33,7 @@ const Header: React.FC = () => {
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
               <img 
-                src="/Neighbri Logos & Images/Neighbri_Wordmark_Final.png" 
+                src="/images/Neighbri_Wordmark_Final.png" 
                 alt="neighbri"
                 style={{ height: '32px', maxWidth: '180px' }}
               />
