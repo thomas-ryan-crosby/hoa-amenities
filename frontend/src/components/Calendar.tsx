@@ -78,9 +78,17 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
       const startDate = getStartDate();
       const endDate = getEndDate();
       
+      // Use local date components to avoid timezone shifts
+      const formatDate = (date: Date): string => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      };
+      
       const params = new URLSearchParams({
-        startDate: startDate.toISOString().split('T')[0],
-        endDate: endDate.toISOString().split('T')[0]
+        startDate: formatDate(startDate),
+        endDate: formatDate(endDate)
       });
       
       if (selectedAmenity !== 'all') {

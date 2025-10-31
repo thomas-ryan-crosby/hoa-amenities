@@ -28,7 +28,14 @@ interface ReservationModalProps {
 const ReservationModal: React.FC<ReservationModalProps> = ({
   isOpen,
   onClose,
-  selectedDate = new Date().toISOString().split('T')[0], // Default to today
+  // Default to today using local date components
+  selectedDate = (() => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  })(),
   onReservationCreated
 }) => {
   const { user } = useAuth();
@@ -215,7 +222,13 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
             type="date"
             value={reservationDate}
             onChange={(e) => setReservationDate(e.target.value)}
-            min={new Date().toISOString().split('T')[0]} // Can't select past dates
+            min={(() => {
+              const today = new Date();
+              const year = today.getFullYear();
+              const month = String(today.getMonth() + 1).padStart(2, '0');
+              const day = String(today.getDate()).padStart(2, '0');
+              return `${year}-${month}-${day}`;
+            })()} // Can't select past dates
             style={{
               width: '100%',
               padding: '8px',
