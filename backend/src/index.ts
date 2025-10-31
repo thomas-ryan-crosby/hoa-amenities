@@ -7,6 +7,10 @@ import dotenv from 'dotenv';
 // Load environment variables
 dotenv.config();
 
+// Initialize database models and sync
+import { sequelize, User, Amenity, Reservation } from './models';
+import { seedDatabase } from './seeders/seedData';
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -64,12 +68,34 @@ app.use('*', (req, res) => {
   res.status(404).json({ message: 'Route not found' });
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📊 Health check: http://localhost:${PORT}/health`);
-  console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
-});
+// Initialize database and start server
+async function startServer() {
+  try {
+    // Test database connection
+    await sequelize.authenticate();
+    console.log('✅ Database connection established.');
+
+    // Sync database models (create tables if they don't exist)
+    await sequelize.sync({ alter: false }); // Use alter: false in production to avoid data loss
+    console.log('✅ Database tables synced.');
+
+    // Seed initial data (amenities and demo users)
+    await seedDatabase();
+    console.log('✅ Database seeded with initial data.');
+
+    // Start server
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`📊 Health check: http://localhost:${PORT}/health`);
+      console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+    });
+  } catch (error) {
+    console.error('❌ Unable to start server:', error);
+    process.exit(1);
+  }
+}
+
+startServer();
 
 export default app;
 
