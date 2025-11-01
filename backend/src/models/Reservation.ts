@@ -11,6 +11,8 @@ export interface ReservationAttributes {
   partyTimeStart: Date;
   partyTimeEnd: Date;
   guestCount: number;
+  eventName: string | null;
+  isPrivate: boolean;
   specialRequirements: string;
   status: 'NEW' | 'JANITORIAL_APPROVED' | 'FULLY_APPROVED' | 'CANCELLED' | 'COMPLETED';
   totalFee: number;
@@ -47,6 +49,8 @@ export class Reservation extends Model<ReservationAttributes, ReservationCreatio
   public partyTimeStart!: Date;
   public partyTimeEnd!: Date;
   public guestCount!: number;
+  public eventName!: string | null;
+  public isPrivate!: boolean;
   public specialRequirements!: string;
   public status!: 'NEW' | 'JANITORIAL_APPROVED' | 'FULLY_APPROVED' | 'CANCELLED' | 'COMPLETED';
   public totalFee!: number;
@@ -118,6 +122,15 @@ Reservation.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 1,
+    },
+    eventName: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    isPrivate: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
     },
     specialRequirements: {
       type: DataTypes.TEXT,

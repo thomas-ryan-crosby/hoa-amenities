@@ -142,6 +142,8 @@ router.post('/', authenticateToken, async (req: any, res) => {
       partyTimeStart,
       partyTimeEnd,
       guestCount,
+      eventName,
+      isPrivate,
       specialRequirements
     } = req.body;
 
@@ -208,6 +210,8 @@ router.post('/', authenticateToken, async (req: any, res) => {
       partyTimeStart,
       partyTimeEnd,
       guestCount,
+      eventName: eventName || null,
+      isPrivate: isPrivate === true || isPrivate === 'true',
       specialRequirements: specialRequirements || null,
       status: 'NEW',
       totalFee,

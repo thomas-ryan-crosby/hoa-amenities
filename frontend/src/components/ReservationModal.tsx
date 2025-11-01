@@ -50,6 +50,8 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
   const [setupTimeStart, setSetupTimeStart] = useState<string>('');
   const [partyTimeEnd, setPartyTimeEnd] = useState<string>('');
   const [guestCount, setGuestCount] = useState<number>(1);
+  const [eventName, setEventName] = useState<string>('');
+  const [isPrivate, setIsPrivate] = useState<boolean>(false);
   const [specialRequirements, setSpecialRequirements] = useState<string>('');
 
   useEffect(() => {
@@ -166,6 +168,8 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
         partyTimeStart: `${reservationDate}T${roundedSetupTime}:00`, // Party starts when setup starts
         partyTimeEnd: `${reservationDate}T${roundedPartyTimeEnd}:00`,
         guestCount,
+        eventName: eventName || null,
+        isPrivate: isPrivate,
         specialRequirements: specialRequirements || null,
         totalFee,
         totalDeposit
@@ -186,6 +190,8 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
       setSetupTimeStart('');
       setPartyTimeEnd('');
       setGuestCount(1);
+      setEventName('');
+      setIsPrivate(false);
       setSpecialRequirements('');
       
       // Close modal and refresh calendar
@@ -384,6 +390,53 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
             />
             <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#6b7280' }}>
               When your party will end
+            </p>
+          </div>
+
+          {/* Event Name */}
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
+              Event Name *
+            </label>
+            <input
+              type="text"
+              value={eventName}
+              onChange={(e) => setEventName(e.target.value)}
+              placeholder="e.g., Birthday Party, Family Reunion..."
+              style={{
+                width: '100%',
+                padding: '8px',
+                border: '1px solid #d1d5db',
+                borderRadius: '4px',
+                fontSize: '16px'
+              }}
+              required
+            />
+            <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#6b7280' }}>
+              This will be displayed on the calendar
+            </p>
+          </div>
+
+          {/* Make Event Private */}
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+              <input
+                type="checkbox"
+                checked={isPrivate}
+                onChange={(e) => setIsPrivate(e.target.checked)}
+                style={{
+                  marginRight: '8px',
+                  width: '18px',
+                  height: '18px',
+                  cursor: 'pointer'
+                }}
+              />
+              <span style={{ fontWeight: 'bold' }}>
+                Make Event Private
+              </span>
+            </label>
+            <p style={{ margin: '4px 0 0 26px', fontSize: '12px', color: '#6b7280' }}>
+              If checked, "Private Event" will be shown on the calendar instead of the event name. Janitorial and Admin staff will still see the full details.
             </p>
           </div>
 

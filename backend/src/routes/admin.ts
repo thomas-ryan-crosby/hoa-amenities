@@ -201,6 +201,54 @@ router.delete('/users/:id', async (req: any, res) => {
   }
 });
 
+// POST /api/admin/migrate-event-name-fields - Run database migration for event name fields
+router.post('/migrate-event-name-fields', async (req: any, res) => {
+  try {
+    console.log('🔧 Starting event name fields migration...');
+    
+    // Check if columns already exist
+    const checkColumns = await sequelize.query(`
+      SELECT column_name 
+      FROM information_schema.columns 
+      WHERE table_name = 'reservations' 
+      AND column_name IN ('eventName', 'isPrivate')
+    `) as any[];
+
+    const existingColumns = checkColumns[0].map((row: any) => row.column_name);
+
+    if (existingColumns.includes('eventName') && existingColumns.includes('isPrivate')) {
+      console.log('✅ Columns "eventName" and "isPrivate" already exist.');
+      return res.json({ success: true, message: 'Columns already exist. Migration skipped.', fieldsAdded: [] });
+    }
+
+    const fieldsAdded: string[] = [];
+
+    // Add eventName column if it doesn't exist
+    if (!existingColumns.includes('eventName')) {
+      await sequelize.query(`ALTER TABLE reservations ADD COLUMN IF NOT EXISTS "eventName" VARCHAR(255) NULL;`);
+      fieldsAdded.push('eventName');
+      console.log('✅ Column "eventName" added');
+    }
+
+    // Add isPrivate column if it doesn't exist
+    if (!existingColumns.includes('isPrivate')) {
+      await sequelize.query(`ALTER TABLE reservations ADD COLUMN IF NOT EXISTS "isPrivate" BOOLEAN NOT NULL DEFAULT false;`);
+      fieldsAdded.push('isPrivate');
+      console.log('✅ Column "isPrivate" added');
+    }
+
+    console.log('🎉 Event name fields migration completed successfully!');
+    return res.json({ 
+      success: true, 
+      message: 'Migration completed successfully. All event name fields have been added to the reservations table.',
+      fieldsAdded 
+    });
+  } catch (error: any) {
+    console.error('❌ Migration failed:', error);
+    return res.status(500).json({ success: false, message: 'Migration failed', error: error.message });
+  }
+});
+
 // POST /api/admin/migrate-damage-fields - Run database migration for damage assessment fields
 router.post('/migrate-damage-fields', async (req: any, res) => {
   try {

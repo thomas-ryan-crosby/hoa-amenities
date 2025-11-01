@@ -14,6 +14,8 @@ interface CalendarEvent {
   userEmail: string;
   guestCount: number;
   status: string;
+  eventName?: string | null;
+  isPrivate?: boolean;
   setupTime: { start: string; end: string };
   partyTime: { start: string; end: string };
   cleaningTime?: { start: string; end: string };
@@ -447,7 +449,10 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                           overflow: 'hidden',
                           paddingRight: '6px' // Make room for status indicator
                         }}>
-                          {event.title}
+                          {/* Show actual event name for admin/janitorial, or title for others */}
+                          {(user?.role === 'admin' || user?.role === 'janitorial') && event.eventName && event.isPrivate
+                            ? `${event.eventName} (Private)`
+                            : event.title}
                         <div style={{ 
                           fontSize: '5px', 
                           color: 'red', 
@@ -621,7 +626,10 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                           overflow: 'hidden',
                           paddingRight: '6px' // Make room for status indicator
                         }}>
-                          {event.title}
+                          {/* Show actual event name for admin/janitorial, or title for others */}
+                          {(user?.role === 'admin' || user?.role === 'janitorial') && event.eventName && event.isPrivate
+                            ? `${event.eventName} (Private)`
+                            : event.title}
                         <div style={{ 
                           fontSize: '5px', 
                           color: 'red', 
@@ -874,7 +882,10 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                                 overflow: 'hidden',
                                 paddingRight: '8px' // Make room for status indicator
                               }}>
-                                {event.title}
+                                {/* Show actual event name for admin/janitorial, or title for others */}
+                                {(user?.role === 'admin' || user?.role === 'janitorial') && event.eventName && event.isPrivate
+                                  ? `${event.eventName} (Private)`
+                                  : event.title}
                                 <div style={{ 
                                   fontSize: '5px', 
                                   color: 'red', 
@@ -1041,7 +1052,10 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                                 overflow: 'hidden',
                                 paddingRight: '8px' // Make room for status indicator
                               }}>
-                                {event.title}
+                                {/* Show actual event name for admin/janitorial, or title for others */}
+                                {(user?.role === 'admin' || user?.role === 'janitorial') && event.eventName && event.isPrivate
+                                  ? `${event.eventName} (Private)`
+                                  : event.title}
                                 <div style={{ 
                                   fontSize: '5px', 
                                   color: 'red', 

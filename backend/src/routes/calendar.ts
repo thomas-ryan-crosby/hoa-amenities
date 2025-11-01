@@ -113,7 +113,7 @@ router.get('/events', async (req, res) => {
       attributes: [
         'id', 'date', 'setupTimeStart', 'setupTimeEnd', 
         'partyTimeStart', 'partyTimeEnd', 'status', 'guestCount',
-        'specialRequirements', 'totalFee', 'totalDeposit',
+        'eventName', 'isPrivate', 'specialRequirements', 'totalFee', 'totalDeposit',
         'cleaningTimeStart', 'cleaningTimeEnd'
       ],
       order: [['date', 'ASC'], ['partyTimeStart', 'ASC']]
@@ -126,9 +126,19 @@ router.get('/events', async (req, res) => {
         ? `${reservation.date.getFullYear()}-${String(reservation.date.getMonth() + 1).padStart(2, '0')}-${String(reservation.date.getDate()).padStart(2, '0')}`
         : reservation.date;
       
+      // Determine display title based on privacy and event name
+      let displayTitle;
+      if (reservation.isPrivate) {
+        displayTitle = 'Private Event';
+      } else if (reservation.eventName) {
+        displayTitle = reservation.eventName;
+      } else {
+        displayTitle = `${reservation.amenity?.name || 'Unknown'} - ${reservation.user?.firstName || ''} ${reservation.user?.lastName || ''}`;
+      }
+      
       return {
         id: reservation.id,
-        title: `${reservation.amenity?.name || 'Unknown'} - ${reservation.user?.firstName || ''} ${reservation.user?.lastName || ''}`,
+        title: displayTitle,
         start: reservation.setupTimeStart,
         end: reservation.partyTimeEnd,
         date: dateStr,
@@ -138,6 +148,8 @@ router.get('/events', async (req, res) => {
         userEmail: reservation.user?.email || '',
         guestCount: reservation.guestCount,
         status: reservation.status,
+        eventName: reservation.eventName || null,
+        isPrivate: reservation.isPrivate || false,
         setupTime: {
           start: reservation.setupTimeStart,
           end: reservation.setupTimeEnd
