@@ -40,12 +40,12 @@ export async function seedDatabase() {
     const hashedPassword = await bcrypt.hash('admin123', 10);
     
     const [adminUser, adminCreated] = await User.findOrCreate({
-      where: { email: 'admin@hoa.com' },
+      where: { email: 'ryan@kellby.com' },
       defaults: {
-        email: 'admin@hoa.com',
+        email: 'ryan@kellby.com',
         password: hashedPassword,
-        firstName: 'HOA',
-        lastName: 'Administrator',
+        firstName: 'Ryan',
+        lastName: 'Kellby',
         role: 'admin',
         isActive: true,
         emailVerified: true
@@ -53,12 +53,12 @@ export async function seedDatabase() {
     });
 
     const [janitorialUser, janitorialCreated] = await User.findOrCreate({
-      where: { email: 'janitorial@hoa.com' },
+      where: { email: 'thomas.ryan.crosby@gmail.com' },
       defaults: {
-        email: 'janitorial@hoa.com',
+        email: 'thomas.ryan.crosby@gmail.com',
         password: hashedPassword,
-        firstName: 'Janitorial',
-        lastName: 'Staff',
+        firstName: 'Thomas',
+        lastName: 'Crosby',
         role: 'janitorial',
         isActive: true,
         emailVerified: true
@@ -66,12 +66,12 @@ export async function seedDatabase() {
     });
 
     const [residentUser, residentCreated] = await User.findOrCreate({
-      where: { email: 'resident@hoa.com' },
+      where: { email: 'ryan@wetlandx.com' },
       defaults: {
-        email: 'resident@hoa.com',
+        email: 'ryan@wetlandx.com',
         password: hashedPassword,
-        firstName: 'John',
-        lastName: 'Doe',
+        firstName: 'Ryan',
+        lastName: 'Wetlandx',
         role: 'resident',
         isActive: true,
         emailVerified: true
@@ -86,9 +86,9 @@ export async function seedDatabase() {
 
     console.log('🎉 Database seeding completed successfully!');
     console.log('\n📋 Default login credentials:');
-    console.log('Admin: admin@hoa.com / admin123');
-    console.log('Janitorial: janitorial@hoa.com / admin123');
-    console.log('Resident: resident@hoa.com / admin123');
+    console.log('Admin: ryan@kellby.com / admin123');
+    console.log('Janitorial: thomas.ryan.crosby@gmail.com / admin123');
+    console.log('Resident: ryan@wetlandx.com / admin123');
 
   } catch (error) {
     console.error('❌ Error seeding database:', error);

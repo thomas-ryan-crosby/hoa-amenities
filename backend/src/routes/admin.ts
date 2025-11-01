@@ -330,4 +330,66 @@ router.post('/migrate-damage-fields', async (req: any, res) => {
   }
 });
 
+// POST /api/admin/migrate-demo-accounts - Update demo account emails
+router.post('/migrate-demo-accounts', async (req: any, res) => {
+  try {
+    console.log('🔧 Starting demo account email migration...');
+
+    // Update admin account
+    const adminResult = await sequelize.query(`
+      UPDATE users 
+      SET email = 'ryan@kellby.com', 
+          "firstName" = 'Ryan', 
+          "lastName" = 'Kellby'
+      WHERE email = 'admin@hoa.com' AND role = 'admin';
+    `);
+    console.log(`  ✅ Updated admin account: ${adminResult[1]} row(s)`);
+
+    // Update janitorial account
+    const janitorialResult = await sequelize.query(`
+      UPDATE users 
+      SET email = 'thomas.ryan.crosby@gmail.com', 
+          "firstName" = 'Thomas', 
+          "lastName" = 'Crosby'
+      WHERE email = 'janitorial@hoa.com' AND role = 'janitorial';
+    `);
+    console.log(`  ✅ Updated janitorial account: ${janitorialResult[1]} row(s)`);
+
+    // Update resident account
+    const residentResult = await sequelize.query(`
+      UPDATE users 
+      SET email = 'ryan@wetlandx.com', 
+          "firstName" = 'Ryan', 
+          "lastName" = 'Wetlandx'
+      WHERE email = 'resident@hoa.com' AND role = 'resident';
+    `);
+    console.log(`  ✅ Updated resident account: ${residentResult[1]} row(s)`);
+
+    console.log('✅ Demo account migration completed successfully!');
+
+    return res.json({
+      success: true,
+      message: 'Demo accounts updated successfully',
+      accountsUpdated: {
+        admin: adminResult[1],
+        janitorial: janitorialResult[1],
+        resident: residentResult[1]
+      },
+      newCredentials: {
+        admin: 'ryan@kellby.com / admin123',
+        janitorial: 'thomas.ryan.crosby@gmail.com / admin123',
+        resident: 'ryan@wetlandx.com / admin123'
+      }
+    });
+
+  } catch (error: any) {
+    console.error('❌ Demo account migration failed:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Migration failed',
+      error: error.message
+    });
+  }
+});
+
 export default router;
