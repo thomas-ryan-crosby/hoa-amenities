@@ -307,7 +307,7 @@ const ReservationsPage: React.FC = () => {
                   </span>
                   {(reservation.status === 'NEW' || reservation.status === 'JANITORIAL_APPROVED') && (
                     <button
-                      onClick={() => handleCancelReservation(reservation.id)}
+                      onClick={() => handleCancelReservation(reservation)}
                       style={{
                         backgroundColor: '#ef4444',
                         color: 'white',
