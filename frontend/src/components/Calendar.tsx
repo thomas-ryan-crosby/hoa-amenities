@@ -147,7 +147,22 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
     const newDate = new Date(currentDate);
     switch (view) {
       case 'month':
-        newDate.setMonth(newDate.getMonth() + (direction === 'next' ? 1 : -1));
+        // Use setFullYear and setMonth to avoid month boundary issues
+        const year = newDate.getFullYear();
+        const month = newDate.getMonth();
+        const day = newDate.getDate();
+        if (direction === 'next') {
+          // Move to next month, keeping the same day (or last day if invalid)
+          newDate.setFullYear(year, month + 1, 1);
+          // If original day exceeds days in new month, keep last day of month
+          const lastDay = new Date(year, month + 2, 0).getDate();
+          newDate.setDate(Math.min(day, lastDay));
+        } else {
+          // Move to previous month, keeping the same day (or last day if invalid)
+          newDate.setFullYear(year, month - 1, 1);
+          const lastDay = new Date(year, month, 0).getDate();
+          newDate.setDate(Math.min(day, lastDay));
+        }
         break;
       case 'week':
         newDate.setDate(newDate.getDate() + (direction === 'next' ? 7 : -7));

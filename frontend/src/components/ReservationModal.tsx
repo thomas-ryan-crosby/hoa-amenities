@@ -55,8 +55,19 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
   useEffect(() => {
     if (isOpen) {
       fetchAmenities();
+      // Update reservation date when modal opens with a selected date
+      if (selectedDate) {
+        setReservationDate(selectedDate);
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, selectedDate]);
+
+  // Update reservation date when selectedDate prop changes
+  useEffect(() => {
+    if (selectedDate) {
+      setReservationDate(selectedDate);
+    }
+  }, [selectedDate]);
 
   useEffect(() => {
     if (selectedAmenity && isOpen) {
@@ -101,8 +112,27 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
     setPartyTimeEnd('');
   };
 
+  // Round time to nearest 30 minutes
+  const roundToNearest30Minutes = (time: string): string => {
+    if (!time) return time;
+    
+    const [hours, minutes] = time.split(':').map(Number);
+    const totalMinutes = hours * 60 + minutes;
+    const roundedMinutes = Math.round(totalMinutes / 30) * 30;
+    const roundedHours = Math.floor(roundedMinutes / 60) % 24;
+    const roundedMins = roundedMinutes % 60;
+    
+    return `${String(roundedHours).padStart(2, '0')}:${String(roundedMins).padStart(2, '0')}`;
+  };
+
   const handleSetupTimeChange = (time: string) => {
-    setSetupTimeStart(time);
+    const roundedTime = roundToNearest30Minutes(time);
+    setSetupTimeStart(roundedTime);
+  };
+
+  const handlePartyTimeEndChange = (time: string) => {
+    const roundedTime = roundToNearest30Minutes(time);
+    setPartyTimeEnd(roundedTime);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -124,13 +154,17 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
       const totalFee = parseFloat(String(selectedAmenityData?.reservationFee)) || 0;
       const totalDeposit = parseFloat(String(selectedAmenityData?.deposit)) || 0;
 
+      // Ensure times are rounded to nearest 30 minutes (safety check)
+      const roundedSetupTime = roundToNearest30Minutes(setupTimeStart);
+      const roundedPartyTimeEnd = roundToNearest30Minutes(partyTimeEnd);
+      
       const reservationData = {
         amenityId: selectedAmenity,
         date: reservationDate,
-        setupTimeStart: `${reservationDate}T${setupTimeStart}:00`,
-        setupTimeEnd: `${reservationDate}T${setupTimeStart}:00`, // Same as start for now
-        partyTimeStart: `${reservationDate}T${setupTimeStart}:00`, // Party starts when setup starts
-        partyTimeEnd: `${reservationDate}T${partyTimeEnd}:00`,
+        setupTimeStart: `${reservationDate}T${roundedSetupTime}:00`,
+        setupTimeEnd: `${reservationDate}T${roundedSetupTime}:00`, // Same as start for now
+        partyTimeStart: `${reservationDate}T${roundedSetupTime}:00`, // Party starts when setup starts
+        partyTimeEnd: `${reservationDate}T${roundedPartyTimeEnd}:00`,
         guestCount,
         specialRequirements: specialRequirements || null,
         totalFee,
@@ -333,7 +367,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
             <input
               type="time"
               value={partyTimeEnd}
-              onChange={(e) => setPartyTimeEnd(e.target.value)}
+              onChange={(e) => handlePartyTimeEndChange(e.target.value)}
               step="1800"
               style={{
                 width: '100%',
