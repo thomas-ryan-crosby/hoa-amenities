@@ -48,16 +48,22 @@ A modern web application that provides:
 
 #### 4.1 Amenity Management
 **Clubroom**
-- Reservation fee: $125
-- Deposit: $75
-- Capacity: [To be defined]
+- Reservation fee: $125 (charged at booking)
+- Potential damage fee: $75 (only charged if damages occur after party)
+- Capacity: 50 people
 - Amenities: [To be defined]
 
 **Pool**
-- Reservation fee: $25
-- Deposit: $50
-- Capacity: [To be defined]
+- Reservation fee: $25 (charged at booking)
+- Potential damage fee: $50 (only charged if damages occur after party)
+- Capacity: 30 people
 - Amenities: [To be defined]
+
+**Payment Model:**
+- Reservation fees are charged immediately upon booking confirmation
+- Damage fees are not charged upfront; they are only assessed and charged if damages occur
+- Janitorial staff or administrators can assess damages after party completion
+- If damages are assessed, the damage fee (or portion thereof) will be charged separately
 
 #### 4.2 Reservation System
 **Calendar Interface**
@@ -207,11 +213,16 @@ A modern web application that provides:
 - Refund policy for deposits: [To be defined]
 
 #### 8.2 Fee Structure
-- **Reservation fees**: Non-refundable, charged per day
-- **Deposits**: Refundable upon successful completion, charged per day
-- **Multi-day pricing**: Each day incurs full reservation fee and deposit
+- **Reservation fees**: Non-refundable, charged immediately upon booking confirmation, charged per day
+- **Damage fees**: Only charged if damages occur, assessed after party completion, charged per day for multi-day reservations
+- **Multi-day pricing**: Each day incurs full reservation fee; damage fees charged separately if damages occur
+- **Damage Assessment Process**:
+  1. Party completion is confirmed by janitorial staff
+  2. Janitorial staff or admin can assess damages
+  3. If damages found, admin can charge the damage fee (or portion)
+  4. Damage fee is charged via Square payment processing
+  5. Resident receives notification of damage charge
 - Late cancellation fees: [To be defined]
-- Damage assessment process: [To be defined]
 
 #### 8.3 Time Management
 - **Setup time**: 15 minutes minimum, 2 hours maximum

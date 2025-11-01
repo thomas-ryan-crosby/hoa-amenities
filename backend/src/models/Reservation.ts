@@ -17,6 +17,20 @@ export interface ReservationAttributes {
   totalDeposit: number;
   cleaningTimeStart?: Date;
   cleaningTimeEnd?: Date;
+  // Damage Assessment Fields
+  damageAssessed?: boolean;
+  damageAssessmentPending?: boolean;
+  damageAssessmentStatus?: 'PENDING' | 'APPROVED' | 'ADJUSTED' | 'DENIED' | null;
+  damageCharge?: number | null;
+  damageChargeAmount?: number | null; // Amount assessed by janitorial
+  damageChargeAdjusted?: number | null; // Amount adjusted by admin
+  damageDescription?: string | null;
+  damageNotes?: string | null;
+  adminDamageNotes?: string | null;
+  damageAssessedBy?: number | null; // User ID of janitorial staff
+  damageReviewedBy?: number | null; // User ID of admin who reviewed
+  damageAssessedAt?: Date | null;
+  damageReviewedAt?: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -39,6 +53,20 @@ export class Reservation extends Model<ReservationAttributes, ReservationCreatio
   public totalDeposit!: number;
   public cleaningTimeStart?: Date;
   public cleaningTimeEnd?: Date;
+  // Damage Assessment Fields
+  public damageAssessed?: boolean;
+  public damageAssessmentPending?: boolean;
+  public damageAssessmentStatus?: 'PENDING' | 'APPROVED' | 'ADJUSTED' | 'DENIED' | null;
+  public damageCharge?: number | null;
+  public damageChargeAmount?: number | null;
+  public damageChargeAdjusted?: number | null;
+  public damageDescription?: string | null;
+  public damageNotes?: string | null;
+  public adminDamageNotes?: string | null;
+  public damageAssessedBy?: number | null;
+  public damageReviewedBy?: number | null;
+  public damageAssessedAt?: Date | null;
+  public damageReviewedAt?: Date | null;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
@@ -113,6 +141,69 @@ Reservation.init(
       allowNull: true,
     },
     cleaningTimeEnd: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    // Damage Assessment Fields
+    damageAssessed: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
+      defaultValue: false,
+    },
+    damageAssessmentPending: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
+      defaultValue: false,
+    },
+    damageAssessmentStatus: {
+      type: DataTypes.ENUM('PENDING', 'APPROVED', 'ADJUSTED', 'DENIED'),
+      allowNull: true,
+    },
+    damageCharge: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: true,
+    },
+    damageChargeAmount: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: true,
+    },
+    damageChargeAdjusted: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: true,
+    },
+    damageDescription: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    damageNotes: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    adminDamageNotes: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    damageAssessedBy: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'users',
+        key: 'id',
+      },
+    },
+    damageReviewedBy: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'users',
+        key: 'id',
+      },
+    },
+    damageAssessedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    damageReviewedAt: {
       type: DataTypes.DATE,
       allowNull: true,
     },

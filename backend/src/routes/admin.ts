@@ -1,5 +1,5 @@
 import express from 'express';
-import { User } from '../models';
+import { User, Reservation, sequelize } from '../models';
 import { authenticateToken, requireAdmin } from '../middleware/auth';
 import bcrypt from 'bcryptjs';
 
@@ -198,6 +198,135 @@ router.delete('/users/:id', async (req: any, res) => {
   } catch (error) {
     console.error('❌ Error deleting user:', error);
     return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// POST /api/admin/migrate-damage-fields - Run database migration for damage assessment fields
+router.post('/migrate-damage-fields', async (req: any, res) => {
+  try {
+    console.log('🔧 Starting damage assessment fields migration...');
+
+    // Run migration queries
+    await sequelize.query(`
+      ALTER TABLE reservations 
+      ADD COLUMN IF NOT EXISTS "damageAssessed" BOOLEAN DEFAULT false;
+    `);
+    console.log('  ✅ Added damageAssessed');
+
+    await sequelize.query(`
+      ALTER TABLE reservations 
+      ADD COLUMN IF NOT EXISTS "damageAssessmentPending" BOOLEAN DEFAULT false;
+    `);
+    console.log('  ✅ Added damageAssessmentPending');
+
+    // Create enum type if it doesn't exist
+    await sequelize.query(`
+      DO $$ 
+      BEGIN
+        IF NOT EXISTS (
+          SELECT 1 FROM pg_type WHERE typname = 'damage_assessment_status_enum'
+        ) THEN
+          CREATE TYPE damage_assessment_status_enum AS ENUM ('PENDING', 'APPROVED', 'ADJUSTED', 'DENIED');
+        END IF;
+      END $$;
+    `);
+    console.log('  ✅ Created/verified damage_assessment_status_enum');
+
+    await sequelize.query(`
+      ALTER TABLE reservations 
+      ADD COLUMN IF NOT EXISTS "damageAssessmentStatus" damage_assessment_status_enum;
+    `);
+    console.log('  ✅ Added damageAssessmentStatus');
+
+    await sequelize.query(`
+      ALTER TABLE reservations 
+      ADD COLUMN IF NOT EXISTS "damageCharge" DECIMAL(10,2);
+    `);
+    console.log('  ✅ Added damageCharge');
+
+    await sequelize.query(`
+      ALTER TABLE reservations 
+      ADD COLUMN IF NOT EXISTS "damageChargeAmount" DECIMAL(10,2);
+    `);
+    console.log('  ✅ Added damageChargeAmount');
+
+    await sequelize.query(`
+      ALTER TABLE reservations 
+      ADD COLUMN IF NOT EXISTS "damageChargeAdjusted" DECIMAL(10,2);
+    `);
+    console.log('  ✅ Added damageChargeAdjusted');
+
+    await sequelize.query(`
+      ALTER TABLE reservations 
+      ADD COLUMN IF NOT EXISTS "damageDescription" TEXT;
+    `);
+    console.log('  ✅ Added damageDescription');
+
+    await sequelize.query(`
+      ALTER TABLE reservations 
+      ADD COLUMN IF NOT EXISTS "damageNotes" TEXT;
+    `);
+    console.log('  ✅ Added damageNotes');
+
+    await sequelize.query(`
+      ALTER TABLE reservations 
+      ADD COLUMN IF NOT EXISTS "adminDamageNotes" TEXT;
+    `);
+    console.log('  ✅ Added adminDamageNotes');
+
+    await sequelize.query(`
+      ALTER TABLE reservations 
+      ADD COLUMN IF NOT EXISTS "damageAssessedBy" INTEGER REFERENCES users(id);
+    `);
+    console.log('  ✅ Added damageAssessedBy');
+
+    await sequelize.query(`
+      ALTER TABLE reservations 
+      ADD COLUMN IF NOT EXISTS "damageReviewedBy" INTEGER REFERENCES users(id);
+    `);
+    console.log('  ✅ Added damageReviewedBy');
+
+    await sequelize.query(`
+      ALTER TABLE reservations 
+      ADD COLUMN IF NOT EXISTS "damageAssessedAt" TIMESTAMP;
+    `);
+    console.log('  ✅ Added damageAssessedAt');
+
+    await sequelize.query(`
+      ALTER TABLE reservations 
+      ADD COLUMN IF NOT EXISTS "damageReviewedAt" TIMESTAMP;
+    `);
+    console.log('  ✅ Added damageReviewedAt');
+
+    console.log('✅ Migration completed successfully!');
+
+    return res.json({
+      success: true,
+      message: 'Migration completed successfully. All damage assessment fields have been added to the reservations table.',
+      fieldsAdded: [
+        'damageAssessed',
+        'damageAssessmentPending',
+        'damageAssessmentStatus',
+        'damageCharge',
+        'damageChargeAmount',
+        'damageChargeAdjusted',
+        'damageDescription',
+        'damageNotes',
+        'adminDamageNotes',
+        'damageAssessedBy',
+        'damageReviewedBy',
+        'damageAssessedAt',
+        'damageReviewedAt'
+      ]
+    });
+
+  } catch (error: any) {
+    console.error('❌ Migration failed:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Migration failed',
+      error: error.message
+    });
   }
 });
 

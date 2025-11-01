@@ -308,7 +308,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
               <option value="">Choose an amenity...</option>
               {amenities.map(amenity => (
                 <option key={amenity.id} value={amenity.id}>
-                  {amenity.name} - ${parseFloat(String(amenity.reservationFee)).toFixed(2)} fee, ${parseFloat(String(amenity.deposit)).toFixed(2)} deposit
+                  {amenity.name} - ${parseFloat(String(amenity.reservationFee)).toFixed(2)} reservation fee (Potential damage fee: ${parseFloat(String(amenity.deposit)).toFixed(2)} if damages occur)
                 </option>
               ))}
             </select>
@@ -329,8 +329,12 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
                 <strong>Capacity:</strong> {selectedAmenityData.capacity} people
               </p>
               <p style={{ margin: '0', fontSize: '14px' }}>
-                <strong>Total Cost:</strong> ${(parseFloat(String(selectedAmenityData.reservationFee)) + parseFloat(String(selectedAmenityData.deposit))).toFixed(2)} 
-                (${parseFloat(String(selectedAmenityData.reservationFee)).toFixed(2)} fee + ${parseFloat(String(selectedAmenityData.deposit)).toFixed(2)} deposit)
+                <strong>Reservation Fee:</strong> ${parseFloat(String(selectedAmenityData.reservationFee)).toFixed(2)}
+                <span style={{ color: '#6b7280', fontSize: '12px' }}> (Charged at booking)</span>
+              </p>
+              <p style={{ margin: '4px 0 0 0', fontSize: '14px' }}>
+                <strong>Potential Damage Fee:</strong> ${parseFloat(String(selectedAmenityData.deposit)).toFixed(2)}
+                <span style={{ color: '#6b7280', fontSize: '12px' }}> (Only charged if damages occur)</span>
               </p>
             </div>
           )}

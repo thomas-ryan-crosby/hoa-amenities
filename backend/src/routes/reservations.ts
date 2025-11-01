@@ -506,4 +506,315 @@ router.put('/:id/reject', authenticateToken, async (req: any, res) => {
   }
 });
 
+// Mark party as complete (janitorial)
+router.put('/:id/complete', authenticateToken, async (req: any, res) => {
+  try {
+    const { id } = req.params;
+    const { damagesFound } = req.body;
+    const userId = req.user.id;
+    const userRole = req.user.role;
+
+    // Check if user is janitorial or admin
+    if (userRole !== 'janitorial' && userRole !== 'admin') {
+      return res.status(403).json({ message: 'Janitorial access required' });
+    }
+
+    // Find reservation
+    const reservation = await Reservation.findByPk(id, {
+      include: [
+        {
+          model: Amenity,
+          as: 'amenity',
+          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity']
+        },
+        {
+          model: User,
+          as: 'user',
+          attributes: ['id', 'firstName', 'lastName', 'email', 'phone', 'address']
+        }
+      ]
+    }) as ReservationWithAssociations;
+
+    if (!reservation) {
+      return res.status(404).json({ message: 'Reservation not found' });
+    }
+
+    // Check if reservation is in a completable state
+    if (reservation.status !== 'FULLY_APPROVED' && reservation.status !== 'JANITORIAL_APPROVED') {
+      return res.status(400).json({ 
+        message: `Cannot complete reservation with status: ${reservation.status}` 
+      });
+    }
+
+    // Update reservation
+    if (damagesFound === false || damagesFound === 'false') {
+      // No damages found
+      await reservation.update({
+        status: 'COMPLETED',
+        damageAssessed: false,
+        damageAssessmentPending: false,
+        damageAssessmentStatus: null
+      });
+    } else {
+      // Damages found - set pending flag for assessment
+      await reservation.update({
+        status: 'COMPLETED',
+        damageAssessed: false,
+        damageAssessmentPending: true
+        // Don't set damageAssessmentStatus yet - wait for assessment
+      });
+    }
+
+    console.log('✅ Party marked as complete:', id, 'damagesFound:', damagesFound);
+
+    return res.json({
+      message: 'Party marked as complete',
+      reservation: reservation.toJSON(),
+      requiresDamageAssessment: damagesFound === true || damagesFound === 'true'
+    });
+
+  } catch (error) {
+    console.error('❌ Error marking party complete:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Assess damages (janitorial)
+router.post('/:id/assess-damages', authenticateToken, async (req: any, res) => {
+  try {
+    const { id } = req.params;
+    const { amount, description, notes } = req.body;
+    const userId = req.user.id;
+    const userRole = req.user.role;
+
+    // Check if user is janitorial or admin
+    if (userRole !== 'janitorial' && userRole !== 'admin') {
+      return res.status(403).json({ message: 'Janitorial access required' });
+    }
+
+    // Validate input
+    if (!amount || amount <= 0) {
+      return res.status(400).json({ message: 'Damage amount must be greater than 0' });
+    }
+    if (!description || description.trim() === '') {
+      return res.status(400).json({ message: 'Damage description is required' });
+    }
+
+    // Find reservation
+    const reservation = await Reservation.findByPk(id, {
+      include: [
+        {
+          model: Amenity,
+          as: 'amenity',
+          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity']
+        },
+        {
+          model: User,
+          as: 'user',
+          attributes: ['id', 'firstName', 'lastName', 'email', 'phone', 'address']
+        }
+      ]
+    }) as ReservationWithAssociations;
+
+    if (!reservation) {
+      return res.status(404).json({ message: 'Reservation not found' });
+    }
+
+    // Check if reservation is completed and needs damage assessment
+    if (reservation.status !== 'COMPLETED') {
+      return res.status(400).json({ 
+        message: 'Reservation must be completed before assessing damages' 
+      });
+    }
+
+    // Validate amount doesn't exceed potential damage fee
+    const maxDamageFee = parseFloat(String(reservation.amenity?.deposit || reservation.totalDeposit));
+    const damageAmount = parseFloat(String(amount));
+    
+    if (damageAmount > maxDamageFee) {
+      return res.status(400).json({ 
+        message: `Damage amount cannot exceed potential damage fee of $${maxDamageFee.toFixed(2)}` 
+      });
+    }
+
+    // Update reservation with damage assessment
+    await reservation.update({
+      damageAssessed: true,
+      damageAssessmentPending: true,
+      damageAssessmentStatus: 'PENDING',
+      damageChargeAmount: damageAmount,
+      damageDescription: description.trim(),
+      damageNotes: notes ? notes.trim() : null,
+      damageAssessedBy: userId,
+      damageAssessedAt: new Date()
+    });
+
+    console.log('✅ Damage assessment submitted:', id, 'amount:', damageAmount);
+
+    return res.json({
+      message: 'Damage assessment submitted for admin review',
+      reservation: reservation.toJSON()
+    });
+
+  } catch (error) {
+    console.error('❌ Error assessing damages:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Review damage assessment (admin)
+router.put('/:id/review-damage-assessment', authenticateToken, async (req: any, res) => {
+  try {
+    const { id } = req.params;
+    const { action, amount, adminNotes } = req.body;
+    const userId = req.user.id;
+    const userRole = req.user.role;
+
+    // Check if user is admin
+    if (userRole !== 'admin') {
+      return res.status(403).json({ message: 'Admin access required' });
+    }
+
+    // Validate action
+    if (!['approve', 'adjust', 'deny'].includes(action)) {
+      return res.status(400).json({ message: 'Invalid action. Must be approve, adjust, or deny' });
+    }
+
+    // If adjust, validate amount
+    if (action === 'adjust' && (!amount || amount <= 0)) {
+      return res.status(400).json({ message: 'Adjusted amount is required and must be greater than 0' });
+    }
+
+    // Find reservation
+    const reservation = await Reservation.findByPk(id, {
+      include: [
+        {
+          model: Amenity,
+          as: 'amenity',
+          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity']
+        },
+        {
+          model: User,
+          as: 'user',
+          attributes: ['id', 'firstName', 'lastName', 'email', 'phone', 'address']
+        }
+      ]
+    }) as ReservationWithAssociations;
+
+    if (!reservation) {
+      return res.status(404).json({ message: 'Reservation not found' });
+    }
+
+    // Check if damage assessment is pending
+    if (!reservation.damageAssessmentPending || reservation.damageAssessmentStatus !== 'PENDING') {
+      return res.status(400).json({ 
+        message: 'No pending damage assessment found for this reservation' 
+      });
+    }
+
+    // Process action
+    let finalCharge = 0;
+    let newStatus: 'APPROVED' | 'ADJUSTED' | 'DENIED';
+    const updateData: any = {
+      damageReviewedBy: userId,
+      damageReviewedAt: new Date(),
+      damageAssessmentPending: false
+    };
+
+    if (action === 'approve') {
+      newStatus = 'APPROVED';
+      finalCharge = parseFloat(String(reservation.damageChargeAmount || 0));
+      updateData.damageAssessmentStatus = 'APPROVED';
+      updateData.damageCharge = finalCharge;
+      
+    } else if (action === 'adjust') {
+      newStatus = 'ADJUSTED';
+      const adjustedAmount = parseFloat(String(amount));
+      const maxDamageFee = parseFloat(String(reservation.amenity?.deposit || reservation.totalDeposit));
+      
+      if (adjustedAmount > maxDamageFee) {
+        return res.status(400).json({ 
+          message: `Adjusted amount cannot exceed potential damage fee of $${maxDamageFee.toFixed(2)}` 
+        });
+      }
+      
+      finalCharge = adjustedAmount;
+      updateData.damageAssessmentStatus = 'ADJUSTED';
+      updateData.damageCharge = finalCharge;
+      updateData.damageChargeAdjusted = adjustedAmount;
+      if (adminNotes) {
+        updateData.adminDamageNotes = adminNotes.trim();
+      }
+      
+    } else if (action === 'deny') {
+      newStatus = 'DENIED';
+      finalCharge = 0;
+      updateData.damageAssessmentStatus = 'DENIED';
+      updateData.damageCharge = null;
+      if (adminNotes) {
+        updateData.adminDamageNotes = adminNotes.trim();
+      }
+    }
+
+    await reservation.update(updateData);
+
+    console.log('✅ Damage assessment reviewed:', id, 'action:', action, 'charge:', finalCharge);
+
+    // TODO: Integrate with Square here to charge the damage fee if approved/adjusted
+    // For now, we just update the database
+
+    return res.json({
+      message: `Damage assessment ${action}d successfully`,
+      reservation: reservation.toJSON(),
+      chargeAmount: finalCharge,
+      charged: action !== 'deny'
+    });
+
+  } catch (error) {
+    console.error('❌ Error reviewing damage assessment:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Get pending damage reviews (admin)
+router.get('/admin/damage-reviews', authenticateToken, async (req: any, res) => {
+  try {
+    const userRole = req.user.role;
+
+    // Check if user is admin
+    if (userRole !== 'admin') {
+      return res.status(403).json({ message: 'Admin access required' });
+    }
+
+    // Find all reservations with pending damage assessments
+    const reservations = await Reservation.findAll({
+      where: {
+        damageAssessmentPending: true,
+        damageAssessmentStatus: 'PENDING'
+      },
+      include: [
+        {
+          model: Amenity,
+          as: 'amenity',
+          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity']
+        },
+        {
+          model: User,
+          as: 'user',
+          attributes: ['id', 'firstName', 'lastName', 'email', 'phone', 'address']
+        }
+      ],
+      order: [['damageAssessedAt', 'ASC']]
+    });
+
+    return res.json({
+      reservations: reservations.map(r => r.toJSON())
+    });
+
+  } catch (error) {
+    console.error('❌ Error fetching pending damage reviews:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 export default router;

@@ -213,8 +213,11 @@ const ReservationsPage: React.FC = () => {
         <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
           <h3 style={{ margin: '0 0 10px 0', color: '#6b7280' }}>Total Cost</h3>
           <div style={{ fontSize: '2rem', fontWeight: 600, color: '#355B45', fontFamily: 'Inter, sans-serif' }}>
-            ${reservations.reduce((sum, r) => sum + parseFloat(String(r.totalFee)) + parseFloat(String(r.totalDeposit)), 0).toFixed(2)}
+            ${reservations.reduce((sum, r) => sum + parseFloat(String(r.totalFee)), 0).toFixed(2)}
           </div>
+          <p style={{ margin: '8px 0 0 0', fontSize: '0.875rem', color: '#6b7280' }}>
+            (Reservation fees only - damage fees charged separately if damages occur)
+          </p>
         </div>
       </div>
 
@@ -312,13 +315,15 @@ const ReservationsPage: React.FC = () => {
                 </div>
                 <div>
                   <h4 style={{ fontSize: '14px', fontWeight: 'bold', color: '#374151', margin: '0 0 4px 0' }}>
-                    Total Cost
+                    Payment
                   </h4>
                   <p style={{ margin: 0, fontSize: '14px', color: '#6b7280' }}>
-                    ${(parseFloat(String(reservation.totalFee)) + parseFloat(String(reservation.totalDeposit))).toFixed(2)}
-                    <span style={{ fontSize: '12px', color: '#9ca3af' }}>
-                      {' '}(${parseFloat(String(reservation.totalFee)).toFixed(2)} fee + ${parseFloat(String(reservation.totalDeposit)).toFixed(2)} deposit)
-                    </span>
+                    <strong>Reservation Fee:</strong> ${parseFloat(String(reservation.totalFee)).toFixed(2)}
+                    <span style={{ fontSize: '12px', color: '#9ca3af' }}> (PAID)</span>
+                  </p>
+                  <p style={{ margin: '4px 0 0 0', fontSize: '14px', color: '#6b7280' }}>
+                    <strong>Potential Damage Fee:</strong> ${parseFloat(String(reservation.totalDeposit)).toFixed(2)}
+                    <span style={{ fontSize: '12px', color: '#9ca3af' }}> (Not charged - pending assessment)</span>
                   </p>
                 </div>
               </div>

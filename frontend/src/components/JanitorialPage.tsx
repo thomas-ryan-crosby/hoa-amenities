@@ -16,6 +16,14 @@ interface Reservation {
   totalDeposit: number | string;
   cleaningTimeStart?: string;
   cleaningTimeEnd?: string;
+  // Damage Assessment Fields
+  damageAssessed?: boolean;
+  damageAssessmentPending?: boolean;
+  damageAssessmentStatus?: 'PENDING' | 'APPROVED' | 'ADJUSTED' | 'DENIED' | null;
+  damageCharge?: number | null;
+  damageChargeAmount?: number | null;
+  damageDescription?: string | null;
+  damageNotes?: string | null;
   amenity: {
     id: number;
     name: string;
@@ -44,6 +52,13 @@ const JanitorialPage: React.FC = () => {
   const [cleaningTime, setCleaningTime] = useState({
     start: '',
     end: ''
+  });
+  const [showPartyCompleteModal, setShowPartyCompleteModal] = useState(false);
+  const [showDamageAssessmentModal, setShowDamageAssessmentModal] = useState(false);
+  const [damageAssessment, setDamageAssessment] = useState({
+    amount: '',
+    description: '',
+    notes: ''
   });
 
   useEffect(() => {
@@ -155,6 +170,89 @@ const JanitorialPage: React.FC = () => {
     setShowCleaningTimeModal(false);
     setSelectedReservation(null);
     setCleaningTime({ start: '', end: '' });
+  };
+
+  const handlePartyComplete = async (damagesFound: boolean) => {
+    if (!selectedReservation) return;
+    
+    try {
+      setActionLoading(selectedReservation.id);
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      const token = localStorage.getItem('token');
+      
+      await axios.put(`${apiUrl}/api/reservations/${selectedReservation.id}/complete`, {
+        damagesFound
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      // If damages found, open damage assessment modal
+      if (damagesFound) {
+        setShowPartyCompleteModal(false);
+        setShowDamageAssessmentModal(true);
+      } else {
+        // No damages - close modal and refresh
+        setShowPartyCompleteModal(false);
+        setSelectedReservation(null);
+        fetchReservations();
+      }
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to mark party complete');
+      console.error('Error marking party complete:', err);
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleDamageAssessment = async () => {
+    if (!selectedReservation) return;
+    
+    // Validate input
+    if (!damageAssessment.amount || parseFloat(damageAssessment.amount) <= 0) {
+      setError('Damage amount must be greater than 0');
+      return;
+    }
+    if (!damageAssessment.description || damageAssessment.description.trim() === '') {
+      setError('Damage description is required');
+      return;
+    }
+    
+    const maxDamageFee = parseFloat(String(selectedReservation.amenity?.deposit || selectedReservation.totalDeposit));
+    const damageAmount = parseFloat(damageAssessment.amount);
+    
+    if (damageAmount > maxDamageFee) {
+      setError(`Damage amount cannot exceed potential damage fee of $${maxDamageFee.toFixed(2)}`);
+      return;
+    }
+    
+    try {
+      setActionLoading(selectedReservation.id);
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      const token = localStorage.getItem('token');
+      
+      await axios.post(`${apiUrl}/api/reservations/${selectedReservation.id}/assess-damages`, {
+        amount: damageAmount,
+        description: damageAssessment.description.trim(),
+        notes: damageAssessment.notes.trim() || null
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      // Close modal and refresh
+      setShowDamageAssessmentModal(false);
+      setSelectedReservation(null);
+      setDamageAssessment({ amount: '', description: '', notes: '' });
+      fetchReservations();
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to assess damages');
+      console.error('Error assessing damages:', err);
+    } finally {
+      setActionLoading(null);
+    }
   };
 
   const handleReject = async (reservationId: number) => {
@@ -406,10 +504,11 @@ const JanitorialPage: React.FC = () => {
                     Total Cost
                   </h4>
                   <p style={{ margin: 0, fontSize: '14px', color: '#6b7280' }}>
-                    ${(parseFloat(String(reservation.totalFee)) + parseFloat(String(reservation.totalDeposit))).toFixed(2)}
-                    <span style={{ fontSize: '12px', color: '#9ca3af' }}>
-                      {' '}(${parseFloat(String(reservation.totalFee)).toFixed(2)} fee + ${parseFloat(String(reservation.totalDeposit)).toFixed(2)} deposit)
-                    </span>
+                    <strong>Reservation Fee:</strong> ${parseFloat(String(reservation.totalFee)).toFixed(2)}
+                    <span style={{ fontSize: '12px', color: '#9ca3af' }}> (PAID)</span>
+                    <br />
+                    <strong>Potential Damage Fee:</strong> ${parseFloat(String(reservation.totalDeposit)).toFixed(2)}
+                    <span style={{ fontSize: '12px', color: '#9ca3af' }}> (Not charged - pending assessment)</span>
                   </p>
                 </div>
               </div>
@@ -463,6 +562,50 @@ const JanitorialPage: React.FC = () => {
                     }}
                   >
                     {actionLoading === reservation.id ? 'Processing...' : 'Reject'}
+                  </button>
+                )}
+                {(reservation.status === 'FULLY_APPROVED' || reservation.status === 'JANITORIAL_APPROVED') && (
+                  <button
+                    onClick={() => {
+                      setSelectedReservation(reservation);
+                      setShowPartyCompleteModal(true);
+                    }}
+                    disabled={actionLoading === reservation.id}
+                    style={{
+                      backgroundColor: actionLoading === reservation.id ? '#9ca3af' : '#355B45',
+                      color: 'white',
+                      padding: '8px 16px',
+                      borderRadius: '4px',
+                      border: 'none',
+                      cursor: actionLoading === reservation.id ? 'not-allowed' : 'pointer',
+                      fontSize: '14px',
+                      fontWeight: 'bold',
+                      marginLeft: '8px'
+                    }}
+                  >
+                    Mark Party Complete
+                  </button>
+                )}
+                {reservation.status === 'COMPLETED' && reservation.damageAssessmentPending && !reservation.damageAssessed && (
+                  <button
+                    onClick={() => {
+                      setSelectedReservation(reservation);
+                      setShowDamageAssessmentModal(true);
+                    }}
+                    disabled={actionLoading === reservation.id}
+                    style={{
+                      backgroundColor: actionLoading === reservation.id ? '#9ca3af' : '#f59e0b',
+                      color: 'white',
+                      padding: '8px 16px',
+                      borderRadius: '4px',
+                      border: 'none',
+                      cursor: actionLoading === reservation.id ? 'not-allowed' : 'pointer',
+                      fontSize: '14px',
+                      fontWeight: 'bold',
+                      marginLeft: '8px'
+                    }}
+                  >
+                    Assess Damages
                   </button>
                 )}
               </div>
@@ -578,6 +721,234 @@ const JanitorialPage: React.FC = () => {
                 }}
               >
                 Approve with Cleaning Time
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Party Complete Modal */}
+      {showPartyCompleteModal && selectedReservation && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            padding: '2rem',
+            borderRadius: '8px',
+            maxWidth: '500px',
+            width: '90%'
+          }}>
+            <h2 style={{ marginBottom: '1rem', color: '#1f2937' }}>
+              Party Completion
+            </h2>
+            
+            <p style={{ color: '#6b7280', marginBottom: '1.5rem' }}>
+              Did you find any damages?
+            </p>
+
+            <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
+              <button
+                onClick={() => handlePartyComplete(false)}
+                disabled={actionLoading === selectedReservation.id}
+                style={{
+                  flex: 1,
+                  backgroundColor: actionLoading === selectedReservation.id ? '#9ca3af' : '#10b981',
+                  color: 'white',
+                  padding: '12px 24px',
+                  borderRadius: '4px',
+                  border: 'none',
+                  cursor: actionLoading === selectedReservation.id ? 'not-allowed' : 'pointer',
+                  fontSize: '14px',
+                  fontWeight: 'bold'
+                }}
+              >
+                No Damages Found
+              </button>
+              <button
+                onClick={() => handlePartyComplete(true)}
+                disabled={actionLoading === selectedReservation.id}
+                style={{
+                  flex: 1,
+                  backgroundColor: actionLoading === selectedReservation.id ? '#9ca3af' : '#f59e0b',
+                  color: 'white',
+                  padding: '12px 24px',
+                  borderRadius: '4px',
+                  border: 'none',
+                  cursor: actionLoading === selectedReservation.id ? 'not-allowed' : 'pointer',
+                  fontSize: '14px',
+                  fontWeight: 'bold'
+                }}
+              >
+                Damages Found
+              </button>
+            </div>
+
+            <button
+              onClick={() => {
+                setShowPartyCompleteModal(false);
+                setSelectedReservation(null);
+              }}
+              style={{
+                width: '100%',
+                backgroundColor: '#e5e7eb',
+                color: '#374151',
+                padding: '8px 16px',
+                borderRadius: '4px',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '14px'
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Damage Assessment Modal */}
+      {showDamageAssessmentModal && selectedReservation && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            padding: '2rem',
+            borderRadius: '8px',
+            maxWidth: '600px',
+            width: '90%',
+            maxHeight: '90vh',
+            overflow: 'auto'
+          }}>
+            <h2 style={{ marginBottom: '1rem', color: '#1f2937' }}>
+              Damage Assessment
+            </h2>
+            
+            <p style={{ color: '#6b7280', marginBottom: '1.5rem' }}>
+              <strong>Reservation:</strong> {selectedReservation.amenity.name} - {selectedReservation.user.firstName} {selectedReservation.user.lastName}
+              <br />
+              <strong>Date:</strong> {new Date(selectedReservation.date).toLocaleDateString()}
+              <br />
+              <strong>Max Damage Fee:</strong> ${parseFloat(String(selectedReservation.amenity?.deposit || selectedReservation.totalDeposit)).toFixed(2)}
+            </p>
+
+            <div style={{ marginBottom: '1rem' }}>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', color: '#374151' }}>
+                Damage Amount ($)
+              </label>
+              <input
+                type="number"
+                step="0.01"
+                min="0"
+                max={parseFloat(String(selectedReservation.amenity?.deposit || selectedReservation.totalDeposit))}
+                value={damageAssessment.amount}
+                onChange={(e) => setDamageAssessment(prev => ({ ...prev, amount: e.target.value }))}
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '4px',
+                  fontSize: '14px'
+                }}
+              />
+            </div>
+
+            <div style={{ marginBottom: '1rem' }}>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', color: '#374151' }}>
+                Damage Description *
+              </label>
+              <textarea
+                value={damageAssessment.description}
+                onChange={(e) => setDamageAssessment(prev => ({ ...prev, description: e.target.value }))}
+                rows={4}
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '4px',
+                  fontSize: '14px',
+                  resize: 'vertical'
+                }}
+                placeholder="Describe the damages found..."
+              />
+            </div>
+
+            <div style={{ marginBottom: '1.5rem' }}>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', color: '#374151' }}>
+                Additional Notes (Optional)
+              </label>
+              <textarea
+                value={damageAssessment.notes}
+                onChange={(e) => setDamageAssessment(prev => ({ ...prev, notes: e.target.value }))}
+                rows={3}
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '4px',
+                  fontSize: '14px',
+                  resize: 'vertical'
+                }}
+                placeholder="Any additional notes..."
+              />
+            </div>
+
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <button
+                onClick={handleDamageAssessment}
+                disabled={actionLoading === selectedReservation.id}
+                style={{
+                  flex: 1,
+                  backgroundColor: actionLoading === selectedReservation.id ? '#9ca3af' : '#355B45',
+                  color: 'white',
+                  padding: '12px 24px',
+                  borderRadius: '4px',
+                  border: 'none',
+                  cursor: actionLoading === selectedReservation.id ? 'not-allowed' : 'pointer',
+                  fontSize: '14px',
+                  fontWeight: 'bold',
+                  fontFamily: 'Inter, sans-serif'
+                }}
+              >
+                {actionLoading === selectedReservation.id ? 'Submitting...' : 'Submit for Admin Review'}
+              </button>
+              <button
+                onClick={() => {
+                  setShowDamageAssessmentModal(false);
+                  setSelectedReservation(null);
+                  setDamageAssessment({ amount: '', description: '', notes: '' });
+                }}
+                style={{
+                  flex: 1,
+                  backgroundColor: '#e5e7eb',
+                  color: '#374151',
+                  padding: '12px 24px',
+                  borderRadius: '4px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  fontFamily: 'Inter, sans-serif'
+                }}
+              >
+                Cancel
               </button>
             </div>
           </div>
