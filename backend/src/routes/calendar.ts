@@ -82,13 +82,13 @@ router.get('/events', async (req, res) => {
 
     console.log('📅 Fetching calendar events for:', { startDate, endDate, amenityId });
 
-    // Build where clause - exclude completed reservations from calendar view
+    // Build where clause - exclude only cancelled reservations, include completed ones
     const whereClause: any = {
       date: {
         [Op.between]: [startDate, endDate]
       },
       status: {
-        [Op.notIn]: ['COMPLETED', 'CANCELLED']
+        [Op.notIn]: ['CANCELLED'] // Include COMPLETED reservations
       }
     };
 

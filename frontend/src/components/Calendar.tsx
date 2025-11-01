@@ -397,6 +397,9 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                         statusColor = '#6b7280'; // Grey
                     }
 
+                    // Check if event is completed
+                    const isCompleted = event.status === 'COMPLETED';
+                    
                     return (
                       <div
                         key={`clubroom-${eventIndex}`}
@@ -418,9 +421,12 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                           marginBottom: '1px',
                           position: 'relative', // Ensure status indicator positions relative to this block
                           boxSizing: 'border-box', // Include padding and border in width calculation
-                          ...heightStyle
+                          ...heightStyle,
+                          opacity: isCompleted ? 0.5 : 1, // Make completed events more transparent
+                          textDecoration: isCompleted ? 'line-through' : 'none', // Strikethrough for completed
+                          border: isCompleted ? '1px dashed rgba(255,255,255,0.5)' : 'none' // Dashed border for completed
                         }}
-                        title={`Clubroom - ${event.title} (${new Date(event.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(event.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}) - Status: ${event.status}`}
+                        title={`Clubroom - ${event.title} (${new Date(event.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(event.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}) - Status: ${event.status}${isCompleted ? ' (Completed)' : ''}`}
                       >
                         {/* Status indicator */}
                         <div style={{
@@ -461,6 +467,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                     const cleaningEnd = new Date(event.cleaningTime!.end);
                     const cleanStartHour = cleaningStart.getHours();
                     const cleanEndHour = cleaningEnd.getHours();
+                    const isCompleted = event.status === 'COMPLETED';
                     
                     // Determine height based on cleaning time duration
                     let heightStyle;
@@ -494,9 +501,10 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                           boxSizing: 'border-box',
                           ...heightStyle,
                           border: '1px dashed #dc2626', // Dashed border to indicate non-bookable
-                          opacity: 0.8
+                          opacity: isCompleted ? 0.4 : 0.8, // More transparent if completed
+                          textDecoration: isCompleted ? 'line-through' : 'none' // Strikethrough for completed
                         }}
-                        title={`Cleaning Time - Clubroom unavailable (${new Date(event.cleaningTime!.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(event.cleaningTime!.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})`}
+                        title={`Cleaning Time - Clubroom unavailable (${new Date(event.cleaningTime!.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(event.cleaningTime!.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})${isCompleted ? ' - Completed' : ''}`}
                       >
                         <div style={{ 
                           textAlign: 'center',
@@ -563,6 +571,9 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                         statusColor = '#6b7280'; // Grey
                     }
 
+                    // Check if event is completed
+                    const isCompleted = event.status === 'COMPLETED';
+                    
                     return (
                       <div
                         key={`pool-${eventIndex}`}
@@ -584,9 +595,12 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                           marginBottom: '1px',
                           position: 'relative', // Ensure status indicator positions relative to this block
                           boxSizing: 'border-box', // Include padding and border in width calculation
-                          ...heightStyle
+                          ...heightStyle,
+                          opacity: isCompleted ? 0.5 : 1, // Make completed events more transparent
+                          textDecoration: isCompleted ? 'line-through' : 'none', // Strikethrough for completed
+                          border: isCompleted ? '1px dashed rgba(255,255,255,0.5)' : 'none' // Dashed border for completed
                         }}
-                        title={`Pool - ${event.title} (${new Date(event.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(event.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}) - Status: ${event.status}`}
+                        title={`Pool - ${event.title} (${new Date(event.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(event.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}) - Status: ${event.status}${isCompleted ? ' (Completed)' : ''}`}
                       >
                         {/* Status indicator */}
                         <div style={{
@@ -811,6 +825,9 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                               statusColor = '#6b7280'; // Grey
                           }
 
+                          // Check if event is completed
+                          const isCompleted = event.status === 'COMPLETED';
+                          
                           return (
                             <div
                               key={`clubroom-${eventIndex}`}
@@ -831,9 +848,12 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                                 marginBottom: '1px',
                                 wordWrap: 'break-word',
                                 overflowWrap: 'break-word',
-                                position: 'relative'
+                                position: 'relative',
+                                opacity: isCompleted ? 0.5 : 1, // Make completed events more transparent
+                                textDecoration: isCompleted ? 'line-through' : 'none', // Strikethrough for completed
+                                border: isCompleted ? '1px dashed rgba(255,255,255,0.5)' : 'none' // Dashed border for completed
                               }}
-                              title={`Clubroom - ${event.title} (${new Date(event.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(event.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}) - Status: ${event.status}`}
+                              title={`Clubroom - ${event.title} (${new Date(event.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(event.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}) - Status: ${event.status}${isCompleted ? ' (Completed)' : ''}`}
                             >
                               {/* Status indicator */}
                               <div style={{
@@ -874,6 +894,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                           const cleaningEnd = new Date(event.cleaningTime!.end);
                           const timeSlotStart = timeIndex * 2;
                           const timeSlotEnd = (timeIndex + 1) * 2;
+                          const isCompleted = event.status === 'COMPLETED';
                           
                           // Check if cleaning time spans this time slot
                           const cleanStartHour = cleaningStart.getHours();
@@ -910,9 +931,10 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                                 overflowWrap: 'break-word',
                                 position: 'relative',
                                 border: '1px dashed #dc2626', // Dashed border to indicate non-bookable
-                                opacity: 0.8
+                                opacity: isCompleted ? 0.4 : 0.8, // More transparent if completed
+                                textDecoration: isCompleted ? 'line-through' : 'none' // Strikethrough for completed
                               }}
-                              title={`Cleaning Time - Clubroom unavailable (${new Date(event.cleaningTime!.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(event.cleaningTime!.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})`}
+                              title={`Cleaning Time - Clubroom unavailable (${new Date(event.cleaningTime!.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(event.cleaningTime!.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})${isCompleted ? ' - Completed' : ''}`}
                             >
                               <div style={{ 
                                 textAlign: 'center',
@@ -970,6 +992,9 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                               statusColor = '#6b7280'; // Grey
                           }
 
+                          // Check if event is completed
+                          const isCompleted = event.status === 'COMPLETED';
+                          
                           return (
                             <div
                               key={`pool-${eventIndex}`}
@@ -990,9 +1015,12 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                                 marginBottom: '1px',
                                 wordWrap: 'break-word',
                                 overflowWrap: 'break-word',
-                                position: 'relative'
+                                position: 'relative',
+                                opacity: isCompleted ? 0.5 : 1, // Make completed events more transparent
+                                textDecoration: isCompleted ? 'line-through' : 'none', // Strikethrough for completed
+                                border: isCompleted ? '1px dashed rgba(255,255,255,0.5)' : 'none' // Dashed border for completed
                               }}
-                              title={`Pool - ${event.title} (${new Date(event.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(event.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}) - Status: ${event.status}`}
+                              title={`Pool - ${event.title} (${new Date(event.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(event.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}) - Status: ${event.status}${isCompleted ? ' (Completed)' : ''}`}
                             >
                               {/* Status indicator */}
                               <div style={{
