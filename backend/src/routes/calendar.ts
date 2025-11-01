@@ -1,5 +1,5 @@
 import express from 'express';
-import { Reservation, Amenity, User } from '../models';
+import { Reservation, Amenity, User, sequelize } from '../models';
 import { authenticateToken } from '../middleware/auth';
 import { Op } from 'sequelize';
 
@@ -96,6 +96,35 @@ router.get('/events', async (req, res) => {
       whereClause.amenityId = amenityId;
     }
 
+    // Try to include eventName and isPrivate, but handle if they don't exist yet
+    const attributes = [
+      'id', 'date', 'setupTimeStart', 'setupTimeEnd', 
+      'partyTimeStart', 'partyTimeEnd', 'status', 'guestCount',
+      'specialRequirements', 'totalFee', 'totalDeposit',
+      'cleaningTimeStart', 'cleaningTimeEnd'
+    ];
+    
+    // Check if eventName and isPrivate columns exist before adding them
+    try {
+      const columnCheck = await sequelize.query(`
+        SELECT column_name 
+        FROM information_schema.columns 
+        WHERE table_name = 'reservations' 
+        AND column_name IN ('eventName', 'isPrivate')
+      `) as any[];
+      
+      const existingColumns = columnCheck[0].map((row: any) => row.column_name);
+      if (existingColumns.includes('eventName')) {
+        attributes.push('eventName');
+      }
+      if (existingColumns.includes('isPrivate')) {
+        attributes.push('isPrivate');
+      }
+    } catch (error) {
+      // If check fails, continue without eventName/isPrivate
+      console.log('⚠️ Could not check for eventName/isPrivate columns, continuing without them');
+    }
+
     const reservations = await Reservation.findAll({
       where: whereClause,
       include: [
@@ -110,12 +139,7 @@ router.get('/events', async (req, res) => {
           attributes: ['id', 'firstName', 'lastName', 'email']
         }
       ],
-      attributes: [
-        'id', 'date', 'setupTimeStart', 'setupTimeEnd', 
-        'partyTimeStart', 'partyTimeEnd', 'status', 'guestCount',
-        'eventName', 'isPrivate', 'specialRequirements', 'totalFee', 'totalDeposit',
-        'cleaningTimeStart', 'cleaningTimeEnd'
-      ],
+      attributes: attributes,
       order: [['date', 'ASC'], ['partyTimeStart', 'ASC']]
     }) as ReservationWithAssociations[];
 
@@ -127,11 +151,15 @@ router.get('/events', async (req, res) => {
         : reservation.date;
       
       // Determine display title based on privacy and event name
+      // Check if eventName and isPrivate exist (may be undefined if columns don't exist yet)
+      const eventName = (reservation as any).eventName;
+      const isPrivate = (reservation as any).isPrivate === true || (reservation as any).isPrivate === 'true';
+      
       let displayTitle;
-      if (reservation.isPrivate) {
+      if (isPrivate) {
         displayTitle = 'Private Event';
-      } else if (reservation.eventName) {
-        displayTitle = reservation.eventName;
+      } else if (eventName) {
+        displayTitle = eventName;
       } else {
         displayTitle = `${reservation.amenity?.name || 'Unknown'} - ${reservation.user?.firstName || ''} ${reservation.user?.lastName || ''}`;
       }
@@ -148,8 +176,8 @@ router.get('/events', async (req, res) => {
         userEmail: reservation.user?.email || '',
         guestCount: reservation.guestCount,
         status: reservation.status,
-        eventName: reservation.eventName || null,
-        isPrivate: reservation.isPrivate || false,
+        eventName: eventName || null,
+        isPrivate: isPrivate || false,
         setupTime: {
           start: reservation.setupTimeStart,
           end: reservation.setupTimeEnd
