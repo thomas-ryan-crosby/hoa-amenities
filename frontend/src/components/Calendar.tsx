@@ -293,9 +293,18 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
           const isPast = day < new Date(new Date().setHours(0, 0, 0, 0));
           
           // Group events by amenity
-          const clubroomEvents = dayEvents.filter(event => event.amenityName === 'Clubroom');
-          const poolEvents = dayEvents.filter(event => event.amenityName === 'Pool');
-          const otherEvents = dayEvents.filter(event => event.amenityName !== 'Clubroom' && event.amenityName !== 'Pool');
+          // Filter events - include "Pool + Clubroom" in both Clubroom and Pool columns
+          const clubroomEvents = dayEvents.filter(event => 
+            event.amenityName === 'Clubroom' || event.amenityName === 'Pool + Clubroom'
+          );
+          const poolEvents = dayEvents.filter(event => 
+            event.amenityName === 'Pool' || event.amenityName === 'Pool + Clubroom'
+          );
+          const otherEvents = dayEvents.filter(event => 
+            event.amenityName !== 'Clubroom' && 
+            event.amenityName !== 'Pool' && 
+            event.amenityName !== 'Pool + Clubroom'
+          );
           
           // Calculate date string for this cell
           const year = day.getFullYear();
@@ -360,7 +369,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                   maxWidth: 'calc(50% - 1px)',
                   overflow: 'hidden'
                 }}>
-                  {dayEvents.filter(event => event.amenityName === 'Clubroom').slice(0, 2).map((event, eventIndex) => {
+                  {dayEvents.filter(event => event.amenityName === 'Clubroom' || event.amenityName === 'Pool + Clubroom').slice(0, 2).map((event, eventIndex) => {
                     // Simple morning/afternoon logic
                     const eventStart = new Date(event.start);
                     const eventEnd = new Date(event.end);
@@ -467,7 +476,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                   })}
                   
                   {/* Cleaning blocks for Clubroom events */}
-                  {dayEvents.filter(event => event.amenityName === 'Clubroom' && event.cleaningTime && event.cleaningTime.start && event.cleaningTime.end).map((event, cleanIndex) => {
+                  {dayEvents.filter(event => (event.amenityName === 'Clubroom' || event.amenityName === 'Pool + Clubroom') && event.cleaningTime && event.cleaningTime.start && event.cleaningTime.end).map((event, cleanIndex) => {
                     const cleaningStart = new Date(event.cleaningTime!.start);
                     const cleaningEnd = new Date(event.cleaningTime!.end);
                     const cleanStartHour = cleaningStart.getHours();
@@ -540,7 +549,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                   maxWidth: 'calc(50% - 1px)',
                   overflow: 'hidden'
                 }}>
-                  {dayEvents.filter(event => event.amenityName === 'Pool').slice(0, 2).map((event, eventIndex) => {
+                  {dayEvents.filter(event => event.amenityName === 'Pool' || event.amenityName === 'Pool + Clubroom').slice(0, 2).map((event, eventIndex) => {
                     // Simple morning/afternoon logic
                     const eventStart = new Date(event.start);
                     const eventEnd = new Date(event.end);
@@ -758,7 +767,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                 
                 // Find cleaning times that span this time slot (for clubroom only)
                 const spanningCleaningEvents = dayEvents.filter(event => {
-                  if (event.amenityName !== 'Clubroom' || !event.cleaningTime || !event.cleaningTime.start || !event.cleaningTime.end) {
+                  if ((event.amenityName !== 'Clubroom' && event.amenityName !== 'Pool + Clubroom') || !event.cleaningTime || !event.cleaningTime.start || !event.cleaningTime.end) {
                     return false;
                   }
                   const cleaningStart = new Date(event.cleaningTime.start);
@@ -805,7 +814,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                         flexDirection: 'column',
                         maxWidth: '50%'
                       }}>
-                        {spanningEvents.filter(event => event.amenityName === 'Clubroom').map((event, eventIndex) => {
+                        {spanningEvents.filter(event => event.amenityName === 'Clubroom' || event.amenityName === 'Pool + Clubroom').map((event, eventIndex) => {
                           const eventStart = new Date(event.start);
                           const eventEnd = new Date(event.end);
                           const timeSlotStart = timeIndex * 2;
@@ -975,7 +984,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                         flexDirection: 'column',
                         maxWidth: '50%'
                       }}>
-                        {spanningEvents.filter(event => event.amenityName === 'Pool').map((event, eventIndex) => {
+                        {spanningEvents.filter(event => event.amenityName === 'Pool' || event.amenityName === 'Pool + Clubroom').map((event, eventIndex) => {
                           const eventStart = new Date(event.start);
                           const eventEnd = new Date(event.end);
                           const timeSlotStart = timeIndex * 2;
@@ -1279,7 +1288,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                     width: '12px',
                     height: '12px',
                     borderRadius: '50%',
-                    backgroundColor: selectedEvent.amenityName === 'Clubroom' ? '#9333ea' : '#3b82f6'
+                    backgroundColor: (selectedEvent.amenityName === 'Clubroom' || selectedEvent.amenityName === 'Pool + Clubroom') ? '#9333ea' : '#3b82f6'
                   }}></div>
                   <span style={{ fontSize: '18px', fontWeight: '600', color: '#1f2937' }}>
                     {selectedEvent.amenityName}
