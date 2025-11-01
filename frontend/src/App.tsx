@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Calendar from './components/Calendar';
@@ -18,18 +18,63 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
   return isAuthenticated ? <>{children}</> : <Navigate to="/login" />;
 };
 
+const MobileNavLink: React.FC<{ to: string; onClick: () => void; children: React.ReactNode }> = ({ to, onClick, children }) => {
+  return (
+    <Link
+      to={to}
+      onClick={onClick}
+      style={{
+        color: 'white',
+        textDecoration: 'none',
+        padding: '0.75rem 1rem',
+        borderRadius: '4px',
+        fontSize: '1rem',
+        fontFamily: 'Inter, sans-serif',
+        fontWeight: 400,
+        minHeight: '44px',
+        alignItems: 'center',
+        backgroundColor: 'rgba(255, 255, 255, 0.05)',
+        transition: 'background-color 0.2s'
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+      }}
+    >
+      {children}
+    </Link>
+  );
+};
+
 const Header: React.FC = () => {
   const { user, logout, isAuthenticated, isAdmin, isJanitorial } = useAuth();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   return (
     <header style={{ 
       backgroundColor: '#355B45', 
       color: 'white', 
       boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-      padding: '1rem 0'
+      padding: isMobile ? '0.75rem 0' : '1rem 0'
     }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: isMobile ? '0 0.75rem' : '0 1rem' }}>
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center',
+          flexWrap: isMobile ? 'wrap' : 'nowrap'
+        }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
               <img 
@@ -39,7 +84,80 @@ const Header: React.FC = () => {
               />
             </Link>
           </div>
-          <nav style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+          {isMobile ? (
+            <>
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                style={{
+                  backgroundColor: 'transparent',
+                  border: '1px solid rgba(255,255,255,0.3)',
+                  color: 'white',
+                  padding: '0.5rem',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  minHeight: '44px',
+                  minWidth: '44px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                ☰
+              </button>
+              {isMobileMenuOpen && (
+                <div style={{
+                  position: 'fixed',
+                  top: '60px',
+                  left: 0,
+                  right: 0,
+                  backgroundColor: '#355B45',
+                  padding: '1rem',
+                  boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+                  zIndex: 1000
+                }}>
+                  <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    <MobileNavLink to="/" onClick={() => setIsMobileMenuOpen(false)}>Calendar</MobileNavLink>
+                    {isAuthenticated && (
+                      <MobileNavLink to="/reservations" onClick={() => setIsMobileMenuOpen(false)}>My Reservations</MobileNavLink>
+                    )}
+                    {isJanitorial && (
+                      <MobileNavLink to="/janitorial" onClick={() => setIsMobileMenuOpen(false)}>Janitorial</MobileNavLink>
+                    )}
+                    {isAdmin && (
+                      <MobileNavLink to="/admin" onClick={() => setIsMobileMenuOpen(false)}>Admin</MobileNavLink>
+                    )}
+                    {isAuthenticated && (
+                      <>
+                        <MobileNavLink to="/profile" onClick={() => setIsMobileMenuOpen(false)}>Profile</MobileNavLink>
+                        <div style={{ marginTop: '0.5rem', paddingTop: '0.5rem', borderTop: '1px solid rgba(255,255,255,0.2)' }}>
+                          <button
+                            onClick={() => {
+                              setIsMobileMenuOpen(false);
+                              logout();
+                            }}
+                            style={{
+                              width: '100%',
+                              padding: '0.75rem',
+                              backgroundColor: '#244032',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '4px',
+                              cursor: 'pointer',
+                              fontSize: '1rem',
+                              minHeight: '44px'
+                            }}
+                          >
+                            Logout
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </nav>
+                </div>
+              )}
+            </>
+          ) : (
+          <nav style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
             <Link 
               to="/" 
               style={{ 

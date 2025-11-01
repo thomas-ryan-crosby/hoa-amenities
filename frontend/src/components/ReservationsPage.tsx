@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 import ReservationModal from './ReservationModal';
+import { useMobile } from '../hooks/useMobile';
 
 interface Reservation {
   id: number;
@@ -27,6 +28,7 @@ interface Reservation {
 
 const ReservationsPage: React.FC = () => {
   const { user } = useAuth();
+  const isMobile = useMobile();
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -183,76 +185,107 @@ const ReservationsPage: React.FC = () => {
   }
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
+    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: isMobile ? '0.75rem' : '20px' }}>
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
-        <h1 style={{ fontSize: '2rem', fontWeight: 'bold', margin: 0 }}>
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: isMobile ? 'column' : 'row',
+        justifyContent: 'space-between', 
+        alignItems: isMobile ? 'stretch' : 'center', 
+        marginBottom: isMobile ? '1.5rem' : '30px',
+        gap: isMobile ? '1rem' : '0'
+      }}>
+        <h1 style={{ fontSize: isMobile ? '1.5rem' : '2rem', fontWeight: 'bold', margin: 0 }}>
           My Reservations
         </h1>
         
-        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+        <div style={{ 
+          display: 'flex', 
+          flexDirection: isMobile ? 'column' : 'row',
+          gap: isMobile ? '0.75rem' : '10px', 
+          alignItems: isMobile ? 'stretch' : 'center',
+          width: isMobile ? '100%' : 'auto'
+        }}>
           <button
             onClick={() => setShowReservationModal(true)}
             style={{
-              padding: '10px 20px',
+              padding: isMobile ? '0.75rem 1.25rem' : '10px 20px',
               backgroundColor: '#355B45',
               color: 'white',
               border: 'none',
               borderRadius: '6px',
-              fontSize: '14px',
+              fontSize: isMobile ? '1rem' : '14px',
               fontWeight: 600,
               fontFamily: 'Inter, sans-serif',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '8px'
+              justifyContent: 'center',
+              gap: '8px',
+              minHeight: '44px',
+              width: isMobile ? '100%' : 'auto'
             }}
           >
             <span>+</span>
             Add a new reservation
           </button>
-          <label style={{ fontSize: '14px', fontWeight: 'bold' }}>Filter:</label>
-          <select
-            value={filter}
-            onChange={(e) => setFilter(e.target.value as any)}
-            style={{ padding: '8px', border: '1px solid #d1d5db', borderRadius: '4px' }}
-          >
-            <option value="all">All Reservations</option>
-            <option value="NEW">New</option>
-            <option value="JANITORIAL_APPROVED">Janitorial Approved</option>
-            <option value="FULLY_APPROVED">Fully Approved</option>
-            <option value="CANCELLED">Cancelled</option>
-            <option value="COMPLETED">Completed</option>
-          </select>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', width: isMobile ? '100%' : 'auto' }}>
+            <label style={{ fontSize: isMobile ? '1rem' : '14px', fontWeight: 'bold', whiteSpace: 'nowrap' }}>Filter:</label>
+            <select
+              value={filter}
+              onChange={(e) => setFilter(e.target.value as any)}
+              style={{ 
+                padding: isMobile ? '0.75rem' : '8px', 
+                border: '1px solid #d1d5db', 
+                borderRadius: '4px',
+                fontSize: isMobile ? '1rem' : '14px',
+                minHeight: '44px',
+                width: isMobile ? '100%' : 'auto',
+                flex: isMobile ? 1 : 'none'
+              }}
+            >
+              <option value="all">All Reservations</option>
+              <option value="NEW">New</option>
+              <option value="JANITORIAL_APPROVED">Janitorial Approved</option>
+              <option value="FULLY_APPROVED">Fully Approved</option>
+              <option value="CANCELLED">Cancelled</option>
+              <option value="COMPLETED">Completed</option>
+            </select>
+          </div>
         </div>
       </div>
 
       {/* Summary Stats */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '30px' }}>
-        <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-          <h3 style={{ margin: '0 0 10px 0', color: '#6b7280' }}>Total Reservations</h3>
-          <div style={{ fontSize: '2rem', fontWeight: 600, color: '#355B45', fontFamily: 'Inter, sans-serif' }}>
+      <div style={{ 
+        display: 'grid', 
+        gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(200px, 1fr))', 
+        gap: isMobile ? '0.75rem' : '20px', 
+        marginBottom: isMobile ? '1.5rem' : '30px' 
+      }}>
+        <div style={{ backgroundColor: 'white', padding: isMobile ? '1rem' : '20px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+          <h3 style={{ margin: '0 0 10px 0', color: '#6b7280', fontSize: isMobile ? '0.95rem' : '1rem' }}>Total Reservations</h3>
+          <div style={{ fontSize: isMobile ? '1.75rem' : '2rem', fontWeight: 600, color: '#355B45', fontFamily: 'Inter, sans-serif' }}>
             {reservations.length}
           </div>
         </div>
-        <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-          <h3 style={{ margin: '0 0 10px 0', color: '#6b7280' }}>Pending Review</h3>
-          <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#f59e0b' }}>
+        <div style={{ backgroundColor: 'white', padding: isMobile ? '1rem' : '20px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+          <h3 style={{ margin: '0 0 10px 0', color: '#6b7280', fontSize: isMobile ? '0.95rem' : '1rem' }}>Pending Review</h3>
+          <div style={{ fontSize: isMobile ? '1.75rem' : '2rem', fontWeight: 'bold', color: '#f59e0b' }}>
             {reservations.filter(r => r.status === 'NEW').length}
           </div>
         </div>
-        <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-          <h3 style={{ margin: '0 0 10px 0', color: '#6b7280' }}>Approved</h3>
-          <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#10b981' }}>
+        <div style={{ backgroundColor: 'white', padding: isMobile ? '1rem' : '20px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+          <h3 style={{ margin: '0 0 10px 0', color: '#6b7280', fontSize: isMobile ? '0.95rem' : '1rem' }}>Approved</h3>
+          <div style={{ fontSize: isMobile ? '1.75rem' : '2rem', fontWeight: 'bold', color: '#10b981' }}>
             {reservations.filter(r => r.status === 'FULLY_APPROVED').length}
           </div>
         </div>
-        <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-          <h3 style={{ margin: '0 0 10px 0', color: '#6b7280' }}>Total Cost</h3>
-          <div style={{ fontSize: '2rem', fontWeight: 600, color: '#355B45', fontFamily: 'Inter, sans-serif' }}>
+        <div style={{ backgroundColor: 'white', padding: isMobile ? '1rem' : '20px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+          <h3 style={{ margin: '0 0 10px 0', color: '#6b7280', fontSize: isMobile ? '0.95rem' : '1rem' }}>Total Cost</h3>
+          <div style={{ fontSize: isMobile ? '1.75rem' : '2rem', fontWeight: 600, color: '#355B45', fontFamily: 'Inter, sans-serif' }}>
             ${reservations.reduce((sum, r) => sum + parseFloat(String(r.totalFee)), 0).toFixed(2)}
           </div>
-    <p style={{ margin: '8px 0 0 0', fontSize: '0.875rem', color: '#6b7280', fontStyle: 'italic' }}>
+    <p style={{ margin: '8px 0 0 0', fontSize: isMobile ? '0.8rem' : '0.875rem', color: '#6b7280', fontStyle: 'italic' }}>
       Damage fees will be assessed after conclusion of the party. If damages are noted, you are responsible for the amount of the repairs.
     </p>
         </div>
@@ -278,29 +311,44 @@ const ReservationsPage: React.FC = () => {
                 backgroundColor: 'white',
                 borderRadius: '8px',
                 boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                padding: '24px',
+                padding: isMobile ? '1rem' : '24px',
                 border: '1px solid #e5e7eb'
               }}
             >
               {/* Header */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+              <div style={{ 
+                display: 'flex', 
+                flexDirection: isMobile ? 'column' : 'row',
+                justifyContent: 'space-between', 
+                alignItems: isMobile ? 'flex-start' : 'flex-start', 
+                marginBottom: '16px',
+                gap: isMobile ? '0.75rem' : '0'
+              }}>
                 <div>
-                  <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', margin: '0 0 4px 0' }}>
+                  <h3 style={{ fontSize: isMobile ? '1.1rem' : '1.25rem', fontWeight: 'bold', margin: '0 0 4px 0' }}>
                     {reservation.amenity.name}
                   </h3>
-                  <p style={{ color: '#6b7280', margin: 0, fontSize: '14px' }}>
+                  <p style={{ color: '#6b7280', margin: 0, fontSize: isMobile ? '0.9rem' : '14px' }}>
                     {formatDate(reservation.date)}
                   </p>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{ 
+                  display: 'flex', 
+                  flexDirection: isMobile ? 'column' : 'row',
+                  alignItems: isMobile ? 'stretch' : 'center', 
+                  gap: isMobile ? '0.5rem' : '12px',
+                  width: isMobile ? '100%' : 'auto'
+                }}>
                   <span
                     style={{
                       backgroundColor: getStatusColor(reservation.status),
                       color: 'white',
-                      padding: '4px 12px',
+                      padding: isMobile ? '0.5rem 0.75rem' : '4px 12px',
                       borderRadius: '20px',
-                      fontSize: '12px',
-                      fontWeight: 'bold'
+                      fontSize: isMobile ? '0.9rem' : '12px',
+                      fontWeight: 'bold',
+                      textAlign: 'center',
+                      width: isMobile ? '100%' : 'auto'
                     }}
                   >
                     {getStatusText(reservation.status)}
@@ -311,11 +359,13 @@ const ReservationsPage: React.FC = () => {
                       style={{
                         backgroundColor: '#ef4444',
                         color: 'white',
-                        padding: '6px 12px',
+                        padding: isMobile ? '0.75rem 1rem' : '6px 12px',
                         borderRadius: '4px',
                         border: 'none',
                         cursor: 'pointer',
-                        fontSize: '12px'
+                        fontSize: isMobile ? '1rem' : '12px',
+                        minHeight: '44px',
+                        width: isMobile ? '100%' : 'auto'
                       }}
                     >
                       Cancel
@@ -325,7 +375,7 @@ const ReservationsPage: React.FC = () => {
               </div>
 
               {/* Details Grid */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '16px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '16px' }}>
                 <div>
                   <h4 style={{ fontSize: '14px', fontWeight: 'bold', color: '#374151', margin: '0 0 4px 0' }}>
                     Setup Time
@@ -378,18 +428,27 @@ const ReservationsPage: React.FC = () => {
 
               {/* Action Buttons */}
               {reservation.status !== 'COMPLETED' && reservation.status !== 'CANCELLED' && (
-                <div style={{ marginTop: '16px', display: 'flex', gap: '10px' }}>
+                <div style={{ 
+                  marginTop: '16px', 
+                  display: 'flex', 
+                  flexDirection: isMobile ? 'column' : 'row',
+                  gap: isMobile ? '0.75rem' : '10px',
+                  width: '100%'
+                }}>
                   <button
                     onClick={() => handleModifyReservation(reservation)}
                     style={{
-                      padding: '8px 16px',
+                      padding: isMobile ? '0.75rem 1rem' : '8px 16px',
                       backgroundColor: '#355B45',
                       color: 'white',
                       border: 'none',
                       borderRadius: '4px',
                       cursor: 'pointer',
-                      fontSize: '14px',
-                      fontWeight: '500'
+                      fontSize: isMobile ? '1rem' : '14px',
+                      fontWeight: '500',
+                      minHeight: '44px',
+                      width: isMobile ? '100%' : 'auto',
+                      flex: isMobile ? 'none' : 1
                     }}
                   >
                     Modify Reservation
@@ -397,14 +456,17 @@ const ReservationsPage: React.FC = () => {
                   <button
                     onClick={() => handleCancelReservation(reservation)}
                     style={{
-                      padding: '8px 16px',
+                      padding: isMobile ? '0.75rem 1rem' : '8px 16px',
                       backgroundColor: '#dc2626',
                       color: 'white',
                       border: 'none',
                       borderRadius: '4px',
                       cursor: 'pointer',
-                      fontSize: '14px',
-                      fontWeight: '500'
+                      fontSize: isMobile ? '1rem' : '14px',
+                      fontWeight: '500',
+                      minHeight: '44px',
+                      width: isMobile ? '100%' : 'auto',
+                      flex: isMobile ? 'none' : 1
                     }}
                   >
                     Cancel Reservation

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
+import { useMobile } from '../hooks/useMobile';
 
 interface CalendarEvent {
   id: number;
@@ -40,6 +41,7 @@ interface CalendarProps {
 
 const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
   const { user, isAuthenticated } = useAuth();
+  const isMobile = useMobile();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState<'month' | 'week'>('month');
   const [selectedAmenity, setSelectedAmenity] = useState<number | 'all'>('all');
@@ -276,10 +278,10 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
         {weekDays.map(day => (
           <div key={day} style={{ 
             backgroundColor: '#f3f4f6', 
-            padding: '8px', 
+            padding: isMobile ? '0.5rem' : '8px', 
             textAlign: 'center', 
             fontWeight: 'bold',
-            fontSize: '14px'
+            fontSize: isMobile ? '0.75rem' : '14px'
           }}>
             {day}
           </div>
@@ -317,12 +319,13 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
               key={index}
               style={{
                 backgroundColor: 'white',
-                minHeight: '120px',
-                padding: '4px',
+                minHeight: isMobile ? '80px' : '120px',
+                padding: isMobile ? '0.25rem' : '4px',
                 border: '1px solid #e5e7eb',
                 cursor: (isAuthenticated && !isPast) ? 'pointer' : 'default',
                 opacity: isPast ? 0.4 : 1,
-                position: 'relative'
+                position: 'relative',
+                fontSize: isMobile ? '0.7rem' : '14px'
               }}
               onClick={(e) => {
                 if (!isPast) {
@@ -468,7 +471,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                           marginTop: '1px',
                           fontWeight: 'bold'
                         }}>
-                          DB: {event.date} | {new Date(event.partyTime.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {new Date(event.partyTime.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          {!isMobile && `DB: ${event.date} | ${new Date(event.partyTime.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(event.partyTime.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
                         </div>
                         </div>
                       </div>
@@ -645,7 +648,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                           marginTop: '1px',
                           fontWeight: 'bold'
                         }}>
-                          DB: {event.date} | {new Date(event.partyTime.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {new Date(event.partyTime.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          {!isMobile && `DB: ${event.date} | ${new Date(event.partyTime.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(event.partyTime.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
                         </div>
                         </div>
                       </div>
@@ -895,14 +898,16 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                                 {(user?.role === 'admin' || user?.role === 'janitorial') && event.eventName && event.isPrivate
                                   ? `${event.eventName} (Private)`
                                   : event.title}
-                                <div style={{ 
-                                  fontSize: '5px', 
-                                  color: 'red', 
-                                  marginTop: '1px',
-                                  fontWeight: 'bold'
-                                }}>
-                                  {new Date(event.start).toLocaleDateString()} {new Date(event.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                </div>
+                                {!isMobile && (
+                                  <div style={{ 
+                                    fontSize: '5px', 
+                                    color: 'red', 
+                                    marginTop: '1px',
+                                    fontWeight: 'bold'
+                                  }}>
+                                    {new Date(event.start).toLocaleDateString()} {new Date(event.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                  </div>
+                                )}
                               </div>
                             </div>
                           );
@@ -1065,14 +1070,16 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                                 {(user?.role === 'admin' || user?.role === 'janitorial') && event.eventName && event.isPrivate
                                   ? `${event.eventName} (Private)`
                                   : event.title}
-                                <div style={{ 
-                                  fontSize: '5px', 
-                                  color: 'red', 
-                                  marginTop: '1px',
-                                  fontWeight: 'bold'
-                                }}>
-                                  {new Date(event.start).toLocaleDateString()} {new Date(event.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                </div>
+                                {!isMobile && (
+                                  <div style={{ 
+                                    fontSize: '5px', 
+                                    color: 'red', 
+                                    marginTop: '1px',
+                                    fontWeight: 'bold'
+                                  }}>
+                                    {new Date(event.start).toLocaleDateString()} {new Date(event.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                  </div>
+                                )}
                               </div>
                             </div>
                           );
@@ -1112,27 +1119,44 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
   }
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
+    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: isMobile ? '0.75rem' : '20px' }}>
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <h1 style={{ fontSize: '2rem', fontWeight: 600, margin: 0, fontFamily: 'Inter, sans-serif', color: '#244032' }}>
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: isMobile ? 'column' : 'row',
+        justifyContent: 'space-between', 
+        alignItems: isMobile ? 'stretch' : 'center', 
+        marginBottom: isMobile ? '1rem' : '20px',
+        gap: isMobile ? '0.75rem' : '0'
+      }}>
+        <h1 style={{ fontSize: isMobile ? '1.5rem' : '2rem', fontWeight: 600, margin: 0, fontFamily: 'Inter, sans-serif', color: '#244032' }}>
           Calendar
         </h1>
         
-        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+        <div style={{ 
+          display: 'flex', 
+          flexDirection: isMobile ? 'column' : 'row',
+          gap: isMobile ? '0.75rem' : '10px', 
+          alignItems: isMobile ? 'stretch' : 'center',
+          width: isMobile ? '100%' : 'auto'
+        }}>
           {/* View Toggle */}
-          <div style={{ display: 'flex', border: '1px solid #d1d5db', borderRadius: '4px' }}>
+          <div style={{ display: 'flex', border: '1px solid #d1d5db', borderRadius: '4px', width: isMobile ? '100%' : 'auto' }}>
             {(['month', 'week'] as const).map(v => (
               <button
                 key={v}
                 onClick={() => setView(v)}
                 style={{
-                  padding: '8px 12px',
+                  padding: isMobile ? '0.75rem' : '8px 12px',
                   backgroundColor: view === v ? '#355B45' : 'white',
                   color: view === v ? 'white' : '#374151',
                   border: 'none',
                   cursor: 'pointer',
-                  textTransform: 'capitalize'
+                  textTransform: 'capitalize',
+                  fontSize: isMobile ? '1rem' : '14px',
+                  minHeight: '44px',
+                  flex: isMobile ? 1 : 'none',
+                  width: isMobile ? '100%' : 'auto'
                 }}
               >
                 {v}
@@ -1144,7 +1168,14 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
           <select
             value={selectedAmenity}
             onChange={(e) => setSelectedAmenity(e.target.value === 'all' ? 'all' : parseInt(e.target.value))}
-            style={{ padding: '8px', border: '1px solid #d1d5db', borderRadius: '4px' }}
+            style={{ 
+              padding: isMobile ? '0.75rem' : '8px', 
+              border: '1px solid #d1d5db', 
+              borderRadius: '4px',
+              fontSize: isMobile ? '1rem' : '14px',
+              minHeight: '44px',
+              width: isMobile ? '100%' : 'auto'
+            }}
           >
             <option value="all">All Amenities</option>
             {amenities.map(amenity => (
@@ -1155,29 +1186,55 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
       </div>
 
       {/* Navigation */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        marginBottom: isMobile ? '1rem' : '20px',
+        flexWrap: isMobile ? 'wrap' : 'nowrap',
+        gap: isMobile ? '0.75rem' : '0'
+      }}>
         <button
           onClick={() => navigateDate('prev')}
-          style={{ padding: '8px 16px', backgroundColor: '#f3f4f6', border: '1px solid #d1d5db', borderRadius: '4px', cursor: 'pointer' }}
+          style={{ 
+            padding: isMobile ? '0.75rem 1rem' : '8px 16px', 
+            backgroundColor: '#f3f4f6', 
+            border: '1px solid #d1d5db', 
+            borderRadius: '4px', 
+            cursor: 'pointer',
+            fontSize: isMobile ? '1rem' : '14px',
+            minHeight: '44px',
+            flex: isMobile ? 1 : 'none'
+          }}
         >
           ← Previous
         </button>
         
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: 0 }}>
+        <div style={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center', 
+          gap: isMobile ? '0.5rem' : '8px',
+          flex: isMobile ? 'none' : 1,
+          order: isMobile ? -1 : 0,
+          width: isMobile ? '100%' : 'auto'
+        }}>
+          <h2 style={{ fontSize: isMobile ? '1.25rem' : '1.5rem', fontWeight: 'bold', margin: 0 }}>
             {formatDate(currentDate)}
           </h2>
           <button
             onClick={() => goToToday()}
             style={{ 
-              padding: '6px 12px', 
+              padding: isMobile ? '0.75rem 1rem' : '6px 12px', 
               backgroundColor: '#355B45', 
               color: 'white',
               border: 'none', 
               borderRadius: '4px', 
               cursor: 'pointer',
-              fontSize: '12px',
-              fontWeight: '500'
+              fontSize: isMobile ? '1rem' : '12px',
+              fontWeight: '500',
+              minHeight: '44px',
+              width: isMobile ? '100%' : 'auto'
             }}
           >
             Go to Today
@@ -1186,7 +1243,16 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
         
         <button
           onClick={() => navigateDate('next')}
-          style={{ padding: '8px 16px', backgroundColor: '#f3f4f6', border: '1px solid #d1d5db', borderRadius: '4px', cursor: 'pointer' }}
+          style={{ 
+            padding: isMobile ? '0.75rem 1rem' : '8px 16px', 
+            backgroundColor: '#f3f4f6', 
+            border: '1px solid #d1d5db', 
+            borderRadius: '4px', 
+            cursor: 'pointer',
+            fontSize: isMobile ? '1rem' : '14px',
+            minHeight: '44px',
+            flex: isMobile ? 1 : 'none'
+          }}
         >
           Next →
         </button>

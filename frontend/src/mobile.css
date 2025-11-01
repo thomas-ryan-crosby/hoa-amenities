@@ -1,0 +1,193 @@
+/* Mobile-first responsive styles */
+
+/* Base mobile styles (default) */
+@media (max-width: 768px) {
+  /* Typography adjustments */
+  h1, h2 {
+    font-size: 1.5rem !important;
+  }
+  
+  h3 {
+    font-size: 1.25rem !important;
+  }
+  
+  /* Navigation mobile-friendly */
+  .mobile-nav {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .mobile-nav-link {
+    padding: 1rem !important;
+    font-size: 1rem !important;
+    min-height: 44px; /* Touch-friendly */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Header adjustments */
+  .header-container {
+    padding: 0.5rem 1rem !important;
+  }
+  
+  .header-logo {
+    height: 28px !important;
+    max-width: 140px !important;
+  }
+  
+  /* Card grid - stack on mobile */
+  .card-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+  
+  /* Summary cards - full width on mobile */
+  .summary-card {
+    padding: 1rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+  
+  .summary-card-number {
+    font-size: 2rem !important;
+  }
+  
+  /* Buttons - touch-friendly */
+  button {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0.75rem 1.25rem !important;
+    font-size: 1rem !important;
+  }
+  
+  /* Calendar mobile adjustments */
+  .calendar-header {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  
+  .calendar-view-buttons {
+    width: 100%;
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .calendar-view-button {
+    flex: 1;
+    padding: 0.75rem !important;
+    font-size: 0.9rem !important;
+  }
+  
+  /* Calendar grid - smaller on mobile */
+  .calendar-month-grid {
+    font-size: 0.75rem !important;
+  }
+  
+  .calendar-day-header {
+    font-size: 0.7rem !important;
+    padding: 0.25rem !important;
+  }
+  
+  .calendar-day-cell {
+    min-height: 60px !important;
+    padding: 0.25rem !important;
+    font-size: 0.7rem !important;
+  }
+  
+  /* Week view mobile */
+  .calendar-week-view {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .week-time-column {
+    min-width: 80px !important;
+  }
+  
+  /* Reservation cards */
+  .reservation-card {
+    padding: 1rem !important;
+    margin-bottom: 1rem !important;
+  }
+  
+  .reservation-details-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+  
+  /* Form inputs */
+  input, select, textarea {
+    font-size: 16px !important; /* Prevents zoom on iOS */
+    padding: 0.75rem !important;
+    min-height: 44px;
+  }
+  
+  /* Modal adjustments */
+  .modal-content {
+    width: 95% !important;
+    max-width: 95% !important;
+    margin: 1rem auto !important;
+    max-height: 90vh !important;
+    overflow-y: auto;
+    padding: 1.25rem !important;
+  }
+  
+  /* Filter dropdown */
+  .filter-select {
+    width: 100% !important;
+    margin-top: 0.5rem;
+  }
+  
+  /* Spacing adjustments */
+  .page-container {
+    padding: 0.75rem !important;
+  }
+  
+  /* Hide debug text on mobile */
+  .debug-text {
+    display: none !important;
+  }
+  
+  /* Legend - stack on mobile */
+  .legend-container {
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+    padding: 1rem !important;
+    font-size: 0.85rem !important;
+  }
+  
+  /* Action buttons - full width stack on mobile */
+  .action-buttons {
+    flex-direction: column !important;
+    width: 100%;
+  }
+  
+  .action-button {
+    width: 100% !important;
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* Tablet adjustments */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .card-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  .calendar-day-cell {
+    min-height: 80px !important;
+  }
+}
+
+/* Large mobile (landscape) */
+@media (max-width: 896px) and (orientation: landscape) {
+  .calendar-month-grid {
+    font-size: 0.7rem !important;
+  }
+  
+  .calendar-day-cell {
+    min-height: 50px !important;
+  }
+}
+
