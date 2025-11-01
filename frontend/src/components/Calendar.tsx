@@ -378,6 +378,9 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                       heightStyle = { minHeight: '35px', maxHeight: '40px' };
                     }
                     
+                    // Check if this event has cleaning time
+                    const hasCleaningTime = event.cleaningTime && event.cleaningTime.start && event.cleaningTime.end;
+                    
                     // Determine status color
                     let statusColor;
                     switch (event.status) {
@@ -447,6 +450,69 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                         }}>
                           DB: {event.date} | {new Date(event.partyTime.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {new Date(event.partyTime.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  
+                  {/* Cleaning blocks for Clubroom events */}
+                  {dayEvents.filter(event => event.amenityName === 'Clubroom' && event.cleaningTime && event.cleaningTime.start && event.cleaningTime.end).map((event, cleanIndex) => {
+                    const cleaningStart = new Date(event.cleaningTime!.start);
+                    const cleaningEnd = new Date(event.cleaningTime!.end);
+                    const cleanStartHour = cleaningStart.getHours();
+                    const cleanEndHour = cleaningEnd.getHours();
+                    
+                    // Determine height based on cleaning time duration
+                    let heightStyle;
+                    if (cleanStartHour < 12 && cleanEndHour < 12) {
+                      heightStyle = { minHeight: '20px', maxHeight: '25px' };
+                    } else if (cleanStartHour >= 12 && cleanEndHour >= 12) {
+                      heightStyle = { minHeight: '20px', maxHeight: '25px' };
+                    } else {
+                      heightStyle = { minHeight: '35px', maxHeight: '40px' };
+                    }
+                    
+                    return (
+                      <div
+                        key={`cleaning-clubroom-${cleanIndex}`}
+                        style={{
+                          width: '100%',
+                          backgroundColor: '#fca5a5', // Light red for cleaning
+                          borderRadius: '4px',
+                          padding: '2px',
+                          color: '#7f1d1d', // Dark red text
+                          fontSize: '7px',
+                          fontWeight: '500',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                          wordWrap: 'break-word',
+                          overflowWrap: 'break-word',
+                          marginBottom: '1px',
+                          position: 'relative',
+                          boxSizing: 'border-box',
+                          ...heightStyle,
+                          border: '1px dashed #dc2626', // Dashed border to indicate non-bookable
+                          opacity: 0.8
+                        }}
+                        title={`Cleaning Time - Clubroom unavailable (${new Date(event.cleaningTime!.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(event.cleaningTime!.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})`}
+                      >
+                        <div style={{ 
+                          textAlign: 'center',
+                          lineHeight: '1.2',
+                          width: '100%',
+                          overflow: 'hidden'
+                        }}>
+                          Cleaning
+                          <div style={{ 
+                            fontSize: '5px', 
+                            color: '#991b1b',
+                            marginTop: '1px',
+                            fontWeight: 'bold'
+                          }}>
+                            {new Date(event.cleaningTime!.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {new Date(event.cleaningTime!.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </div>
                         </div>
                       </div>
                     );
@@ -668,6 +734,19 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                   return eventStart.getHours() < timeSlotEnd && eventEnd.getHours() > timeSlotStart;
                 });
                 
+                // Find cleaning times that span this time slot (for clubroom only)
+                const spanningCleaningEvents = dayEvents.filter(event => {
+                  if (event.amenityName !== 'Clubroom' || !event.cleaningTime || !event.cleaningTime.start || !event.cleaningTime.end) {
+                    return false;
+                  }
+                  const cleaningStart = new Date(event.cleaningTime.start);
+                  const cleaningEnd = new Date(event.cleaningTime.end);
+                  const timeSlotStart = timeIndex * 2;
+                  const timeSlotEnd = (timeIndex + 1) * 2;
+                  
+                  return cleaningStart.getHours() < timeSlotEnd && cleaningEnd.getHours() > timeSlotStart;
+                });
+                
                 return (
                   <div
                     key={dayIndex}
@@ -783,6 +862,72 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                                   fontWeight: 'bold'
                                 }}>
                                   {new Date(event.start).toLocaleDateString()} {new Date(event.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                        
+                        {/* Cleaning blocks for Clubroom events */}
+                        {spanningCleaningEvents.map((event, cleanIndex) => {
+                          const cleaningStart = new Date(event.cleaningTime!.start);
+                          const cleaningEnd = new Date(event.cleaningTime!.end);
+                          const timeSlotStart = timeIndex * 2;
+                          const timeSlotEnd = (timeIndex + 1) * 2;
+                          
+                          // Check if cleaning time spans this time slot
+                          const cleanStartHour = cleaningStart.getHours();
+                          const cleanEndHour = cleaningEnd.getHours();
+                          
+                          if (cleanStartHour >= timeSlotEnd || cleanEndHour <= timeSlotStart) {
+                            return null; // Cleaning doesn't span this time slot
+                          }
+                          
+                          // Calculate height based on duration within this time slot
+                          const cleanStartInSlot = Math.max(cleanStartHour, timeSlotStart);
+                          const cleanEndInSlot = Math.min(cleanEndHour, timeSlotEnd);
+                          const durationInSlot = cleanEndInSlot - cleanStartInSlot;
+                          const heightPercent = (durationInSlot / 2) * 100; // 2-hour slots
+                          
+                          return (
+                            <div
+                              key={`cleaning-clubroom-${cleanIndex}-${timeIndex}`}
+                              style={{
+                                width: '100%',
+                                height: `${Math.max(heightPercent, 20)}%`,
+                                backgroundColor: '#fca5a5', // Light red for cleaning
+                                borderRadius: '6px',
+                                padding: '2px',
+                                color: '#7f1d1d', // Dark red text
+                                fontSize: '8px',
+                                fontWeight: '500',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                                marginBottom: '1px',
+                                wordWrap: 'break-word',
+                                overflowWrap: 'break-word',
+                                position: 'relative',
+                                border: '1px dashed #dc2626', // Dashed border to indicate non-bookable
+                                opacity: 0.8
+                              }}
+                              title={`Cleaning Time - Clubroom unavailable (${new Date(event.cleaningTime!.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(event.cleaningTime!.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})`}
+                            >
+                              <div style={{ 
+                                textAlign: 'center',
+                                lineHeight: '1.1',
+                                width: '100%',
+                                overflow: 'hidden'
+                              }}>
+                                Cleaning
+                                <div style={{ 
+                                  fontSize: '5px', 
+                                  color: '#991b1b',
+                                  marginTop: '1px',
+                                  fontWeight: 'bold'
+                                }}>
+                                  {new Date(event.cleaningTime!.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                 </div>
                               </div>
                             </div>
