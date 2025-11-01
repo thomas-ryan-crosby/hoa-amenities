@@ -31,9 +31,22 @@ export async function seedDatabase() {
       }
     });
 
+    const [poolAndClubroom, poolAndClubroomCreated] = await Amenity.findOrCreate({
+      where: { name: 'Pool + Clubroom' },
+      defaults: {
+        name: 'Pool + Clubroom',
+        description: 'Combined reservation for both pool and clubroom',
+        reservationFee: 150.00, // 125 + 25
+        deposit: 125.00, // 75 + 50
+        capacity: 50, // Max capacity
+        isActive: true
+      }
+    });
+
     console.log('✅ Amenities checked:', { 
       clubroom: clubroom.name + (clubroomCreated ? ' (created)' : ' (exists)'),
-      pool: pool.name + (poolCreated ? ' (created)' : ' (exists)')
+      pool: pool.name + (poolCreated ? ' (created)' : ' (exists)'),
+      poolAndClubroom: poolAndClubroom.name + (poolAndClubroomCreated ? ' (created)' : ' (exists)')
     });
 
     // Create demo users (or find existing)

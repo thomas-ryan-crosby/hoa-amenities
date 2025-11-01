@@ -302,6 +302,104 @@ router.put('/:id', authenticateToken, async (req: any, res) => {
   }
 });
 
+// Helper function to calculate modification/cancellation fee
+function calculateModificationFee(reservationDate: Date, totalFee: number): { fee: number; reason: string } {
+  const now = new Date();
+  const reservationDateTime = new Date(reservationDate);
+  
+  // Set reservation date to start of day for comparison
+  reservationDateTime.setHours(0, 0, 0, 0);
+  const nowDate = new Date(now);
+  nowDate.setHours(0, 0, 0, 0);
+  
+  const hoursUntilReservation = (reservationDateTime.getTime() - now.getTime()) / (1000 * 60 * 60);
+  const daysUntilReservation = Math.floor(hoursUntilReservation / 24);
+  
+  if (hoursUntilReservation < 48) {
+    // Within 48 hours - full booking amount
+    return { fee: totalFee, reason: 'Within 48 hours - full booking amount' };
+  } else if (daysUntilReservation < 7) {
+    // Within 1 week - $50 fee
+    return { fee: 50.00, reason: 'Within 1 week - $50 modification/cancellation fee' };
+  } else if (daysUntilReservation < 30) {
+    // Within 1 month - $10 fee
+    return { fee: 10.00, reason: 'Within 1 month - $10 modification/cancellation fee' };
+  } else {
+    // More than 1 month - no fee
+    return { fee: 0, reason: 'More than 1 month away - no fee' };
+  }
+}
+
+// PUT /api/reservations/:id/modify - Modify reservation with fee calculation
+router.put('/:id/modify', authenticateToken, async (req: any, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+    const updateData = req.body;
+
+    console.log('📝 Modifying reservation:', id, 'for user:', userId);
+
+    // Find reservation
+    const reservation = await Reservation.findOne({
+      where: { 
+        id: id,
+        userId: userId // Ensure user can only modify their own reservations
+      },
+      include: [
+        {
+          model: Amenity,
+          as: 'amenity',
+          attributes: ['id', 'name', 'reservationFee', 'deposit']
+        }
+      ]
+    });
+
+    if (!reservation) {
+      return res.status(404).json({ message: 'Reservation not found' });
+    }
+
+    // Don't allow modification of completed/cancelled reservations
+    if (reservation.status === 'COMPLETED' || reservation.status === 'CANCELLED') {
+      return res.status(400).json({ 
+        message: 'Cannot modify completed or cancelled reservations' 
+      });
+    }
+
+    // Calculate modification fee
+    const modificationFee = calculateModificationFee(
+      new Date(reservation.date),
+      parseFloat(String(reservation.totalFee))
+    );
+
+    // Update reservation
+    await reservation.update(updateData);
+
+    // Fetch updated reservation with details
+    const updatedReservation = await Reservation.findByPk(id, {
+      include: [
+        {
+          model: Amenity,
+          as: 'amenity',
+          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity']
+        }
+      ]
+    });
+
+    console.log('✅ Reservation modified:', id);
+
+    return res.json({
+      message: 'Reservation modified successfully',
+      reservation: updatedReservation,
+      modificationFee: modificationFee.fee,
+      modificationFeeReason: modificationFee.reason
+    });
+
+  } catch (error) {
+    console.error('❌ Error modifying reservation:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 // DELETE /api/reservations/:id - Cancel reservation
 router.delete('/:id', authenticateToken, async (req: any, res) => {
   try {
@@ -315,7 +413,14 @@ router.delete('/:id', authenticateToken, async (req: any, res) => {
       where: { 
         id: id,
         userId: userId // Ensure user can only cancel their own reservations
-      }
+      },
+      include: [
+        {
+          model: Amenity,
+          as: 'amenity',
+          attributes: ['id', 'name', 'reservationFee', 'deposit']
+        }
+      ]
     });
 
     if (!reservation) {
@@ -329,13 +434,21 @@ router.delete('/:id', authenticateToken, async (req: any, res) => {
       });
     }
 
+    // Calculate cancellation fee
+    const cancellationFee = calculateModificationFee(
+      new Date(reservation.date),
+      parseFloat(String(reservation.totalFee))
+    );
+
     // Update status to cancelled
     await reservation.update({ status: 'CANCELLED' });
 
     console.log('✅ Reservation cancelled:', id);
 
     return res.json({
-      message: 'Reservation cancelled successfully'
+      message: 'Reservation cancelled successfully',
+      cancellationFee: cancellationFee.fee,
+      cancellationFeeReason: cancellationFee.reason
     });
 
   } catch (error) {

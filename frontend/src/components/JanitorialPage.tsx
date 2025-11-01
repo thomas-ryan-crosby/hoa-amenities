@@ -507,8 +507,7 @@ const JanitorialPage: React.FC = () => {
                     <strong>Reservation Fee:</strong> ${parseFloat(String(reservation.totalFee)).toFixed(2)}
                     <span style={{ fontSize: '12px', color: '#9ca3af' }}> (PAID)</span>
                     <br />
-                    <strong>Potential Damage Fee:</strong> ${parseFloat(String(reservation.totalDeposit)).toFixed(2)}
-                    <span style={{ fontSize: '12px', color: '#9ca3af' }}> (Not charged - pending assessment)</span>
+                    <strong>Damage Assessment:</strong> Damage fees will be assessed after conclusion of the party. If damages are noted, the resident is responsible for the amount of the repairs.
                   </p>
                 </div>
               </div>

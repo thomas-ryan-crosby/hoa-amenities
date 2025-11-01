@@ -314,7 +314,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
               <option value="">Choose an amenity...</option>
               {amenities.map(amenity => (
                 <option key={amenity.id} value={amenity.id}>
-                  {amenity.name} - ${parseFloat(String(amenity.reservationFee)).toFixed(2)} reservation fee (Potential damage fee: ${parseFloat(String(amenity.deposit)).toFixed(2)} if damages occur)
+                  {amenity.name} - ${parseFloat(String(amenity.reservationFee)).toFixed(2)} reservation fee
                 </option>
               ))}
             </select>
@@ -338,9 +338,8 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
                 <strong>Reservation Fee:</strong> ${parseFloat(String(selectedAmenityData.reservationFee)).toFixed(2)}
                 <span style={{ color: '#6b7280', fontSize: '12px' }}> (Charged at booking)</span>
               </p>
-              <p style={{ margin: '4px 0 0 0', fontSize: '14px' }}>
-                <strong>Potential Damage Fee:</strong> ${parseFloat(String(selectedAmenityData.deposit)).toFixed(2)}
-                <span style={{ color: '#6b7280', fontSize: '12px' }}> (Only charged if damages occur)</span>
+              <p style={{ margin: '4px 0 0 0', fontSize: '14px', color: '#6b7280', fontStyle: 'italic' }}>
+                <strong>Damage Assessment:</strong> Damage fees will be assessed after conclusion of the party. If damages are noted, you are responsible for the amount of the repairs.
               </p>
             </div>
           )}

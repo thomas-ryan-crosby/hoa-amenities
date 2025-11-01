@@ -58,8 +58,39 @@ const ReservationsPage: React.FC = () => {
     }
   };
 
-  const handleCancelReservation = async (reservationId: number) => {
-    if (!window.confirm('Are you sure you want to cancel this reservation?')) {
+  const handleModifyReservation = (reservation: Reservation) => {
+    // TODO: Open modification modal with pre-filled data
+    alert(`Modification feature coming soon!\n\nYou will be able to modify:\n- Event name\n- Date\n- Times\n- Guest count\n- Special requirements\n\nModification fees apply based on timing:\n- Within 1 month: $10 fee\n- Within 1 week: $50 fee\n- Within 48 hours: Full booking amount`);
+  };
+
+  const handleCancelReservation = async (reservation: Reservation) => {
+    // Calculate cancellation fee on frontend first for display
+    const reservationDate = new Date(reservation.date);
+    const now = new Date();
+    const hoursUntilReservation = (reservationDate.getTime() - now.getTime()) / (1000 * 60 * 60);
+    const daysUntilReservation = Math.floor(hoursUntilReservation / 24);
+    
+    let cancellationFee = 0;
+    let feeReason = '';
+    
+    if (hoursUntilReservation < 48) {
+      cancellationFee = parseFloat(String(reservation.totalFee));
+      feeReason = 'Within 48 hours - full booking amount';
+    } else if (daysUntilReservation < 7) {
+      cancellationFee = 50.00;
+      feeReason = 'Within 1 week - $50 modification/cancellation fee';
+    } else if (daysUntilReservation < 30) {
+      cancellationFee = 10.00;
+      feeReason = 'Within 1 month - $10 modification/cancellation fee';
+    } else {
+      feeReason = 'More than 1 month away - no fee';
+    }
+    
+    const confirmMessage = cancellationFee > 0
+      ? `Are you sure you want to cancel this reservation?\n\nCancellation Fee: $${cancellationFee.toFixed(2)}\nReason: ${feeReason}\n\nClick OK to confirm cancellation.`
+      : `Are you sure you want to cancel this reservation?\n\nNo cancellation fee will be charged.\nReason: ${feeReason}`;
+    
+    if (!window.confirm(confirmMessage)) {
       return;
     }
 
@@ -67,7 +98,7 @@ const ReservationsPage: React.FC = () => {
       const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       const token = localStorage.getItem('token');
       
-      await axios.delete(`${apiUrl}/api/reservations/${reservationId}`, {
+      await axios.delete(`${apiUrl}/api/reservations/${reservation.id}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -75,6 +106,12 @@ const ReservationsPage: React.FC = () => {
       
       // Refresh reservations
       fetchReservations();
+      
+      if (cancellationFee > 0) {
+        alert(`Reservation cancelled successfully.\n\nCancellation Fee: $${cancellationFee.toFixed(2)}\nReason: ${feeReason}`);
+      } else {
+        alert('Reservation cancelled successfully. No fee charged.');
+      }
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to cancel reservation');
       console.error('Error cancelling reservation:', err);
@@ -215,9 +252,9 @@ const ReservationsPage: React.FC = () => {
           <div style={{ fontSize: '2rem', fontWeight: 600, color: '#355B45', fontFamily: 'Inter, sans-serif' }}>
             ${reservations.reduce((sum, r) => sum + parseFloat(String(r.totalFee)), 0).toFixed(2)}
           </div>
-          <p style={{ margin: '8px 0 0 0', fontSize: '0.875rem', color: '#6b7280' }}>
-            (Reservation fees only - damage fees charged separately if damages occur)
-          </p>
+    <p style={{ margin: '8px 0 0 0', fontSize: '0.875rem', color: '#6b7280', fontStyle: 'italic' }}>
+      Damage fees will be assessed after conclusion of the party. If damages are noted, you are responsible for the amount of the repairs.
+    </p>
         </div>
       </div>
 
@@ -321,10 +358,9 @@ const ReservationsPage: React.FC = () => {
                     <strong>Reservation Fee:</strong> ${parseFloat(String(reservation.totalFee)).toFixed(2)}
                     <span style={{ fontSize: '12px', color: '#9ca3af' }}> (PAID)</span>
                   </p>
-                  <p style={{ margin: '4px 0 0 0', fontSize: '14px', color: '#6b7280' }}>
-                    <strong>Potential Damage Fee:</strong> ${parseFloat(String(reservation.totalDeposit)).toFixed(2)}
-                    <span style={{ fontSize: '12px', color: '#9ca3af' }}> (Not charged - pending assessment)</span>
-                  </p>
+                <p style={{ margin: '4px 0 0 0', fontSize: '14px', color: '#6b7280', fontStyle: 'italic' }}>
+                  <strong>Damage Assessment:</strong> Damage fees will be assessed after conclusion of the party. If damages are noted, you are responsible for the amount of the repairs.
+                </p>
                 </div>
               </div>
 
@@ -337,6 +373,42 @@ const ReservationsPage: React.FC = () => {
                   <p style={{ margin: 0, fontSize: '14px', color: '#6b7280' }}>
                     {reservation.specialRequirements}
                   </p>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              {reservation.status !== 'COMPLETED' && reservation.status !== 'CANCELLED' && (
+                <div style={{ marginTop: '16px', display: 'flex', gap: '10px' }}>
+                  <button
+                    onClick={() => handleModifyReservation(reservation)}
+                    style={{
+                      padding: '8px 16px',
+                      backgroundColor: '#355B45',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      fontWeight: '500'
+                    }}
+                  >
+                    Modify Reservation
+                  </button>
+                  <button
+                    onClick={() => handleCancelReservation(reservation)}
+                    style={{
+                      padding: '8px 16px',
+                      backgroundColor: '#dc2626',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      fontWeight: '500'
+                    }}
+                  >
+                    Cancel Reservation
+                  </button>
                 </div>
               )}
             </div>
