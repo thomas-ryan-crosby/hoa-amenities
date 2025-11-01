@@ -345,6 +345,7 @@ const Header: React.FC = () => {
               </div>
             )}
           </nav>
+          )}
         </div>
       </div>
     </header>
