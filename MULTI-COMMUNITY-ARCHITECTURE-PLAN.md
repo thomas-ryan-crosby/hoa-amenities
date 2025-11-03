@@ -396,12 +396,15 @@ useEffect(() => {
 1. Create `communities` table
 2. Create `community_users` table
 3. Create `community_amenities` table (if using join table approach)
-4. Create default community "Default Community"
+4. Create two communities:
+   - "The Sanctuary - Mandeville, LA" (for existing production data)
+   - "DEMO COMMUNITY" (for demo purposes, empty)
 5. Add `community_id` columns to `amenities` and `reservations`
 6. Migrate existing data:
-   - Assign all users to default community with their current role
-   - Assign all amenities to default community
-   - Assign all reservations to default community
+   - Assign all users to "The Sanctuary - Mandeville, LA" with their current role
+   - Assign all amenities to "The Sanctuary - Mandeville, LA"
+   - Assign all reservations to "The Sanctuary - Mandeville, LA"
+   - Create demo users in "DEMO COMMUNITY" (optional, for demo purposes)
 7. Make `community_id` NOT NULL after migration
 8. Update indexes and constraints
 
@@ -416,33 +419,50 @@ useEffect(() => {
 ### 4.2 Data Migration Details
 
 ```sql
--- Step 1: Create default community
-INSERT INTO communities (name, description, is_active)
-VALUES ('Default Community', 'Migrated from single-community system', true)
+-- Step 1: Create production community for existing data
+INSERT INTO communities (name, description, address, is_active)
+VALUES (
+  'The Sanctuary - Mandeville, LA',
+  'Production community containing all existing data migrated from single-community system',
+  'Mandeville, LA',
+  true
+)
 RETURNING id;
 
--- Step 2: Assign all users to default community with their current role
+-- Step 2: Create demo community for testing/demo purposes
+INSERT INTO communities (name, description, is_active)
+VALUES (
+  'DEMO COMMUNITY',
+  'Demo community for testing and demonstration purposes',
+  true
+)
+RETURNING id;
+
+-- Step 3: Assign all existing users to "The Sanctuary - Mandeville, LA" with their current role
 INSERT INTO community_users (community_id, user_id, role, is_active)
 SELECT 
-  (SELECT id FROM communities WHERE name = 'Default Community'),
+  (SELECT id FROM communities WHERE name = 'The Sanctuary - Mandeville, LA'),
   id,
   role,
   is_active
 FROM users;
 
--- Step 3: Assign all amenities to default community
+-- Step 4: Assign all existing amenities to "The Sanctuary - Mandeville, LA"
 UPDATE amenities 
-SET community_id = (SELECT id FROM communities WHERE name = 'Default Community')
+SET community_id = (SELECT id FROM communities WHERE name = 'The Sanctuary - Mandeville, LA')
 WHERE community_id IS NULL;
 
--- Step 4: Assign all reservations to default community
+-- Step 5: Assign all existing reservations to "The Sanctuary - Mandeville, LA"
 UPDATE reservations 
-SET community_id = (SELECT id FROM communities WHERE name = 'Default Community')
+SET community_id = (SELECT id FROM communities WHERE name = 'The Sanctuary - Mandeville, LA')
 WHERE community_id IS NULL;
 
--- Step 5: Make community_id required
+-- Step 6: Make community_id required
 ALTER TABLE amenities ALTER COLUMN community_id SET NOT NULL;
 ALTER TABLE reservations ALTER COLUMN community_id SET NOT NULL;
+
+-- Optional: Create demo users in DEMO COMMUNITY
+-- This can be done manually or via seed script after migration
 ```
 
 ---
