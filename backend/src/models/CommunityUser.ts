@@ -35,6 +35,7 @@ CommunityUser.init(
     communityId: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      field: 'communityId', // Map to actual database column name (camelCase with quotes)
       references: {
         model: 'communities',
         key: 'id',
@@ -43,6 +44,7 @@ CommunityUser.init(
     userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      field: 'userId', // Map to actual database column name (camelCase with quotes)
       references: {
         model: 'users',
         key: 'id',
@@ -75,21 +77,9 @@ CommunityUser.init(
     sequelize,
     tableName: 'community_users',
     timestamps: true,
-    indexes: [
-      {
-        unique: true,
-        fields: ['community_id', 'user_id'],
-        name: 'community_users_unique',
-      },
-      {
-        fields: ['community_id'],
-        name: 'community_users_community_id_idx',
-      },
-      {
-        fields: ['user_id'],
-        name: 'community_users_user_id_idx',
-      },
-    ],
+    // Indexes already exist in database from migration script
+    // Removing from model to prevent Sequelize from trying to recreate them
+    indexes: [],
   }
 );
 
