@@ -5,6 +5,7 @@ export interface ReservationAttributes {
   id: number;
   userId: number;
   amenityId: number;
+  communityId: number;
   date: Date;
   setupTimeStart: Date;
   setupTimeEnd: Date;
@@ -43,6 +44,7 @@ export class Reservation extends Model<ReservationAttributes, ReservationCreatio
   public id!: number;
   public userId!: number;
   public amenityId!: number;
+  public communityId!: number;
   public date!: Date;
   public setupTimeStart!: Date;
   public setupTimeEnd!: Date;
@@ -95,6 +97,14 @@ Reservation.init(
       allowNull: false,
       references: {
         model: 'amenities',
+        key: 'id',
+      },
+    },
+    communityId: {
+      type: DataTypes.INTEGER,
+      allowNull: true, // Will be set to NOT NULL after migration
+      references: {
+        model: 'communities',
         key: 'id',
       },
     },

@@ -1,0 +1,80 @@
+import { DataTypes, Model, Optional } from 'sequelize';
+import sequelize from '../config/database';
+
+export interface CommunityAttributes {
+  id: number;
+  name: string;
+  description?: string;
+  address?: string;
+  contactEmail?: string;
+  isActive: boolean;
+  settings?: any; // JSON field for community-specific configurations
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface CommunityCreationAttributes extends Optional<CommunityAttributes, 'id' | 'createdAt' | 'updatedAt' | 'settings'> {}
+
+export class Community extends Model<CommunityAttributes, CommunityCreationAttributes> implements CommunityAttributes {
+  public id!: number;
+  public name!: string;
+  public description?: string;
+  public address?: string;
+  public contactEmail?: string;
+  public isActive!: boolean;
+  public settings?: any;
+  public readonly createdAt!: Date;
+  public readonly updatedAt!: Date;
+}
+
+Community.init(
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    description: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    address: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    contactEmail: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      validate: {
+        isEmail: true,
+      },
+    },
+    isActive: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true,
+    },
+    settings: {
+      type: DataTypes.JSONB,
+      allowNull: true,
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+  },
+  {
+    sequelize,
+    tableName: 'communities',
+    timestamps: true,
+  }
+);
+

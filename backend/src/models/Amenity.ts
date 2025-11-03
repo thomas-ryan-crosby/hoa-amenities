@@ -8,6 +8,7 @@ export interface AmenityAttributes {
   reservationFee: number;
   deposit: number;
   capacity: number;
+  communityId: number;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -22,6 +23,7 @@ export class Amenity extends Model<AmenityAttributes, AmenityCreationAttributes>
   public reservationFee!: number;
   public deposit!: number;
   public capacity!: number;
+  public communityId!: number;
   public isActive!: boolean;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -37,7 +39,14 @@ Amenity.init(
     name: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
+    },
+    communityId: {
+      type: DataTypes.INTEGER,
+      allowNull: true, // Will be set to NOT NULL after migration
+      references: {
+        model: 'communities',
+        key: 'id',
+      },
     },
     description: {
       type: DataTypes.TEXT,
