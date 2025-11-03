@@ -28,7 +28,7 @@ BEGIN
   SELECT 
     demo_community_id,
     admin_user_id,
-    'admin'::enum_community_users_role,
+    'admin'::text::enum_community_users_role,
     true,
     NOW(),
     NOW(),
@@ -47,7 +47,7 @@ BEGIN
     ('Demo Pool', 'Demo community swimming pool', 50.00, 25.00, 30, demo_community_id, true, NOW(), NOW()),
     ('Demo Clubroom', 'Demo community clubroom for events', 75.00, 50.00, 40, demo_community_id, true, NOW(), NOW()),
     ('Demo Pool + Clubroom', 'Combined pool and clubroom reservation', 100.00, 75.00, 50, demo_community_id, true, NOW(), NOW())
-  ON CONFLICT (name, "communityId") DO NOTHING;
+  ON CONFLICT DO NOTHING;
 
   RAISE NOTICE 'Created demo amenities';
 
