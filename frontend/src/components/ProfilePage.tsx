@@ -23,7 +23,7 @@ interface UserProfile {
 }
 
 const ProfilePage: React.FC = () => {
-  const { user, login, communities, currentCommunity, refreshCommunities } = useAuth();
+  const { user, login, communities, currentCommunity, refreshCommunities, switchCommunity } = useAuth();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -488,8 +488,18 @@ const ProfilePage: React.FC = () => {
           </h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
             {communitiesList.map((community) => (
-              <div
+              <button
                 key={community.id}
+                onClick={async () => {
+                  if (community.id !== currentCommunity?.id) {
+                    try {
+                      await switchCommunity(community.id);
+                    } catch (error: any) {
+                      alert(error.message || 'Failed to switch community');
+                    }
+                  }
+                }}
+                disabled={community.id === currentCommunity?.id}
                 style={{
                   display: 'flex',
                   justifyContent: 'space-between',
@@ -498,7 +508,23 @@ const ProfilePage: React.FC = () => {
                   backgroundColor: community.id === currentCommunity?.id ? '#f0fdf4' : '#f9fafb',
                   border: community.id === currentCommunity?.id ? '2px solid #059669' : '1px solid #e5e7eb',
                   borderRadius: '0.375rem',
-                  transition: 'all 0.2s'
+                  transition: 'all 0.2s',
+                  cursor: community.id === currentCommunity?.id ? 'default' : 'pointer',
+                  textAlign: 'left',
+                  width: '100%',
+                  fontFamily: 'inherit'
+                }}
+                onMouseEnter={(e) => {
+                  if (community.id !== currentCommunity?.id) {
+                    e.currentTarget.style.backgroundColor = '#e0f2fe';
+                    e.currentTarget.style.borderColor = '#059669';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (community.id !== currentCommunity?.id) {
+                    e.currentTarget.style.backgroundColor = '#f9fafb';
+                    e.currentTarget.style.borderColor = '#e5e7eb';
+                  }
                 }}
               >
                 <div style={{ flex: 1 }}>
@@ -535,7 +561,7 @@ const ProfilePage: React.FC = () => {
                 }}>
                   {community.role}
                 </span>
-              </div>
+              </button>
             ))}
           </div>
         </div>

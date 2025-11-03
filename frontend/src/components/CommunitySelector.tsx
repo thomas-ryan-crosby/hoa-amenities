@@ -41,26 +41,89 @@ const CommunitySelector: React.FC = () => {
     }
   };
 
-  // Always show community name, but only show dropdown if multiple communities
-  if (communities.length <= 1) {
+  // Always show community selector, even if only one community (for visibility)
+  // If only one community, show it but still make it clickable to see details
+  if (!currentCommunity || communities.length === 0) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
         <span style={{ fontSize: '0.875rem', fontWeight: '600', color: 'white' }}>
-          {currentCommunity?.name || 'Loading...'}
+          Loading...
         </span>
-        <span
+      </div>
+    );
+  }
+
+  // If only one community, still show it as a button (for visibility)
+  if (communities.length === 1) {
+    return (
+      <div ref={dropdownRef} style={{ position: 'relative', display: 'inline-block' }}>
+        <button
+          onClick={() => setIsOpen(!isOpen)}
           style={{
-            backgroundColor: getRoleColor(currentCommunity?.role || ''),
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            backgroundColor: 'rgba(255, 255, 255, 0.1)',
             color: 'white',
-            padding: '0.25rem 0.5rem',
-            borderRadius: '0.25rem',
-            fontSize: '0.75rem',
-            fontWeight: '500',
-            textTransform: 'uppercase'
+            padding: '0.5rem 1rem',
+            borderRadius: '0.375rem',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            cursor: 'pointer',
+            fontSize: '0.875rem',
+            fontWeight: '600',
+            transition: 'background-color 0.2s',
+            fontFamily: 'Inter, sans-serif'
           }}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.15)'}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
         >
-          {currentCommunity?.role || '...'}
-        </span>
+          <span>{currentCommunity.name}</span>
+          <span
+            style={{
+              backgroundColor: getRoleColor(currentCommunity.role),
+              color: 'white',
+              padding: '0.125rem 0.375rem',
+              borderRadius: '0.25rem',
+              fontSize: '0.75rem',
+              fontWeight: '500',
+              textTransform: 'uppercase'
+            }}
+          >
+            {currentCommunity.role}
+          </span>
+          <span style={{ fontSize: '0.75rem', marginLeft: '0.25rem' }}>
+            {isOpen ? '▲' : '▼'}
+          </span>
+        </button>
+        {isOpen && (
+          <div
+            style={{
+              position: 'absolute',
+              top: '100%',
+              right: 0,
+              marginTop: '0.5rem',
+              backgroundColor: 'white',
+              borderRadius: '0.5rem',
+              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06)',
+              minWidth: '250px',
+              zIndex: 1000,
+              padding: '0.75rem',
+              border: '1px solid #e5e7eb'
+            }}
+          >
+            <div style={{ fontSize: '0.875rem', fontWeight: '600', color: '#1f2937', marginBottom: '0.5rem' }}>
+              {currentCommunity.name}
+            </div>
+            {currentCommunity.description && (
+              <div style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.5rem' }}>
+                {currentCommunity.description}
+              </div>
+            )}
+            <div style={{ fontSize: '0.75rem', color: '#9ca3af' }}>
+              You are a member of 1 community
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -80,16 +143,17 @@ const CommunitySelector: React.FC = () => {
           border: '1px solid rgba(255, 255, 255, 0.2)',
           cursor: 'pointer',
           fontSize: '0.875rem',
-          fontWeight: '500',
-          transition: 'background-color 0.2s'
+          fontWeight: '600',
+          transition: 'background-color 0.2s',
+          fontFamily: 'Inter, sans-serif'
         }}
         onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.15)'}
         onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
       >
-        <span>{currentCommunity?.name}</span>
+        <span>{currentCommunity.name}</span>
         <span
           style={{
-            backgroundColor: getRoleColor(currentCommunity?.role || ''),
+            backgroundColor: getRoleColor(currentCommunity.role),
             color: 'white',
             padding: '0.125rem 0.375rem',
             borderRadius: '0.25rem',
@@ -98,7 +162,7 @@ const CommunitySelector: React.FC = () => {
             textTransform: 'uppercase'
           }}
         >
-          {currentCommunity?.role}
+          {currentCommunity.role}
         </span>
         <span style={{ fontSize: '0.75rem', marginLeft: '0.25rem' }}>
           {isOpen ? '▲' : '▼'}
