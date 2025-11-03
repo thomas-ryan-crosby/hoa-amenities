@@ -626,6 +626,11 @@ ALTER TABLE reservations ALTER COLUMN community_id SET NOT NULL;
 5. **Community Deletion:** Hard delete or soft delete (mark inactive)?
    - **Recommendation:** Soft delete (mark `is_active = false`) to preserve data
 
+6. **Initial Communities:**
+   - **Decision:** ✅ 
+     - **"The Sanctuary - Mandeville, LA"** - Production community for existing data (all current users, amenities, and reservations will be migrated here)
+     - **"DEMO COMMUNITY"** - Demo/testing community (can be used for demonstrations with test data)
+
 ---
 
 ## Next Steps
