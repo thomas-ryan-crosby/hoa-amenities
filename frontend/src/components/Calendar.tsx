@@ -40,7 +40,7 @@ interface CalendarProps {
 }
 
 const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
-  const { user, isAuthenticated, isAdmin, isJanitorial } = useAuth();
+  const { user, isAuthenticated, isAdmin, isJanitorial, token } = useAuth();
   const isMobile = useMobile();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState<'month' | 'week'>('month');
@@ -65,7 +65,18 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
   const fetchAmenities = async () => {
     try {
       const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-      const response = await axios.get(`${apiUrl}/api/amenities`);
+      const currentToken = token || localStorage.getItem('token');
+      
+      if (!currentToken) {
+        setError('Authentication required');
+        return;
+      }
+
+      const response = await axios.get(`${apiUrl}/api/amenities`, {
+        headers: {
+          'Authorization': `Bearer ${currentToken}`
+        }
+      });
       setAmenities(response.data);
     } catch (err) {
       setError('Failed to load amenities');
@@ -99,7 +110,19 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
         params.append('amenityId', selectedAmenity.toString());
       }
 
-      const response = await axios.get(`${apiUrl}/api/calendar/events?${params}`);
+      const currentToken = token || localStorage.getItem('token');
+      
+      if (!currentToken) {
+        setError('Authentication required');
+        setLoading(false);
+        return;
+      }
+
+      const response = await axios.get(`${apiUrl}/api/calendar/events?${params}`, {
+        headers: {
+          'Authorization': `Bearer ${currentToken}`
+        }
+      });
       setEvents(response.data.events);
       
       // Debug: Log all events and their dates
