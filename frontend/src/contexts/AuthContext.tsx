@@ -143,42 +143,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }, []);
 
-  const refreshCommunities = async () => {
-    try {
-      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-      const currentToken = token || localStorage.getItem('token');
-      
-      if (!currentToken) return;
-
-      const response = await axios.get(`${apiUrl}/api/communities`, {
-        headers: {
-          'Authorization': `Bearer ${currentToken}`
-        }
-      });
-
-      const fetchedCommunities = response.data.communities.map((c: any) => ({
-        id: c.id,
-        name: c.name,
-        description: c.description,
-        role: c.role,
-        joinedAt: c.joinedAt,
-        isCurrent: c.isCurrent
-      }));
-
-      setCommunities(fetchedCommunities);
-      
-      const current = fetchedCommunities.find((c: Community) => c.isCurrent) || fetchedCommunities[0];
-      if (current) {
-        setCurrentCommunity(current);
-        localStorage.setItem('currentCommunity', JSON.stringify(current));
-      }
-      
-      localStorage.setItem('communities', JSON.stringify(fetchedCommunities));
-    } catch (error) {
-      console.error('Error refreshing communities:', error);
-    }
-  };
-
   const login = (userData: User, userToken: string, communitiesData: Community[], currentCommunityData: Community) => {
     setUser(userData);
     setToken(userToken);

@@ -40,7 +40,7 @@ interface CalendarProps {
 }
 
 const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, isAdmin, isJanitorial } = useAuth();
   const isMobile = useMobile();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState<'month' | 'week'>('month');
@@ -462,7 +462,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                           paddingRight: '6px' // Make room for status indicator
                         }}>
                           {/* Show actual event name for admin/janitorial, or title for others */}
-                          {(user?.role === 'admin' || user?.role === 'janitorial') && event.eventName && event.isPrivate
+                          {(isAdmin || isJanitorial) && event.eventName && event.isPrivate
                             ? `${event.eventName} (Private)`
                             : event.title}
                         <div style={{ 
@@ -639,7 +639,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                           paddingRight: '6px' // Make room for status indicator
                         }}>
                           {/* Show actual event name for admin/janitorial, or title for others */}
-                          {(user?.role === 'admin' || user?.role === 'janitorial') && event.eventName && event.isPrivate
+                          {(isAdmin || isJanitorial) && event.eventName && event.isPrivate
                             ? `${event.eventName} (Private)`
                             : event.title}
                         <div style={{ 
@@ -895,7 +895,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                                 paddingRight: '8px' // Make room for status indicator
                               }}>
                                 {/* Show actual event name for admin/janitorial, or title for others */}
-                                {(user?.role === 'admin' || user?.role === 'janitorial') && event.eventName && event.isPrivate
+                                {(isAdmin || isJanitorial) && event.eventName && event.isPrivate
                                   ? `${event.eventName} (Private)`
                                   : event.title}
                                 {!isMobile && (
@@ -1067,7 +1067,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                                 paddingRight: '8px' // Make room for status indicator
                               }}>
                                 {/* Show actual event name for admin/janitorial, or title for others */}
-                                {(user?.role === 'admin' || user?.role === 'janitorial') && event.eventName && event.isPrivate
+                                {(isAdmin || isJanitorial) && event.eventName && event.isPrivate
                                   ? `${event.eventName} (Private)`
                                   : event.title}
                                 {!isMobile && (

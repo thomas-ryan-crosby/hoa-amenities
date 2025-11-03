@@ -42,7 +42,7 @@ interface Reservation {
 }
 
 const JanitorialPage: React.FC = () => {
-  const { user } = useAuth();
+  const { user, currentCommunity, isAdmin, isJanitorial } = useAuth();
   const isMobile = useMobile();
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
@@ -90,7 +90,7 @@ const JanitorialPage: React.FC = () => {
 
   const handleApprove = async (reservationId: number) => {
     // For janitorial users, show cleaning time modal
-    if (user?.role === 'janitorial') {
+    if (isJanitorial) {
       const reservation = reservations.find(r => r.id === reservationId);
       if (reservation) {
         setSelectedReservation(reservation);
@@ -323,9 +323,9 @@ const JanitorialPage: React.FC = () => {
   };
 
   const canApprove = (reservation: Reservation): boolean => {
-    if (user?.role === 'admin') {
+    if (isAdmin) {
       return reservation.status === 'NEW' || reservation.status === 'JANITORIAL_APPROVED';
-    } else if (user?.role === 'janitorial') {
+    } else if (isJanitorial) {
       return reservation.status === 'NEW';
     }
     return false;

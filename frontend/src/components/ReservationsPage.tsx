@@ -408,9 +408,9 @@ const ReservationsPage: React.FC = () => {
                     <strong>Reservation Fee:</strong> ${parseFloat(String(reservation.totalFee)).toFixed(2)}
                     <span style={{ fontSize: '12px', color: '#9ca3af' }}> (PAID)</span>
                   </p>
-                <p style={{ margin: '4px 0 0 0', fontSize: '14px', color: '#6b7280', fontStyle: 'italic' }}>
-                  <strong>Damage Assessment:</strong> Damage fees will be assessed after conclusion of the party. If damages are noted, you are responsible for the amount of the repairs.
-                </p>
+                  <p style={{ margin: '4px 0 0 0', fontSize: '14px', color: '#6b7280', fontStyle: 'italic' }}>
+                    <strong>Damage Assessment:</strong> Damage fees will be assessed after conclusion of the party. If damages are noted, you are responsible for the amount of the repairs.
+                  </p>
                 </div>
               </div>
 

@@ -273,8 +273,8 @@ const Header: React.FC = () => {
                 >
                   Profile
                 </Link>
-                <span style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.7)', padding: '0 0.5rem' }}>
-                  {user?.firstName} ({user?.role})
+                <span style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.7)', padding: '0 0.5rem' }}>                          
+                  {user?.firstName}
                 </span>
                 <button
                   onClick={logout}
