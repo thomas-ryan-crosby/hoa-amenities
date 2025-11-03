@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import LandingHeader from './LandingHeader';
 
 interface LoginProps {
   onLogin: (user: any, token: string) => void;
 }
 
 const Login: React.FC<LoginProps> = ({ onLogin }) => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -38,6 +40,9 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
         
         // Call parent callback
         onLogin(response.data.user, response.data.token);
+        
+        // Redirect to app
+        navigate('/app');
       }
     } catch (err: any) {
       setError(err.response?.data?.message || 'Login failed');
@@ -47,7 +52,9 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div style={{ minHeight: '100vh', backgroundColor: '#f9fafb' }}>
+      <LandingHeader />
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 200px)', padding: '2rem 1rem' }}>
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900" style={{ fontFamily: 'Inter, sans-serif', fontWeight: 600 }}>
@@ -154,6 +161,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
             </p>
           </div>
         </form>
+      </div>
       </div>
     </div>
   );

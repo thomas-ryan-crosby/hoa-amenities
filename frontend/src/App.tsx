@@ -12,6 +12,8 @@ import Register from './components/Register';
 import EmailVerificationPage from './components/EmailVerificationPage';
 import ForgotPasswordPage from './components/ForgotPasswordPage';
 import ResetPasswordPage from './components/ResetPasswordPage';
+import LandingPage from './components/LandingPage';
+import AboutPage from './components/AboutPage';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated } = useAuth();
@@ -76,7 +78,7 @@ const Header: React.FC = () => {
           flexWrap: isMobile ? 'wrap' : 'nowrap'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
+            <Link to="/app" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
               <img 
                 src="/images/Neighbri_Wordmark_Final.png" 
                 alt="neighbri"
@@ -116,7 +118,7 @@ const Header: React.FC = () => {
                   zIndex: 1000
                 }}>
                   <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                    <MobileNavLink to="/" onClick={() => setIsMobileMenuOpen(false)}>Calendar</MobileNavLink>
+                    <MobileNavLink to="/app" onClick={() => setIsMobileMenuOpen(false)}>Calendar</MobileNavLink>
                     {isAuthenticated && (
                       <MobileNavLink to="/reservations" onClick={() => setIsMobileMenuOpen(false)}>My Reservations</MobileNavLink>
                     )}
@@ -159,7 +161,7 @@ const Header: React.FC = () => {
           ) : (
           <nav style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
             <Link 
-              to="/" 
+              to="/app" 
               style={{ 
                 color: 'white', 
                 textDecoration: 'none',
@@ -368,95 +370,105 @@ const AppContent: React.FC = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#f9fafb' }}>
-      <Header />
-      <main>
-        <Routes>
-          <Route path="/" element={
-            <Calendar 
-              onDateClick={handleDateClick}
-              refreshTrigger={refreshCalendar}
+    <>
+      <Routes>
+        {/* Public routes without app header */}
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/login" element={
+          isAuthenticated ? 
+            <Navigate to="/app" /> : 
+            <Login onLogin={login} />
+        } />
+        
+        {/* App routes with header */}
+        <Route path="*" element={
+          <>
+            <Header />
+            <main>
+              <Routes>
+                <Route path="/app" element={
+                  <ProtectedRoute>
+                    <Calendar 
+                      onDateClick={handleDateClick}
+                      refreshTrigger={refreshCalendar}
+                    />
+                  </ProtectedRoute>
+                } />
+                <Route 
+                  path="/reservations" 
+                  element={
+                    <ProtectedRoute>
+                      <ReservationsPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/janitorial" 
+                  element={
+                    <ProtectedRoute>
+                      <JanitorialPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/admin" 
+                  element={
+                    <ProtectedRoute>
+                      <AdminPage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/profile" 
+                  element={
+                    <ProtectedRoute>
+                      <ProfilePage />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/register" 
+                  element={
+                    isAuthenticated ? 
+                      <Navigate to="/app" /> : 
+                      <Register />
+                  } 
+                />
+                <Route 
+                  path="/verify-email/:token" 
+                  element={<EmailVerificationPage />} 
+                />
+                <Route 
+                  path="/forgot-password" 
+                  element={
+                    isAuthenticated ? 
+                      <Navigate to="/app" /> : 
+                      <ForgotPasswordPage />
+                  } 
+                />
+                <Route 
+                  path="/reset-password/:token" 
+                  element={
+                    isAuthenticated ? 
+                      <Navigate to="/app" /> : 
+                      <ResetPasswordPage />
+                  } 
+                />
+              </Routes>
+            </main>
+            
+            {/* Reservation Modal */}
+            <ReservationModal
+              isOpen={showReservationModal}
+              onClose={() => setShowReservationModal(false)}
+              selectedDate={selectedDate}
+              onReservationCreated={handleReservationCreated}
             />
-          } />
-          <Route 
-            path="/reservations" 
-            element={
-              <ProtectedRoute>
-                <ReservationsPage />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/janitorial" 
-            element={
-              <ProtectedRoute>
-                <JanitorialPage />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/admin" 
-            element={
-              <ProtectedRoute>
-                <AdminPage />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/profile" 
-            element={
-              <ProtectedRoute>
-                <ProfilePage />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/login" 
-            element={
-              isAuthenticated ? 
-                <Navigate to="/" /> : 
-                <Login onLogin={login} />
-            } 
-          />
-          <Route 
-            path="/register" 
-            element={
-              isAuthenticated ? 
-                <Navigate to="/" /> : 
-                <Register />
-            } 
-          />
-          <Route 
-            path="/verify-email/:token" 
-            element={<EmailVerificationPage />} 
-          />
-          <Route 
-            path="/forgot-password" 
-            element={
-              isAuthenticated ? 
-                <Navigate to="/" /> : 
-                <ForgotPasswordPage />
-            } 
-          />
-          <Route 
-            path="/reset-password/:token" 
-            element={
-              isAuthenticated ? 
-                <Navigate to="/" /> : 
-                <ResetPasswordPage />
-            } 
-          />
-        </Routes>
-      </main>
-      
-      {/* Reservation Modal */}
-      <ReservationModal
-        isOpen={showReservationModal}
-        onClose={() => setShowReservationModal(false)}
-        selectedDate={selectedDate}
-        onReservationCreated={handleReservationCreated}
-      />
-    </div>
+          </>
+        } />
+      </Routes>
+    </>
   );
 };
 
