@@ -7,7 +7,7 @@ import ReservationsPage from './components/ReservationsPage';
 import JanitorialPage from './components/JanitorialPage';
 import AdminPage from './components/AdminPage';
 import ProfilePage from './components/ProfilePage';
-import Login from './components/Login';
+import AuthPage from './components/AuthPage';
 import Register from './components/Register';
 import EmailVerificationPage from './components/EmailVerificationPage';
 import ForgotPasswordPage from './components/ForgotPasswordPage';
@@ -378,7 +378,7 @@ const AppContent: React.FC = () => {
         <Route path="/login" element={
           isAuthenticated ? 
             <Navigate to="/app" /> : 
-            <Login onLogin={login} />
+            <AuthPage onLogin={login} />
         } />
         
         {/* App routes with header */}

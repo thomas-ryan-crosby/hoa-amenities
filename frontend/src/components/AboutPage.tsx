@@ -75,9 +75,18 @@ const AboutPage: React.FC = () => {
             <p style={{
               color: '#6b7280',
               lineHeight: '1.6',
-              fontFamily: 'Inter, sans-serif'
+              fontFamily: 'Inter, sans-serif',
+              marginBottom: '0.5rem'
             }}>
-              Have questions or need support? Contact your community administrator or reach out through your HOA management portal.
+              Have questions or need support? Contact your community administrator or reach out to us directly.
+            </p>
+            <p style={{
+              color: '#355B45',
+              lineHeight: '1.6',
+              fontFamily: 'Inter, sans-serif',
+              fontWeight: 500
+            }}>
+              Email: <a href="mailto:neighbriapp@gmail.com" style={{ color: '#355B45', textDecoration: 'none' }} onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'} onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}>neighbriapp@gmail.com</a>
             </p>
           </div>
         </section>
