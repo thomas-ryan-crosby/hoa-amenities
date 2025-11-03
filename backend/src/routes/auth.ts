@@ -2,7 +2,7 @@ import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
-import { User } from '../models';
+import { User, CommunityUser, Community } from '../models';
 import { authenticateToken } from '../middleware/auth';
 import { buildPasswordResetEmail, buildVerificationEmail, sendEmail } from '../services/emailService';
 
@@ -230,9 +230,48 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    // Generate JWT token
+    // Get all communities user belongs to
+    const communityMemberships = await CommunityUser.findAll({
+      where: { userId: user.id, isActive: true },
+      include: [
+        {
+          model: Community,
+          as: 'community',
+          attributes: ['id', 'name', 'description', 'isActive']
+        }
+      ],
+      attributes: ['role', 'communityId']
+    });
+
+    // Get communities with roles
+    const communities = (communityMemberships as any[])
+      .filter((cu: any) => cu.community && cu.community.isActive)
+      .map((cu: any) => ({
+        id: cu.communityId,
+        name: cu.community.name,
+        description: cu.community.description,
+        role: cu.role as 'resident' | 'janitorial' | 'admin'
+      }));
+
+    if (communities.length === 0) {
+      return res.status(403).json({ 
+        message: 'User is not associated with any active communities. Please contact an administrator.' 
+      });
+    }
+
+    // Default to first community (or could be stored in user preferences later)
+    const currentCommunityId = communities[0].id;
+    const currentCommunityRole = communities[0].role;
+
+    // Generate JWT token with community info
     const token = jwt.sign(
-      { userId: user.id, email: user.email, role: user.role },
+      { 
+        userId: user.id, 
+        email: user.email,
+        currentCommunityId,
+        communityRole: currentCommunityRole,
+        allCommunities: communities.map(c => ({ id: c.id, name: c.name, role: c.role }))
+      },
       process.env.JWT_SECRET || 'fallback-secret',
       { expiresIn: '7d' }
     );
@@ -244,8 +283,13 @@ router.post('/login', async (req, res) => {
         id: user.id,
         email: user.email,
         firstName: user.firstName,
-        lastName: user.lastName,
-        role: user.role
+        lastName: user.lastName
+      },
+      communities,
+      currentCommunity: {
+        id: currentCommunityId,
+        name: communities[0].name,
+        role: currentCommunityRole
       },
       token
     });

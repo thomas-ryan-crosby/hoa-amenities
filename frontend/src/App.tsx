@@ -355,7 +355,7 @@ const Header: React.FC = () => {
 };
 
 const AppContent: React.FC = () => {
-  const { isAuthenticated, login } = useAuth();
+  const { isAuthenticated, login, currentCommunity } = useAuth();
   const [showReservationModal, setShowReservationModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [refreshCalendar, setRefreshCalendar] = useState(0);

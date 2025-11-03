@@ -5,7 +5,7 @@ import LandingHeader from './LandingHeader';
 import Register from './Register';
 
 interface AuthPageProps {
-  onLogin: (user: any, token: string) => void;
+  onLogin: (user: any, token: string, communities: any[], currentCommunity: any) => void;
 }
 
 const AuthPage: React.FC<AuthPageProps> = ({ onLogin }) => {
@@ -35,9 +35,24 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLogin }) => {
       const response = await axios.post(`${apiUrl}/api/auth/login`, formData);
       
       if (response.data.token) {
-        localStorage.setItem('token', response.data.token);
-        localStorage.setItem('user', JSON.stringify(response.data.user));
-        onLogin(response.data.user, response.data.token);
+        const { user, token, communities, currentCommunity } = response.data;
+        
+        // Transform communities data
+        const communitiesList = communities.map((c: any) => ({
+          id: c.id,
+          name: c.name,
+          description: c.description,
+          role: c.role,
+          joinedAt: c.joinedAt
+        }));
+        
+        const currentCommunityData = {
+          id: currentCommunity.id,
+          name: currentCommunity.name,
+          role: currentCommunity.role
+        };
+        
+        onLogin(user, token, communitiesList, currentCommunityData);
         navigate('/app');
       }
     } catch (err: any) {

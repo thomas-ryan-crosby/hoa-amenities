@@ -2,6 +2,14 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 
+interface Community {
+  id: number;
+  name: string;
+  description?: string;
+  role: 'resident' | 'janitorial' | 'admin';
+  joinedAt?: string;
+}
+
 interface UserProfile {
   id: number;
   firstName: string;
@@ -15,12 +23,13 @@ interface UserProfile {
 }
 
 const ProfilePage: React.FC = () => {
-  const { user, login } = useAuth();
+  const { user, login, communities, currentCommunity, refreshCommunities } = useAuth();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [communitiesList, setCommunitiesList] = useState<Community[]>([]);
   
   // Form states
   const [editMode, setEditMode] = useState(false);
@@ -41,7 +50,25 @@ const ProfilePage: React.FC = () => {
 
   useEffect(() => {
     fetchProfile();
+    fetchCommunities();
   }, []);
+
+  const fetchCommunities = async () => {
+    try {
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      const token = localStorage.getItem('token');
+      
+      const response = await axios.get(`${apiUrl}/api/communities`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      setCommunitiesList(response.data.communities);
+    } catch (error: any) {
+      console.error('Error fetching communities:', error);
+    }
+  };
 
   const fetchProfile = async () => {
     try {
@@ -409,6 +436,111 @@ const ProfilePage: React.FC = () => {
         </div>
       </div>
 
+      {/* Current Community Information */}
+      {currentCommunity && (
+        <div style={{
+          backgroundColor: 'white',
+          padding: '1.5rem',
+          borderRadius: '0.5rem',
+          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+          marginBottom: '1.5rem'
+        }}>
+          <h2 style={{ fontSize: '1.25rem', fontWeight: '600', color: '#1f2937', marginBottom: '1rem' }}>
+            Current Community
+          </h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.75rem', backgroundColor: '#f9fafb', borderRadius: '0.375rem' }}>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: '1rem', fontWeight: '600', color: '#1f2937', marginBottom: '0.25rem' }}>
+                {currentCommunity.name}
+              </div>
+              {currentCommunity.description && (
+                <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>
+                  {currentCommunity.description}
+                </div>
+              )}
+            </div>
+            <span style={{
+              backgroundColor: getRoleColor(currentCommunity.role),
+              color: 'white',
+              padding: '0.375rem 0.75rem',
+              borderRadius: '0.25rem',
+              fontSize: '0.75rem',
+              fontWeight: '500',
+              textTransform: 'uppercase'
+            }}>
+              {currentCommunity.role}
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* Communities Summary */}
+      {communitiesList.length > 0 && (
+        <div style={{
+          backgroundColor: 'white',
+          padding: '1.5rem',
+          borderRadius: '0.5rem',
+          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+          marginBottom: '1.5rem'
+        }}>
+          <h2 style={{ fontSize: '1.25rem', fontWeight: '600', color: '#1f2937', marginBottom: '1rem' }}>
+            Your Communities ({communitiesList.length})
+          </h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            {communitiesList.map((community) => (
+              <div
+                key={community.id}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '1rem',
+                  backgroundColor: community.id === currentCommunity?.id ? '#f0fdf4' : '#f9fafb',
+                  border: community.id === currentCommunity?.id ? '2px solid #059669' : '1px solid #e5e7eb',
+                  borderRadius: '0.375rem',
+                  transition: 'all 0.2s'
+                }}
+              >
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+                    <span style={{ fontSize: '0.875rem', fontWeight: '600', color: '#1f2937' }}>
+                      {community.name}
+                    </span>
+                    {community.id === currentCommunity?.id && (
+                      <span style={{ fontSize: '0.75rem', color: '#059669', fontWeight: '500' }}>
+                        (Current)
+                      </span>
+                    )}
+                  </div>
+                  {community.description && (
+                    <div style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.25rem' }}>
+                      {community.description}
+                    </div>
+                  )}
+                  {community.joinedAt && (
+                    <div style={{ fontSize: '0.75rem', color: '#9ca3af' }}>
+                      Joined: {new Date(community.joinedAt).toLocaleDateString()}
+                    </div>
+                  )}
+                </div>
+                <span style={{
+                  backgroundColor: getRoleColor(community.role),
+                  color: 'white',
+                  padding: '0.25rem 0.5rem',
+                  borderRadius: '0.25rem',
+                  fontSize: '0.75rem',
+                  fontWeight: '500',
+                  textTransform: 'uppercase',
+                  flexShrink: 0
+                }}>
+                  {community.role}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Account Information */}
       <div style={{
         backgroundColor: 'white',
@@ -424,11 +556,11 @@ const ProfilePage: React.FC = () => {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
           <div>
             <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', color: '#374151', marginBottom: '0.25rem' }}>
-              Role
+              Current Role
             </label>
             <div style={{ padding: '0.5rem' }}>
               <span style={{
-                backgroundColor: getRoleColor(profile.role),
+                backgroundColor: getRoleColor(currentCommunity?.role || profile.role),
                 color: 'white',
                 padding: '0.25rem 0.5rem',
                 borderRadius: '0.25rem',
@@ -436,7 +568,7 @@ const ProfilePage: React.FC = () => {
                 fontWeight: '500',
                 textTransform: 'uppercase'
               }}>
-                {profile.role}
+                {currentCommunity?.role || profile.role}
               </span>
             </div>
           </div>

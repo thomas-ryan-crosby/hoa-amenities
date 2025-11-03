@@ -12,18 +12,20 @@ interface ReservationWithAssociations extends Reservation {
 const router = express.Router();
 
 // GET /api/calendar/availability - Get availability for date range
-router.get('/availability', async (req, res) => {
+router.get('/availability', authenticateToken, async (req: any, res) => {
   try {
     const { startDate, endDate, amenityId } = req.query;
+    const communityId = req.user.currentCommunityId;
     
     if (!startDate || !endDate) {
       return res.status(400).json({ message: 'Start date and end date are required' });
     }
 
-    console.log('🔍 Fetching availability for:', { startDate, endDate, amenityId });
+    console.log('🔍 Fetching availability for:', { startDate, endDate, amenityId, communityId });
 
-    // Build where clause
+    // Build where clause - filter by community
     const whereClause: any = {
+      communityId,
       date: {
         [Op.between]: [startDate, endDate]
       },
@@ -72,18 +74,20 @@ router.get('/availability', async (req, res) => {
 });
 
 // GET /api/calendar/events - Get events for calendar view
-router.get('/events', async (req, res) => {
+router.get('/events', authenticateToken, async (req: any, res) => {
   try {
     const { startDate, endDate, amenityId } = req.query;
+    const communityId = req.user.currentCommunityId;
     
     if (!startDate || !endDate) {
       return res.status(400).json({ message: 'Start date and end date are required' });
     }
 
-    console.log('📅 Fetching calendar events for:', { startDate, endDate, amenityId });
+    console.log('📅 Fetching calendar events for:', { startDate, endDate, amenityId, communityId });
 
-    // Build where clause - exclude only cancelled reservations, include completed ones
+    // Build where clause - filter by community, exclude only cancelled reservations
     const whereClause: any = {
+      communityId,
       date: {
         [Op.between]: [startDate, endDate]
       },

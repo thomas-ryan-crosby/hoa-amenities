@@ -1,52 +1,88 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import CommunitySelector from './CommunitySelector';
 
 const Header: React.FC = () => {
-  const { user, logout, isAuthenticated, isAdmin, isJanitorial } = useAuth();
+  const { user, logout, isAuthenticated, isAdmin, isJanitorial, currentCommunity } = useAuth();
 
   return (
-    <header className="bg-blue-600 text-white shadow-lg">
-      <div className="container mx-auto px-4 py-4">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center space-x-4">
-            <Link to="/" className="text-2xl font-bold">
-              HOA Amenities Manager
+    <header style={{
+      backgroundColor: '#355B45',
+      color: 'white',
+      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+      fontFamily: 'Inter, sans-serif'
+    }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '1rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            <Link to="/" style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'white', textDecoration: 'none' }}>
+              Neighbri
             </Link>
           </div>
-          <nav className="flex space-x-4 items-center">
-            <Link to="/" className="hover:text-blue-200 transition-colors">
+          <nav style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+            <Link to="/" style={{ color: 'white', textDecoration: 'none', fontSize: '0.875rem', padding: '0.5rem 0.75rem', borderRadius: '0.375rem', transition: 'background-color 0.2s' }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
               Calendar
             </Link>
             {isAuthenticated && (
-              <Link to="/reservations" className="hover:text-blue-200 transition-colors">
+              <Link to="/reservations" style={{ color: 'white', textDecoration: 'none', fontSize: '0.875rem', padding: '0.5rem 0.75rem', borderRadius: '0.375rem', transition: 'background-color 0.2s' }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
                 My Reservations
               </Link>
             )}
             {isJanitorial && (
-              <Link to="/janitorial" className="hover:text-blue-200 transition-colors">
+              <Link to="/janitorial" style={{ color: 'white', textDecoration: 'none', fontSize: '0.875rem', padding: '0.5rem 0.75rem', borderRadius: '0.375rem', transition: 'background-color 0.2s' }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
                 Janitorial
               </Link>
             )}
             {isAdmin && (
-              <Link to="/admin" className="hover:text-blue-200 transition-colors">
+              <Link to="/admin" style={{ color: 'white', textDecoration: 'none', fontSize: '0.875rem', padding: '0.5rem 0.75rem', borderRadius: '0.375rem', transition: 'background-color 0.2s' }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
                 Admin
               </Link>
             )}
+            {isAuthenticated && (
+              <Link to="/profile" style={{ color: 'white', textDecoration: 'none', fontSize: '0.875rem', padding: '0.5rem 0.75rem', borderRadius: '0.375rem', transition: 'background-color 0.2s' }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+                Profile
+              </Link>
+            )}
             {isAuthenticated ? (
-              <div className="flex items-center space-x-4">
-                <span className="text-sm">
-                  Welcome, {user?.firstName} ({user?.role})
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginLeft: '1rem', paddingLeft: '1rem', borderLeft: '1px solid rgba(255, 255, 255, 0.2)' }}>
+                <CommunitySelector />
+                <span style={{ fontSize: '0.875rem', color: 'rgba(255, 255, 255, 0.9)' }}>
+                  {user?.firstName}
                 </span>
                 <button
                   onClick={logout}
-                  className="bg-blue-700 hover:bg-blue-800 px-3 py-1 rounded text-sm transition-colors"
+                  style={{
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    color: 'white',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '0.375rem',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    cursor: 'pointer',
+                    fontSize: '0.875rem',
+                    fontWeight: '500',
+                    transition: 'background-color 0.2s'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
                 >
                   Logout
                 </button>
               </div>
             ) : (
-              <Link to="/login" className="hover:text-blue-200 transition-colors">
+              <Link to="/login" style={{ color: 'white', textDecoration: 'none', fontSize: '0.875rem', padding: '0.5rem 0.75rem', borderRadius: '0.375rem', transition: 'background-color 0.2s' }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
                 Login
               </Link>
             )}

@@ -19,7 +19,10 @@ router.get('/', authenticateToken, async (req: any, res) => {
 
     console.log('🔍 Fetching reservations for user:', userId);
 
-    const whereClause: any = { userId };
+    const whereClause: any = { 
+      userId,
+      communityId: req.user.currentCommunityId 
+    };
     
     if (status) {
       whereClause.status = status;
@@ -57,15 +60,19 @@ router.get('/', authenticateToken, async (req: any, res) => {
 // GET /api/reservations/all - Get all reservations (janitorial and admin)
 router.get('/all', authenticateToken, async (req: any, res) => {
   try {
-    // Check if user is janitorial or admin
-    if (!['janitorial', 'admin'].includes(req.user.role)) {
+    // Check if user is janitorial or admin in current community
+    if (!['janitorial', 'admin'].includes(req.user.communityRole)) {
       return res.status(403).json({ message: 'Janitorial or admin access required' });
     }
 
-    console.log('🔍 Admin fetching all reservations for user:', req.user.role);
+    const communityId = req.user.currentCommunityId;
+    console.log('🔍 Admin fetching all reservations for community:', communityId);
 
-    // Fetch reservations with associations
+    // Fetch reservations with associations for current community
     const reservations = await Reservation.findAll({
+      where: {
+        communityId
+      },
       include: [
         {
           model: Amenity,
@@ -107,7 +114,8 @@ router.get('/:id', authenticateToken, async (req: any, res) => {
     const reservation = await Reservation.findOne({
       where: { 
         id: id,
-        userId: userId // Ensure user can only access their own reservations
+        userId: userId, // Ensure user can only access their own reservations
+        communityId: req.user.currentCommunityId // Ensure reservation belongs to current community
       },
       include: [
         {
@@ -156,10 +164,15 @@ router.post('/', authenticateToken, async (req: any, res) => {
       });
     }
 
-    // Validate amenity exists
-    const amenity = await Amenity.findByPk(amenityId);
+    // Validate amenity exists and belongs to current community
+    const amenity = await Amenity.findOne({
+      where: {
+        id: amenityId,
+        communityId: req.user.currentCommunityId
+      }
+    });
     if (!amenity) {
-      return res.status(404).json({ message: 'Amenity not found' });
+      return res.status(404).json({ message: 'Amenity not found or does not belong to your community' });
     }
 
     // Validate guest count
@@ -169,10 +182,11 @@ router.post('/', authenticateToken, async (req: any, res) => {
       });
     }
 
-    // Check for time conflicts
+    // Check for time conflicts (within same community)
     const conflictingReservation = await Reservation.findOne({
       where: {
         amenityId: amenityId,
+        communityId: req.user.currentCommunityId,
         date: date,
         status: {
           [Op.in]: ['NEW', 'JANITORIAL_APPROVED', 'FULLY_APPROVED']

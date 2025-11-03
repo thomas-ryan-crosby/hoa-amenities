@@ -1,19 +1,24 @@
 import express from 'express';
 import { Amenity } from '../models';
+import { authenticateToken } from '../middleware/auth';
 
 const router = express.Router();
 
-// GET /api/amenities - List all amenities
-router.get('/', async (req, res) => {
+// GET /api/amenities - List all amenities for current community
+router.get('/', authenticateToken, async (req: any, res) => {
   try {
-    console.log('🔍 Fetching amenities from database...');
+    const communityId = req.user.currentCommunityId;
+    
+    console.log('🔍 Fetching amenities for community:', communityId);
     const amenities = await Amenity.findAll({
-      where: { isActive: true },
+      where: { 
+        communityId,
+        isActive: true 
+      },
       attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity']
     });
     
     console.log('✅ Found amenities:', amenities.length, 'items');
-    console.log('📋 Amenities data:', amenities);
     
     return res.json(amenities);
   } catch (error) {
@@ -22,11 +27,17 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET /api/amenities/:id - Get specific amenity
-router.get('/:id', async (req, res) => {
+// GET /api/amenities/:id - Get specific amenity (must belong to current community)
+router.get('/:id', authenticateToken, async (req: any, res) => {
   try {
     const { id } = req.params;
-    const amenity = await Amenity.findByPk(id, {
+    const communityId = req.user.currentCommunityId;
+    
+    const amenity = await Amenity.findOne({
+      where: { 
+        id,
+        communityId 
+      },
       attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity']
     });
     

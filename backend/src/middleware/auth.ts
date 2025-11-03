@@ -1,15 +1,17 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { User } from '../models';
+import { User, CommunityUser, Community } from '../models';
 
-// Extend Request interface to include user
+// Extend Request interface to include user with community info
 declare global {
   namespace Express {
     interface Request {
       user?: {
         id: number;
         email: string;
-        role: string;
+        currentCommunityId: number;
+        communityRole: 'resident' | 'janitorial' | 'admin';
+        allCommunities: Array<{id: number, name: string, role: string}>;
       };
     }
   }
@@ -28,17 +30,59 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
     
     // Verify user still exists and is active
     const user = await User.findByPk(decoded.userId, {
-      attributes: ['id', 'email', 'role', 'isActive']
+      attributes: ['id', 'email', 'isActive']
     });
 
     if (!user || !user.isActive) {
       return res.status(401).json({ message: 'User not found or inactive' });
     }
 
+    // Extract community info from token
+    const currentCommunityId = decoded.currentCommunityId;
+    const communityRole = decoded.communityRole;
+    const allCommunities = decoded.allCommunities || [];
+
+    if (!currentCommunityId || !communityRole) {
+      return res.status(401).json({ message: 'Invalid token: missing community information' });
+    }
+
+    // Verify user still has access to the current community
+    const communityMembership = await CommunityUser.findOne({
+      where: { 
+        userId: user.id, 
+        communityId: currentCommunityId,
+        isActive: true 
+      },
+      include: [
+        {
+          model: Community,
+          as: 'community',
+          attributes: ['id', 'name', 'isActive']
+        }
+      ]
+    });
+
+    const membership = communityMembership as any;
+    if (!membership || !membership.community || !membership.community.isActive) {
+      return res.status(403).json({ 
+        message: 'User no longer has access to the selected community' 
+      });
+    }
+
+    // Verify the role in the token matches the database
+    if (membership.role !== communityRole) {
+      // Role changed, update token would require re-login
+      return res.status(403).json({ 
+        message: 'Your role has changed. Please log in again.' 
+      });
+    }
+
     req.user = {
       id: user.id,
       email: user.email,
-      role: user.role
+      currentCommunityId,
+      communityRole: communityRole as 'resident' | 'janitorial' | 'admin',
+      allCommunities
     };
 
     return next();
@@ -54,11 +98,12 @@ export const requireRole = (roles: string[]) => {
       return res.status(401).json({ message: 'Authentication required' });
     }
 
-    if (!roles.includes(req.user.role)) {
+    // Check communityRole instead of user.role
+    if (!roles.includes(req.user.communityRole)) {
       return res.status(403).json({ 
         message: 'Insufficient permissions',
         required: roles,
-        current: req.user.role
+        current: req.user.communityRole
       });
     }
 
