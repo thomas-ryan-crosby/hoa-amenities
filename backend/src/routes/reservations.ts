@@ -479,17 +479,17 @@ router.put('/:id/approve', authenticateToken, async (req: any, res) => {
     const { id } = req.params;
     const { cleaningTimeStart, cleaningTimeEnd } = req.body;
     const userId = req.user.id;
-    const userRole = req.user.role;
+    const communityRole = req.user.communityRole;
 
     console.log('✅ Janitorial approval for reservation:', id, 'by user:', userId);
 
-    // Check if user is janitorial or admin
-    if (userRole !== 'janitorial' && userRole !== 'admin') {
+    // Check if user is janitorial or admin in current community
+    if (communityRole !== 'janitorial' && communityRole !== 'admin') {
       return res.status(403).json({ message: 'Janitorial access required' });
     }
 
     // Validate cleaning time parameters (required for janitorial approval)
-    if (userRole === 'janitorial' && (!cleaningTimeStart || !cleaningTimeEnd)) {
+    if (communityRole === 'janitorial' && (!cleaningTimeStart || !cleaningTimeEnd)) {
       return res.status(400).json({ 
         message: 'Cleaning time start and end are required for janitorial approval' 
       });
@@ -541,7 +541,7 @@ router.put('/:id/approve', authenticateToken, async (req: any, res) => {
     let newStatus: 'JANITORIAL_APPROVED' | 'FULLY_APPROVED';
     if (reservation.status === 'NEW') {
       newStatus = 'JANITORIAL_APPROVED';
-    } else if (reservation.status === 'JANITORIAL_APPROVED' && userRole === 'admin') {
+    } else if (reservation.status === 'JANITORIAL_APPROVED' && communityRole === 'admin') {
       newStatus = 'FULLY_APPROVED';
     } else {
       return res.status(400).json({ 
@@ -579,13 +579,13 @@ router.put('/:id/reject', authenticateToken, async (req: any, res) => {
   try {
     const { id } = req.params;
     const userId = req.user.id;
-    const userRole = req.user.role;
+    const communityRole = req.user.communityRole;
     const { reason } = req.body;
 
     console.log('❌ Janitorial rejection for reservation:', id, 'by user:', userId);
 
-    // Check if user is janitorial or admin
-    if (userRole !== 'janitorial' && userRole !== 'admin') {
+    // Check if user is janitorial or admin in current community
+    if (communityRole !== 'janitorial' && communityRole !== 'admin') {
       return res.status(403).json({ message: 'Janitorial access required' });
     }
 
@@ -644,10 +644,10 @@ router.put('/:id/complete', authenticateToken, async (req: any, res) => {
     const { id } = req.params;
     const { damagesFound } = req.body;
     const userId = req.user.id;
-    const userRole = req.user.role;
+    const communityRole = req.user.communityRole;
 
-    // Check if user is janitorial or admin
-    if (userRole !== 'janitorial' && userRole !== 'admin') {
+    // Check if user is janitorial or admin in current community
+    if (communityRole !== 'janitorial' && communityRole !== 'admin') {
       return res.status(403).json({ message: 'Janitorial access required' });
     }
 
@@ -717,10 +717,10 @@ router.post('/:id/assess-damages', authenticateToken, async (req: any, res) => {
     const { id } = req.params;
     const { amount, description, notes } = req.body;
     const userId = req.user.id;
-    const userRole = req.user.role;
+    const communityRole = req.user.communityRole;
 
-    // Check if user is janitorial or admin
-    if (userRole !== 'janitorial' && userRole !== 'admin') {
+    // Check if user is janitorial or admin in current community
+    if (communityRole !== 'janitorial' && communityRole !== 'admin') {
       return res.status(403).json({ message: 'Janitorial access required' });
     }
 
@@ -800,10 +800,10 @@ router.put('/:id/review-damage-assessment', authenticateToken, async (req: any, 
     const { id } = req.params;
     const { action, amount, adminNotes } = req.body;
     const userId = req.user.id;
-    const userRole = req.user.role;
+    const communityRole = req.user.communityRole;
 
-    // Check if user is admin
-    if (userRole !== 'admin') {
+    // Check if user is admin in current community
+    if (communityRole !== 'admin') {
       return res.status(403).json({ message: 'Admin access required' });
     }
 
@@ -817,8 +817,12 @@ router.put('/:id/review-damage-assessment', authenticateToken, async (req: any, 
       return res.status(400).json({ message: 'Adjusted amount is required and must be greater than 0' });
     }
 
-    // Find reservation
-    const reservation = await Reservation.findByPk(id, {
+    // Find reservation (must belong to current community)
+    const reservation = await Reservation.findOne({
+      where: {
+        id,
+        communityId: req.user.currentCommunityId
+      },
       include: [
         {
           model: Amenity,
@@ -834,7 +838,7 @@ router.put('/:id/review-damage-assessment', authenticateToken, async (req: any, 
     }) as ReservationWithAssociations;
 
     if (!reservation) {
-      return res.status(404).json({ message: 'Reservation not found' });
+      return res.status(404).json({ message: 'Reservation not found or does not belong to your community' });
     }
 
     // Check if damage assessment is pending
@@ -911,16 +915,18 @@ router.put('/:id/review-damage-assessment', authenticateToken, async (req: any, 
 // Get pending damage reviews (admin)
 router.get('/admin/damage-reviews', authenticateToken, async (req: any, res) => {
   try {
-    const userRole = req.user.role;
+    const communityRole = req.user.communityRole;
+    const communityId = req.user.currentCommunityId;
 
-    // Check if user is admin
-    if (userRole !== 'admin') {
+    // Check if user is admin in current community
+    if (communityRole !== 'admin') {
       return res.status(403).json({ message: 'Admin access required' });
     }
 
-    // Find all reservations with pending damage assessments
+    // Find all reservations with pending damage assessments for current community
     const reservations = await Reservation.findAll({
       where: {
+        communityId,
         damageAssessmentPending: true,
         damageAssessmentStatus: 'PENDING'
       },
