@@ -1,4 +1,4 @@
-import { Amenity } from '../models/Amenity';
+import { Amenity, Community } from '../models';
 import { User } from '../models/User';
 import bcrypt from 'bcryptjs';
 
@@ -6,39 +6,58 @@ export async function seedDatabase() {
   try {
     console.log('🌱 Starting database seeding...');
 
-    // Create amenities (or find existing)
+    // Get or create the sanctuary community (for seed data)
+    let sanctuaryCommunity = await Community.findOne({ 
+      where: { name: 'The Sanctuary - Mandeville, LA' } 
+    });
+    
+    if (!sanctuaryCommunity) {
+      // If sanctuary doesn't exist yet, create it
+      sanctuaryCommunity = await Community.create({
+        name: 'The Sanctuary - Mandeville, LA',
+        description: 'Production community containing all existing data',
+        address: 'Mandeville, LA',
+        isActive: true
+      });
+      console.log('✅ Created sanctuary community for seeding');
+    }
+
+    // Create amenities (or find existing) - include communityId
     const [clubroom, clubroomCreated] = await Amenity.findOrCreate({
-      where: { name: 'Clubroom' },
+      where: { name: 'Clubroom', communityId: sanctuaryCommunity.id },
       defaults: {
         name: 'Clubroom',
         description: 'Community clubroom for events and gatherings',
         reservationFee: 125.00,
         deposit: 75.00,
         capacity: 50,
+        communityId: sanctuaryCommunity.id,
         isActive: true
       }
     });
 
     const [pool, poolCreated] = await Amenity.findOrCreate({
-      where: { name: 'Pool' },
+      where: { name: 'Pool', communityId: sanctuaryCommunity.id },
       defaults: {
         name: 'Pool',
         description: 'Community swimming pool',
         reservationFee: 25.00,
         deposit: 50.00,
         capacity: 30,
+        communityId: sanctuaryCommunity.id,
         isActive: true
       }
     });
 
     const [poolAndClubroom, poolAndClubroomCreated] = await Amenity.findOrCreate({
-      where: { name: 'Pool + Clubroom' },
+      where: { name: 'Pool + Clubroom', communityId: sanctuaryCommunity.id },
       defaults: {
         name: 'Pool + Clubroom',
         description: 'Combined reservation for both pool and clubroom',
         reservationFee: 150.00, // 125 + 25
         deposit: 125.00, // 75 + 50
         capacity: 50, // Max capacity
+        communityId: sanctuaryCommunity.id,
         isActive: true
       }
     });

@@ -204,6 +204,7 @@ router.post('/', authenticateToken, async (req: any, res) => {
     const reservation = await Reservation.create({
       userId,
       amenityId,
+      communityId: amenity.communityId, // Get communityId from amenity
       date,
       setupTimeStart,
       setupTimeEnd,
