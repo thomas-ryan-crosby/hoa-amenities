@@ -372,9 +372,29 @@ const JanitorialPage: React.FC = () => {
         marginBottom: isMobile ? '1.5rem' : '30px',
         gap: isMobile ? '1rem' : '0'
       }}>
-        <h1 style={{ fontSize: isMobile ? '1.5rem' : '2rem', fontWeight: 'bold', margin: 0 }}>
-          Janitorial Dashboard
-        </h1>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <h1 style={{ fontSize: isMobile ? '1.5rem' : '2rem', fontWeight: 'bold', margin: 0 }}>
+            Janitorial Dashboard
+          </h1>
+          {currentCommunity && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: '0.875rem', color: '#6b7280', fontWeight: '500' }}>
+                Community:
+              </span>
+              <span style={{ 
+                fontSize: '0.875rem', 
+                color: '#355B45', 
+                fontWeight: '600',
+                backgroundColor: '#f0f9f4',
+                padding: '0.25rem 0.75rem',
+                borderRadius: '0.375rem',
+                border: '1px solid #d1fae5'
+              }}>
+                {currentCommunity.name}
+              </span>
+            </div>
+          )}
+        </div>
         
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           <label style={{ fontSize: '14px', fontWeight: 'bold' }}>Filter:</label>

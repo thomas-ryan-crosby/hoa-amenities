@@ -41,12 +41,12 @@ const CommunitySelector: React.FC = () => {
     }
   };
 
+  // Always show community name, but only show dropdown if multiple communities
   if (communities.length <= 1) {
-    // Don't show selector if user only belongs to one community
     return (
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-        <span style={{ fontSize: '0.875rem', fontWeight: '500', color: 'white' }}>
-          {currentCommunity?.name}
+        <span style={{ fontSize: '0.875rem', fontWeight: '600', color: 'white' }}>
+          {currentCommunity?.name || 'Loading...'}
         </span>
         <span
           style={{
@@ -59,7 +59,7 @@ const CommunitySelector: React.FC = () => {
             textTransform: 'uppercase'
           }}
         >
-          {currentCommunity?.role}
+          {currentCommunity?.role || '...'}
         </span>
       </div>
     );

@@ -15,7 +15,7 @@ interface User {
 }
 
 const AdminPage: React.FC = () => {
-  const { user } = useAuth();
+  const { user, currentCommunity } = useAuth();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -207,9 +207,29 @@ const AdminPage: React.FC = () => {
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem 1rem' }}>
       <div style={{ marginBottom: '2rem' }}>
-        <h1 style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#1f2937', marginBottom: '0.5rem' }}>
-          Admin Dashboard
-        </h1>
+        <div style={{ marginBottom: '0.5rem' }}>
+          <h1 style={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#1f2937', marginBottom: '0.5rem' }}>
+            Admin Dashboard
+          </h1>
+          {currentCommunity && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.5rem' }}>
+              <span style={{ fontSize: '0.875rem', color: '#6b7280', fontWeight: '500' }}>
+                Community:
+              </span>
+              <span style={{ 
+                fontSize: '0.875rem', 
+                color: '#355B45', 
+                fontWeight: '600',
+                backgroundColor: '#f0f9f4',
+                padding: '0.25rem 0.75rem',
+                borderRadius: '0.375rem',
+                border: '1px solid #d1fae5'
+              }}>
+                {currentCommunity.name}
+              </span>
+            </div>
+          )}
+        </div>
         <p style={{ color: '#6b7280' }}>
           Manage users and review damage assessments
         </p>

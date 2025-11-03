@@ -40,7 +40,7 @@ interface CalendarProps {
 }
 
 const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
-  const { user, isAuthenticated, isAdmin, isJanitorial, token } = useAuth();
+  const { user, isAuthenticated, isAdmin, isJanitorial, token, currentCommunity } = useAuth();
   const isMobile = useMobile();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState<'month' | 'week'>('month');
@@ -1152,9 +1152,29 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
         marginBottom: isMobile ? '1rem' : '20px',
         gap: isMobile ? '0.75rem' : '0'
       }}>
-        <h1 style={{ fontSize: isMobile ? '1.5rem' : '2rem', fontWeight: 600, margin: 0, fontFamily: 'Inter, sans-serif', color: '#244032' }}>
-          Calendar
-        </h1>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <h1 style={{ fontSize: isMobile ? '1.5rem' : '2rem', fontWeight: 600, margin: 0, fontFamily: 'Inter, sans-serif', color: '#244032' }}>
+            Calendar
+          </h1>
+          {currentCommunity && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: '0.875rem', color: '#6b7280', fontWeight: '500' }}>
+                Community:
+              </span>
+              <span style={{ 
+                fontSize: '0.875rem', 
+                color: '#355B45', 
+                fontWeight: '600',
+                backgroundColor: '#f0f9f4',
+                padding: '0.25rem 0.75rem',
+                borderRadius: '0.375rem',
+                border: '1px solid #d1fae5'
+              }}>
+                {currentCommunity.name}
+              </span>
+            </div>
+          )}
+        </div>
         
         <div style={{ 
           display: 'flex', 
