@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -10,34 +10,12 @@ const OnboardingPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [accessCode, setAccessCode] = useState<string>('');
 
-  useEffect(() => {
-    // Refresh communities to get latest data including access code
-    if (token) {
-      refreshCommunities();
-    }
+  const fetchAccessCode = useCallback(async () => {
+    if (!currentCommunity?.id || !token) return;
     
-    // Check if community needs onboarding
-    if (currentCommunity?.onboardingCompleted) {
-      navigate('/app');
-    }
-    // Only allow admins to access onboarding
-    if (currentCommunity && currentCommunity.role !== 'admin') {
-      navigate('/app');
-    }
-    
-    // Get access code from current community
-    if (currentCommunity?.accessCode) {
-      setAccessCode(currentCommunity.accessCode);
-    } else if (currentCommunity?.id && token) {
-      // Fetch access code if not in current community data
-      fetchAccessCode();
-    }
-  }, [currentCommunity, token, navigate, refreshCommunities]);
-
-  const fetchAccessCode = async () => {
     try {
       const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-      const response = await axios.get(`${apiUrl}/api/communities/${currentCommunity?.id}`, {
+      const response = await axios.get(`${apiUrl}/api/communities/${currentCommunity.id}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -49,7 +27,33 @@ const OnboardingPage: React.FC = () => {
     } catch (err) {
       console.error('Error fetching access code:', err);
     }
-  };
+  }, [currentCommunity?.id, token]);
+
+  useEffect(() => {
+    // Refresh communities to get latest data including access code
+    if (token) {
+      refreshCommunities();
+    }
+    
+    // Check if community needs onboarding
+    if (currentCommunity?.onboardingCompleted) {
+      navigate('/app');
+      return;
+    }
+    // Only allow admins to access onboarding
+    if (currentCommunity && currentCommunity.role !== 'admin') {
+      navigate('/app');
+      return;
+    }
+    
+    // Get access code from current community
+    if (currentCommunity?.accessCode) {
+      setAccessCode(currentCommunity.accessCode);
+    } else if (currentCommunity?.id && token) {
+      // Fetch access code if not in current community data
+      fetchAccessCode();
+    }
+  }, [currentCommunity, token, navigate, refreshCommunities, fetchAccessCode]);
 
   const handleCompleteOnboarding = async () => {
     try {
