@@ -11,9 +11,28 @@ const router = express.Router();
 // POST /api/auth/register - User registration
 router.post('/register', async (req, res) => {
   try {
-    const { email, password, firstName, lastName, phone, address, role = 'resident' } = req.body;
+    const { 
+      email, 
+      password, 
+      firstName, 
+      lastName, 
+      phone, 
+      address, 
+      role = 'resident',
+      communitySelection,
+      interestedRole,
+      communityIds = []
+    } = req.body;
 
-    console.log('📝 Registration attempt:', { email, firstName, lastName, hasPhone: !!phone, hasAddress: !!address });
+    console.log('📝 Registration attempt:', { 
+      email, 
+      firstName, 
+      lastName, 
+      hasPhone: !!phone, 
+      hasAddress: !!address,
+      communitySelection,
+      communityIds: communityIds.length
+    });
 
     // Validate required fields
     if (!email || !password || !firstName || !lastName) {
@@ -52,6 +71,39 @@ router.post('/register', async (req, res) => {
       emailVerificationToken,
       emailVerificationTokenExpires
     });
+
+    // If user selected "existing" communities, add them to those communities
+    if (communitySelection === 'existing' && Array.isArray(communityIds) && communityIds.length > 0) {
+      // Validate that all communities exist and are active
+      const communities = await Community.findAll({
+        where: {
+          id: communityIds,
+          isActive: true
+        }
+      });
+
+      if (communities.length !== communityIds.length) {
+        console.warn(`⚠️ Some communities not found or inactive. Requested: ${communityIds.length}, Found: ${communities.length}`);
+      }
+
+      // Add user to each community as a resident (default role)
+      for (const community of communities) {
+        await CommunityUser.findOrCreate({
+          where: {
+            userId: user.id,
+            communityId: community.id
+          },
+          defaults: {
+            userId: user.id,
+            communityId: community.id,
+            role: 'resident',
+            isActive: true
+          }
+        });
+      }
+
+      console.log(`✅ User added to ${communities.length} community(ies)`);
+    }
 
     // Send verification email (non-blocking)
     try {

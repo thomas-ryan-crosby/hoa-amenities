@@ -7,9 +7,16 @@ interface RegisterProps {
 }
 
 const Register: React.FC<RegisterProps> = ({ onRegister }) => {
-  const [step, setStep] = useState<'community-selection' | 'registration'>('community-selection');
+  const [step, setStep] = useState<'community-selection' | 'community-finder' | 'registration'>('community-selection');
   const [communitySelection, setCommunitySelection] = useState<'existing' | 'interested' | null>(null);
   const [interestedRole, setInterestedRole] = useState<'resident' | 'janitorial' | 'admin' | ''>('');
+  const [selectedCommunities, setSelectedCommunities] = useState<Array<{id: number, name: string, description?: string}>>([]);
+  const [searchMethod, setSearchMethod] = useState<'zipcode' | 'accesscode'>('zipcode');
+  const [zipCode, setZipCode] = useState('');
+  const [accessCode, setAccessCode] = useState('');
+  const [accessCodes, setAccessCodes] = useState<string[]>(['']);
+  const [searchResults, setSearchResults] = useState<Array<{id: number, name: string, description?: string, address?: string}>>([]);
+  const [searching, setSearching] = useState(false);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -81,6 +88,9 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
       registrationData.communitySelection = communitySelection;
       if (communitySelection === 'interested' && interestedRole) {
         registrationData.interestedRole = interestedRole;
+      }
+      if (communitySelection === 'existing' && selectedCommunities.length > 0) {
+        registrationData.communityIds = selectedCommunities.map(c => c.id);
       }
 
       const response = await axios.post(`${apiUrl}/api/auth/register`, registrationData);
@@ -433,37 +443,6 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
           </button>
         )}
 
-        {communitySelection === 'existing' && (
-          <button
-            type="button"
-            onClick={() => setStep('registration')}
-            style={{
-              width: '100%',
-              backgroundColor: '#355B45',
-              color: 'white',
-              padding: '0.75rem 1rem',
-              border: 'none',
-              borderRadius: '0.5rem',
-              fontSize: '1rem',
-              fontWeight: 600,
-              fontFamily: 'Inter, sans-serif',
-              cursor: 'pointer',
-              marginBottom: '1.5rem',
-              transition: 'background-color 0.2s, transform 0.1s',
-              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#244032';
-              e.currentTarget.style.transform = 'translateY(-1px)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#355B45';
-              e.currentTarget.style.transform = 'translateY(0)';
-            }}
-          >
-            Continue
-          </button>
-        )}
 
         <div style={{ textAlign: 'center' }}>
           <p style={{ color: '#6b7280', fontSize: '0.875rem' }}>
@@ -480,6 +459,421 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
             </Link>
           </p>
         </div>
+      </div>
+    );
+  }
+
+  // Community Finder Step (for existing communities)
+  if (step === 'community-finder') {
+    const searchByZipCode = async () => {
+      if (!zipCode.trim()) {
+        setError('Please enter a zip code');
+        return;
+      }
+
+      try {
+        setSearching(true);
+        setError(null);
+        const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+        const response = await axios.get(`${apiUrl}/api/communities/search/by-zipcode`, {
+          params: { zipCode: zipCode.trim() }
+        });
+        setSearchResults(response.data.communities || []);
+        if (response.data.communities.length === 0) {
+          setError('No communities found for this zip code');
+        }
+      } catch (err: any) {
+        setError(err.response?.data?.message || 'Failed to search communities');
+        setSearchResults([]);
+      } finally {
+        setSearching(false);
+      }
+    };
+
+    const searchByAccessCode = async (code: string) => {
+      if (!code.trim()) {
+        return;
+      }
+
+      try {
+        setSearching(true);
+        setError(null);
+        const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+        const response = await axios.get(`${apiUrl}/api/communities/search/by-access-code`, {
+          params: { accessCode: code.trim().toUpperCase() }
+        });
+        
+        const community = response.data.community;
+        if (community && !selectedCommunities.find(c => c.id === community.id)) {
+          setSelectedCommunities([...selectedCommunities, community]);
+          setAccessCode('');
+        } else if (community) {
+          setError('Community already added');
+        }
+      } catch (err: any) {
+        setError(err.response?.data?.message || 'Community not found with this access code');
+      } finally {
+        setSearching(false);
+      }
+    };
+
+    const removeCommunity = (id: number) => {
+      setSelectedCommunities(selectedCommunities.filter(c => c.id !== id));
+    };
+
+    const addCommunityFromResults = (community: any) => {
+      if (!selectedCommunities.find(c => c.id === community.id)) {
+        setSelectedCommunities([...selectedCommunities, community]);
+      }
+    };
+
+    return (
+      <div>
+        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+          <h1 style={{ 
+            fontSize: '1.875rem', 
+            fontWeight: 700, 
+            color: '#1f2937', 
+            marginBottom: '0.5rem',
+            fontFamily: 'Inter, sans-serif' 
+          }}>
+            Find Your Community
+          </h1>
+          <p style={{ 
+            color: '#6b7280', 
+            fontSize: '0.9375rem',
+            fontFamily: 'Inter, sans-serif' 
+          }}>
+            Search by zip code or enter an access code
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setStep('community-selection')}
+          style={{
+            background: 'transparent',
+            border: 'none',
+            color: '#6b7280',
+            cursor: 'pointer',
+            fontSize: '0.875rem',
+            padding: '0.5rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            marginBottom: '1.5rem',
+            fontFamily: 'Inter, sans-serif'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.color = '#355B45';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.color = '#6b7280';
+          }}
+        >
+          ← Back
+        </button>
+
+        {error && (
+          <div style={{
+            backgroundColor: '#fef2f2',
+            border: '1px solid #fecaca',
+            color: '#dc2626',
+            padding: '0.75rem',
+            borderRadius: '0.5rem',
+            marginBottom: '1.5rem',
+            fontSize: '0.875rem',
+            fontFamily: 'Inter, sans-serif'
+          }}>
+            {error}
+          </div>
+        )}
+
+        {/* Search Method Toggle */}
+        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', borderBottom: '1px solid #e5e7eb', paddingBottom: '1rem' }}>
+          <button
+            type="button"
+            onClick={() => setSearchMethod('zipcode')}
+            style={{
+              flex: 1,
+              padding: '0.75rem',
+              backgroundColor: searchMethod === 'zipcode' ? '#f0f9f4' : 'white',
+              border: searchMethod === 'zipcode' ? '2px solid #355B45' : '1px solid #d1d5db',
+              borderRadius: '0.5rem',
+              cursor: 'pointer',
+              fontSize: '0.875rem',
+              fontWeight: searchMethod === 'zipcode' ? 600 : 400,
+              color: '#1f2937',
+              fontFamily: 'Inter, sans-serif'
+            }}
+          >
+            Search by Zip Code
+          </button>
+          <button
+            type="button"
+            onClick={() => setSearchMethod('accesscode')}
+            style={{
+              flex: 1,
+              padding: '0.75rem',
+              backgroundColor: searchMethod === 'accesscode' ? '#f0f9f4' : 'white',
+              border: searchMethod === 'accesscode' ? '2px solid #355B45' : '1px solid #d1d5db',
+              borderRadius: '0.5rem',
+              cursor: 'pointer',
+              fontSize: '0.875rem',
+              fontWeight: searchMethod === 'accesscode' ? 600 : 400,
+              color: '#1f2937',
+              fontFamily: 'Inter, sans-serif'
+            }}
+          >
+            Enter Access Code
+          </button>
+        </div>
+
+        {/* Zip Code Search */}
+        {searchMethod === 'zipcode' && (
+          <div style={{ marginBottom: '2rem' }}>
+            <label style={{ 
+              display: 'block', 
+              fontSize: '0.875rem', 
+              fontWeight: '500', 
+              color: '#374151',
+              marginBottom: '0.5rem'
+            }}>
+              Zip Code *
+            </label>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <input
+                type="text"
+                value={zipCode}
+                onChange={(e) => setZipCode(e.target.value)}
+                placeholder="Enter zip code"
+                style={{
+                  flex: 1,
+                  padding: '0.75rem',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '0.5rem',
+                  fontSize: '1rem',
+                  fontFamily: 'Inter, sans-serif',
+                  boxSizing: 'border-box'
+                }}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    searchByZipCode();
+                  }
+                }}
+              />
+              <button
+                type="button"
+                onClick={searchByZipCode}
+                disabled={searching || !zipCode.trim()}
+                style={{
+                  padding: '0.75rem 1.5rem',
+                  backgroundColor: searching || !zipCode.trim() ? '#9ca3af' : '#355B45',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '0.5rem',
+                  fontSize: '0.875rem',
+                  fontWeight: 600,
+                  fontFamily: 'Inter, sans-serif',
+                  cursor: searching || !zipCode.trim() ? 'not-allowed' : 'pointer'
+                }}
+              >
+                {searching ? 'Searching...' : 'Search'}
+              </button>
+            </div>
+
+            {/* Search Results */}
+            {searchResults.length > 0 && (
+              <div style={{ marginTop: '1rem' }}>
+                <div style={{ fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.75rem' }}>
+                  Found Communities ({searchResults.length})
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', maxHeight: '300px', overflowY: 'auto' }}>
+                  {searchResults.map((community) => (
+                    <button
+                      key={community.id}
+                      type="button"
+                      onClick={() => addCommunityFromResults(community)}
+                      disabled={!!selectedCommunities.find(c => c.id === community.id)}
+                      style={{
+                        width: '100%',
+                        padding: '1rem',
+                        backgroundColor: selectedCommunities.find(c => c.id === community.id) ? '#f0f9f4' : 'white',
+                        border: selectedCommunities.find(c => c.id === community.id) ? '2px solid #355B45' : '1px solid #d1d5db',
+                        borderRadius: '0.5rem',
+                        cursor: selectedCommunities.find(c => c.id === community.id) ? 'default' : 'pointer',
+                        textAlign: 'left',
+                        fontFamily: 'Inter, sans-serif'
+                      }}
+                    >
+                      <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#1f2937', marginBottom: '0.25rem' }}>
+                        {community.name}
+                        {selectedCommunities.find(c => c.id === community.id) && (
+                          <span style={{ marginLeft: '0.5rem', color: '#059669', fontSize: '0.75rem' }}>✓ Added</span>
+                        )}
+                      </div>
+                      {community.description && (
+                        <div style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: '0.25rem' }}>
+                          {community.description}
+                        </div>
+                      )}
+                      {community.address && (
+                        <div style={{ fontSize: '0.75rem', color: '#9ca3af' }}>
+                          {community.address}
+                        </div>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Access Code Entry */}
+        {searchMethod === 'accesscode' && (
+          <div style={{ marginBottom: '2rem' }}>
+            <label style={{ 
+              display: 'block', 
+              fontSize: '0.875rem', 
+              fontWeight: '500', 
+              color: '#374151',
+              marginBottom: '0.5rem'
+            }}>
+              Access Code *
+            </label>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <input
+                type="text"
+                value={accessCode}
+                onChange={(e) => setAccessCode(e.target.value)}
+                placeholder="Enter access code"
+                style={{
+                  flex: 1,
+                  padding: '0.75rem',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '0.5rem',
+                  fontSize: '1rem',
+                  fontFamily: 'Inter, sans-serif',
+                  boxSizing: 'border-box',
+                  textTransform: 'uppercase'
+                }}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    searchByAccessCode(accessCode);
+                  }
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => searchByAccessCode(accessCode)}
+                disabled={searching || !accessCode.trim()}
+                style={{
+                  padding: '0.75rem 1.5rem',
+                  backgroundColor: searching || !accessCode.trim() ? '#9ca3af' : '#355B45',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '0.5rem',
+                  fontSize: '0.875rem',
+                  fontWeight: 600,
+                  fontFamily: 'Inter, sans-serif',
+                  cursor: searching || !accessCode.trim() ? 'not-allowed' : 'pointer'
+                }}
+              >
+                {searching ? 'Searching...' : 'Add'}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Selected Communities */}
+        {selectedCommunities.length > 0 && (
+          <div style={{ marginBottom: '2rem' }}>
+            <div style={{ fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '0.75rem' }}>
+              Selected Communities ({selectedCommunities.length})
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              {selectedCommunities.map((community) => (
+                <div
+                  key={community.id}
+                  style={{
+                    padding: '1rem',
+                    backgroundColor: '#f0f9f4',
+                    border: '2px solid #355B45',
+                    borderRadius: '0.5rem',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center'
+                  }}
+                >
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#1f2937', marginBottom: '0.25rem' }}>
+                      {community.name}
+                    </div>
+                    {community.description && (
+                      <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>
+                        {community.description}
+                      </div>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => removeCommunity(community.id)}
+                    style={{
+                      padding: '0.5rem',
+                      backgroundColor: 'transparent',
+                      border: 'none',
+                      color: '#dc2626',
+                      cursor: 'pointer',
+                      fontSize: '1.25rem',
+                      fontFamily: 'Inter, sans-serif'
+                    }}
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Continue Button */}
+        <button
+          type="button"
+          onClick={() => {
+            if (selectedCommunities.length === 0) {
+              setError('Please select at least one community or enter an access code');
+              return;
+            }
+            setError(null);
+            setStep('registration');
+          }}
+          style={{
+            width: '100%',
+            backgroundColor: '#355B45',
+            color: 'white',
+            padding: '0.75rem 1rem',
+            border: 'none',
+            borderRadius: '0.5rem',
+            fontSize: '1rem',
+            fontWeight: 600,
+            fontFamily: 'Inter, sans-serif',
+            cursor: 'pointer',
+            marginBottom: '1.5rem',
+            transition: 'background-color 0.2s, transform 0.1s',
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = '#244032';
+            e.currentTarget.style.transform = 'translateY(-1px)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = '#355B45';
+            e.currentTarget.style.transform = 'translateY(0)';
+          }}
+        >
+          Continue with {selectedCommunities.length} {selectedCommunities.length === 1 ? 'Community' : 'Communities'}
+        </button>
       </div>
     );
   }

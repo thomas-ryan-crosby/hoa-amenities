@@ -6,7 +6,9 @@ export interface CommunityAttributes {
   name: string;
   description?: string;
   address?: string;
+  zipCode?: string;
   contactEmail?: string;
+  accessCode?: string;
   isActive: boolean;
   settings?: any; // JSON field for community-specific configurations
   createdAt: Date;
@@ -20,7 +22,9 @@ export class Community extends Model<CommunityAttributes, CommunityCreationAttri
   public name!: string;
   public description?: string;
   public address?: string;
+  public zipCode?: string;
   public contactEmail?: string;
+  public accessCode?: string;
   public isActive!: boolean;
   public settings?: any;
   public readonly createdAt!: Date;
@@ -46,12 +50,21 @@ Community.init(
       type: DataTypes.TEXT,
       allowNull: true,
     },
+    zipCode: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     contactEmail: {
       type: DataTypes.STRING,
       allowNull: true,
       validate: {
         isEmail: true,
       },
+    },
+    accessCode: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      unique: true,
     },
     isActive: {
       type: DataTypes.BOOLEAN,

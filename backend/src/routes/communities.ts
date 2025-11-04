@@ -45,6 +45,75 @@ router.get('/', authenticateToken, async (req: any, res) => {
   }
 });
 
+// GET /api/communities/search - Public endpoint to search communities by zip code
+router.get('/search/by-zipcode', async (req: any, res) => {
+  try {
+    const { zipCode } = req.query;
+
+    if (!zipCode) {
+      return res.status(400).json({ message: 'Zip code is required' });
+    }
+
+    const communities = await Community.findAll({
+      where: {
+        zipCode: zipCode.toString().trim(),
+        isActive: true
+      },
+      attributes: ['id', 'name', 'description', 'address', 'zipCode'],
+      order: [['name', 'ASC']]
+    });
+
+    return res.json({
+      communities: communities.map(c => ({
+        id: c.id,
+        name: c.name,
+        description: c.description,
+        address: c.address,
+        zipCode: c.zipCode
+      }))
+    });
+  } catch (error) {
+    console.error('Error searching communities by zip code:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// GET /api/communities/search/by-access-code - Public endpoint to find community by access code
+router.get('/search/by-access-code', async (req: any, res) => {
+  try {
+    const { accessCode } = req.query;
+
+    if (!accessCode) {
+      return res.status(400).json({ message: 'Access code is required' });
+    }
+
+    const community = await Community.findOne({
+      where: {
+        accessCode: accessCode.toString().trim().toUpperCase(),
+        isActive: true
+      },
+      attributes: ['id', 'name', 'description', 'address', 'zipCode']
+    });
+
+    if (!community) {
+      return res.status(404).json({ message: 'Community not found with this access code' });
+    }
+
+    return res.json({
+      community: {
+        id: community.id,
+        name: community.name,
+        description: community.description,
+        address: community.address,
+        zipCode: community.zipCode
+      }
+    });
+  } catch (error) {
+    console.error('Error searching community by access code:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 // GET /api/communities/:id - Get specific community details
 router.get('/:id', authenticateToken, async (req: any, res) => {
   try {
