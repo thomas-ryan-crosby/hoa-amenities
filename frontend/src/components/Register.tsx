@@ -17,6 +17,13 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
   const [accessCodes, setAccessCodes] = useState<string[]>(['']);
   const [searchResults, setSearchResults] = useState<Array<{id: number, name: string, description?: string, address?: string}>>([]);
   const [searching, setSearching] = useState(false);
+  const [registeringNewCommunity, setRegisteringNewCommunity] = useState(false);
+  const [communityInfo, setCommunityInfo] = useState({
+    communityName: '',
+    communityAddress: '',
+    approximateHouseholds: '',
+    primaryContact: ''
+  });
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -40,6 +47,14 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
     });
   };
 
+  const handleCommunityInfoChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    setCommunityInfo({
+      ...communityInfo,
+      [e.target.name]: value
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -55,9 +70,25 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
       return;
     }
 
-    if (communitySelection === 'existing' && selectedCommunities.length === 0) {
-      setError('Please select at least one community');
+    if (communitySelection === 'existing' && selectedCommunities.length === 0 && !registeringNewCommunity) {
+      setError('Please select at least one community or register a new community');
       return;
+    }
+
+    // Validate community info if registering new community
+    if (registeringNewCommunity) {
+      if (!communityInfo.communityName.trim()) {
+        setError('Community / HOA Name is required');
+        return;
+      }
+      if (!communityInfo.communityAddress.trim()) {
+        setError('Community / HOA Address is required');
+        return;
+      }
+      if (!communityInfo.primaryContact.trim()) {
+        setError('Primary contact for HOA / Community is required');
+        return;
+      }
     }
 
     if (!formData.agreedToTerms) {
@@ -90,12 +121,22 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
       };
 
       // Add community selection info
-      registrationData.communitySelection = communitySelection;
+      registrationData.communitySelection = registeringNewCommunity ? 'new-community' : communitySelection;
       if (communitySelection === 'interested' && interestedRole) {
         registrationData.interestedRole = interestedRole;
       }
       if (communitySelection === 'existing' && selectedCommunities.length > 0) {
         registrationData.communityIds = selectedCommunities.map(c => c.id);
+      }
+      
+      // Add community info if registering new community
+      if (registeringNewCommunity) {
+        registrationData.communityInfo = {
+          communityName: communityInfo.communityName,
+          communityAddress: communityInfo.communityAddress,
+          approximateHouseholds: parseInt(communityInfo.approximateHouseholds) || 0,
+          primaryContact: communityInfo.primaryContact
+        };
       }
 
       const response = await axios.post(`${apiUrl}/api/auth/register`, registrationData);

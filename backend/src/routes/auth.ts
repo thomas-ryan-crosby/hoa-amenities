@@ -21,7 +21,8 @@ router.post('/register', async (req, res) => {
       role = 'resident',
       communitySelection,
       interestedRole,
-      communityIds = []
+      communityIds = [],
+      communityInfo
     } = req.body;
 
     console.log('📝 Registration attempt:', { 
@@ -71,6 +72,30 @@ router.post('/register', async (req, res) => {
       emailVerificationToken,
       emailVerificationTokenExpires
     });
+
+    // Handle new community registration
+    if (communitySelection === 'new-community' && communityInfo) {
+      // Create new community (pending approval)
+      const newCommunity = await Community.create({
+        name: communityInfo.communityName,
+        address: communityInfo.communityAddress,
+        description: `New community registration pending approval. Approximate households: ${communityInfo.approximateHouseholds || 'N/A'}. Primary contact: ${communityInfo.primaryContact}`,
+        zipCode: null, // Will be set during approval process
+        accessCode: null, // Will be generated during approval process
+        isActive: false // Pending approval - admin will activate
+      });
+
+      // Add user as admin of the new community
+      await CommunityUser.create({
+        userId: user.id,
+        communityId: newCommunity.id,
+        role: 'admin',
+        isActive: true,
+        joinedAt: new Date()
+      });
+
+      console.log(`✅ New community created: ${newCommunity.name} (ID: ${newCommunity.id}) - Pending approval`);
+    }
 
     // If user selected "existing" communities, add them to those communities
     if (communitySelection === 'existing' && Array.isArray(communityIds) && communityIds.length > 0) {
