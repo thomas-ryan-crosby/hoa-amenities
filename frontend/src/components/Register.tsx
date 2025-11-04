@@ -188,6 +188,302 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
     );
   }
 
+  // Community Selection Step
+  if (step === 'community-selection') {
+    return (
+      <div>
+        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+          <h1 style={{ 
+            fontSize: '1.875rem', 
+            fontWeight: 700, 
+            color: '#1f2937', 
+            marginBottom: '0.5rem',
+            fontFamily: 'Inter, sans-serif' 
+          }}>
+            Welcome to Neighbri
+          </h1>
+          <p style={{ 
+            color: '#6b7280', 
+            fontSize: '0.9375rem',
+            fontFamily: 'Inter, sans-serif',
+            marginBottom: '2rem'
+          }}>
+            Let's get started by understanding your community situation
+          </p>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2rem' }}>
+          <button
+            type="button"
+            onClick={() => {
+              setCommunitySelection('existing');
+              setStep('registration');
+            }}
+            style={{
+              width: '100%',
+              padding: '1.25rem',
+              backgroundColor: communitySelection === 'existing' ? '#f0f9f4' : 'white',
+              border: communitySelection === 'existing' ? '2px solid #355B45' : '2px solid #e5e7eb',
+              borderRadius: '0.75rem',
+              cursor: 'pointer',
+              textAlign: 'left',
+              transition: 'all 0.2s',
+              fontFamily: 'Inter, sans-serif'
+            }}
+            onMouseEnter={(e) => {
+              if (communitySelection !== 'existing') {
+                e.currentTarget.style.borderColor = '#355B45';
+                e.currentTarget.style.backgroundColor = '#f9fafb';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (communitySelection !== 'existing') {
+                e.currentTarget.style.borderColor = '#e5e7eb';
+                e.currentTarget.style.backgroundColor = 'white';
+              }
+            }}
+          >
+            <div style={{ fontSize: '1rem', fontWeight: 600, color: '#1f2937', marginBottom: '0.5rem' }}>
+              My community has Neighbri
+            </div>
+            <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>
+              I am looking to get registered within my community
+            </div>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setCommunitySelection('interested');
+            }}
+            style={{
+              width: '100%',
+              padding: '1.25rem',
+              backgroundColor: communitySelection === 'interested' ? '#f0f9f4' : 'white',
+              border: communitySelection === 'interested' ? '2px solid #355B45' : '2px solid #e5e7eb',
+              borderRadius: '0.75rem',
+              cursor: 'pointer',
+              textAlign: 'left',
+              transition: 'all 0.2s',
+              fontFamily: 'Inter, sans-serif'
+            }}
+            onMouseEnter={(e) => {
+              if (communitySelection !== 'interested') {
+                e.currentTarget.style.borderColor = '#355B45';
+                e.currentTarget.style.backgroundColor = '#f9fafb';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (communitySelection !== 'interested') {
+                e.currentTarget.style.borderColor = '#e5e7eb';
+                e.currentTarget.style.backgroundColor = 'white';
+              }
+            }}
+          >
+            <div style={{ fontSize: '1rem', fontWeight: 600, color: '#1f2937', marginBottom: '0.5rem' }}>
+              Unsure if my community has Neighbri
+            </div>
+            <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>
+              I am interested in learning more
+            </div>
+          </button>
+        </div>
+
+        {communitySelection === 'interested' && (
+          <div style={{ marginBottom: '2rem' }}>
+            <label style={{ 
+              display: 'block', 
+              fontSize: '0.875rem', 
+              fontWeight: '600', 
+              color: '#374151',
+              marginBottom: '0.75rem'
+            }}>
+              What is your role within your community? *
+            </label>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <button
+                type="button"
+                onClick={() => setInterestedRole('resident')}
+                style={{
+                  width: '100%',
+                  padding: '0.75rem 1rem',
+                  backgroundColor: interestedRole === 'resident' ? '#f0f9f4' : 'white',
+                  border: interestedRole === 'resident' ? '2px solid #059669' : '1px solid #d1d5db',
+                  borderRadius: '0.5rem',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  fontSize: '0.875rem',
+                  color: '#1f2937',
+                  fontWeight: interestedRole === 'resident' ? 600 : 400,
+                  transition: 'all 0.2s',
+                  fontFamily: 'Inter, sans-serif'
+                }}
+                onMouseEnter={(e) => {
+                  if (interestedRole !== 'resident') {
+                    e.currentTarget.style.borderColor = '#059669';
+                    e.currentTarget.style.backgroundColor = '#f9fafb';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (interestedRole !== 'resident') {
+                    e.currentTarget.style.borderColor = '#d1d5db';
+                    e.currentTarget.style.backgroundColor = 'white';
+                  }
+                }}
+              >
+                Resident
+              </button>
+              <button
+                type="button"
+                onClick={() => setInterestedRole('janitorial')}
+                style={{
+                  width: '100%',
+                  padding: '0.75rem 1rem',
+                  backgroundColor: interestedRole === 'janitorial' ? '#f0f9f4' : 'white',
+                  border: interestedRole === 'janitorial' ? '2px solid #355B45' : '1px solid #d1d5db',
+                  borderRadius: '0.5rem',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  fontSize: '0.875rem',
+                  color: '#1f2937',
+                  fontWeight: interestedRole === 'janitorial' ? 600 : 400,
+                  transition: 'all 0.2s',
+                  fontFamily: 'Inter, sans-serif'
+                }}
+                onMouseEnter={(e) => {
+                  if (interestedRole !== 'janitorial') {
+                    e.currentTarget.style.borderColor = '#355B45';
+                    e.currentTarget.style.backgroundColor = '#f9fafb';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (interestedRole !== 'janitorial') {
+                    e.currentTarget.style.borderColor = '#d1d5db';
+                    e.currentTarget.style.backgroundColor = 'white';
+                  }
+                }}
+              >
+                Janitorial Staff
+              </button>
+              <button
+                type="button"
+                onClick={() => setInterestedRole('admin')}
+                style={{
+                  width: '100%',
+                  padding: '0.75rem 1rem',
+                  backgroundColor: interestedRole === 'admin' ? '#f0f9f4' : 'white',
+                  border: interestedRole === 'admin' ? '2px solid #dc2626' : '1px solid #d1d5db',
+                  borderRadius: '0.5rem',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  fontSize: '0.875rem',
+                  color: '#1f2937',
+                  fontWeight: interestedRole === 'admin' ? 600 : 400,
+                  transition: 'all 0.2s',
+                  fontFamily: 'Inter, sans-serif'
+                }}
+                onMouseEnter={(e) => {
+                  if (interestedRole !== 'admin') {
+                    e.currentTarget.style.borderColor = '#dc2626';
+                    e.currentTarget.style.backgroundColor = '#f9fafb';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (interestedRole !== 'admin') {
+                    e.currentTarget.style.borderColor = '#d1d5db';
+                    e.currentTarget.style.backgroundColor = 'white';
+                  }
+                }}
+              >
+                Admin / HOA Board Member
+              </button>
+            </div>
+          </div>
+        )}
+
+        {communitySelection === 'interested' && interestedRole && (
+          <button
+            type="button"
+            onClick={() => setStep('registration')}
+            style={{
+              width: '100%',
+              backgroundColor: '#355B45',
+              color: 'white',
+              padding: '0.75rem 1rem',
+              border: 'none',
+              borderRadius: '0.5rem',
+              fontSize: '1rem',
+              fontWeight: 600,
+              fontFamily: 'Inter, sans-serif',
+              cursor: 'pointer',
+              marginBottom: '1.5rem',
+              transition: 'background-color 0.2s, transform 0.1s',
+              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#244032';
+              e.currentTarget.style.transform = 'translateY(-1px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#355B45';
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}
+          >
+            Continue
+          </button>
+        )}
+
+        {communitySelection === 'existing' && (
+          <button
+            type="button"
+            onClick={() => setStep('registration')}
+            style={{
+              width: '100%',
+              backgroundColor: '#355B45',
+              color: 'white',
+              padding: '0.75rem 1rem',
+              border: 'none',
+              borderRadius: '0.5rem',
+              fontSize: '1rem',
+              fontWeight: 600,
+              fontFamily: 'Inter, sans-serif',
+              cursor: 'pointer',
+              marginBottom: '1.5rem',
+              transition: 'background-color 0.2s, transform 0.1s',
+              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#244032';
+              e.currentTarget.style.transform = 'translateY(-1px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#355B45';
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}
+          >
+            Continue
+          </button>
+        )}
+
+        <div style={{ textAlign: 'center' }}>
+          <p style={{ color: '#6b7280', fontSize: '0.875rem' }}>
+            Already have an account?{' '}
+            <Link 
+              to="/login" 
+              style={{ 
+                color: '#355B45', 
+                textDecoration: 'none',
+                fontFamily: 'Inter, sans-serif'
+              }}
+            >
+              Sign in here
+            </Link>
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
@@ -208,6 +504,32 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
           Join the Neighbri community today
         </p>
       </div>
+
+      <button
+        type="button"
+        onClick={() => setStep('community-selection')}
+        style={{
+          background: 'transparent',
+          border: 'none',
+          color: '#6b7280',
+          cursor: 'pointer',
+          fontSize: '0.875rem',
+          padding: '0.5rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem',
+          marginBottom: '1.5rem',
+          fontFamily: 'Inter, sans-serif'
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.color = '#355B45';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.color = '#6b7280';
+        }}
+      >
+        ← Back
+      </button>
 
       {error && (
         <div style={{
