@@ -6,6 +6,7 @@ import { Amenity } from './Amenity';
 import { Reservation } from './Reservation';
 import { Payment } from './Payment';
 import { CleaningSchedule } from './CleaningSchedule';
+import { Prospect } from './Prospect';
 
 // Define associations
 // Community associations
@@ -47,5 +48,6 @@ export {
   Amenity,
   Reservation,
   Payment,
-  CleaningSchedule
+  CleaningSchedule,
+  Prospect
 };

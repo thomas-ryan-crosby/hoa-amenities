@@ -18,12 +18,18 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
   const [searchResults, setSearchResults] = useState<Array<{id: number, name: string, description?: string, address?: string}>>([]);
   const [searching, setSearching] = useState(false);
   const [accessCodeSearched, setAccessCodeSearched] = useState(false);
+  const [zipCodeSearched, setZipCodeSearched] = useState(false);
   const [registeringNewCommunity, setRegisteringNewCommunity] = useState(false);
   const [communityInfo, setCommunityInfo] = useState({
     communityName: '',
-    communityAddress: '',
+    communityStreet: '',
+    communityZipCode: '',
+    communityCity: '',
+    communityState: '',
     approximateHouseholds: '',
-    primaryContact: ''
+    primaryContactName: '',
+    primaryContactTitle: '',
+    primaryContactInfo: ''
   });
   const [formData, setFormData] = useState({
     firstName: '',
@@ -32,7 +38,10 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
     password: '',
     confirmPassword: '',
     phone: '',
-    address: '',
+    street: '',
+    zipCode: '',
+    city: '',
+    state: '',
     agreedToTerms: false
   });
   const [loading, setLoading] = useState(false);
@@ -49,11 +58,64 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
   };
 
   const handleCommunityInfoChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const value = e.target.value;
+    const { name, value } = e.target;
     setCommunityInfo({
       ...communityInfo,
-      [e.target.name]: value
+      [name]: value
     });
+    
+    // Auto-populate city and state when zip code is entered
+    if (name === 'communityZipCode' && value.length === 5) {
+      fetchCityStateFromZip(value);
+    }
+  };
+
+  const fetchCityStateFromZip = async (zip: string) => {
+    try {
+      const response = await fetch(`https://api.zippopotam.us/us/${zip}`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.places && data.places.length > 0) {
+          const place = data.places[0];
+          setCommunityInfo(prev => ({
+            ...prev,
+            communityCity: place['place name'],
+            communityState: place['state abbreviation']
+          }));
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching city/state from zip:', error);
+    }
+  };
+
+  const handlePersonalZipChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setFormData({
+      ...formData,
+      zipCode: value
+    });
+    
+    // Auto-populate city and state when zip code is entered
+    if (value.length === 5) {
+      try {
+        const response = await fetch(`https://api.zippopotam.us/us/${value}`);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.places && data.places.length > 0) {
+            const place = data.places[0];
+            setFormData(prev => ({
+              ...prev,
+              zipCode: value,
+              city: place['place name'],
+              state: place['state abbreviation']
+            }));
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching city/state from zip:', error);
+      }
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -72,12 +134,20 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
         setError('Community / HOA Name is required');
         return;
       }
-      if (!communityInfo.communityAddress.trim()) {
-        setError('Community / HOA Address is required');
+      if (!communityInfo.communityStreet.trim()) {
+        setError('Community street address is required');
         return;
       }
-      if (!communityInfo.primaryContact.trim()) {
-        setError('Primary contact for HOA / Community is required');
+      if (!communityInfo.communityZipCode.trim()) {
+        setError('Community zip code is required');
+        return;
+      }
+      if (!communityInfo.primaryContactName.trim()) {
+        setError('Primary contact name is required');
+        return;
+      }
+      if (!communityInfo.primaryContactTitle.trim()) {
+        setError('Primary contact title is required');
         return;
       }
       if (!formData.firstName.trim() || !formData.lastName.trim() || !formData.email.trim()) {
@@ -97,12 +167,20 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
         setError('Community / HOA Name is required');
         return;
       }
-      if (!communityInfo.communityAddress.trim()) {
-        setError('Community / HOA Address is required');
+      if (!communityInfo.communityStreet.trim()) {
+        setError('Community street address is required');
         return;
       }
-      if (!communityInfo.primaryContact.trim()) {
-        setError('Primary contact for HOA / Community is required');
+      if (!communityInfo.communityZipCode.trim()) {
+        setError('Community zip code is required');
+        return;
+      }
+      if (!communityInfo.primaryContactName.trim()) {
+        setError('Primary contact name is required');
+        return;
+      }
+      if (!communityInfo.primaryContactTitle.trim()) {
+        setError('Primary contact title is required');
         return;
       }
     }
@@ -131,16 +209,24 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
         const interestData = {
           communityInfo: {
             communityName: communityInfo.communityName,
-            communityAddress: communityInfo.communityAddress,
+            communityStreet: communityInfo.communityStreet,
+            communityZipCode: communityInfo.communityZipCode,
+            communityCity: communityInfo.communityCity,
+            communityState: communityInfo.communityState,
             approximateHouseholds: parseInt(communityInfo.approximateHouseholds) || 0,
-            primaryContact: communityInfo.primaryContact
+            primaryContactName: communityInfo.primaryContactName,
+            primaryContactTitle: communityInfo.primaryContactTitle,
+            primaryContactInfo: communityInfo.primaryContactInfo || null
           },
           personalInfo: {
             firstName: formData.firstName,
             lastName: formData.lastName,
             email: formData.email,
             phone: formData.phone || null,
-            address: formData.address || null
+            street: formData.street || null,
+            zipCode: formData.zipCode || null,
+            city: formData.city || null,
+            state: formData.state || null
           }
         };
 
@@ -158,7 +244,10 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
         email: formData.email,
         password: formData.password,
         phone: formData.phone,
-        address: formData.address,
+        street: formData.street,
+        zipCode: formData.zipCode,
+        city: formData.city,
+        state: formData.state,
         role: 'resident' // Default role for new registrations
       };
 
@@ -172,9 +261,14 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
       if (registeringNewCommunity) {
         registrationData.communityInfo = {
           communityName: communityInfo.communityName,
-          communityAddress: communityInfo.communityAddress,
+          communityStreet: communityInfo.communityStreet,
+          communityZipCode: communityInfo.communityZipCode,
+          communityCity: communityInfo.communityCity,
+          communityState: communityInfo.communityState,
           approximateHouseholds: parseInt(communityInfo.approximateHouseholds) || 0,
-          primaryContact: communityInfo.primaryContact
+          primaryContactName: communityInfo.primaryContactName,
+          primaryContactTitle: communityInfo.primaryContactTitle,
+          primaryContactInfo: communityInfo.primaryContactInfo || null
         };
       }
 
@@ -484,6 +578,7 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
       try {
         setSearching(true);
         setError(null);
+        setZipCodeSearched(true);
         const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
         const response = await axios.get(`${apiUrl}/api/communities/search/by-zipcode`, {
           params: { zipCode: zipCode.trim() }
@@ -495,8 +590,14 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
           setError(null);
         }
       } catch (err: any) {
-        setError(err.response?.data?.message || 'Failed to search communities');
-        setSearchResults([]);
+        // Don't set error for empty results - show no results message instead
+        if (err.response?.status === 404 || (err.response?.data?.communities && err.response.data.communities.length === 0)) {
+          setSearchResults([]);
+          setError(null);
+        } else {
+          setError(err.response?.data?.message || 'Failed to search communities');
+          setSearchResults([]);
+        }
       } finally {
         setSearching(false);
       }
@@ -691,7 +792,10 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
               <input
                 type="text"
                 value={zipCode}
-                onChange={(e) => setZipCode(e.target.value)}
+                onChange={(e) => {
+                  setZipCode(e.target.value);
+                  setZipCodeSearched(false); // Reset when user types
+                }}
                 placeholder="Enter zip code"
                 style={{
                   flex: 1,
@@ -775,7 +879,7 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
             )}
 
             {/* No Results Message */}
-            {!searching && searchResults.length === 0 && zipCode && (
+            {!searching && searchResults.length === 0 && zipCodeSearched && zipCode && (
               <div style={{ 
                 marginTop: '1rem', 
                 padding: '1rem', 
@@ -845,7 +949,10 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
               <input
                 type="text"
                 value={accessCode}
-                onChange={(e) => setAccessCode(e.target.value)}
+                onChange={(e) => {
+                  setAccessCode(e.target.value);
+                  setAccessCodeSearched(false); // Reset when user types
+                }}
                 placeholder="Enter access code"
                 style={{
                   flex: 1,
@@ -1278,15 +1385,15 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
                 color: '#374151',
                 marginBottom: '0.25rem'
               }}>
-                Community / HOA Address *
+                Street Address *
               </label>
               <input
                 type="text"
-                name="communityAddress"
-                value={communityInfo.communityAddress}
+                name="communityStreet"
+                value={communityInfo.communityStreet}
                 onChange={handleCommunityInfoChange}
                 required
-                placeholder="e.g., 1 Sanctuary Blvd, Mandeville, LA 70471"
+                placeholder="e.g., 1 Sanctuary Blvd"
                 style={{
                   width: '100%',
                   padding: '0.75rem',
@@ -1297,6 +1404,94 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
                   boxSizing: 'border-box'
                 }}
               />
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem', marginBottom: '1rem' }}>
+              <div>
+                <label style={{ 
+                  display: 'block', 
+                  fontSize: '0.875rem', 
+                  fontWeight: '500', 
+                  color: '#374151',
+                  marginBottom: '0.25rem'
+                }}>
+                  Zip Code *
+                </label>
+                <input
+                  type="text"
+                  name="communityZipCode"
+                  value={communityInfo.communityZipCode}
+                  onChange={handleCommunityInfoChange}
+                  required
+                  maxLength={5}
+                  placeholder="70471"
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '0.5rem',
+                    fontSize: '1rem',
+                    fontFamily: 'Inter, sans-serif',
+                    boxSizing: 'border-box'
+                  }}
+                />
+              </div>
+              <div>
+                <label style={{ 
+                  display: 'block', 
+                  fontSize: '0.875rem', 
+                  fontWeight: '500', 
+                  color: '#374151',
+                  marginBottom: '0.25rem'
+                }}>
+                  City
+                </label>
+                <input
+                  type="text"
+                  name="communityCity"
+                  value={communityInfo.communityCity}
+                  readOnly
+                  placeholder="Auto-filled"
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '0.5rem',
+                    fontSize: '1rem',
+                    fontFamily: 'Inter, sans-serif',
+                    boxSizing: 'border-box',
+                    backgroundColor: '#f3f4f6'
+                  }}
+                />
+              </div>
+              <div>
+                <label style={{ 
+                  display: 'block', 
+                  fontSize: '0.875rem', 
+                  fontWeight: '500', 
+                  color: '#374151',
+                  marginBottom: '0.25rem'
+                }}>
+                  State
+                </label>
+                <input
+                  type="text"
+                  name="communityState"
+                  value={communityInfo.communityState}
+                  readOnly
+                  placeholder="Auto-filled"
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '0.5rem',
+                    fontSize: '1rem',
+                    fontFamily: 'Inter, sans-serif',
+                    boxSizing: 'border-box',
+                    backgroundColor: '#f3f4f6'
+                  }}
+                />
+              </div>
             </div>
 
             <div style={{ marginBottom: '1rem' }}>
@@ -1334,27 +1529,97 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
                 fontSize: '0.875rem', 
                 fontWeight: '500', 
                 color: '#374151',
-                marginBottom: '0.25rem'
+                marginBottom: '0.5rem'
               }}>
                 Primary Contact for HOA / Community *
               </label>
-              <input
-                type="text"
-                name="primaryContact"
-                value={communityInfo.primaryContact}
-                onChange={handleCommunityInfoChange}
-                required
-                placeholder="e.g., HOA Board President, Property Manager"
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '1rem',
-                  fontFamily: 'Inter, sans-serif',
-                  boxSizing: 'border-box'
-                }}
-              />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                  <div>
+                    <label style={{ 
+                      display: 'block', 
+                      fontSize: '0.75rem', 
+                      fontWeight: '500', 
+                      color: '#6b7280',
+                      marginBottom: '0.25rem'
+                    }}>
+                      Name *
+                    </label>
+                    <input
+                      type="text"
+                      name="primaryContactName"
+                      value={communityInfo.primaryContactName}
+                      onChange={handleCommunityInfoChange}
+                      required
+                      placeholder="Full Name"
+                      style={{
+                        width: '100%',
+                        padding: '0.75rem',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '0.5rem',
+                        fontSize: '1rem',
+                        fontFamily: 'Inter, sans-serif',
+                        boxSizing: 'border-box'
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ 
+                      display: 'block', 
+                      fontSize: '0.75rem', 
+                      fontWeight: '500', 
+                      color: '#6b7280',
+                      marginBottom: '0.25rem'
+                    }}>
+                      Title *
+                    </label>
+                    <input
+                      type="text"
+                      name="primaryContactTitle"
+                      value={communityInfo.primaryContactTitle}
+                      onChange={handleCommunityInfoChange}
+                      required
+                      placeholder="e.g., HOA President, Property Manager"
+                      style={{
+                        width: '100%',
+                        padding: '0.75rem',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '0.5rem',
+                        fontSize: '1rem',
+                        fontFamily: 'Inter, sans-serif',
+                        boxSizing: 'border-box'
+                      }}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label style={{ 
+                    display: 'block', 
+                    fontSize: '0.75rem', 
+                    fontWeight: '500', 
+                    color: '#6b7280',
+                    marginBottom: '0.25rem'
+                  }}>
+                    Contact Information (Optional)
+                  </label>
+                  <input
+                    type="text"
+                    name="primaryContactInfo"
+                    value={communityInfo.primaryContactInfo}
+                    onChange={handleCommunityInfoChange}
+                    placeholder="Phone or Email"
+                    style={{
+                      width: '100%',
+                      padding: '0.75rem',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '0.5rem',
+                      fontSize: '1rem',
+                      fontFamily: 'Inter, sans-serif',
+                      boxSizing: 'border-box'
+                    }}
+                  />
+                </div>
+              </div>
             </div>
           </div>
         )}
@@ -1528,14 +1793,14 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
             color: '#374151',
             marginBottom: '0.25rem'
           }}>
-            Address
+            Street Address
           </label>
           <input
             type="text"
-            name="address"
-            value={formData.address}
+            name="street"
+            value={formData.street}
             onChange={handleChange}
-            placeholder="Street address, City, State"
+            placeholder="Street address"
             style={{
               width: '100%',
               padding: '0.75rem',
@@ -1556,6 +1821,103 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
               e.currentTarget.style.boxShadow = 'none';
             }}
           />
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem', marginBottom: '1rem' }}>
+          <div>
+            <label style={{ 
+              display: 'block', 
+              fontSize: '0.875rem', 
+              fontWeight: '500', 
+              color: '#374151',
+              marginBottom: '0.25rem'
+            }}>
+              Zip Code
+            </label>
+            <input
+              type="text"
+              name="zipCode"
+              value={formData.zipCode}
+              onChange={handlePersonalZipChange}
+              maxLength={5}
+              placeholder="70471"
+              style={{
+                width: '100%',
+                padding: '0.75rem',
+                border: '1px solid #d1d5db',
+                borderRadius: '0.5rem',
+                fontSize: '1rem',
+                fontFamily: 'Inter, sans-serif',
+                boxSizing: 'border-box',
+                transition: 'border-color 0.2s, box-shadow 0.2s'
+              }}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = '#355B45';
+                e.currentTarget.style.outline = 'none';
+                e.currentTarget.style.boxShadow = '0 0 0 3px rgba(53, 91, 69, 0.1)';
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = '#d1d5db';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            />
+          </div>
+          <div>
+            <label style={{ 
+              display: 'block', 
+              fontSize: '0.875rem', 
+              fontWeight: '500', 
+              color: '#374151',
+              marginBottom: '0.25rem'
+            }}>
+              City
+            </label>
+            <input
+              type="text"
+              name="city"
+              value={formData.city}
+              readOnly
+              placeholder="Auto-filled"
+              style={{
+                width: '100%',
+                padding: '0.75rem',
+                border: '1px solid #d1d5db',
+                borderRadius: '0.5rem',
+                fontSize: '1rem',
+                fontFamily: 'Inter, sans-serif',
+                boxSizing: 'border-box',
+                backgroundColor: '#f3f4f6'
+              }}
+            />
+          </div>
+          <div>
+            <label style={{ 
+              display: 'block', 
+              fontSize: '0.875rem', 
+              fontWeight: '500', 
+              color: '#374151',
+              marginBottom: '0.25rem'
+            }}>
+              State
+            </label>
+            <input
+              type="text"
+              name="state"
+              value={formData.state}
+              readOnly
+              placeholder="Auto-filled"
+              style={{
+                width: '100%',
+                padding: '0.75rem',
+                border: '1px solid #d1d5db',
+                borderRadius: '0.5rem',
+                fontSize: '1rem',
+                fontFamily: 'Inter, sans-serif',
+                boxSizing: 'border-box',
+                backgroundColor: '#f3f4f6'
+              }}
+            />
+          </div>
         </div>
 
         <div style={{ marginBottom: '1rem' }}>

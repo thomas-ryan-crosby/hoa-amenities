@@ -2,7 +2,7 @@ import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
-import { User, CommunityUser, Community } from '../models';
+import { User, CommunityUser, Community, Prospect } from '../models';
 import { authenticateToken } from '../middleware/auth';
 import { buildPasswordResetEmail, buildVerificationEmail, sendEmail } from '../services/emailService';
 
@@ -28,9 +28,10 @@ router.post('/register-interest', async (req, res) => {
       });
     }
 
-    if (!communityInfo.communityName || !communityInfo.communityAddress || !communityInfo.primaryContact) {
+    if (!communityInfo.communityName || !communityInfo.communityStreet || !communityInfo.communityZipCode || 
+        !communityInfo.primaryContactName || !communityInfo.primaryContactTitle) {
       return res.status(400).json({ 
-        message: 'Community name, address, and primary contact are required' 
+        message: 'Community name, street, zip code, primary contact name, and title are required' 
       });
     }
 
@@ -40,12 +41,34 @@ router.post('/register-interest', async (req, res) => {
       });
     }
 
+    // Store prospect information in prospects table
+    const prospect = await Prospect.create({
+      firstName: personalInfo.firstName,
+      lastName: personalInfo.lastName,
+      email: personalInfo.email,
+      phone: personalInfo.phone || undefined,
+      street: personalInfo.street || undefined,
+      zipCode: personalInfo.zipCode || undefined,
+      city: personalInfo.city || undefined,
+      state: personalInfo.state || undefined,
+      communityName: communityInfo.communityName,
+      communityStreet: communityInfo.communityStreet,
+      communityZipCode: communityInfo.communityZipCode,
+      communityCity: communityInfo.communityCity || undefined,
+      communityState: communityInfo.communityState || undefined,
+      approximateHouseholds: communityInfo.approximateHouseholds || undefined,
+      primaryContactName: communityInfo.primaryContactName,
+      primaryContactTitle: communityInfo.primaryContactTitle,
+      primaryContactInfo: communityInfo.primaryContactInfo || undefined
+    });
+
     // Create a pending community entry (inactive, for admin review)
+    const fullAddress = `${communityInfo.communityStreet}, ${communityInfo.communityCity || ''}, ${communityInfo.communityState || ''} ${communityInfo.communityZipCode}`.trim();
     const pendingCommunity = await Community.create({
       name: communityInfo.communityName,
-      address: communityInfo.communityAddress,
-      description: `Interest registration - Pending review. Approximate households: ${communityInfo.approximateHouseholds || 'N/A'}. Primary contact: ${communityInfo.primaryContact}. Contact person: ${personalInfo.firstName} ${personalInfo.lastName} (${personalInfo.email})`,
-      zipCode: undefined,
+      address: fullAddress,
+      description: `Interest registration - Pending review. Approximate households: ${communityInfo.approximateHouseholds || 'N/A'}. Primary contact: ${communityInfo.primaryContactName} (${communityInfo.primaryContactTitle}). Contact person: ${personalInfo.firstName} ${personalInfo.lastName} (${personalInfo.email})`,
+      zipCode: communityInfo.communityZipCode,
       accessCode: undefined,
       isActive: false // Pending review
     });
