@@ -207,6 +207,28 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
   if (step === 'community-selection') {
     return (
       <div>
+        {/* Progress Indicator */}
+        <div style={{ marginBottom: '2rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+            <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#355B45', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600, fontSize: '0.875rem' }}>
+              1
+            </div>
+            <div style={{ width: '60px', height: '2px', backgroundColor: '#e5e7eb' }}></div>
+            <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#e5e7eb', color: '#9ca3af', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600, fontSize: '0.875rem' }}>
+              2
+            </div>
+            <div style={{ width: '60px', height: '2px', backgroundColor: '#e5e7eb' }}></div>
+            <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#e5e7eb', color: '#9ca3af', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600, fontSize: '0.875rem' }}>
+              3
+            </div>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', fontSize: '0.75rem', color: '#6b7280' }}>
+            <span style={{ color: '#355B45', fontWeight: 600 }}>Community</span>
+            <span>Account</span>
+            <span>Complete</span>
+          </div>
+        </div>
+
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <h1 style={{ 
             fontSize: '1.875rem', 
@@ -232,7 +254,7 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
             type="button"
             onClick={() => {
               setCommunitySelection('existing');
-              setStep('registration');
+              setStep('community-finder');
             }}
             style={{
               width: '100%',
@@ -534,6 +556,29 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
 
     return (
       <div>
+        {/* Progress Indicator */}
+        <div style={{ marginBottom: '2rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+            <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#10b981', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600, fontSize: '0.875rem' }}>
+              ✓
+            </div>
+            <div style={{ width: '60px', height: '2px', backgroundColor: '#355B45' }}></div>
+            <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#355B45', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600, fontSize: '0.875rem' }}>
+              2
+            </div>
+            <div style={{ width: '60px', height: '2px', backgroundColor: '#e5e7eb' }}></div>
+            <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#e5e7eb', color: '#9ca3af', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600, fontSize: '0.875rem' }}>
+              3
+            </div>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', fontSize: '0.75rem', color: '#6b7280' }}>
+            <span style={{ color: '#10b981', fontWeight: 600 }}>Community</span>
+            <span style={{ color: '#355B45', fontWeight: 600 }}>Find</span>
+            <span>Account</span>
+            <span>Complete</span>
+          </div>
+        </div>
+
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <h1 style={{ 
             fontSize: '1.875rem', 
