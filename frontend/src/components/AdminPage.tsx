@@ -15,6 +15,539 @@ interface User {
   createdAt?: string;
 }
 
+interface Amenity {
+  id: number;
+  name: string;
+  description?: string;
+  reservationFee: number | string;
+  deposit: number | string;
+  capacity: number;
+  calendarGroup?: string | null;
+  isActive: boolean;
+}
+
+interface AmenitiesManagementProps {
+  currentCommunity: any;
+  onError: (error: string | null) => void;
+}
+
+const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommunity, onError }) => {
+  const [amenities, setAmenities] = useState<Amenity[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [editingAmenity, setEditingAmenity] = useState<Amenity | null>(null);
+  const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+    reservationFee: '',
+    deposit: '',
+    capacity: '50',
+    calendarGroup: ''
+  });
+
+  useEffect(() => {
+    fetchAmenities();
+  }, [currentCommunity?.id]);
+
+  const fetchAmenities = async () => {
+    if (!currentCommunity?.id) return;
+
+    try {
+      setLoading(true);
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      const token = localStorage.getItem('token');
+      
+      // Fetch all amenities (including inactive) for admin management
+      const response = await axios.get(`${apiUrl}/api/amenities`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      // Also fetch inactive ones - we'll need to modify the backend to return all
+      // For now, we'll use what we get
+      setAmenities(response.data || []);
+    } catch (error: any) {
+      console.error('Error fetching amenities:', error);
+      onError(error.response?.data?.message || 'Failed to fetch amenities');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!currentCommunity?.id) {
+      onError('No community selected');
+      return;
+    }
+
+    try {
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      const token = localStorage.getItem('token');
+
+      const payload = {
+        name: formData.name,
+        description: formData.description || null,
+        reservationFee: parseFloat(formData.reservationFee),
+        deposit: parseFloat(formData.deposit),
+        capacity: parseInt(formData.capacity),
+        calendarGroup: formData.calendarGroup.trim() || null
+      };
+
+      if (editingAmenity) {
+        // Update existing
+        await axios.put(`${apiUrl}/api/amenities/${editingAmenity.id}`, payload, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+      } else {
+        // Create new
+        await axios.post(`${apiUrl}/api/amenities`, payload, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+      }
+
+      setShowModal(false);
+      setEditingAmenity(null);
+      setFormData({
+        name: '',
+        description: '',
+        reservationFee: '',
+        deposit: '',
+        capacity: '50',
+        calendarGroup: ''
+      });
+      fetchAmenities();
+    } catch (error: any) {
+      console.error('Error saving amenity:', error);
+      onError(error.response?.data?.message || 'Failed to save amenity');
+    }
+  };
+
+  const handleEdit = (amenity: Amenity) => {
+    setEditingAmenity(amenity);
+    setFormData({
+      name: amenity.name,
+      description: amenity.description || '',
+      reservationFee: String(amenity.reservationFee),
+      deposit: String(amenity.deposit),
+      capacity: String(amenity.capacity),
+      calendarGroup: amenity.calendarGroup || ''
+    });
+    setShowModal(true);
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!window.confirm('Are you sure you want to delete this amenity? This will deactivate it.')) {
+      return;
+    }
+
+    try {
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      const token = localStorage.getItem('token');
+
+      await axios.delete(`${apiUrl}/api/amenities/${id}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      fetchAmenities();
+    } catch (error: any) {
+      console.error('Error deleting amenity:', error);
+      onError(error.response?.data?.message || 'Failed to delete amenity');
+    }
+  };
+
+  const handleCreateNew = () => {
+    setEditingAmenity(null);
+    setFormData({
+      name: '',
+      description: '',
+      reservationFee: '',
+      deposit: '',
+      capacity: '50',
+      calendarGroup: ''
+    });
+    setShowModal(true);
+  };
+
+  // Get unique calendar groups
+  const calendarGroups = Array.from(new Set(amenities.map(a => a.calendarGroup).filter(Boolean))) as string[];
+
+  if (loading) {
+    return (
+      <div style={{ textAlign: 'center', padding: '2rem' }}>
+        <div>Loading amenities...</div>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+        <h2 style={{ fontSize: '1.5rem', fontWeight: 600, color: '#1f2937' }}>Amenities Management</h2>
+        <button
+          onClick={handleCreateNew}
+          style={{
+            padding: '0.75rem 1.5rem',
+            backgroundColor: '#355B45',
+            color: 'white',
+            border: 'none',
+            borderRadius: '0.5rem',
+            fontSize: '1rem',
+            fontWeight: 600,
+            cursor: 'pointer',
+            fontFamily: 'Inter, sans-serif'
+          }}
+        >
+          + Create Amenity
+        </button>
+      </div>
+
+      {/* Calendar Groups Summary */}
+      {calendarGroups.length > 0 && (
+        <div style={{
+          backgroundColor: '#f0f9f4',
+          border: '1px solid #355B45',
+          borderRadius: '0.5rem',
+          padding: '1rem',
+          marginBottom: '1.5rem'
+        }}>
+          <div style={{ fontWeight: 600, marginBottom: '0.5rem', color: '#1f2937' }}>Calendar Groups:</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+            {calendarGroups.map(group => (
+              <span key={group} style={{
+                backgroundColor: 'white',
+                padding: '0.25rem 0.75rem',
+                borderRadius: '0.375rem',
+                fontSize: '0.875rem',
+                color: '#355B45',
+                border: '1px solid #355B45'
+              }}>
+                {group}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Amenities List */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        {amenities.map((amenity) => (
+          <div
+            key={amenity.id}
+            style={{
+              backgroundColor: 'white',
+              padding: '1.5rem',
+              borderRadius: '0.5rem',
+              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+              border: '1px solid #e5e7eb',
+              opacity: amenity.isActive ? 1 : 0.6
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
+                  <h3 style={{ fontSize: '1.125rem', fontWeight: 600, color: '#1f2937', margin: 0 }}>
+                    {amenity.name}
+                  </h3>
+                  {!amenity.isActive && (
+                    <span style={{
+                      backgroundColor: '#6b7280',
+                      color: 'white',
+                      padding: '0.25rem 0.5rem',
+                      borderRadius: '0.25rem',
+                      fontSize: '0.75rem',
+                      fontWeight: 500
+                    }}>
+                      Inactive
+                    </span>
+                  )}
+                  {amenity.calendarGroup && (
+                    <span style={{
+                      backgroundColor: '#dbeafe',
+                      color: '#1e40af',
+                      padding: '0.25rem 0.5rem',
+                      borderRadius: '0.25rem',
+                      fontSize: '0.75rem',
+                      fontWeight: 500
+                    }}>
+                      {amenity.calendarGroup}
+                    </span>
+                  )}
+                </div>
+                {amenity.description && (
+                  <p style={{ color: '#6b7280', marginBottom: '0.5rem', fontSize: '0.875rem' }}>
+                    {amenity.description}
+                  </p>
+                )}
+                <div style={{ display: 'flex', gap: '2rem', fontSize: '0.875rem', color: '#6b7280' }}>
+                  <div>💰 Reservation Fee: ${parseFloat(String(amenity.reservationFee)).toFixed(2)}</div>
+                  <div>💵 Deposit: ${parseFloat(String(amenity.deposit)).toFixed(2)}</div>
+                  <div>👥 Capacity: {amenity.capacity}</div>
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <button
+                  onClick={() => handleEdit(amenity)}
+                  style={{
+                    padding: '0.5rem 1rem',
+                    backgroundColor: '#355B45',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '0.375rem',
+                    fontSize: '0.875rem',
+                    fontWeight: 500,
+                    cursor: 'pointer'
+                  }}
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(amenity.id)}
+                  style={{
+                    padding: '0.5rem 1rem',
+                    backgroundColor: '#dc2626',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '0.375rem',
+                    fontSize: '0.875rem',
+                    fontWeight: 500,
+                    cursor: 'pointer'
+                  }}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {amenities.length === 0 && (
+        <div style={{ textAlign: 'center', padding: '3rem', color: '#6b7280' }}>
+          <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>🏊</div>
+          <div>No amenities configured yet.</div>
+          <button
+            onClick={handleCreateNew}
+            style={{
+              marginTop: '1rem',
+              padding: '0.75rem 1.5rem',
+              backgroundColor: '#355B45',
+              color: 'white',
+              border: 'none',
+              borderRadius: '0.5rem',
+              fontSize: '1rem',
+              fontWeight: 600,
+              cursor: 'pointer'
+            }}
+          >
+            Create First Amenity
+          </button>
+        </div>
+      )}
+
+      {/* Create/Edit Modal */}
+      {showModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '0.5rem',
+            padding: '2rem',
+            maxWidth: '600px',
+            width: '90%',
+            maxHeight: '90vh',
+            overflow: 'auto'
+          }}>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 600, marginBottom: '1.5rem', color: '#1f2937' }}>
+              {editingAmenity ? 'Edit Amenity' : 'Create Amenity'}
+            </h2>
+            <form onSubmit={handleSubmit}>
+              <div style={{ marginBottom: '1rem' }}>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                  Name *
+                </label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  required
+                  style={{
+                    width: '100%',
+                    padding: '0.5rem',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '0.375rem',
+                    fontSize: '1rem'
+                  }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '1rem' }}>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                  Description
+                </label>
+                <textarea
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  rows={3}
+                  style={{
+                    width: '100%',
+                    padding: '0.5rem',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '0.375rem',
+                    fontSize: '1rem',
+                    fontFamily: 'Inter, sans-serif'
+                  }}
+                />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                    Reservation Fee ($) *
+                  </label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={formData.reservationFee}
+                    onChange={(e) => setFormData({ ...formData, reservationFee: e.target.value })}
+                    required
+                    style={{
+                      width: '100%',
+                      padding: '0.5rem',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '0.375rem',
+                      fontSize: '1rem'
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                    Deposit ($) *
+                  </label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={formData.deposit}
+                    onChange={(e) => setFormData({ ...formData, deposit: e.target.value })}
+                    required
+                    style={{
+                      width: '100%',
+                      padding: '0.5rem',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '0.375rem',
+                      fontSize: '1rem'
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div style={{ marginBottom: '1rem' }}>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                  Capacity *
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  value={formData.capacity}
+                  onChange={(e) => setFormData({ ...formData, capacity: e.target.value })}
+                  required
+                  style={{
+                    width: '100%',
+                    padding: '0.5rem',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '0.375rem',
+                    fontSize: '1rem'
+                  }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '1.5rem' }}>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                  Calendar Group
+                </label>
+                <input
+                  type="text"
+                  value={formData.calendarGroup}
+                  onChange={(e) => setFormData({ ...formData, calendarGroup: e.target.value })}
+                  placeholder="e.g., Pool + Clubroom, Tennis Courts, Ballfield"
+                  style={{
+                    width: '100%',
+                    padding: '0.5rem',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '0.375rem',
+                    fontSize: '1rem'
+                  }}
+                />
+                <p style={{ fontSize: '0.875rem', color: '#6b7280', marginTop: '0.25rem' }}>
+                  Amenities with the same calendar group will appear on the same calendar view. Leave empty for default calendar.
+                </p>
+              </div>
+
+              <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowModal(false);
+                    setEditingAmenity(null);
+                  }}
+                  style={{
+                    padding: '0.75rem 1.5rem',
+                    backgroundColor: '#f3f4f6',
+                    color: '#374151',
+                    border: 'none',
+                    borderRadius: '0.375rem',
+                    fontSize: '1rem',
+                    fontWeight: 500,
+                    cursor: 'pointer'
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  style={{
+                    padding: '0.75rem 1.5rem',
+                    backgroundColor: '#355B45',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '0.375rem',
+                    fontSize: '1rem',
+                    fontWeight: 600,
+                    cursor: 'pointer'
+                  }}
+                >
+                  {editingAmenity ? 'Update' : 'Create'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const AdminPage: React.FC = () => {
   const { user, currentCommunity } = useAuth();
   const [users, setUsers] = useState<User[]>([]);
@@ -22,7 +555,7 @@ const AdminPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'resident' | 'janitorial' | 'admin'>('all');
   const [actionLoading, setActionLoading] = useState<number | null>(null);
-  const [activeTab, setActiveTab] = useState<'users' | 'damage-reviews'>('users');
+  const [activeTab, setActiveTab] = useState<'users' | 'damage-reviews' | 'amenities'>('users');
   const [damageReviews, setDamageReviews] = useState<any[]>([]);
   const [damageReviewsLoading, setDamageReviewsLoading] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
@@ -34,9 +567,10 @@ const AdminPage: React.FC = () => {
   useEffect(() => {
     if (activeTab === 'users') {
       fetchUsers();
-    } else {
+    } else if (activeTab === 'damage-reviews') {
       fetchDamageReviews();
     }
+    // amenities tab will fetch its own data
   }, [activeTab, currentCommunity?.id]);
 
   const fetchUsers = async () => {
@@ -275,6 +809,23 @@ const AdminPage: React.FC = () => {
           Users
         </button>
         <button
+          onClick={() => setActiveTab('amenities')}
+          style={{
+            padding: '0.75rem 1.5rem',
+            backgroundColor: activeTab === 'amenities' ? '#355B45' : 'transparent',
+            color: activeTab === 'amenities' ? 'white' : '#6b7280',
+            border: 'none',
+            borderBottom: activeTab === 'amenities' ? '2px solid #355B45' : '2px solid transparent',
+            cursor: 'pointer',
+            fontSize: '1rem',
+            fontWeight: activeTab === 'amenities' ? '600' : '400',
+            fontFamily: 'Inter, sans-serif',
+            marginBottom: '-2px'
+          }}
+        >
+          Amenities
+        </button>
+        <button
           onClick={() => setActiveTab('damage-reviews')}
           style={{
             padding: '0.75rem 1.5rem',
@@ -324,6 +875,14 @@ const AdminPage: React.FC = () => {
         }}>
           {error}
         </div>
+      )}
+
+      {/* Amenities Tab Content */}
+      {activeTab === 'amenities' && (
+        <AmenitiesManagement 
+          currentCommunity={currentCommunity}
+          onError={setError}
+        />
       )}
 
       {/* Users Tab Content */}

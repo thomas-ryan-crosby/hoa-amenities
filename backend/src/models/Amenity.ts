@@ -9,6 +9,7 @@ export interface AmenityAttributes {
   deposit: number;
   capacity: number;
   communityId: number;
+  calendarGroup: string | null; // Group name for calendar display (e.g., "Pool + Clubroom", "Tennis Courts")
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -24,6 +25,7 @@ export class Amenity extends Model<AmenityAttributes, AmenityCreationAttributes>
   public deposit!: number;
   public capacity!: number;
   public communityId!: number;
+  public calendarGroup!: string | null;
   public isActive!: boolean;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -64,6 +66,11 @@ Amenity.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 50,
+    },
+    calendarGroup: {
+      type: DataTypes.STRING,
+      allowNull: true, // Null means amenity appears on default calendar
+      defaultValue: null,
     },
     isActive: {
       type: DataTypes.BOOLEAN,

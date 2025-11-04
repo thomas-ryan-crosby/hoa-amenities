@@ -32,6 +32,7 @@ interface Amenity {
   reservationFee: number | string;
   deposit: number | string;
   capacity: number;
+  calendarGroup?: string | null;
 }
 
 interface CalendarProps {
