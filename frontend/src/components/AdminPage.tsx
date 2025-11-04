@@ -405,7 +405,8 @@ const AdminPage: React.FC = () => {
                   <div>📧 {userData.email}</div>
                   {userData.phone && <div>📞 {userData.phone}</div>}
                   {userData.address && <div>🏠 {userData.address}</div>}
-                  <div>📅 Joined: {new Date(userData.createdAt).toLocaleDateString()}</div>
+                  {userData.createdAt && <div>📅 Joined: {new Date(userData.createdAt).toLocaleDateString()}</div>}
+                  {userData.joinedAt && <div>📅 Joined Community: {new Date(userData.joinedAt).toLocaleDateString()}</div>}
                 </div>
               </div>
 
