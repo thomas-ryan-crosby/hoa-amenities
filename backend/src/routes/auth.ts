@@ -80,8 +80,8 @@ router.post('/register', async (req, res) => {
         name: communityInfo.communityName,
         address: communityInfo.communityAddress,
         description: `New community registration pending approval. Approximate households: ${communityInfo.approximateHouseholds || 'N/A'}. Primary contact: ${communityInfo.primaryContact}`,
-        zipCode: null, // Will be set during approval process
-        accessCode: null, // Will be generated during approval process
+        zipCode: undefined, // Will be set during approval process
+        accessCode: undefined, // Will be generated during approval process
         isActive: false // Pending approval - admin will activate
       });
 
