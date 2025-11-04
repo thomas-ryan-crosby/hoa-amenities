@@ -24,7 +24,7 @@ export interface ProspectAttributes {
   updatedAt: Date;
 }
 
-export interface ProspectCreationAttributes extends Optional<ProspectAttributes, 'id' | 'phone' | 'street' | 'zipCode' | 'city' | 'state' | 'communityCity' | 'communityState' | 'approximateHouseholds' | 'primaryContactInfo'> {}
+export interface ProspectCreationAttributes extends Optional<ProspectAttributes, 'id' | 'phone' | 'street' | 'zipCode' | 'city' | 'state' | 'communityCity' | 'communityState' | 'approximateHouseholds' | 'primaryContactInfo' | 'createdAt' | 'updatedAt'> {}
 
 export class Prospect extends Model<ProspectAttributes, ProspectCreationAttributes> implements ProspectAttributes {
   public id!: number;

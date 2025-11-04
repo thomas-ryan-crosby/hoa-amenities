@@ -46,20 +46,20 @@ router.post('/register-interest', async (req, res) => {
       firstName: personalInfo.firstName,
       lastName: personalInfo.lastName,
       email: personalInfo.email,
-      phone: personalInfo.phone || undefined,
-      street: personalInfo.street || undefined,
-      zipCode: personalInfo.zipCode || undefined,
-      city: personalInfo.city || undefined,
-      state: personalInfo.state || undefined,
+      phone: personalInfo.phone || null,
+      street: personalInfo.street || null,
+      zipCode: personalInfo.zipCode || null,
+      city: personalInfo.city || null,
+      state: personalInfo.state || null,
       communityName: communityInfo.communityName,
       communityStreet: communityInfo.communityStreet,
       communityZipCode: communityInfo.communityZipCode,
-      communityCity: communityInfo.communityCity || undefined,
-      communityState: communityInfo.communityState || undefined,
-      approximateHouseholds: communityInfo.approximateHouseholds || undefined,
+      communityCity: communityInfo.communityCity || null,
+      communityState: communityInfo.communityState || null,
+      approximateHouseholds: communityInfo.approximateHouseholds || null,
       primaryContactName: communityInfo.primaryContactName,
       primaryContactTitle: communityInfo.primaryContactTitle,
-      primaryContactInfo: communityInfo.primaryContactInfo || undefined
+      primaryContactInfo: communityInfo.primaryContactInfo || null
     });
 
     // Create a pending community entry (inactive, for admin review)
