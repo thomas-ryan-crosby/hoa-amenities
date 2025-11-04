@@ -257,6 +257,93 @@ router.post('/register', async (req, res) => {
       console.log(`✅ User added to ${communities.length} community(ies)`);
     }
 
+    // If user is registering without a community (for public amenities), create a "Community-less" membership
+    if (communitySelection === 'none' || (!communitySelection && (!communityIds || communityIds.length === 0))) {
+      // Find or create a "Community-less" community for public users
+      let communityLess = await Community.findOne({
+        where: { name: 'Community-less' }
+      });
+
+      if (!communityLess) {
+        communityLess = await Community.create({
+          name: 'Community-less',
+          description: 'Default community for users without a specific community',
+          address: 'N/A',
+          isActive: true,
+          onboardingCompleted: true
+        });
+        console.log(`✅ Created "Community-less" community for public users`);
+      }
+
+      // Add user to "Community-less" community
+      await CommunityUser.findOrCreate({
+        where: {
+          userId: user.id,
+          communityId: communityLess.id
+        },
+        defaults: {
+          userId: user.id,
+          communityId: communityLess.id,
+          role: 'resident',
+          isActive: true,
+          joinedAt: new Date()
+        }
+      });
+
+      console.log(`✅ User added to "Community-less" community`);
+
+      // Auto-login community-less users
+      const allCommunityUsers = await CommunityUser.findAll({
+        where: { userId: user.id, isActive: true },
+        include: [{
+          model: Community,
+          as: 'community',
+          attributes: ['id', 'name', 'address', 'description', 'isActive', 'accessCode', 'onboardingCompleted', 'authorizationCertified', 'paymentSetup', 'memberListUploaded']
+        }]
+      });
+
+      const communities = (allCommunityUsers as any[])
+        .filter((cu: any) => cu.community && cu.community.isActive)
+        .map((cu: any) => ({
+          id: cu.community.id,
+          name: cu.community.name,
+          role: cu.role,
+          onboardingCompleted: cu.community.onboardingCompleted
+        }));
+
+      // Generate JWT token for auto-login
+      const token = jwt.sign(
+        {
+          userId: user.id,
+          email: user.email,
+          currentCommunityId: communityLess.id,
+          communityRole: 'resident',
+          communityRoles: communities.reduce((acc: any, comm: any) => {
+            acc[comm.id] = comm.role;
+            return acc;
+          }, {}),
+          allCommunities: communities.map((c: any) => ({ id: c.id, name: c.name, role: c.role }))
+        },
+        process.env.JWT_SECRET || 'your-secret-key',
+        { expiresIn: '7d' }
+      );
+
+      return res.status(201).json({
+        message: 'Registration successful. You can now book public amenities.',
+        token,
+        user: {
+          id: user.id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName
+        },
+        community: {
+          id: communityLess.id,
+          name: communityLess.name
+        }
+      });
+    }
+
     // If new community was created, auto-login the user
     if (communitySelection === 'new-community' && communityInfo) {
       // Get the newly created community with user's membership

@@ -10,6 +10,9 @@ export interface AmenityAttributes {
   capacity: number;
   communityId: number;
   calendarGroup: string | null; // Group name for calendar display (e.g., "Pool + Clubroom", "Tennis Courts")
+  isPublic: boolean; // Whether amenity can be booked by non-community members
+  publicReservationFee: number | null; // Different price for public users (null = same as reservationFee)
+  publicDeposit: number | null; // Different deposit for public users (null = same as deposit)
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -26,6 +29,9 @@ export class Amenity extends Model<AmenityAttributes, AmenityCreationAttributes>
   public capacity!: number;
   public communityId!: number;
   public calendarGroup!: string | null;
+  public isPublic!: boolean;
+  public publicReservationFee!: number | null;
+  public publicDeposit!: number | null;
   public isActive!: boolean;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -70,6 +76,21 @@ Amenity.init(
     calendarGroup: {
       type: DataTypes.STRING,
       allowNull: true, // Null means amenity appears on default calendar
+      defaultValue: null,
+    },
+    isPublic: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
+    publicReservationFee: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: true, // Null means use reservationFee for public users
+      defaultValue: null,
+    },
+    publicDeposit: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: true, // Null means use deposit for public users
       defaultValue: null,
     },
     isActive: {

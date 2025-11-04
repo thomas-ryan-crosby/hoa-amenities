@@ -23,6 +23,9 @@ interface Amenity {
   deposit: number | string;
   capacity: number;
   calendarGroup?: string | null;
+  isPublic?: boolean;
+  publicReservationFee?: number | string | null;
+  publicDeposit?: number | string | null;
   isActive: boolean;
 }
 
@@ -42,7 +45,10 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
     reservationFee: '',
     deposit: '',
     capacity: '50',
-    calendarGroup: ''
+    calendarGroup: '',
+    isPublic: false,
+    publicReservationFee: '',
+    publicDeposit: ''
   });
 
   useEffect(() => {
@@ -87,14 +93,24 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
       const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       const token = localStorage.getItem('token');
 
-      const payload = {
+      const payload: any = {
         name: formData.name,
         description: formData.description || null,
-        reservationFee: parseFloat(formData.reservationFee),
-        deposit: parseFloat(formData.deposit),
+        reservationFee: formData.reservationFee === '' ? '0' : formData.reservationFee,
+        deposit: formData.deposit === '' ? '0' : formData.deposit,
         capacity: parseInt(formData.capacity),
-        calendarGroup: formData.calendarGroup.trim() || null
+        calendarGroup: formData.calendarGroup.trim() || null,
+        isPublic: formData.isPublic
       };
+
+      // Only include public pricing if amenity is public
+      if (formData.isPublic) {
+        payload.publicReservationFee = formData.publicReservationFee === '' ? null : formData.publicReservationFee;
+        payload.publicDeposit = formData.publicDeposit === '' ? null : formData.publicDeposit;
+      } else {
+        payload.publicReservationFee = null;
+        payload.publicDeposit = null;
+      }
 
       if (editingAmenity) {
         // Update existing
@@ -120,7 +136,10 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
         reservationFee: '',
         deposit: '',
         capacity: '50',
-        calendarGroup: ''
+        calendarGroup: '',
+        isPublic: false,
+        publicReservationFee: '',
+        publicDeposit: ''
       });
       fetchAmenities();
     } catch (error: any) {
@@ -137,7 +156,10 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
       reservationFee: String(amenity.reservationFee),
       deposit: String(amenity.deposit),
       capacity: String(amenity.capacity),
-      calendarGroup: amenity.calendarGroup || ''
+      calendarGroup: amenity.calendarGroup || '',
+      isPublic: amenity.isPublic || false,
+      publicReservationFee: amenity.publicReservationFee !== null && amenity.publicReservationFee !== undefined ? String(amenity.publicReservationFee) : '',
+      publicDeposit: amenity.publicDeposit !== null && amenity.publicDeposit !== undefined ? String(amenity.publicDeposit) : ''
     });
     setShowModal(true);
   };
@@ -172,7 +194,10 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
       reservationFee: '',
       deposit: '',
       capacity: '50',
-      calendarGroup: ''
+      calendarGroup: '',
+      isPublic: false,
+      publicReservationFee: '',
+      publicDeposit: ''
     });
     setShowModal(true);
   };
@@ -502,6 +527,73 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                 <p style={{ fontSize: '0.875rem', color: '#6b7280', marginTop: '0.25rem' }}>
                   Amenities with the same calendar group will appear on the same calendar view. Leave empty for default calendar.
                 </p>
+              </div>
+
+              <div style={{ marginBottom: '1rem', padding: '1rem', backgroundColor: '#f0f9f4', border: '1px solid #355B45', borderRadius: '0.375rem' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', marginBottom: formData.isPublic ? '1rem' : '0' }}>
+                  <input
+                    type="checkbox"
+                    checked={formData.isPublic}
+                    onChange={(e) => setFormData({ ...formData, isPublic: e.target.checked })}
+                    style={{
+                      width: '20px',
+                      height: '20px',
+                      cursor: 'pointer'
+                    }}
+                  />
+                  <span style={{ fontWeight: 500, color: '#374151' }}>
+                    Public Amenity (bookable by non-community members)
+                  </span>
+                </label>
+                {formData.isPublic && (
+                  <div style={{ marginTop: '1rem', paddingLeft: '1.75rem' }}>
+                    <p style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '1rem' }}>
+                      Set different pricing for public users. Leave empty to use the same prices as residents.
+                    </p>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                      <div>
+                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151', fontSize: '0.875rem' }}>
+                          Public Reservation Fee ($)
+                        </label>
+                        <input
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          value={formData.publicReservationFee}
+                          onChange={(e) => setFormData({ ...formData, publicReservationFee: e.target.value })}
+                          placeholder="Same as resident fee"
+                          style={{
+                            width: '100%',
+                            padding: '0.5rem',
+                            border: '1px solid #d1d5db',
+                            borderRadius: '0.375rem',
+                            fontSize: '1rem'
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151', fontSize: '0.875rem' }}>
+                          Public Deposit ($)
+                        </label>
+                        <input
+                          type="number"
+                          step="0.01"
+                          min="0"
+                          value={formData.publicDeposit}
+                          onChange={(e) => setFormData({ ...formData, publicDeposit: e.target.value })}
+                          placeholder="Same as resident deposit"
+                          style={{
+                            width: '100%',
+                            padding: '0.5rem',
+                            border: '1px solid #d1d5db',
+                            borderRadius: '0.375rem',
+                            fontSize: '1rem'
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>

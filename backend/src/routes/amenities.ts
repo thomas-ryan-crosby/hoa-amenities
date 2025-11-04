@@ -1,8 +1,31 @@
 import express from 'express';
-import { Amenity } from '../models';
+import { Amenity, Community } from '../models';
 import { authenticateToken, requireAdmin } from '../middleware/auth';
 
 const router = express.Router();
+
+// GET /api/amenities/public - Get all public amenities (no auth required)
+router.get('/public', async (req: any, res) => {
+  try {
+    const publicAmenities = await Amenity.findAll({
+      where: { 
+        isPublic: true,
+        isActive: true
+      },
+      include: [{
+        model: Community,
+        as: 'community',
+        attributes: ['id', 'name', 'address']
+      }],
+      attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'calendarGroup', 'publicReservationFee', 'publicDeposit', 'communityId']
+    });
+    
+    return res.json(publicAmenities);
+  } catch (error) {
+    console.error('Error fetching public amenities:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
 
 // GET /api/amenities - List all amenities for current community
 router.get('/', authenticateToken, async (req: any, res) => {
@@ -21,7 +44,7 @@ router.get('/', authenticateToken, async (req: any, res) => {
 
     const amenities = await Amenity.findAll({
       where: whereClause,
-      attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'calendarGroup', 'isActive']
+      attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'calendarGroup', 'isPublic', 'publicReservationFee', 'publicDeposit', 'isActive']
     });
     
     console.log('✅ Found amenities:', amenities.length, 'items');
@@ -62,10 +85,25 @@ router.get('/:id', authenticateToken, async (req: any, res) => {
 router.post('/', authenticateToken, requireAdmin, async (req: any, res) => {
   try {
     const communityId = req.user.currentCommunityId;
-    const { name, description, reservationFee, deposit, capacity, calendarGroup } = req.body;
+    const { name, description, reservationFee, deposit, capacity, calendarGroup, isPublic, publicReservationFee, publicDeposit } = req.body;
 
-    if (!name || !reservationFee || !deposit || !capacity) {
+    if (!name || reservationFee === undefined || deposit === undefined || !capacity) {
       return res.status(400).json({ message: 'Name, reservation fee, deposit, and capacity are required' });
+    }
+
+    // Validate numeric values
+    const fee = parseFloat(reservationFee);
+    const depositAmount = parseFloat(deposit);
+    const cap = parseInt(capacity);
+
+    if (isNaN(fee) || fee < 0) {
+      return res.status(400).json({ message: 'Reservation fee must be a non-negative number' });
+    }
+    if (isNaN(depositAmount) || depositAmount < 0) {
+      return res.status(400).json({ message: 'Deposit must be a non-negative number' });
+    }
+    if (isNaN(cap) || cap < 1) {
+      return res.status(400).json({ message: 'Capacity must be a positive number' });
     }
 
     // Verify user is admin of this community
@@ -73,16 +111,19 @@ router.post('/', authenticateToken, requireAdmin, async (req: any, res) => {
       return res.status(403).json({ message: 'No community selected' });
     }
 
-    const amenity = await Amenity.create({
-      name,
-      description: description || null,
-      reservationFee: parseFloat(reservationFee),
-      deposit: parseFloat(deposit),
-      capacity: parseInt(capacity),
-      communityId,
-      calendarGroup: calendarGroup || null,
-      isActive: true
-    });
+      const amenity = await Amenity.create({
+        name,
+        description: description || null,
+        reservationFee: fee,
+        deposit: depositAmount,
+        capacity: cap,
+        communityId,
+        calendarGroup: calendarGroup || null,
+        isPublic: isPublic === true,
+        publicReservationFee: publicReservationFee !== undefined && publicReservationFee !== '' ? parseFloat(publicReservationFee) : null,
+        publicDeposit: publicDeposit !== undefined && publicDeposit !== '' ? parseFloat(publicDeposit) : null,
+        isActive: true
+      });
 
     return res.status(201).json({
       message: 'Amenity created successfully',
@@ -93,7 +134,10 @@ router.post('/', authenticateToken, requireAdmin, async (req: any, res) => {
         reservationFee: amenity.reservationFee,
         deposit: amenity.deposit,
         capacity: amenity.capacity,
-        calendarGroup: amenity.calendarGroup
+        calendarGroup: amenity.calendarGroup,
+        isPublic: amenity.isPublic,
+        publicReservationFee: amenity.publicReservationFee,
+        publicDeposit: amenity.publicDeposit
       }
     });
   } catch (error) {
@@ -107,7 +151,7 @@ router.put('/:id', authenticateToken, requireAdmin, async (req: any, res) => {
   try {
     const { id } = req.params;
     const communityId = req.user.currentCommunityId;
-    const { name, description, reservationFee, deposit, capacity, calendarGroup, isActive } = req.body;
+    const { name, description, reservationFee, deposit, capacity, calendarGroup, isPublic, publicReservationFee, publicDeposit, isActive } = req.body;
 
     if (!communityId) {
       return res.status(403).json({ message: 'No community selected' });
@@ -124,10 +168,35 @@ router.put('/:id', authenticateToken, requireAdmin, async (req: any, res) => {
     // Update fields
     if (name !== undefined) amenity.name = name;
     if (description !== undefined) amenity.description = description;
-    if (reservationFee !== undefined) amenity.reservationFee = parseFloat(reservationFee);
-    if (deposit !== undefined) amenity.deposit = parseFloat(deposit);
-    if (capacity !== undefined) amenity.capacity = parseInt(capacity);
+    if (reservationFee !== undefined) {
+      const fee = parseFloat(reservationFee);
+      if (isNaN(fee) || fee < 0) {
+        return res.status(400).json({ message: 'Reservation fee must be a non-negative number' });
+      }
+      amenity.reservationFee = fee;
+    }
+    if (deposit !== undefined) {
+      const depositAmount = parseFloat(deposit);
+      if (isNaN(depositAmount) || depositAmount < 0) {
+        return res.status(400).json({ message: 'Deposit must be a non-negative number' });
+      }
+      amenity.deposit = depositAmount;
+    }
+    if (capacity !== undefined) {
+      const cap = parseInt(capacity);
+      if (isNaN(cap) || cap < 1) {
+        return res.status(400).json({ message: 'Capacity must be a positive number' });
+      }
+      amenity.capacity = cap;
+    }
     if (calendarGroup !== undefined) amenity.calendarGroup = calendarGroup || null;
+    if (isPublic !== undefined) amenity.isPublic = isPublic === true;
+    if (publicReservationFee !== undefined) {
+      amenity.publicReservationFee = publicReservationFee !== null && publicReservationFee !== '' ? parseFloat(publicReservationFee) : null;
+    }
+    if (publicDeposit !== undefined) {
+      amenity.publicDeposit = publicDeposit !== null && publicDeposit !== '' ? parseFloat(publicDeposit) : null;
+    }
     if (isActive !== undefined) amenity.isActive = isActive;
 
     await amenity.save();
@@ -142,6 +211,9 @@ router.put('/:id', authenticateToken, requireAdmin, async (req: any, res) => {
         deposit: amenity.deposit,
         capacity: amenity.capacity,
         calendarGroup: amenity.calendarGroup,
+        isPublic: amenity.isPublic,
+        publicReservationFee: amenity.publicReservationFee,
+        publicDeposit: amenity.publicDeposit,
         isActive: amenity.isActive
       }
     });
