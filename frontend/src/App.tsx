@@ -14,10 +14,27 @@ import ForgotPasswordPage from './components/ForgotPasswordPage';
 import ResetPasswordPage from './components/ResetPasswordPage';
 import LandingPage from './components/LandingPage';
 import AboutPage from './components/AboutPage';
+import OnboardingPage from './components/OnboardingPage';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated } = useAuth();
   return isAuthenticated ? <>{children}</> : <Navigate to="/login" />;
+};
+
+const OnboardingRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { isAuthenticated, currentCommunity, isAdmin } = useAuth();
+  
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
+  
+  // If user is admin and community needs onboarding, redirect to onboarding
+  if (isAdmin && currentCommunity && !currentCommunity.onboardingCompleted) {
+    return <Navigate to="/onboarding" />;
+  }
+  
+  // If onboarding is completed, allow access
+  return <>{children}</>;
 };
 
 const MobileNavLink: React.FC<{ to: string; onClick: () => void; children: React.ReactNode }> = ({ to, onClick, children }) => {
@@ -388,42 +405,60 @@ const AppContent: React.FC = () => {
             <main>
               <Routes>
                 <Route path="/app" element={
-                  <ProtectedRoute>
-                    <Calendar 
-                      onDateClick={handleDateClick}
-                      refreshTrigger={refreshCalendar}
-                    />
-                  </ProtectedRoute>
+                  <OnboardingRoute>
+                    <ProtectedRoute>
+                      <Calendar 
+                        onDateClick={handleDateClick}
+                        refreshTrigger={refreshCalendar}
+                      />
+                    </ProtectedRoute>
+                  </OnboardingRoute>
                 } />
                 <Route 
                   path="/reservations" 
                   element={
-                    <ProtectedRoute>
-                      <ReservationsPage />
-                    </ProtectedRoute>
+                    <OnboardingRoute>
+                      <ProtectedRoute>
+                        <ReservationsPage />
+                      </ProtectedRoute>
+                    </OnboardingRoute>
                   } 
                 />
                 <Route 
                   path="/janitorial" 
                   element={
-                    <ProtectedRoute>
-                      <JanitorialPage />
-                    </ProtectedRoute>
+                    <OnboardingRoute>
+                      <ProtectedRoute>
+                        <JanitorialPage />
+                      </ProtectedRoute>
+                    </OnboardingRoute>
                   } 
                 />
                 <Route 
                   path="/admin" 
                   element={
-                    <ProtectedRoute>
-                      <AdminPage />
-                    </ProtectedRoute>
+                    <OnboardingRoute>
+                      <ProtectedRoute>
+                        <AdminPage />
+                      </ProtectedRoute>
+                    </OnboardingRoute>
                   } 
                 />
                 <Route 
                   path="/profile" 
                   element={
+                    <OnboardingRoute>
+                      <ProtectedRoute>
+                        <ProfilePage />
+                      </ProtectedRoute>
+                    </OnboardingRoute>
+                  } 
+                />
+                <Route 
+                  path="/onboarding" 
+                  element={
                     <ProtectedRoute>
-                      <ProfilePage />
+                      <OnboardingPage />
                     </ProtectedRoute>
                   } 
                 />

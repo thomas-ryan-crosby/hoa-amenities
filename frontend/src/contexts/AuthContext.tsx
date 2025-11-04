@@ -15,6 +15,11 @@ interface Community {
   role: 'resident' | 'janitorial' | 'admin';
   joinedAt?: string;
   isCurrent?: boolean;
+  accessCode?: string;
+  onboardingCompleted?: boolean;
+  authorizationCertified?: boolean;
+  paymentSetup?: boolean;
+  memberListUploaded?: boolean;
 }
 
 interface AuthContextType {

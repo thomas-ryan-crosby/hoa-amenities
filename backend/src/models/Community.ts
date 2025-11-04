@@ -10,6 +10,10 @@ export interface CommunityAttributes {
   contactEmail?: string;
   accessCode?: string;
   isActive: boolean;
+  onboardingCompleted?: boolean;
+  authorizationCertified?: boolean;
+  paymentSetup?: boolean;
+  memberListUploaded?: boolean;
   settings?: any; // JSON field for community-specific configurations
   createdAt: Date;
   updatedAt: Date;
@@ -26,6 +30,10 @@ export class Community extends Model<CommunityAttributes, CommunityCreationAttri
   public contactEmail?: string;
   public accessCode?: string;
   public isActive!: boolean;
+  public onboardingCompleted?: boolean;
+  public authorizationCertified?: boolean;
+  public paymentSetup?: boolean;
+  public memberListUploaded?: boolean;
   public settings?: any;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -70,6 +78,31 @@ Community.init(
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: true,
+      field: 'isActive'
+    },
+    onboardingCompleted: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+      field: 'onboardingCompleted'
+    },
+    authorizationCertified: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+      field: 'authorizationCertified'
+    },
+    paymentSetup: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+      field: 'paymentSetup'
+    },
+    memberListUploaded: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+      field: 'memberListUploaded'
     },
     settings: {
       type: DataTypes.JSONB,

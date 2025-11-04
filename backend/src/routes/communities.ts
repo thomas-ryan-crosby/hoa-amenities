@@ -1,7 +1,12 @@
 import express from 'express';
+import multer from 'multer';
 import { Community, CommunityUser, User } from '../models';
 import { authenticateToken, requireAdmin } from '../middleware/auth';
+import { sendEmail } from '../services/emailService';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
+
+const upload = multer({ storage: multer.memoryStorage() });
 
 const router = express.Router();
 
@@ -16,13 +21,13 @@ router.get('/', authenticateToken, async (req: any, res) => {
         {
           model: Community,
           as: 'community',
-          attributes: ['id', 'name', 'description', 'address', 'contactEmail', 'isActive']
+          attributes: ['id', 'name', 'description', 'address', 'contactEmail', 'isActive', 'accessCode', 'onboardingCompleted', 'authorizationCertified', 'paymentSetup', 'memberListUploaded']
         }
       ],
       attributes: ['role', 'communityId', 'joinedAt']
     });
 
-    const communities = (communityMemberships as any[])
+      const communities = (communityMemberships as any[])
       .filter((cu: any) => cu.community && cu.community.isActive)
       .map((cu: any) => ({
         id: cu.communityId,
@@ -30,6 +35,11 @@ router.get('/', authenticateToken, async (req: any, res) => {
         description: cu.community.description,
         address: cu.community.address,
         contactEmail: cu.community.contactEmail,
+        accessCode: cu.community.accessCode,
+        onboardingCompleted: cu.community.onboardingCompleted,
+        authorizationCertified: cu.community.authorizationCertified,
+        paymentSetup: cu.community.paymentSetup,
+        memberListUploaded: cu.community.memberListUploaded,
         role: cu.role as 'resident' | 'janitorial' | 'admin',
         joinedAt: cu.joinedAt,
         isCurrent: cu.communityId === req.user.currentCommunityId
@@ -359,6 +369,266 @@ router.put('/:id', authenticateToken, requireAdmin, async (req: any, res) => {
     return res.status(500).json({ message: 'Internal server error' });
   }
 });
+
+// PUT /api/communities/:id/onboarding/certify - Certify authorization
+router.put('/:id/onboarding/certify', authenticateToken, requireAdmin, async (req: any, res) => {
+  try {
+    const { id } = req.params;
+    const communityId = parseInt(id);
+    const { certified } = req.body;
+
+    // Verify user is admin of this community
+    const membership = await CommunityUser.findOne({
+      where: {
+        userId: req.user.id,
+        communityId,
+        role: 'admin',
+        isActive: true
+      }
+    });
+
+    if (!membership) {
+      return res.status(403).json({ message: 'You must be an admin of this community' });
+    }
+
+    const community = await Community.findByPk(communityId);
+    if (!community) {
+      return res.status(404).json({ message: 'Community not found' });
+    }
+
+    community.authorizationCertified = certified;
+    await community.save();
+
+    return res.json({
+      message: 'Authorization certification updated',
+      community: {
+        id: community.id,
+        authorizationCertified: community.authorizationCertified
+      }
+    });
+  } catch (error) {
+    console.error('Error updating authorization certification:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// PUT /api/communities/:id/onboarding/complete - Mark onboarding as complete
+router.put('/:id/onboarding/complete', authenticateToken, requireAdmin, async (req: any, res) => {
+  try {
+    const { id } = req.params;
+    const communityId = parseInt(id);
+
+    // Verify user is admin of this community
+    const membership = await CommunityUser.findOne({
+      where: {
+        userId: req.user.id,
+        communityId,
+        role: 'admin',
+        isActive: true
+      }
+    });
+
+    if (!membership) {
+      return res.status(403).json({ message: 'You must be an admin of this community' });
+    }
+
+    const community = await Community.findByPk(communityId);
+    if (!community) {
+      return res.status(404).json({ message: 'Community not found' });
+    }
+
+    // Generate access code if not already set
+    if (!community.accessCode) {
+      const accessCode = crypto.randomBytes(4).toString('hex').toUpperCase();
+      community.accessCode = accessCode;
+    }
+
+    community.onboardingCompleted = true;
+    community.memberListUploaded = true;
+    await community.save();
+
+    return res.json({
+      message: 'Onboarding completed',
+      community: {
+        id: community.id,
+        onboardingCompleted: community.onboardingCompleted,
+        accessCode: community.accessCode
+      }
+    });
+  } catch (error) {
+    console.error('Error completing onboarding:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// POST /api/communities/:id/onboarding/send-access-codes - Send access codes via email
+router.post('/:id/onboarding/send-access-codes', authenticateToken, requireAdmin, async (req: any, res) => {
+  try {
+    const { id } = req.params;
+    const communityId = parseInt(id);
+    const { emails } = req.body;
+
+    if (!emails || !Array.isArray(emails) || emails.length === 0) {
+      return res.status(400).json({ message: 'Email addresses are required' });
+    }
+
+    // Verify user is admin of this community
+    const membership = await CommunityUser.findOne({
+      where: {
+        userId: req.user.id,
+        communityId,
+        role: 'admin',
+        isActive: true
+      }
+    });
+
+    if (!membership) {
+      return res.status(403).json({ message: 'You must be an admin of this community' });
+    }
+
+    const community = await Community.findByPk(communityId);
+    if (!community) {
+      return res.status(404).json({ message: 'Community not found' });
+    }
+
+    // Generate access code if not already set
+    if (!community.accessCode) {
+      const accessCode = crypto.randomBytes(4).toString('hex').toUpperCase();
+      community.accessCode = accessCode;
+      await community.save();
+    }
+
+    const baseUrl = process.env.FRONTEND_URL || 'https://www.neighbri.com';
+    const registrationUrl = `${baseUrl}/register`;
+
+    // Send emails to all addresses
+    const emailPromises = emails.map(async (email: string) => {
+      try {
+        const { subject, html } = buildAccessCodeEmail(community.name, community.accessCode!, registrationUrl);
+        await sendEmail({ to: email.trim(), subject, html });
+      } catch (error) {
+        console.error(`Failed to send email to ${email}:`, error);
+      }
+    });
+
+    await Promise.all(emailPromises);
+
+    return res.json({
+      message: `Access codes sent to ${emails.length} email address(es)`,
+      accessCode: community.accessCode
+    });
+  } catch (error) {
+    console.error('Error sending access codes:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// POST /api/communities/:id/onboarding/upload-member-list - Upload member list CSV
+router.post('/:id/onboarding/upload-member-list', authenticateToken, requireAdmin, upload.single('memberList'), async (req: any, res) => {
+  try {
+    const { id } = req.params;
+    const communityId = parseInt(id);
+
+    // Verify user is admin of this community
+    const membership = await CommunityUser.findOne({
+      where: {
+        userId: req.user.id,
+        communityId,
+        role: 'admin',
+        isActive: true
+      }
+    });
+
+    if (!membership) {
+      return res.status(403).json({ message: 'You must be an admin of this community' });
+    }
+
+    const community = await Community.findByPk(communityId);
+    if (!community) {
+      return res.status(404).json({ message: 'Community not found' });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ message: 'File is required' });
+    }
+
+    // Parse CSV file
+    const csvContent = req.file.buffer.toString('utf-8');
+    const lines = csvContent.split('\n').filter((line: string) => line.trim());
+    const emails: string[] = [];
+
+    // Simple CSV parsing - assumes first column is email or looks for email column
+    lines.forEach((line: string, index: number) => {
+      if (index === 0) {
+        // Skip header row
+        return;
+      }
+      const columns = line.split(',').map((col: string) => col.trim().replace(/^"|"$/g, ''));
+      // Try to find email column (look for @ symbol)
+      const emailColumn = columns.find((col: string) => col.includes('@'));
+      if (emailColumn) {
+        emails.push(emailColumn);
+      } else if (columns[0] && columns[0].includes('@')) {
+        emails.push(columns[0]);
+      }
+    });
+
+    if (emails.length === 0) {
+      return res.status(400).json({ message: 'No email addresses found in CSV file' });
+    }
+
+    // Generate access code if not already set
+    if (!community.accessCode) {
+      const accessCode = crypto.randomBytes(4).toString('hex').toUpperCase();
+      community.accessCode = accessCode;
+      await community.save();
+    }
+
+    const baseUrl = process.env.FRONTEND_URL || 'https://www.neighbri.com';
+    const registrationUrl = `${baseUrl}/register`;
+
+    // Send emails to all addresses
+    const emailPromises = emails.map(async (email: string) => {
+      try {
+        const { subject, html } = buildAccessCodeEmail(community.name, community.accessCode!, registrationUrl);
+        await sendEmail({ to: email.trim(), subject, html });
+      } catch (error) {
+        console.error(`Failed to send email to ${email}:`, error);
+      }
+    });
+
+    await Promise.all(emailPromises);
+
+    return res.json({
+      message: `Member list processed and access codes sent to ${emails.length} email address(es)`,
+      accessCode: community.accessCode,
+      emailsProcessed: emails.length
+    });
+  } catch (error) {
+    console.error('Error uploading member list:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+function buildAccessCodeEmail(communityName: string, accessCode: string, registrationUrl: string) {
+  return {
+    subject: `Welcome to ${communityName} on Neighbri`,
+    html: `
+      <div style="font-family:Arial,sans-serif;max-width:600px;margin:auto;">
+        <h2>Welcome to Neighbri, ${communityName}!</h2>
+        <p>Your community has been set up on Neighbri. Use the access code below to register your account:</p>
+        <div style="background:#f0f9f4;border:2px solid #355B45;border-radius:8px;padding:20px;text-align:center;margin:20px 0;">
+          <div style="font-size:14px;color:#6b7280;margin-bottom:8px;">Your Access Code</div>
+          <div style="font-size:32px;font-weight:700;color:#355B45;letter-spacing:4px;">${accessCode}</div>
+        </div>
+        <p>Click the button below to register your account:</p>
+        <p><a href="${registrationUrl}" style="background:#355B45;color:#fff;padding:12px 24px;border-radius:6px;text-decoration:none;font-weight:600;display:inline-block;">Register Now</a></p>
+        <p>Or visit <a href="${registrationUrl}">${registrationUrl}</a> and enter your access code: <strong>${accessCode}</strong></p>
+        <p>If you have any questions, please contact your community administrator.</p>
+      </div>
+    `
+  };
+}
 
 export default router;
 
