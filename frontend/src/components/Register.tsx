@@ -930,6 +930,29 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
 
   return (
     <div>
+      {/* Progress Indicator */}
+      <div style={{ marginBottom: '2rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+          <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#10b981', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600, fontSize: '0.875rem' }}>
+            ✓
+          </div>
+          <div style={{ width: '60px', height: '2px', backgroundColor: communitySelection === 'existing' ? '#10b981' : '#e5e7eb' }}></div>
+          <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: communitySelection === 'existing' ? '#10b981' : '#355B45', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600, fontSize: '0.875rem' }}>
+            {communitySelection === 'existing' ? '✓' : '2'}
+          </div>
+          <div style={{ width: '60px', height: '2px', backgroundColor: '#355B45' }}></div>
+          <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#355B45', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600, fontSize: '0.875rem' }}>
+            3
+          </div>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', fontSize: '0.75rem', color: '#6b7280' }}>
+          <span style={{ color: '#10b981', fontWeight: 600 }}>Community</span>
+          {communitySelection === 'existing' && <span style={{ color: '#10b981', fontWeight: 600 }}>Find</span>}
+          <span style={{ color: '#355B45', fontWeight: 600 }}>Account</span>
+          <span>Complete</span>
+        </div>
+      </div>
+
       <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
         <h1 style={{ 
           fontSize: '1.875rem', 
@@ -949,31 +972,59 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
         </p>
       </div>
 
-      <button
-        type="button"
-        onClick={() => setStep('community-selection')}
-        style={{
-          background: 'transparent',
-          border: 'none',
-          color: '#6b7280',
-          cursor: 'pointer',
-          fontSize: '0.875rem',
-          padding: '0.5rem',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem',
-          marginBottom: '1.5rem',
-          fontFamily: 'Inter, sans-serif'
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.color = '#355B45';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.color = '#6b7280';
-        }}
-      >
-        ← Back
-      </button>
+      {communitySelection === 'existing' ? (
+        <button
+          type="button"
+          onClick={() => setStep('community-finder')}
+          style={{
+            background: 'transparent',
+            border: 'none',
+            color: '#6b7280',
+            cursor: 'pointer',
+            fontSize: '0.875rem',
+            padding: '0.5rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            marginBottom: '1.5rem',
+            fontFamily: 'Inter, sans-serif'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.color = '#355B45';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.color = '#6b7280';
+          }}
+        >
+          ← Back to Community Finder
+        </button>
+      ) : (
+        <button
+          type="button"
+          onClick={() => setStep('community-selection')}
+          style={{
+            background: 'transparent',
+            border: 'none',
+            color: '#6b7280',
+            cursor: 'pointer',
+            fontSize: '0.875rem',
+            padding: '0.5rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            marginBottom: '1.5rem',
+            fontFamily: 'Inter, sans-serif'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.color = '#355B45';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.color = '#6b7280';
+          }}
+        >
+          ← Back
+        </button>
+      )}
 
       {error && (
         <div style={{
