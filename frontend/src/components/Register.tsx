@@ -125,16 +125,6 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
       setLoading(true);
       const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       
-      const registrationData: any = {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        password: formData.password,
-        phone: formData.phone,
-        address: formData.address,
-        role: 'resident' // Default role for new registrations
-      };
-
       // For interested users, submit interest (no account creation)
       if (communitySelection === 'interested') {
         const interestData = {
