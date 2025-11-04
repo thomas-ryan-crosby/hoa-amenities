@@ -244,4 +244,354 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// Rest of the auth routes...
+// POST /api/auth/login - User login
+router.post('/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required' });
+    }
+
+    const user = await User.findOne({ where: { email: email.trim().toLowerCase() } });
+    if (!user) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    // Check if user is active
+    if (!user.isActive) {
+      return res.status(401).json({ message: 'Account is inactive. Please contact support.' });
+    }
+
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    if (!isValidPassword) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    // Get user's communities and roles
+    const communityUsers = await CommunityUser.findAll({
+      where: { userId: user.id, isActive: true },
+      include: [{
+        model: Community,
+        as: 'community',
+        attributes: ['id', 'name', 'address', 'description']
+      }]
+    });
+
+    const communities = communityUsers.map((cu: any) => ({
+      id: cu.community.id,
+      name: cu.community.name,
+      address: cu.community.address,
+      description: cu.community.description,
+      role: cu.role
+    }));
+
+    // Determine default community (first active community, or null if none)
+    const defaultCommunity = communities.length > 0 ? communities[0] : null;
+    const defaultCommunityId = defaultCommunity?.id || null;
+    const defaultCommunityRole = defaultCommunity?.role || null;
+
+    // Create JWT token with user info and community info
+    const token = jwt.sign(
+      {
+        userId: user.id,
+        email: user.email,
+        currentCommunityId: defaultCommunityId,
+        communityRole: defaultCommunityRole,
+        communityRoles: communities.reduce((acc: any, comm: any) => {
+          acc[comm.id] = comm.role;
+          return acc;
+        }, {})
+      },
+      process.env.JWT_SECRET || 'your-secret-key',
+      { expiresIn: '7d' }
+    );
+
+    return res.json({
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        phone: user.phone,
+        address: user.address,
+        emailVerified: user.emailVerified
+      },
+      communities,
+      currentCommunity: defaultCommunity
+    });
+
+  } catch (error) {
+    console.error('Login error:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// GET /api/auth/verify-email/:token - Verify email address
+router.get('/verify-email/:token', async (req, res) => {
+  try {
+    const { token } = req.params;
+
+    const user = await User.findOne({
+      where: {
+        emailVerificationToken: token,
+        emailVerificationTokenExpires: {
+          [require('sequelize').Op.gt]: new Date()
+        }
+      }
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid or expired verification token' });
+    }
+
+    await user.update({
+      emailVerified: true,
+      emailVerificationToken: null,
+      emailVerificationTokenExpires: null
+    });
+
+    return res.json({ message: 'Email verified successfully' });
+
+  } catch (error) {
+    console.error('Email verification error:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// POST /api/auth/resend-verification - Resend verification email
+router.post('/resend-verification', async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: 'Email is required' });
+    }
+
+    const user = await User.findOne({ where: { email: email.trim().toLowerCase() } });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (user.emailVerified) {
+      return res.status(400).json({ message: 'Email is already verified' });
+    }
+
+    // Generate new verification token
+    const emailVerificationToken = crypto.randomBytes(32).toString('hex');
+    const emailVerificationTokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24h
+
+    await user.update({
+      emailVerificationToken,
+      emailVerificationTokenExpires
+    });
+
+    // Send verification email
+    try {
+      const baseUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+      const verifyUrl = `${baseUrl}/verify-email/${emailVerificationToken}`;
+      const { subject, html } = buildVerificationEmail(user.firstName, verifyUrl);
+      await sendEmail({ to: user.email, subject, html });
+    } catch (e) {
+      console.warn('Failed to send verification email:', e);
+      return res.status(500).json({ message: 'Failed to send verification email' });
+    }
+
+    return res.json({ message: 'Verification email sent' });
+
+  } catch (error) {
+    console.error('Resend verification error:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// POST /api/auth/forgot-password - Request password reset
+router.post('/forgot-password', async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: 'Email is required' });
+    }
+
+    const user = await User.findOne({ where: { email: email.trim().toLowerCase() } });
+    if (!user) {
+      // Don't reveal if user exists or not for security
+      return res.json({ message: 'If an account exists with this email, a password reset link has been sent.' });
+    }
+
+    // Generate reset token
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const resetTokenExpires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+
+    await user.update({
+      passwordResetToken: resetToken,
+      passwordResetTokenExpires: resetTokenExpires
+    });
+
+    // Send reset email
+    try {
+      const baseUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+      const resetUrl = `${baseUrl}/reset-password/${resetToken}`;
+      const { subject, html } = buildPasswordResetEmail(user.firstName, resetUrl);
+      await sendEmail({ to: user.email, subject, html });
+    } catch (e) {
+      console.warn('Failed to send password reset email:', e);
+      return res.status(500).json({ message: 'Failed to send password reset email' });
+    }
+
+    return res.json({ message: 'If an account exists with this email, a password reset link has been sent.' });
+
+  } catch (error) {
+    console.error('Forgot password error:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// POST /api/auth/reset-password - Reset password with token
+router.post('/reset-password', async (req, res) => {
+  try {
+    const { token, newPassword } = req.body;
+
+    if (!token || !newPassword) {
+      return res.status(400).json({ message: 'Token and new password are required' });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({ message: 'Password must be at least 6 characters long' });
+    }
+
+    const user = await User.findOne({
+      where: {
+        passwordResetToken: token,
+        passwordResetTokenExpires: {
+          [require('sequelize').Op.gt]: new Date()
+        }
+      }
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid or expired reset token' });
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update password and clear reset token
+    await user.update({
+      password: hashedPassword,
+      passwordResetToken: null,
+      passwordResetTokenExpires: null
+    });
+
+    return res.json({ message: 'Password reset successfully' });
+
+  } catch (error) {
+    console.error('Reset password error:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// GET /api/auth/profile - Get user profile (protected route)
+router.get('/profile', authenticateToken, async (req: any, res) => {
+  try {
+    const userId = req.user.id;
+    const user = await User.findByPk(userId, {
+      attributes: { exclude: ['password', 'passwordResetToken', 'passwordResetTokenExpires'] }
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    return res.json(user);
+
+  } catch (error) {
+    console.error('Profile fetch error:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// PUT /api/auth/profile - Update user profile (protected route)
+router.put('/profile', authenticateToken, async (req: any, res) => {
+  try {
+    const userId = req.user.id;
+    const { firstName, lastName, phone, address } = req.body;
+
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Update user fields
+    if (firstName !== undefined) user.firstName = firstName.trim();
+    if (lastName !== undefined) user.lastName = lastName.trim();
+    if (phone !== undefined) user.phone = phone && phone.trim() ? phone.trim() : null;
+    if (address !== undefined) user.address = address && address.trim() ? address.trim() : null;
+
+    await user.save();
+
+    return res.json({
+      message: 'Profile updated successfully',
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        phone: user.phone,
+        address: user.address
+      }
+    });
+
+  } catch (error) {
+    console.error('Profile update error:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// PUT /api/auth/change-password - Change user password (protected route)
+router.put('/change-password', authenticateToken, async (req: any, res) => {
+  try {
+    const userId = req.user.id;
+    const { currentPassword, newPassword } = req.body;
+
+    // Validate required fields
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({
+        message: 'Current password and new password are required'
+      });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({
+        message: 'New password must be at least 6 characters long'
+      });
+    }
+
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Verify current password
+    const isValidPassword = await bcrypt.compare(currentPassword, user.password);
+    if (!isValidPassword) {
+      return res.status(401).json({ message: 'Current password is incorrect' });
+    }
+
+    // Hash new password
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update password
+    await user.update({ password: hashedNewPassword });
+
+    return res.json({ message: 'Password changed successfully' });
+
+  } catch (error) {
+    console.error('Password change error:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+export default router;
