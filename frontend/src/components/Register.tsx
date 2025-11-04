@@ -7,6 +7,9 @@ interface RegisterProps {
 }
 
 const Register: React.FC<RegisterProps> = ({ onRegister }) => {
+  const [step, setStep] = useState<'community-selection' | 'registration'>('community-selection');
+  const [communitySelection, setCommunitySelection] = useState<'existing' | 'interested' | null>(null);
+  const [interestedRole, setInterestedRole] = useState<'resident' | 'janitorial' | 'admin' | ''>('');
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -35,6 +38,16 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
     setError(null);
 
     // Validation
+    if (!communitySelection) {
+      setError('Please complete the community selection step');
+      return;
+    }
+
+    if (communitySelection === 'interested' && !interestedRole) {
+      setError('Please select your role within your community');
+      return;
+    }
+
     if (!formData.agreedToTerms) {
       setError('You must agree to the Terms of Service to create an account');
       return;
@@ -54,7 +67,7 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
       setLoading(true);
       const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       
-      const response = await axios.post(`${apiUrl}/api/auth/register`, {
+      const registrationData: any = {
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
@@ -62,7 +75,15 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
         phone: formData.phone,
         address: formData.address,
         role: 'resident' // Default role for new registrations
-      });
+      };
+
+      // Add community selection info
+      registrationData.communitySelection = communitySelection;
+      if (communitySelection === 'interested' && interestedRole) {
+        registrationData.interestedRole = interestedRole;
+      }
+
+      const response = await axios.post(`${apiUrl}/api/auth/register`, registrationData);
 
       console.log('✅ Registration successful:', response.data);
       setRegisteredEmail(formData.email);
