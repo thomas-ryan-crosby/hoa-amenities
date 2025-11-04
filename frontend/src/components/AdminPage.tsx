@@ -11,7 +11,8 @@ interface User {
   address?: string;
   role: 'resident' | 'janitorial' | 'admin';
   isActive: boolean;
-  createdAt: string;
+  joinedAt?: string;
+  createdAt?: string;
 }
 
 const AdminPage: React.FC = () => {
@@ -36,15 +37,21 @@ const AdminPage: React.FC = () => {
     } else {
       fetchDamageReviews();
     }
-  }, [activeTab]);
+  }, [activeTab, currentCommunity?.id]);
 
   const fetchUsers = async () => {
+    if (!currentCommunity?.id) {
+      setError('No community selected');
+      return;
+    }
+
     try {
       setLoading(true);
       const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       const token = localStorage.getItem('token');
       
-      const response = await axios.get(`${apiUrl}/api/admin/users`, {
+      // Fetch users for the current community only
+      const response = await axios.get(`${apiUrl}/api/communities/${currentCommunity.id}/users`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -60,12 +67,18 @@ const AdminPage: React.FC = () => {
   };
 
   const updateUserRole = async (userId: number, newRole: string) => {
+    if (!currentCommunity?.id) {
+      setError('No community selected');
+      return;
+    }
+
     try {
       setActionLoading(userId);
       const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       const token = localStorage.getItem('token');
       
-      await axios.put(`${apiUrl}/api/admin/users/${userId}/role`, {
+      // Update role in the current community
+      await axios.put(`${apiUrl}/api/communities/${currentCommunity.id}/users/${userId}/role`, {
         role: newRole
       }, {
         headers: {
@@ -73,10 +86,8 @@ const AdminPage: React.FC = () => {
         }
       });
 
-      // Update local state
-      setUsers(users.map(u => 
-        u.id === userId ? { ...u, role: newRole as any } : u
-      ));
+      // Refresh users list
+      await fetchUsers();
     } catch (error: any) {
       console.error('❌ Error updating user role:', error);
       setError(error.response?.data?.message || 'Failed to update user role');
@@ -86,12 +97,18 @@ const AdminPage: React.FC = () => {
   };
 
   const toggleUserStatus = async (userId: number, isActive: boolean) => {
+    if (!currentCommunity?.id) {
+      setError('No community selected');
+      return;
+    }
+
     try {
       setActionLoading(userId);
       const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       const token = localStorage.getItem('token');
       
-      await axios.put(`${apiUrl}/api/admin/users/${userId}/status`, {
+      // Update status in the current community
+      await axios.put(`${apiUrl}/api/communities/${currentCommunity.id}/users/${userId}/status`, {
         isActive: !isActive
       }, {
         headers: {
@@ -99,10 +116,8 @@ const AdminPage: React.FC = () => {
         }
       });
 
-      // Update local state
-      setUsers(users.map(u => 
-        u.id === userId ? { ...u, isActive: !isActive } : u
-      ));
+      // Refresh users list
+      await fetchUsers();
     } catch (error: any) {
       console.error('❌ Error updating user status:', error);
       setError(error.response?.data?.message || 'Failed to update user status');

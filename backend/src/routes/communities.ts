@@ -262,7 +262,7 @@ router.get('/:id/users', authenticateToken, requireAdmin, async (req: any, res) 
           attributes: ['id', 'email', 'firstName', 'lastName', 'phone', 'address']
         }
       ],
-      attributes: ['role', 'joinedAt', 'createdAt']
+      attributes: ['id', 'role', 'joinedAt', 'isActive', 'createdAt']
     });
 
     const users = (memberships as any[])
@@ -275,12 +275,114 @@ router.get('/:id/users', authenticateToken, requireAdmin, async (req: any, res) 
         phone: m.user.phone,
         address: m.user.address,
         role: m.role,
-        joinedAt: m.joinedAt
+        isActive: m.isActive,
+        joinedAt: m.joinedAt,
+        createdAt: m.createdAt
       }));
 
     return res.json({ users, total: users.length });
   } catch (error) {
     console.error('Error fetching community users:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// PUT /api/communities/:id/users/:userId/role - Update user's role in community (admin only)
+router.put('/:id/users/:userId/role', authenticateToken, requireAdmin, async (req: any, res) => {
+  try {
+    const { id, userId } = req.params;
+    const communityId = parseInt(id);
+    const targetUserId = parseInt(userId);
+    const { role } = req.body;
+
+    // Verify user is admin of this community
+    if (req.user.currentCommunityId !== communityId) {
+      return res.status(403).json({ message: 'You can only manage users in your current community' });
+    }
+
+    // Validate role
+    if (!['resident', 'janitorial', 'admin'].includes(role)) {
+      return res.status(400).json({ message: 'Invalid role. Must be resident, janitorial, or admin.' });
+    }
+
+    // Prevent admin from changing their own role
+    if (targetUserId === req.user.id) {
+      return res.status(400).json({ message: 'Cannot change your own role' });
+    }
+
+    // Find the community membership
+    const membership = await CommunityUser.findOne({
+      where: {
+        userId: targetUserId,
+        communityId,
+        isActive: true
+      }
+    });
+
+    if (!membership) {
+      return res.status(404).json({ message: 'User is not a member of this community' });
+    }
+
+    // Update role in community_users table
+    membership.role = role as 'resident' | 'janitorial' | 'admin';
+    await membership.save();
+
+    return res.json({
+      message: 'User role updated successfully',
+      user: {
+        id: targetUserId,
+        role: membership.role
+      }
+    });
+  } catch (error) {
+    console.error('Error updating user role:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// PUT /api/communities/:id/users/:userId/status - Update user's active status in community (admin only)
+router.put('/:id/users/:userId/status', authenticateToken, requireAdmin, async (req: any, res) => {
+  try {
+    const { id, userId } = req.params;
+    const communityId = parseInt(id);
+    const targetUserId = parseInt(userId);
+    const { isActive } = req.body;
+
+    // Verify user is admin of this community
+    if (req.user.currentCommunityId !== communityId) {
+      return res.status(403).json({ message: 'You can only manage users in your current community' });
+    }
+
+    // Prevent admin from deactivating themselves
+    if (targetUserId === req.user.id) {
+      return res.status(400).json({ message: 'Cannot deactivate yourself' });
+    }
+
+    // Find the community membership
+    const membership = await CommunityUser.findOne({
+      where: {
+        userId: targetUserId,
+        communityId
+      }
+    });
+
+    if (!membership) {
+      return res.status(404).json({ message: 'User is not a member of this community' });
+    }
+
+    // Update isActive status in community_users table
+    membership.isActive = isActive !== undefined ? isActive : !membership.isActive;
+    await membership.save();
+
+    return res.json({
+      message: 'User status updated successfully',
+      user: {
+        id: targetUserId,
+        isActive: membership.isActive
+      }
+    });
+  } catch (error) {
+    console.error('Error updating user status:', error);
     return res.status(500).json({ message: 'Internal server error' });
   }
 });
