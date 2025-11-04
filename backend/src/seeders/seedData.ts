@@ -32,6 +32,9 @@ export async function seedDatabase() {
         deposit: 75.00,
         capacity: 50,
         communityId: sanctuaryCommunity.id,
+        isPublic: false,
+        publicReservationFee: null,
+        publicDeposit: null,
         isActive: true
       }
     });
@@ -45,6 +48,9 @@ export async function seedDatabase() {
         deposit: 50.00,
         capacity: 30,
         communityId: sanctuaryCommunity.id,
+        isPublic: false,
+        publicReservationFee: null,
+        publicDeposit: null,
         isActive: true
       }
     });
@@ -58,6 +64,9 @@ export async function seedDatabase() {
         deposit: 125.00, // 75 + 50
         capacity: 50, // Max capacity
         communityId: sanctuaryCommunity.id,
+        isPublic: false,
+        publicReservationFee: null,
+        publicDeposit: null,
         isActive: true
       }
     });
