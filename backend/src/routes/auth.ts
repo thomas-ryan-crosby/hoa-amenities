@@ -167,14 +167,23 @@ router.post('/register', async (req, res) => {
 
     // Handle new community registration
     if (communitySelection === 'new-community' && communityInfo) {
-      // Create new community (pending approval)
+      // Generate access code
+      const accessCode = crypto.randomBytes(4).toString('hex').toUpperCase();
+      
+      // Build full address
+      const fullAddress = `${communityInfo.communityStreet || ''}, ${communityInfo.communityCity || ''}, ${communityInfo.communityState || ''} ${communityInfo.communityZipCode || ''}`.trim();
+      
+      // Create new community (activated if authorization and payment are set)
       const newCommunity = await Community.create({
         name: communityInfo.communityName,
-        address: communityInfo.communityAddress,
-        description: `New community registration pending approval. Approximate households: ${communityInfo.approximateHouseholds || 'N/A'}. Primary contact: ${communityInfo.primaryContact}`,
-        zipCode: undefined, // Will be set during approval process
-        accessCode: undefined, // Will be generated during approval process
-        isActive: false // Pending approval - admin will activate
+        address: fullAddress,
+        description: `New community registration. Approximate households: ${communityInfo.approximateHouseholds || 'N/A'}. Primary contact: ${communityInfo.primaryContactName || ''} (${communityInfo.primaryContactTitle || ''})`,
+        zipCode: communityInfo.communityZipCode || undefined,
+        accessCode: accessCode,
+        isActive: !!(communityInfo.authorizationCertified && communityInfo.paymentSetup), // Activate if both are true
+        authorizationCertified: communityInfo.authorizationCertified || false,
+        paymentSetup: communityInfo.paymentSetup || false,
+        onboardingCompleted: false // Will be completed after member list is uploaded
       });
 
       // Add user as admin of the new community
@@ -186,7 +195,33 @@ router.post('/register', async (req, res) => {
         joinedAt: new Date()
       });
 
-      console.log(`✅ New community created: ${newCommunity.name} (ID: ${newCommunity.id}) - Pending approval`);
+      console.log(`✅ New community created: ${newCommunity.name} (ID: ${newCommunity.id}) - Active: ${newCommunity.isActive}`);
+      
+      // Store prospect information (extract personal info from request if available)
+      const personalStreet = req.body.street || req.body.address || null;
+      const personalZipCode = req.body.zipCode || null;
+      const personalCity = req.body.city || null;
+      const personalState = req.body.state || null;
+      
+      await Prospect.create({
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        phone: phoneValue,
+        street: personalStreet,
+        zipCode: personalZipCode,
+        city: personalCity,
+        state: personalState,
+        communityName: communityInfo.communityName,
+        communityStreet: communityInfo.communityStreet || '',
+        communityZipCode: communityInfo.communityZipCode || '',
+        communityCity: communityInfo.communityCity || null,
+        communityState: communityInfo.communityState || null,
+        approximateHouseholds: communityInfo.approximateHouseholds || null,
+        primaryContactName: communityInfo.primaryContactName || '',
+        primaryContactTitle: communityInfo.primaryContactTitle || '',
+        primaryContactInfo: communityInfo.primaryContactInfo || null
+      });
     }
 
     // If user selected "existing" communities, add them to those communities
@@ -220,6 +255,73 @@ router.post('/register', async (req, res) => {
       }
 
       console.log(`✅ User added to ${communities.length} community(ies)`);
+    }
+
+    // If new community was created, auto-login the user
+    if (communitySelection === 'new-community' && communityInfo) {
+      // Get the newly created community with user's membership
+      const communityUser = await CommunityUser.findOne({
+        where: { userId: user.id, role: 'admin' },
+        include: [{
+          model: Community,
+          as: 'community',
+          where: { name: communityInfo.communityName }
+        }]
+      });
+
+      if (communityUser && (communityUser as any).community) {
+        const newCommunity = (communityUser as any).community;
+        
+        // Get all user's communities for token
+        const allCommunityUsers = await CommunityUser.findAll({
+          where: { userId: user.id, isActive: true },
+          include: [{
+            model: Community,
+            as: 'community',
+            attributes: ['id', 'name', 'address', 'description', 'isActive', 'accessCode', 'onboardingCompleted', 'authorizationCertified', 'paymentSetup', 'memberListUploaded']
+          }]
+        });
+
+        const communities = (allCommunityUsers as any[])
+          .filter((cu: any) => cu.community && cu.community.isActive)
+          .map((cu: any) => ({
+            id: cu.community.id,
+            name: cu.community.name,
+            role: cu.role,
+            onboardingCompleted: cu.community.onboardingCompleted
+          }));
+
+        // Generate JWT token for auto-login
+        const token = jwt.sign(
+          {
+            userId: user.id,
+            email: user.email,
+            currentCommunityId: newCommunity.id,
+            communityRole: 'admin',
+            communityRoles: communities.reduce((acc: any, comm: any) => {
+              acc[comm.id] = comm.role;
+              return acc;
+            }, {})
+          },
+          process.env.JWT_SECRET || 'your-secret-key',
+          { expiresIn: '7d' }
+        );
+
+        return res.status(201).json({
+          message: 'Registration successful. Community created and activated.',
+          token,
+          user: {
+            id: user.id,
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName
+          },
+          community: {
+            id: newCommunity.id,
+            name: newCommunity.name
+          }
+        });
+      }
     }
 
     // Send verification email (non-blocking)

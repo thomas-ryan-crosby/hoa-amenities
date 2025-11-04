@@ -7,7 +7,7 @@ interface RegisterProps {
 }
 
 const Register: React.FC<RegisterProps> = ({ onRegister }) => {
-  const [step, setStep] = useState<'community-selection' | 'community-finder' | 'registration'>('community-selection');
+  const [step, setStep] = useState<'community-selection' | 'community-finder' | 'registration' | 'authorization' | 'payment'>('community-selection');
   const [communitySelection, setCommunitySelection] = useState<'existing' | 'interested' | null>(null);
   const [interestedRole, setInterestedRole] = useState<'resident' | 'janitorial' | 'admin' | ''>('');
   const [selectedCommunities, setSelectedCommunities] = useState<Array<{id: number, name: string, description?: string}>>([]);
@@ -48,6 +48,10 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [registeredEmail, setRegisteredEmail] = useState<string>('');
+  
+  // Onboarding states for interested users
+  const [authorizationCertified, setAuthorizationCertified] = useState(false);
+  const [paymentCompleted, setPaymentCompleted] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
@@ -204,9 +208,42 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
       setLoading(true);
       const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       
-      // For interested users, submit interest (no account creation)
-      if (communitySelection === 'interested') {
-        const interestData = {
+      // For interested users, proceed to authorization step
+      if (communitySelection === 'interested' && step === 'registration') {
+        // Move to authorization step
+        setStep('authorization');
+        return;
+      }
+
+      // Handle authorization step - move to payment
+      if (communitySelection === 'interested' && step === 'authorization') {
+        if (!authorizationCertified) {
+          setError('Please certify that you have authorization to make decisions for this community.');
+          return;
+        }
+        setStep('payment');
+        return;
+      }
+
+      // Handle payment step - create account and community
+      if (communitySelection === 'interested' && step === 'payment') {
+        if (!paymentCompleted) {
+          setError('Please complete payment setup');
+          return;
+        }
+
+        // Create account and community with onboarding
+        const registrationData = {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          password: formData.password || 'temp123456', // Generate temp password if not provided
+          phone: formData.phone || null,
+          street: formData.street || null,
+          zipCode: formData.zipCode || null,
+          city: formData.city || null,
+          state: formData.state || null,
+          communitySelection: 'new-community',
           communityInfo: {
             communityName: communityInfo.communityName,
             communityStreet: communityInfo.communityStreet,
@@ -216,24 +253,27 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
             approximateHouseholds: parseInt(communityInfo.approximateHouseholds) || 0,
             primaryContactName: communityInfo.primaryContactName,
             primaryContactTitle: communityInfo.primaryContactTitle,
-            primaryContactInfo: communityInfo.primaryContactInfo || null
-          },
-          personalInfo: {
-            firstName: formData.firstName,
-            lastName: formData.lastName,
-            email: formData.email,
-            phone: formData.phone || null,
-            street: formData.street || null,
-            zipCode: formData.zipCode || null,
-            city: formData.city || null,
-            state: formData.state || null
+            primaryContactInfo: communityInfo.primaryContactInfo || null,
+            authorizationCertified: true,
+            paymentSetup: true
           }
         };
 
-        const response = await axios.post(`${apiUrl}/api/auth/register-interest`, interestData);
-        console.log('✅ Interest registration successful:', response.data);
-        setRegisteredEmail(formData.email);
-        setSuccess(true);
+        const response = await axios.post(`${apiUrl}/api/auth/register`, registrationData);
+        console.log('✅ Community registration successful:', response.data);
+        
+        // Auto-login the user
+        if (response.data.token) {
+          // Store token and user info
+          localStorage.setItem('token', response.data.token);
+          localStorage.setItem('user', JSON.stringify(response.data.user));
+          
+          // Redirect to app (onboarding will be shown there)
+          window.location.href = '/app';
+        } else {
+          setRegisteredEmail(formData.email);
+          setSuccess(true);
+        }
         return;
       }
 
@@ -1330,6 +1370,127 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
         </div>
       )}
 
+      {/* Show different content based on step for interested users */}
+      {communitySelection === 'interested' && step === 'authorization' && (
+        <div style={{ marginBottom: '2rem' }}>
+          <h2 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#1f2937', marginBottom: '1rem' }}>
+            Authorization Certification
+          </h2>
+          <div style={{
+            backgroundColor: '#f0f9f4',
+            border: '1px solid #355B45',
+            borderRadius: '0.5rem',
+            padding: '1.5rem',
+            marginBottom: '1.5rem'
+          }}>
+            <label style={{ display: 'flex', alignItems: 'flex-start', cursor: 'pointer' }}>
+              <input
+                type="checkbox"
+                checked={authorizationCertified}
+                onChange={(e) => setAuthorizationCertified(e.target.checked)}
+                style={{
+                  marginTop: '0.25rem',
+                  marginRight: '0.75rem',
+                  width: '20px',
+                  height: '20px',
+                  cursor: 'pointer'
+                }}
+              />
+              <div>
+                <div style={{ fontWeight: 600, color: '#1f2937', marginBottom: '0.5rem' }}>
+                  I certify that I have authorization to make decisions for {communityInfo.communityName || 'this community'}
+                </div>
+                <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>
+                  By checking this box, you confirm that you have the authority to enter into agreements and make 
+                  decisions on behalf of your community/HOA, including setting up recurring payments.
+                </div>
+              </div>
+            </label>
+          </div>
+          <button
+            type="button"
+            onClick={handleSubmit}
+            disabled={!authorizationCertified}
+            style={{
+              width: '100%',
+              padding: '0.75rem 1.5rem',
+              backgroundColor: !authorizationCertified ? '#9ca3af' : '#355B45',
+              color: 'white',
+              border: 'none',
+              borderRadius: '0.5rem',
+              fontSize: '1rem',
+              fontWeight: 600,
+              cursor: !authorizationCertified ? 'not-allowed' : 'pointer',
+              transition: 'background-color 0.2s'
+            }}
+          >
+            Continue to Payment Setup
+          </button>
+        </div>
+      )}
+
+      {communitySelection === 'interested' && step === 'payment' && (
+        <div style={{ marginBottom: '2rem' }}>
+          <h2 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#1f2937', marginBottom: '1rem' }}>
+            Payment Setup
+          </h2>
+          <div style={{
+            backgroundColor: '#f0f9f4',
+            border: '1px solid #355B45',
+            borderRadius: '0.5rem',
+            padding: '1.5rem',
+            marginBottom: '1.5rem'
+          }}>
+            <div style={{ marginBottom: '1rem' }}>
+              <div style={{ fontWeight: 600, color: '#1f2937', marginBottom: '0.5rem' }}>
+                Recurring Payment: $200/month
+              </div>
+              <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>
+                Your community will be charged $200 per month for Neighbri services. This fee will be automatically 
+                charged to your payment method on file.
+              </div>
+            </div>
+            <div style={{
+              backgroundColor: 'white',
+              border: '2px dashed #d1d5db',
+              borderRadius: '0.5rem',
+              padding: '2rem',
+              textAlign: 'center',
+              marginBottom: '1rem'
+            }}>
+              <div style={{ fontSize: '1.125rem', fontWeight: 600, color: '#6b7280', marginBottom: '0.5rem' }}>
+                Payment Integration Coming Soon
+              </div>
+              <div style={{ fontSize: '0.875rem', color: '#9ca3af' }}>
+                This is where Stripe/Square payment setup would be integrated
+              </div>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setPaymentCompleted(true);
+              handleSubmit(new Event('submit') as any);
+            }}
+            style={{
+              width: '100%',
+              padding: '0.75rem 1.5rem',
+              backgroundColor: '#355B45',
+              color: 'white',
+              border: 'none',
+              borderRadius: '0.5rem',
+              fontSize: '1rem',
+              fontWeight: 600,
+              cursor: 'pointer',
+              transition: 'background-color 0.2s'
+            }}
+          >
+            Continue to Create Account
+          </button>
+        </div>
+      )}
+
+      {((communitySelection === 'interested' && step === 'registration') || (communitySelection !== 'interested')) && (
       <form onSubmit={handleSubmit}>
         {/* Community Information Fields (shown FIRST for interested users or when registering new community) */}
         {(communitySelection === 'interested' || registeringNewCommunity) && (
