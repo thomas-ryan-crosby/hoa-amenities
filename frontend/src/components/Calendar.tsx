@@ -59,16 +59,22 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
   useEffect(() => {
     if (amenities.length > 0) {
       fetchEvents();
+    } else {
+      // If no amenities, set loading to false and events to empty
+      setLoading(false);
+      setEvents([]);
     }
   }, [currentDate, selectedAmenity, amenities, refreshTrigger]);
 
   const fetchAmenities = async () => {
     try {
+      setLoading(true);
       const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       const currentToken = token || localStorage.getItem('token');
       
       if (!currentToken) {
         setError('Authentication required');
+        setLoading(false);
         return;
       }
 
@@ -77,9 +83,16 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
           'Authorization': `Bearer ${currentToken}`
         }
       });
-      setAmenities(response.data);
+      setAmenities(response.data || []);
+      setLoading(false); // Set loading to false even if no amenities
+      
+      // If no amenities, also set events to empty array
+      if (!response.data || response.data.length === 0) {
+        setEvents([]);
+      }
     } catch (err) {
       setError('Failed to load amenities');
+      setLoading(false);
       console.error('Error fetching amenities:', err);
     }
   };
@@ -1208,26 +1221,70 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
           </div>
           
           {/* Amenity Filter */}
-          <select
-            value={selectedAmenity}
-            onChange={(e) => setSelectedAmenity(e.target.value === 'all' ? 'all' : parseInt(e.target.value))}
-            style={{ 
-              padding: isMobile ? '0.75rem' : '8px', 
-              border: '1px solid #d1d5db', 
+          {amenities.length > 0 ? (
+            <select
+              value={selectedAmenity}
+              onChange={(e) => setSelectedAmenity(e.target.value === 'all' ? 'all' : parseInt(e.target.value))}
+              style={{ 
+                padding: isMobile ? '0.75rem' : '8px', 
+                border: '1px solid #d1d5db', 
+                borderRadius: '4px',
+                fontSize: isMobile ? '1rem' : '14px',
+                minHeight: '44px',
+                width: isMobile ? '100%' : 'auto'
+              }}
+            >
+              <option value="all">All Amenities</option>
+              {amenities.map(amenity => (
+                <option key={amenity.id} value={amenity.id}>{amenity.name}</option>
+              ))}
+            </select>
+          ) : (
+            <div style={{
+              padding: isMobile ? '0.75rem' : '8px 12px',
+              backgroundColor: '#fef3c7',
+              border: '1px solid #fbbf24',
               borderRadius: '4px',
-              fontSize: isMobile ? '1rem' : '14px',
+              fontSize: isMobile ? '0.875rem' : '14px',
+              color: '#92400e',
               minHeight: '44px',
+              display: 'flex',
+              alignItems: 'center',
               width: isMobile ? '100%' : 'auto'
-            }}
-          >
-            <option value="all">All Amenities</option>
-            {amenities.map(amenity => (
-              <option key={amenity.id} value={amenity.id}>{amenity.name}</option>
-            ))}
-          </select>
+            }}>
+              No amenities configured
+            </div>
+          )}
         </div>
       </div>
 
+      {/* Show message if no amenities */}
+      {!loading && amenities.length === 0 && (
+        <div style={{
+          textAlign: 'center',
+          padding: '3rem 1rem',
+          backgroundColor: '#f9fafb',
+          borderRadius: '0.5rem',
+          border: '1px solid #e5e7eb',
+          marginTop: '1rem'
+        }}>
+          <div style={{ fontSize: '1.25rem', fontWeight: 600, color: '#1f2937', marginBottom: '0.5rem' }}>
+            No Amenities Available
+          </div>
+          <div style={{ fontSize: '1rem', color: '#6b7280', marginBottom: '1rem' }}>
+            Your community doesn't have any amenities configured yet.
+          </div>
+          {isAdmin && (
+            <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>
+              Contact your system administrator to add amenities to your community.
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Calendar content - only show if amenities exist */}
+      {amenities.length > 0 && (
+        <>
       {/* Navigation */}
       <div style={{ 
         display: 'flex', 
@@ -1502,6 +1559,8 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
             </div>
           </div>
         </div>
+      )}
+        </>
       )}
     </div>
   );
