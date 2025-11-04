@@ -2247,6 +2247,7 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
           </p>
         </div>
       </form>
+      )}
     </div>
   );
 };
