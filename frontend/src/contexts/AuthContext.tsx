@@ -76,7 +76,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         description: c.description,
         role: c.role,
         joinedAt: c.joinedAt,
-        isCurrent: c.isCurrent
+        isCurrent: c.isCurrent,
+        accessCode: c.accessCode,
+        onboardingCompleted: c.onboardingCompleted,
+        authorizationCertified: c.authorizationCertified,
+        paymentSetup: c.paymentSetup,
+        memberListUploaded: c.memberListUploaded
       }));
 
       setCommunities(fetchedCommunities);
@@ -127,7 +132,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               description: c.description,
               role: c.role,
               joinedAt: c.joinedAt,
-              isCurrent: c.isCurrent
+              isCurrent: c.isCurrent,
+              accessCode: c.accessCode,
+              onboardingCompleted: c.onboardingCompleted,
+              authorizationCertified: c.authorizationCertified,
+              paymentSetup: c.paymentSetup,
+              memberListUploaded: c.memberListUploaded
             }));
 
             setCommunities(fetchedCommunities);

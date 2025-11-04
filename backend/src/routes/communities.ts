@@ -137,7 +137,7 @@ router.get('/:id', authenticateToken, async (req: any, res) => {
         {
           model: Community,
           as: 'community',
-          attributes: ['id', 'name', 'description', 'address', 'contactEmail', 'isActive', 'settings']
+          attributes: ['id', 'name', 'description', 'address', 'contactEmail', 'isActive', 'accessCode', 'onboardingCompleted', 'authorizationCertified', 'paymentSetup', 'memberListUploaded', 'settings']
         }
       ]
     });
@@ -154,6 +154,11 @@ router.get('/:id', authenticateToken, async (req: any, res) => {
         description: membershipData.community.description,
         address: membershipData.community.address,
         contactEmail: membershipData.community.contactEmail,
+        accessCode: membershipData.community.accessCode,
+        onboardingCompleted: membershipData.community.onboardingCompleted,
+        authorizationCertified: membershipData.community.authorizationCertified,
+        paymentSetup: membershipData.community.paymentSetup,
+        memberListUploaded: membershipData.community.memberListUploaded,
         settings: membershipData.community.settings
       },
       role: membershipData.role

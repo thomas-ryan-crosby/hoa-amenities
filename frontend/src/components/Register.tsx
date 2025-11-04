@@ -274,7 +274,11 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
               id: response.data.community.id,
               name: response.data.community.name,
               role: 'admin',
-              onboardingCompleted: response.data.community.onboardingCompleted || false
+              accessCode: response.data.community.accessCode || '',
+              onboardingCompleted: response.data.community.onboardingCompleted || false,
+              authorizationCertified: true,
+              paymentSetup: true,
+              memberListUploaded: false
             };
             localStorage.setItem('currentCommunity', JSON.stringify(community));
             localStorage.setItem('communities', JSON.stringify([community]));
