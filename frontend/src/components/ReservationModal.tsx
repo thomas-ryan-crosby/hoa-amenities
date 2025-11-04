@@ -80,7 +80,18 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
   const fetchAmenities = async () => {
     try {
       const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-      const response = await axios.get(`${apiUrl}/api/amenities`);
+      const token = localStorage.getItem('token');
+      
+      if (!token) {
+        setError('Authentication required');
+        return;
+      }
+
+      const response = await axios.get(`${apiUrl}/api/amenities`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       setAmenities(response.data);
     } catch (err) {
       setError('Failed to load amenities');

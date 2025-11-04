@@ -495,8 +495,12 @@ router.put('/:id/approve', authenticateToken, async (req: any, res) => {
       });
     }
 
-    // Find reservation
-    const reservation = await Reservation.findByPk(id, {
+    // Find reservation (must belong to current community)
+    const reservation = await Reservation.findOne({
+      where: {
+        id,
+        communityId: req.user.currentCommunityId
+      },
       include: [
         {
           model: Amenity,
@@ -512,7 +516,7 @@ router.put('/:id/approve', authenticateToken, async (req: any, res) => {
     }) as ReservationWithAssociations;
 
     if (!reservation) {
-      return res.status(404).json({ message: 'Reservation not found' });
+      return res.status(404).json({ message: 'Reservation not found or does not belong to your community' });
     }
 
     // Validate cleaning time is after party end time
@@ -589,8 +593,12 @@ router.put('/:id/reject', authenticateToken, async (req: any, res) => {
       return res.status(403).json({ message: 'Janitorial access required' });
     }
 
-    // Find reservation
-    const reservation = await Reservation.findByPk(id, {
+    // Find reservation (must belong to current community)
+    const reservation = await Reservation.findOne({
+      where: {
+        id,
+        communityId: req.user.currentCommunityId
+      },
       include: [
         {
           model: Amenity,
@@ -606,7 +614,7 @@ router.put('/:id/reject', authenticateToken, async (req: any, res) => {
     }) as ReservationWithAssociations;
 
     if (!reservation) {
-      return res.status(404).json({ message: 'Reservation not found' });
+      return res.status(404).json({ message: 'Reservation not found or does not belong to your community' });
     }
 
     // Only allow rejection of NEW or JANITORIAL_APPROVED reservations
@@ -651,8 +659,12 @@ router.put('/:id/complete', authenticateToken, async (req: any, res) => {
       return res.status(403).json({ message: 'Janitorial access required' });
     }
 
-    // Find reservation
-    const reservation = await Reservation.findByPk(id, {
+    // Find reservation (must belong to current community)
+    const reservation = await Reservation.findOne({
+      where: {
+        id,
+        communityId: req.user.currentCommunityId
+      },
       include: [
         {
           model: Amenity,
@@ -668,7 +680,7 @@ router.put('/:id/complete', authenticateToken, async (req: any, res) => {
     }) as ReservationWithAssociations;
 
     if (!reservation) {
-      return res.status(404).json({ message: 'Reservation not found' });
+      return res.status(404).json({ message: 'Reservation not found or does not belong to your community' });
     }
 
     // Check if reservation is in a completable state
