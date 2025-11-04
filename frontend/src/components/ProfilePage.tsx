@@ -82,12 +82,17 @@ const ProfilePage: React.FC = () => {
         }
       });
 
-      setProfile(response.data.user);
+      const userData = response.data.user || response.data;
+      if (!userData) {
+        throw new Error('User data not found in response');
+      }
+      
+      setProfile(userData);
       setFormData({
-        firstName: response.data.user.firstName,
-        lastName: response.data.user.lastName,
-        phone: response.data.user.phone || '',
-        address: response.data.user.address || ''
+        firstName: userData.firstName || '',
+        lastName: userData.lastName || '',
+        phone: userData.phone || '',
+        address: userData.address || ''
       });
     } catch (error: any) {
       console.error('❌ Error fetching profile:', error);
@@ -128,7 +133,12 @@ const ProfilePage: React.FC = () => {
         }
       });
 
-      setProfile(response.data.user);
+      const userData = response.data.user || response.data;
+      if (!userData) {
+        throw new Error('User data not found in response');
+      }
+      
+      setProfile(userData);
       setEditMode(false);
       setSuccess('Profile updated successfully!');
       

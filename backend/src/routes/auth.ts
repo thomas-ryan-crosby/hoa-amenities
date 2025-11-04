@@ -528,7 +528,19 @@ router.get('/profile', authenticateToken, async (req: any, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    return res.json(user);
+    return res.json({
+      user: {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        phone: user.phone,
+        address: user.address,
+        isActive: user.isActive,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt
+      }
+    });
 
   } catch (error) {
     console.error('Profile fetch error:', error);
