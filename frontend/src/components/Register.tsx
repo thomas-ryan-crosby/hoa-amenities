@@ -263,10 +263,22 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
         console.log('✅ Community registration successful:', response.data);
         
         // Auto-login the user
-        if (response.data.token) {
+        if (response.data.token && response.data.user) {
           // Store token and user info
           localStorage.setItem('token', response.data.token);
           localStorage.setItem('user', JSON.stringify(response.data.user));
+          
+          // Store community info
+          if (response.data.community) {
+            const community = {
+              id: response.data.community.id,
+              name: response.data.community.name,
+              role: 'admin',
+              onboardingCompleted: response.data.community.onboardingCompleted || false
+            };
+            localStorage.setItem('currentCommunity', JSON.stringify(community));
+            localStorage.setItem('communities', JSON.stringify([community]));
+          }
           
           // Redirect to app (onboarding will be shown there)
           window.location.href = '/app';
