@@ -17,6 +17,7 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
   const [accessCodes, setAccessCodes] = useState<string[]>(['']);
   const [searchResults, setSearchResults] = useState<Array<{id: number, name: string, description?: string, address?: string}>>([]);
   const [searching, setSearching] = useState(false);
+  const [accessCodeSearched, setAccessCodeSearched] = useState(false);
   const [registeringNewCommunity, setRegisteringNewCommunity] = useState(false);
   const [communityInfo, setCommunityInfo] = useState({
     communityName: '',
@@ -487,9 +488,11 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
         const response = await axios.get(`${apiUrl}/api/communities/search/by-zipcode`, {
           params: { zipCode: zipCode.trim() }
         });
-        setSearchResults(response.data.communities || []);
-        if (response.data.communities.length === 0) {
-          setError('No communities found for this zip code');
+        const communities = response.data.communities || [];
+        setSearchResults(communities);
+        // Don't set error for empty results - we'll show the no results message instead
+        if (communities.length === 0) {
+          setError(null);
         }
       } catch (err: any) {
         setError(err.response?.data?.message || 'Failed to search communities');
@@ -507,6 +510,7 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
       try {
         setSearching(true);
         setError(null);
+        setAccessCodeSearched(true);
         const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
         const response = await axios.get(`${apiUrl}/api/communities/search/by-access-code`, {
           params: { accessCode: code.trim().toUpperCase() }
@@ -516,11 +520,21 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
         if (community && !selectedCommunities.find(c => c.id === community.id)) {
           setSelectedCommunities([...selectedCommunities, community]);
           setAccessCode('');
+          setError(null); // Clear any previous errors
+          setAccessCodeSearched(false); // Reset since we found a community
         } else if (community) {
           setError('Community already added');
+          setAccessCodeSearched(false);
         }
       } catch (err: any) {
-        setError(err.response?.data?.message || 'Community not found with this access code');
+        // Don't set error for "not found" - we'll show the no results message instead
+        if (err.response?.status === 404) {
+          setError(null);
+          setAccessCodeSearched(true); // Keep as true to show no results message
+        } else {
+          setError(err.response?.data?.message || 'Failed to search community');
+          setAccessCodeSearched(false);
+        }
       } finally {
         setSearching(false);
       }
@@ -759,6 +773,59 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
                 </div>
               </div>
             )}
+
+            {/* No Results Message */}
+            {!searching && searchResults.length === 0 && zipCode && (
+              <div style={{ 
+                marginTop: '1rem', 
+                padding: '1rem', 
+                backgroundColor: '#fef2f2', 
+                border: '1px solid #fecaca', 
+                borderRadius: '0.5rem' 
+              }}>
+                <p style={{ 
+                  color: '#dc2626', 
+                  fontSize: '0.875rem',
+                  marginBottom: '0.75rem',
+                  fontFamily: 'Inter, sans-serif',
+                  fontWeight: 600
+                }}>
+                  Can't find your community?
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (communitySelection === 'interested') {
+                      setStep('registration');
+                    } else {
+                      setRegisteringNewCommunity(true);
+                      setStep('registration');
+                    }
+                  }}
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem 1rem',
+                    backgroundColor: 'transparent',
+                    border: '1px solid #dc2626',
+                    borderRadius: '0.375rem',
+                    color: '#dc2626',
+                    fontSize: '0.875rem',
+                    fontWeight: 600,
+                    fontFamily: 'Inter, sans-serif',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#fee2e2';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                  }}
+                >
+                  Maybe your community isn't onboard yet - Register your community
+                </button>
+              </div>
+            )}
           </div>
         )}
 
@@ -815,6 +882,59 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
                 {searching ? 'Searching...' : 'Add'}
               </button>
             </div>
+
+            {/* No Results Message for Access Code */}
+            {!searching && accessCodeSearched && selectedCommunities.length === 0 && (
+              <div style={{ 
+                marginTop: '1rem', 
+                padding: '1rem', 
+                backgroundColor: '#fef2f2', 
+                border: '1px solid #fecaca', 
+                borderRadius: '0.5rem' 
+              }}>
+                <p style={{ 
+                  color: '#dc2626', 
+                  fontSize: '0.875rem',
+                  marginBottom: '0.75rem',
+                  fontFamily: 'Inter, sans-serif',
+                  fontWeight: 600
+                }}>
+                  Can't find your community?
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (communitySelection === 'interested') {
+                      setStep('registration');
+                    } else {
+                      setRegisteringNewCommunity(true);
+                      setStep('registration');
+                    }
+                  }}
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem 1rem',
+                    backgroundColor: 'transparent',
+                    border: '1px solid #dc2626',
+                    borderRadius: '0.375rem',
+                    color: '#dc2626',
+                    fontSize: '0.875rem',
+                    fontWeight: 600,
+                    fontFamily: 'Inter, sans-serif',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#fee2e2';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                  }}
+                >
+                  Maybe your community isn't onboard yet - Register your community
+                </button>
+              </div>
+            )}
           </div>
         )}
 
@@ -1104,6 +1224,151 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
       )}
 
       <form onSubmit={handleSubmit}>
+        {/* Community Information Fields (shown FIRST for interested users or when registering new community) */}
+        {(communitySelection === 'interested' || registeringNewCommunity) && (
+          <div style={{ 
+            marginBottom: '2rem', 
+            paddingBottom: '2rem', 
+            borderBottom: '2px solid #355B45' 
+          }}>
+            <h3 style={{ 
+              fontSize: '1.125rem', 
+              fontWeight: 600, 
+              color: '#1f2937', 
+              marginBottom: '1rem',
+              fontFamily: 'Inter, sans-serif'
+            }}>
+              Community / HOA Information
+            </h3>
+
+            <div style={{ marginBottom: '1rem' }}>
+              <label style={{ 
+                display: 'block', 
+                fontSize: '0.875rem', 
+                fontWeight: '500', 
+                color: '#374151',
+                marginBottom: '0.25rem'
+              }}>
+                Community / HOA Name *
+              </label>
+              <input
+                type="text"
+                name="communityName"
+                value={communityInfo.communityName}
+                onChange={handleCommunityInfoChange}
+                required
+                placeholder="e.g., The Sanctuary"
+                style={{
+                  width: '100%',
+                  padding: '0.75rem',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '0.5rem',
+                  fontSize: '1rem',
+                  fontFamily: 'Inter, sans-serif',
+                  boxSizing: 'border-box'
+                }}
+              />
+            </div>
+
+            <div style={{ marginBottom: '1rem' }}>
+              <label style={{ 
+                display: 'block', 
+                fontSize: '0.875rem', 
+                fontWeight: '500', 
+                color: '#374151',
+                marginBottom: '0.25rem'
+              }}>
+                Community / HOA Address *
+              </label>
+              <input
+                type="text"
+                name="communityAddress"
+                value={communityInfo.communityAddress}
+                onChange={handleCommunityInfoChange}
+                required
+                placeholder="e.g., 1 Sanctuary Blvd, Mandeville, LA 70471"
+                style={{
+                  width: '100%',
+                  padding: '0.75rem',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '0.5rem',
+                  fontSize: '1rem',
+                  fontFamily: 'Inter, sans-serif',
+                  boxSizing: 'border-box'
+                }}
+              />
+            </div>
+
+            <div style={{ marginBottom: '1rem' }}>
+              <label style={{ 
+                display: 'block', 
+                fontSize: '0.875rem', 
+                fontWeight: '500', 
+                color: '#374151',
+                marginBottom: '0.25rem'
+              }}>
+                Approximate Number of Households / Units
+              </label>
+              <input
+                type="number"
+                name="approximateHouseholds"
+                value={communityInfo.approximateHouseholds}
+                onChange={handleCommunityInfoChange}
+                min="1"
+                placeholder="e.g., 150"
+                style={{
+                  width: '100%',
+                  padding: '0.75rem',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '0.5rem',
+                  fontSize: '1rem',
+                  fontFamily: 'Inter, sans-serif',
+                  boxSizing: 'border-box'
+                }}
+              />
+            </div>
+
+            <div style={{ marginBottom: '1rem' }}>
+              <label style={{ 
+                display: 'block', 
+                fontSize: '0.875rem', 
+                fontWeight: '500', 
+                color: '#374151',
+                marginBottom: '0.25rem'
+              }}>
+                Primary Contact for HOA / Community *
+              </label>
+              <input
+                type="text"
+                name="primaryContact"
+                value={communityInfo.primaryContact}
+                onChange={handleCommunityInfoChange}
+                required
+                placeholder="e.g., HOA Board President, Property Manager"
+                style={{
+                  width: '100%',
+                  padding: '0.75rem',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '0.5rem',
+                  fontSize: '1rem',
+                  fontFamily: 'Inter, sans-serif',
+                  boxSizing: 'border-box'
+                }}
+              />
+            </div>
+          </div>
+        )}
+
+        <h3 style={{ 
+          fontSize: '1.125rem', 
+          fontWeight: 600, 
+          color: '#1f2937', 
+          marginBottom: '1rem',
+          fontFamily: 'Inter, sans-serif'
+        }}>
+          {communitySelection === 'interested' ? 'Your Information' : 'Personal Information'}
+        </h3>
+
         <div style={{ marginBottom: '1rem' }}>
           <label style={{ 
             display: 'block', 
@@ -1370,140 +1635,6 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
           />
         </div>
 
-        {/* Community Information Fields (when registering new community) */}
-        {registeringNewCommunity && (
-          <div style={{ 
-            marginTop: '2rem', 
-            paddingTop: '2rem', 
-            borderTop: '2px solid #355B45' 
-          }}>
-            <h3 style={{ 
-              fontSize: '1.125rem', 
-              fontWeight: 600, 
-              color: '#1f2937', 
-              marginBottom: '1rem',
-              fontFamily: 'Inter, sans-serif'
-            }}>
-              Community / HOA Information
-            </h3>
-
-            <div style={{ marginBottom: '1rem' }}>
-              <label style={{ 
-                display: 'block', 
-                fontSize: '0.875rem', 
-                fontWeight: '500', 
-                color: '#374151',
-                marginBottom: '0.25rem'
-              }}>
-                Community / HOA Name *
-              </label>
-              <input
-                type="text"
-                name="communityName"
-                value={communityInfo.communityName}
-                onChange={handleCommunityInfoChange}
-                required
-                placeholder="e.g., The Sanctuary"
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '1rem',
-                  fontFamily: 'Inter, sans-serif',
-                  boxSizing: 'border-box'
-                }}
-              />
-            </div>
-
-            <div style={{ marginBottom: '1rem' }}>
-              <label style={{ 
-                display: 'block', 
-                fontSize: '0.875rem', 
-                fontWeight: '500', 
-                color: '#374151',
-                marginBottom: '0.25rem'
-              }}>
-                Community / HOA Address *
-              </label>
-              <input
-                type="text"
-                name="communityAddress"
-                value={communityInfo.communityAddress}
-                onChange={handleCommunityInfoChange}
-                required
-                placeholder="e.g., 1 Sanctuary Blvd, Mandeville, LA 70471"
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '1rem',
-                  fontFamily: 'Inter, sans-serif',
-                  boxSizing: 'border-box'
-                }}
-              />
-            </div>
-
-            <div style={{ marginBottom: '1rem' }}>
-              <label style={{ 
-                display: 'block', 
-                fontSize: '0.875rem', 
-                fontWeight: '500', 
-                color: '#374151',
-                marginBottom: '0.25rem'
-              }}>
-                Approximate Number of Households / Units
-              </label>
-              <input
-                type="number"
-                name="approximateHouseholds"
-                value={communityInfo.approximateHouseholds}
-                onChange={handleCommunityInfoChange}
-                min="1"
-                placeholder="e.g., 150"
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '1rem',
-                  fontFamily: 'Inter, sans-serif',
-                  boxSizing: 'border-box'
-                }}
-              />
-            </div>
-
-            <div style={{ marginBottom: '1rem' }}>
-              <label style={{ 
-                display: 'block', 
-                fontSize: '0.875rem', 
-                fontWeight: '500', 
-                color: '#374151',
-                marginBottom: '0.25rem'
-              }}>
-                Primary Contact for HOA / Community *
-              </label>
-              <input
-                type="text"
-                name="primaryContact"
-                value={communityInfo.primaryContact}
-                onChange={handleCommunityInfoChange}
-                required
-                placeholder="e.g., HOA Board President, Property Manager"
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.5rem',
-                  fontSize: '1rem',
-                  fontFamily: 'Inter, sans-serif',
-                  boxSizing: 'border-box'
-                }}
-              />
-            </div>
-          </div>
-        )}
 
         {/* Terms of Service */}
         <div style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'flex-start' }}>
