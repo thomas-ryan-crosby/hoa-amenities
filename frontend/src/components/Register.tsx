@@ -55,6 +55,11 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
       return;
     }
 
+    if (communitySelection === 'existing' && selectedCommunities.length === 0) {
+      setError('Please select at least one community');
+      return;
+    }
+
     if (!formData.agreedToTerms) {
       setError('You must agree to the Terms of Service to create an account');
       return;
