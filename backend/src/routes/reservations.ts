@@ -744,8 +744,12 @@ router.post('/:id/assess-damages', authenticateToken, async (req: any, res) => {
       return res.status(400).json({ message: 'Damage description is required' });
     }
 
-    // Find reservation
-    const reservation = await Reservation.findByPk(id, {
+    // Find reservation (must belong to current community)
+    const reservation = await Reservation.findOne({
+      where: {
+        id,
+        communityId: req.user.currentCommunityId
+      },
       include: [
         {
           model: Amenity,
@@ -761,7 +765,7 @@ router.post('/:id/assess-damages', authenticateToken, async (req: any, res) => {
     }) as ReservationWithAssociations;
 
     if (!reservation) {
-      return res.status(404).json({ message: 'Reservation not found' });
+      return res.status(404).json({ message: 'Reservation not found or does not belong to your community' });
     }
 
     // Check if reservation is completed and needs damage assessment
