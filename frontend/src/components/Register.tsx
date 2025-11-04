@@ -135,11 +135,44 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
         role: 'resident' // Default role for new registrations
       };
 
+      // For interested users, submit interest (no account creation)
+      if (communitySelection === 'interested') {
+        const interestData = {
+          communityInfo: {
+            communityName: communityInfo.communityName,
+            communityAddress: communityInfo.communityAddress,
+            approximateHouseholds: parseInt(communityInfo.approximateHouseholds) || 0,
+            primaryContact: communityInfo.primaryContact
+          },
+          personalInfo: {
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            email: formData.email,
+            phone: formData.phone || null,
+            address: formData.address || null
+          }
+        };
+
+        const response = await axios.post(`${apiUrl}/api/auth/register-interest`, interestData);
+        console.log('✅ Interest registration successful:', response.data);
+        setRegisteredEmail(formData.email);
+        setSuccess(true);
+        return;
+      }
+
+      // For existing users, create account
+      const registrationData: any = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        password: formData.password,
+        phone: formData.phone,
+        address: formData.address,
+        role: 'resident' // Default role for new registrations
+      };
+
       // Add community selection info
       registrationData.communitySelection = registeringNewCommunity ? 'new-community' : communitySelection;
-      if (communitySelection === 'interested' && interestedRole) {
-        registrationData.interestedRole = interestedRole;
-      }
       if (communitySelection === 'existing' && selectedCommunities.length > 0) {
         registrationData.communityIds = selectedCommunities.map(c => c.id);
       }
@@ -187,6 +220,52 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
   };
 
   if (success) {
+    // Show different message for interested users vs account creation
+    if (communitySelection === 'interested') {
+      return (
+        <div style={{ 
+          maxWidth: '480px', 
+          margin: '0 auto', 
+          padding: '2rem',
+          textAlign: 'center'
+        }}>
+          <div style={{ 
+            fontSize: '3rem', 
+            color: '#10b981', 
+            marginBottom: '1rem' 
+          }}>
+            ✓
+          </div>
+          <h2 style={{ 
+            color: '#1f2937', 
+            marginBottom: '1rem', 
+            fontFamily: 'Inter, sans-serif', 
+            fontWeight: 700,
+            fontSize: '1.875rem'
+          }}>
+            Thank You for Your Interest!
+          </h2>
+          <p style={{ 
+            color: '#6b7280', 
+            marginBottom: '1rem',
+            fontSize: '1rem',
+            fontFamily: 'Inter, sans-serif'
+          }}>
+            Someone will reach out to you shortly.
+          </p>
+          <p style={{ 
+            fontSize: '0.9375rem', 
+            color: '#6b7280', 
+            marginBottom: '1.5rem',
+            fontFamily: 'Inter, sans-serif'
+          }}>
+            We've received your information and will contact you at <strong>{registeredEmail}</strong> to discuss how Neighbri can help your community.
+          </p>
+        </div>
+      );
+    }
+
+    // Regular registration success message
     return (
       <div style={{ 
         maxWidth: '480px', 
