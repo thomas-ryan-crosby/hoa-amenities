@@ -171,14 +171,28 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
       const roundedReservationStart = roundToNearest30Minutes(reservationTimeStart);
       const roundedReservationEnd = roundToNearest30Minutes(reservationTimeEnd);
       
+      // Construct Date objects in local timezone, then convert to ISO strings for UTC storage
+      // Parse the date string (YYYY-MM-DD) and create a local date object
+      const [year, month, day] = reservationDate.split('-').map(Number);
+      
+      // Create local date objects for start and end times
+      const localStartDate = new Date(year, month - 1, day); // month is 0-indexed
+      const [startHours, startMinutes] = roundedReservationStart.split(':').map(Number);
+      localStartDate.setHours(startHours, startMinutes, 0, 0);
+      
+      const localEndDate = new Date(year, month - 1, day);
+      const [endHours, endMinutes] = roundedReservationEnd.split(':').map(Number);
+      localEndDate.setHours(endHours, endMinutes, 0, 0);
+      
+      // Convert to ISO strings (UTC) for database storage
       // Setup times are set to same as reservation times (setup/cleanup time should be included in reservation times)
       const reservationData = {
         amenityId: selectedAmenity,
         date: reservationDate,
-        setupTimeStart: `${reservationDate}T${roundedReservationStart}:00`,
-        setupTimeEnd: `${reservationDate}T${roundedReservationStart}:00`,
-        partyTimeStart: `${reservationDate}T${roundedReservationStart}:00`,
-        partyTimeEnd: `${reservationDate}T${roundedReservationEnd}:00`,
+        setupTimeStart: localStartDate.toISOString(),
+        setupTimeEnd: localStartDate.toISOString(),
+        partyTimeStart: localStartDate.toISOString(),
+        partyTimeEnd: localEndDate.toISOString(),
         guestCount,
         eventName: eventName || null,
         isPrivate: isPrivate,
