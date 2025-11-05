@@ -384,7 +384,7 @@ const ReservationsPage: React.FC = () => {
                 }}>
                   <span
                     style={{
-                      backgroundColor: getStatusColor(reservation.status),
+                      backgroundColor: reservation.status === 'FULLY_APPROVED' ? '#10b981' : reservation.status === 'COMPLETED' ? '#6b7280' : reservation.status === 'CANCELLED' ? '#ef4444' : '#f59e0b',
                       color: 'white',
                       padding: isMobile ? '0.5rem 0.75rem' : '4px 12px',
                       borderRadius: '20px',
