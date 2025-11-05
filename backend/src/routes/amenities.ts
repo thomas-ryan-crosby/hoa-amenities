@@ -44,7 +44,7 @@ router.get('/', authenticateToken, async (req: any, res) => {
 
     const amenities = await Amenity.findAll({
       where: whereClause,
-      attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'calendarGroup', 'isPublic', 'publicReservationFee', 'publicDeposit', 'daysOfOperation', 'hoursOfOperation', 'displayColor', 'janitorialRequired', 'isActive']
+      attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'calendarGroup', 'isPublic', 'publicReservationFee', 'publicDeposit', 'daysOfOperation', 'hoursOfOperation', 'displayColor', 'janitorialRequired', 'approvalRequired', 'isActive']
     });
     
     console.log('✅ Found amenities:', amenities.length, 'items');
@@ -67,7 +67,7 @@ router.get('/:id', authenticateToken, async (req: any, res) => {
         id,
         communityId 
       },
-      attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'calendarGroup', 'isPublic', 'publicReservationFee', 'publicDeposit', 'daysOfOperation', 'hoursOfOperation', 'displayColor', 'janitorialRequired']
+      attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'calendarGroup', 'isPublic', 'publicReservationFee', 'publicDeposit', 'daysOfOperation', 'hoursOfOperation', 'displayColor', 'janitorialRequired', 'approvalRequired']
     });
     
     if (!amenity) {
@@ -85,7 +85,7 @@ router.get('/:id', authenticateToken, async (req: any, res) => {
 router.post('/', authenticateToken, requireAdmin, async (req: any, res) => {
   try {
     const communityId = req.user.currentCommunityId;
-    const { name, description, reservationFee, deposit, capacity, calendarGroup, isPublic, publicReservationFee, publicDeposit, daysOfOperation, hoursOfOperation, displayColor, janitorialRequired } = req.body;
+    const { name, description, reservationFee, deposit, capacity, calendarGroup, isPublic, publicReservationFee, publicDeposit, daysOfOperation, hoursOfOperation, displayColor, janitorialRequired, approvalRequired } = req.body;
 
     if (!name || reservationFee === undefined || deposit === undefined || !capacity) {
       return res.status(400).json({ message: 'Name, reservation fee, deposit, and capacity are required' });

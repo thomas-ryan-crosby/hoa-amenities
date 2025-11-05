@@ -17,6 +17,7 @@ export interface AmenityAttributes {
   hoursOfOperation: string | null; // JSON string of {open: "09:00", close: "17:00"} or {open24Hours: true}
   displayColor: string; // Hex color code for calendar display (e.g., "#355B45")
   janitorialRequired: boolean; // Whether janitorial approval is required
+  approvalRequired: boolean; // Whether admin approval is required
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -40,6 +41,7 @@ export class Amenity extends Model<AmenityAttributes, AmenityCreationAttributes>
   public hoursOfOperation!: string | null;
   public displayColor!: string;
   public janitorialRequired!: boolean;
+  public approvalRequired!: boolean;
   public isActive!: boolean;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -117,6 +119,11 @@ Amenity.init(
       defaultValue: '#355B45', // Default green color
     },
     janitorialRequired: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true,
+    },
+    approvalRequired: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: true,

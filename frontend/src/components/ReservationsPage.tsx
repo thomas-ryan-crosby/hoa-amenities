@@ -458,17 +458,17 @@ const ReservationsPage: React.FC = () => {
                   <button
                     onClick={() => handleModifyReservation(reservation)}
                     style={{
-                      padding: isMobile ? '0.75rem 1rem' : '8px 16px',
+                      padding: isMobile ? '0.5rem 0.75rem' : '6px 12px',
                       backgroundColor: '#355B45',
                       color: 'white',
                       border: 'none',
                       borderRadius: '4px',
                       cursor: 'pointer',
-                      fontSize: isMobile ? '1rem' : '14px',
+                      fontSize: isMobile ? '0.875rem' : '13px',
                       fontWeight: '500',
-                      minHeight: '44px',
-                      width: isMobile ? '100%' : 'auto',
-                      flex: isMobile ? 'none' : 1
+                      minHeight: 'auto',
+                      width: 'auto',
+                      flex: 'none'
                     }}
                   >
                     Modify Reservation
@@ -476,17 +476,17 @@ const ReservationsPage: React.FC = () => {
                   <button
                     onClick={() => handleCancelReservation(reservation)}
                     style={{
-                      padding: isMobile ? '0.75rem 1rem' : '8px 16px',
+                      padding: isMobile ? '0.5rem 0.75rem' : '6px 12px',
                       backgroundColor: '#dc2626',
                       color: 'white',
                       border: 'none',
                       borderRadius: '4px',
                       cursor: 'pointer',
-                      fontSize: isMobile ? '1rem' : '14px',
+                      fontSize: isMobile ? '0.875rem' : '13px',
                       fontWeight: '500',
-                      minHeight: '44px',
-                      width: isMobile ? '100%' : 'auto',
-                      flex: isMobile ? 'none' : 1
+                      minHeight: 'auto',
+                      width: 'auto',
+                      flex: 'none'
                     }}
                   >
                     Cancel Reservation

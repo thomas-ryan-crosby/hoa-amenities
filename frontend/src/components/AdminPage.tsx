@@ -30,6 +30,7 @@ interface Amenity {
   hoursOfOperation?: string | null;
   displayColor?: string;
   janitorialRequired?: boolean;
+  approvalRequired?: boolean;
   isActive: boolean;
 }
 
@@ -56,7 +57,8 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
     daysOfOperation: [] as string[],
     hoursOfOperation: { open: '09:00', close: '17:00', open24Hours: false },
     displayColor: '#355B45',
-    janitorialRequired: true
+    janitorialRequired: true,
+    approvalRequired: true
   });
 
   useEffect(() => {
@@ -125,6 +127,7 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
       payload.hoursOfOperation = formData.hoursOfOperation.open24Hours ? { open24Hours: true } : { open: formData.hoursOfOperation.open, close: formData.hoursOfOperation.close };
       payload.displayColor = formData.displayColor;
       payload.janitorialRequired = formData.janitorialRequired;
+      payload.approvalRequired = formData.approvalRequired;
 
       if (editingAmenity) {
         // Update existing
@@ -1092,6 +1095,35 @@ const AdminPage: React.FC = () => {
               }}>
                 {currentCommunity.name}
               </span>
+              {currentCommunity.accessCode && (
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  backgroundColor: '#fef3c7',
+                  border: '2px solid #f59e0b',
+                  borderRadius: '0.5rem',
+                  padding: '0.5rem 1rem',
+                  marginTop: '0.5rem'
+                }}>
+                  <span style={{ fontSize: '0.875rem', fontWeight: '600', color: '#92400e' }}>
+                    Community Access Code:
+                  </span>
+                  <span style={{
+                    fontSize: '1.25rem',
+                    fontWeight: 'bold',
+                    color: '#78350f',
+                    fontFamily: 'monospace',
+                    letterSpacing: '0.1em',
+                    backgroundColor: 'white',
+                    padding: '0.25rem 0.75rem',
+                    borderRadius: '0.25rem',
+                    border: '1px solid #f59e0b'
+                  }}>
+                    {currentCommunity.accessCode}
+                  </span>
+                </div>
+              )}
             </div>
           )}
         </div>
