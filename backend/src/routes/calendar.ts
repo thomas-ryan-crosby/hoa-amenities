@@ -76,14 +76,14 @@ router.get('/availability', authenticateToken, async (req: any, res) => {
 // GET /api/calendar/events - Get events for calendar view
 router.get('/events', authenticateToken, async (req: any, res) => {
   try {
-    const { startDate, endDate, amenityId } = req.query;
+    const { startDate, endDate, amenityId, calendarGroup } = req.query;
     const communityId = req.user.currentCommunityId;
     
     if (!startDate || !endDate) {
       return res.status(400).json({ message: 'Start date and end date are required' });
     }
 
-    console.log('📅 Fetching calendar events for:', { startDate, endDate, amenityId, communityId });
+    console.log('📅 Fetching calendar events for:', { startDate, endDate, amenityId, calendarGroup, communityId });
 
     // Build where clause - filter by community, exclude only cancelled reservations
     const whereClause: any = {
@@ -98,6 +98,17 @@ router.get('/events', authenticateToken, async (req: any, res) => {
 
     if (amenityId) {
       whereClause.amenityId = amenityId;
+    }
+
+    // Build amenity filter for calendar group
+    const amenityWhere: any = {};
+    if (calendarGroup !== undefined) {
+      if (calendarGroup === '') {
+        // Filter for amenities with no calendar group (null)
+        amenityWhere.calendarGroup = null;
+      } else {
+        amenityWhere.calendarGroup = calendarGroup;
+      }
     }
 
     // Try to include eventName and isPrivate, but handle if they don't exist yet
@@ -135,7 +146,9 @@ router.get('/events', authenticateToken, async (req: any, res) => {
         {
           model: Amenity,
           as: 'amenity',
-          attributes: ['id', 'name', 'reservationFee', 'deposit']
+          where: Object.keys(amenityWhere).length > 0 ? amenityWhere : undefined,
+          required: true,
+          attributes: ['id', 'name', 'reservationFee', 'deposit', 'calendarGroup', 'displayColor']
         },
         {
           model: User,
@@ -197,7 +210,7 @@ router.get('/events', authenticateToken, async (req: any, res) => {
         specialRequirements: reservation.specialRequirements,
         totalFee: reservation.totalFee,
         totalDeposit: reservation.totalDeposit,
-        color: getEventColor(reservation.status, reservation.amenityId)
+        color: getEventColor(reservation.status, reservation.amenityId, reservation.amenity?.displayColor)
       };
     });
 
@@ -216,7 +229,12 @@ router.get('/events', authenticateToken, async (req: any, res) => {
 });
 
 // Helper function to get event colors
-function getEventColor(status: string, amenityId: number): string {
+function getEventColor(status: string, amenityId: number, amenityDisplayColor?: string | null): string {
+  // Use amenity's display color if available
+  if (amenityDisplayColor) {
+    return amenityDisplayColor;
+  }
+
   const colors = {
     NEW: '#f59e0b',              // Orange
     JANITORIAL_APPROVED: '#3b82f6',  // Blue
