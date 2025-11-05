@@ -39,6 +39,7 @@ export async function seedDatabase() {
         hoursOfOperation: null,
         displayColor: '#355B45',
         janitorialRequired: true,
+        approvalRequired: true,
         isActive: true
       }
     });
@@ -59,6 +60,7 @@ export async function seedDatabase() {
         hoursOfOperation: null,
         displayColor: '#355B45',
         janitorialRequired: true,
+        approvalRequired: true,
         isActive: true
       }
     });
@@ -79,6 +81,7 @@ export async function seedDatabase() {
         hoursOfOperation: null,
         displayColor: '#355B45',
         janitorialRequired: true,
+        approvalRequired: true,
         isActive: true
       }
     });

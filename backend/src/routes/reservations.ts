@@ -38,7 +38,7 @@ router.get('/', authenticateToken, async (req: any, res) => {
         {
           model: Amenity,
           as: 'amenity',
-          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'calendarGroup', 'displayColor']
+          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'calendarGroup', 'displayColor', 'janitorialRequired', 'approvalRequired']
         }
       ],
       order: [['date', 'ASC'], ['partyTimeStart', 'ASC']]
@@ -104,7 +104,7 @@ router.get('/all', authenticateToken, async (req: any, res) => {
           as: 'amenity',
           where: Object.keys(amenityWhere).length > 0 ? amenityWhere : undefined,
           required: true,
-          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'calendarGroup', 'displayColor']
+          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'calendarGroup', 'displayColor', 'janitorialRequired', 'approvalRequired']
         },
         {
           model: User,
@@ -148,7 +148,7 @@ router.get('/:id', authenticateToken, async (req: any, res) => {
         {
           model: Amenity,
           as: 'amenity',
-          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity']
+          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'janitorialRequired', 'approvalRequired']
         }
       ]
     });
@@ -266,7 +266,7 @@ router.post('/', authenticateToken, async (req: any, res) => {
         {
           model: Amenity,
           as: 'amenity',
-          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity']
+          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'approvalRequired']
         },
         {
           model: User,
@@ -326,7 +326,7 @@ router.put('/:id', authenticateToken, async (req: any, res) => {
         {
           model: Amenity,
           as: 'amenity',
-          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity']
+          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'janitorialRequired', 'approvalRequired']
         }
       ]
     });
@@ -422,7 +422,7 @@ router.put('/:id/modify', authenticateToken, async (req: any, res) => {
         {
           model: Amenity,
           as: 'amenity',
-          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity']
+          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'janitorialRequired', 'approvalRequired']
         }
       ]
     });
@@ -532,7 +532,7 @@ router.put('/:id/approve', authenticateToken, async (req: any, res) => {
         {
           model: Amenity,
           as: 'amenity',
-          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity']
+          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'approvalRequired']
         },
         {
           model: User,
@@ -568,10 +568,15 @@ router.put('/:id/approve', authenticateToken, async (req: any, res) => {
       }
     }
 
-    // Determine new status based on current status
+    // Determine new status based on current status and amenity approval requirements
     let newStatus: 'JANITORIAL_APPROVED' | 'FULLY_APPROVED';
     if (reservation.status === 'NEW') {
-      newStatus = 'JANITORIAL_APPROVED';
+      // If admin approval is not required, skip directly to FULLY_APPROVED
+      if (!reservation.amenity?.approvalRequired) {
+        newStatus = 'FULLY_APPROVED';
+      } else {
+        newStatus = 'JANITORIAL_APPROVED';
+      }
     } else if (reservation.status === 'JANITORIAL_APPROVED' && communityRole === 'admin') {
       newStatus = 'FULLY_APPROVED';
     } else {
@@ -630,7 +635,7 @@ router.put('/:id/reject', authenticateToken, async (req: any, res) => {
         {
           model: Amenity,
           as: 'amenity',
-          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity']
+          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'approvalRequired']
         },
         {
           model: User,
@@ -696,7 +701,7 @@ router.put('/:id/complete', authenticateToken, async (req: any, res) => {
         {
           model: Amenity,
           as: 'amenity',
-          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity']
+          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'approvalRequired']
         },
         {
           model: User,
@@ -781,7 +786,7 @@ router.post('/:id/assess-damages', authenticateToken, async (req: any, res) => {
         {
           model: Amenity,
           as: 'amenity',
-          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity']
+          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'approvalRequired']
         },
         {
           model: User,
@@ -870,7 +875,7 @@ router.put('/:id/review-damage-assessment', authenticateToken, async (req: any, 
         {
           model: Amenity,
           as: 'amenity',
-          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity']
+          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'approvalRequired']
         },
         {
           model: User,
@@ -977,7 +982,7 @@ router.get('/admin/damage-reviews', authenticateToken, async (req: any, res) => 
         {
           model: Amenity,
           as: 'amenity',
-          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity']
+          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'approvalRequired']
         },
         {
           model: User,

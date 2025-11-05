@@ -23,6 +23,8 @@ interface Reservation {
     reservationFee: number | string;
     deposit: number | string;
     capacity: number;
+    janitorialRequired?: boolean;
+    approvalRequired?: boolean;
   };
 }
 
@@ -131,15 +133,36 @@ const ReservationsPage: React.FC = () => {
     return colors[status as keyof typeof colors] || '#6b7280';
   };
 
-  const getStatusText = (status: string): string => {
-    const statusText = {
-      NEW: 'New - Awaiting Janitorial Review',
-      JANITORIAL_APPROVED: 'Janitorial Approved - Awaiting Admin Review',
-      FULLY_APPROVED: 'Fully Approved - Ready to Use',
-      CANCELLED: 'Cancelled',
-      COMPLETED: 'Completed'
-    };
-    return statusText[status as keyof typeof statusText] || status;
+  const getStatusText = (reservation: Reservation): string => {
+    if (reservation.status === 'CANCELLED') {
+      return 'Cancelled';
+    }
+    if (reservation.status === 'COMPLETED') {
+      return 'Completed';
+    }
+    if (reservation.status === 'FULLY_APPROVED') {
+      return 'Confirmed';
+    }
+    
+    // For NEW and JANITORIAL_APPROVED, determine what approvals are still needed
+    const amenity = reservation.amenity;
+    const needsJanitorial = amenity.janitorialRequired !== false && reservation.status === 'NEW';
+    const needsAdmin = amenity.approvalRequired !== false && reservation.status !== 'FULLY_APPROVED';
+    
+    const pendingApprovals: string[] = [];
+    if (needsJanitorial) {
+      pendingApprovals.push('Janitorial');
+    }
+    if (needsAdmin && reservation.status === 'JANITORIAL_APPROVED') {
+      pendingApprovals.push('Admin');
+    }
+    
+    if (pendingApprovals.length > 0) {
+      return `Unconfirmed (Awaiting Approvals - ${pendingApprovals.join(', ')})`;
+    }
+    
+    // Fallback (shouldn't reach here, but just in case)
+    return 'Unconfirmed';
   };
 
   const formatDate = (dateString: string): string => {
@@ -371,7 +394,7 @@ const ReservationsPage: React.FC = () => {
                       width: isMobile ? '100%' : 'auto'
                     }}
                   >
-                    {getStatusText(reservation.status)}
+                    {getStatusText(reservation)}
                   </span>
                   {(reservation.status === 'NEW' || reservation.status === 'JANITORIAL_APPROVED') && (
                     <button

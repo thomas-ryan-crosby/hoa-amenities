@@ -1280,18 +1280,21 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
       </div>
 
       {/* Legend */}
-      <div style={{ marginTop: '20px', display: 'flex', gap: '20px', alignItems: 'center' }}>
+      <div style={{ marginTop: '20px', display: 'flex', gap: '20px', alignItems: 'center', flexWrap: 'wrap' }}>
         <div style={{ fontSize: '14px', fontWeight: 'bold' }}>Legend:</div>
         <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
-          {/* Amenity Types */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-            <div style={{ width: '12px', height: '12px', backgroundColor: '#9333ea', borderRadius: '2px' }}></div>
-            <span style={{ fontSize: '12px' }}>Clubroom</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-            <div style={{ width: '12px', height: '12px', backgroundColor: '#3b82f6', borderRadius: '2px' }}></div>
-            <span style={{ fontSize: '12px' }}>Pool</span>
-          </div>
+          {/* Amenity Types - Dynamically generated from amenities */}
+          {amenities.map(amenity => (
+            <div key={amenity.id} style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+              <div style={{ 
+                width: '12px', 
+                height: '12px', 
+                backgroundColor: amenity.displayColor || '#355B45', 
+                borderRadius: '2px' 
+              }}></div>
+              <span style={{ fontSize: '12px' }}>{amenity.name}</span>
+            </div>
+          ))}
           
           {/* Status Indicators */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>

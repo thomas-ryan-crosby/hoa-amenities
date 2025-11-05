@@ -210,7 +210,8 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
       daysOfOperation: daysOfOp,
       hoursOfOperation: hoursOfOp,
       displayColor: amenity.displayColor || '#355B45',
-      janitorialRequired: amenity.janitorialRequired !== undefined ? amenity.janitorialRequired : true
+      janitorialRequired: amenity.janitorialRequired !== undefined ? amenity.janitorialRequired : true,
+      approvalRequired: amenity.approvalRequired !== undefined ? amenity.approvalRequired : true
     });
     setShowModal(true);
   };
@@ -801,26 +802,48 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                 </p>
               </div>
 
-              {/* Janitorial Required */}
+              {/* Approval Requirements */}
               <div style={{ marginBottom: '1rem', padding: '1rem', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '0.375rem' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
-                  <input
-                    type="checkbox"
-                    checked={formData.janitorialRequired}
-                    onChange={(e) => setFormData({ ...formData, janitorialRequired: e.target.checked })}
-                    style={{
-                      width: '20px',
-                      height: '20px',
-                      cursor: 'pointer'
-                    }}
-                  />
-                  <span style={{ fontWeight: 500, color: '#374151' }}>
-                    Janitorial Approval Required
-                  </span>
-                </label>
-                <p style={{ fontSize: '0.875rem', color: '#6b7280', marginTop: '0.5rem', marginLeft: '1.75rem' }}>
-                  If checked, reservations will require janitorial approval before being confirmed.
-                </p>
+                <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                    <input
+                      type="checkbox"
+                      checked={formData.janitorialRequired}
+                      onChange={(e) => setFormData({ ...formData, janitorialRequired: e.target.checked })}
+                      style={{
+                        width: '20px',
+                        height: '20px',
+                        cursor: 'pointer'
+                      }}
+                    />
+                    <span style={{ fontWeight: 500, color: '#374151' }}>
+                      Janitorial Approval Required
+                    </span>
+                  </label>
+                  <p style={{ fontSize: '0.875rem', color: '#6b7280', marginTop: '0.5rem', marginLeft: '1.75rem' }}>
+                    If checked, reservations will require janitorial approval before being confirmed.
+                  </p>
+                </div>
+                <div>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                    <input
+                      type="checkbox"
+                      checked={formData.approvalRequired}
+                      onChange={(e) => setFormData({ ...formData, approvalRequired: e.target.checked })}
+                      style={{
+                        width: '20px',
+                        height: '20px',
+                        cursor: 'pointer'
+                      }}
+                    />
+                    <span style={{ fontWeight: 500, color: '#374151' }}>
+                      Admin Approval Required
+                    </span>
+                  </label>
+                  <p style={{ fontSize: '0.875rem', color: '#6b7280', marginTop: '0.5rem', marginLeft: '1.75rem' }}>
+                    If checked, reservations will require admin approval after janitorial approval.
+                  </p>
+                </div>
               </div>
 
               <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>

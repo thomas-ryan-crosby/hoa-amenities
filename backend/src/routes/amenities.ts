@@ -126,6 +126,7 @@ router.post('/', authenticateToken, requireAdmin, async (req: any, res) => {
         hoursOfOperation: hoursOfOperation ? (typeof hoursOfOperation === 'string' ? hoursOfOperation : JSON.stringify(hoursOfOperation)) : null,
         displayColor: displayColor || '#355B45',
         janitorialRequired: janitorialRequired !== undefined ? janitorialRequired === true : true,
+        approvalRequired: approvalRequired !== undefined ? approvalRequired === true : true,
         isActive: true
       });
 
@@ -172,7 +173,8 @@ router.put('/:id', authenticateToken, requireAdmin, async (req: any, res) => {
       daysOfOperation, 
       hoursOfOperation, 
       displayColor, 
-      janitorialRequired, 
+      janitorialRequired,
+      approvalRequired,
       isActive 
     } = req.body;
 
@@ -228,6 +230,7 @@ router.put('/:id', authenticateToken, requireAdmin, async (req: any, res) => {
     }
     if (displayColor !== undefined) amenity.displayColor = displayColor || '#355B45';
     if (janitorialRequired !== undefined) amenity.janitorialRequired = janitorialRequired === true;
+    if (approvalRequired !== undefined) amenity.approvalRequired = approvalRequired === true;
     if (isActive !== undefined) amenity.isActive = isActive;
 
     await amenity.save();
