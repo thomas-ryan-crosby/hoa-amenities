@@ -358,6 +358,30 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                       {amenity.calendarGroup}
                     </span>
                   )}
+                  {amenity.displayColor && (
+                    <span style={{
+                      backgroundColor: amenity.displayColor,
+                      width: '20px',
+                      height: '20px',
+                      borderRadius: '50%',
+                      display: 'inline-block',
+                      border: '1px solid #d1d5db',
+                      marginLeft: '0.5rem'
+                    }} title={`Color: ${amenity.displayColor}`} />
+                  )}
+                  {amenity.janitorialRequired !== false && (
+                    <span style={{
+                      backgroundColor: '#fef3c7',
+                      color: '#92400e',
+                      padding: '0.25rem 0.5rem',
+                      borderRadius: '0.25rem',
+                      fontSize: '0.75rem',
+                      fontWeight: 500,
+                      marginLeft: '0.5rem'
+                    }}>
+                      Janitorial Required
+                    </span>
+                  )}
                 </div>
                 {amenity.description && (
                   <p style={{ color: '#6b7280', marginBottom: '0.5rem', fontSize: '0.875rem' }}>

@@ -123,6 +123,17 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
         endDate: formatDate(endDate)
       });
       
+      // Filter by calendar group
+      if (selectedCalendarGroup !== 'all') {
+        if (selectedCalendarGroup === 'default') {
+          // Filter for amenities with no calendar group
+          params.append('calendarGroup', '');
+        } else {
+          params.append('calendarGroup', selectedCalendarGroup);
+        }
+      }
+      
+      // Filter by amenity (only if calendar group is selected or 'all')
       if (selectedAmenity !== 'all') {
         params.append('amenityId', selectedAmenity.toString());
       }

@@ -38,7 +38,7 @@ router.get('/', authenticateToken, async (req: any, res) => {
         {
           model: Amenity,
           as: 'amenity',
-          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity']
+          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'calendarGroup', 'displayColor']
         }
       ],
       order: [['date', 'ASC'], ['partyTimeStart', 'ASC']]
@@ -66,18 +66,45 @@ router.get('/all', authenticateToken, async (req: any, res) => {
     }
 
     const communityId = req.user.currentCommunityId;
+    const { calendarGroup, amenityId, startDate, endDate } = req.query;
     console.log('🔍 Admin fetching all reservations for community:', communityId);
+
+    // Build where clause for reservations
+    const whereClause: any = {
+      communityId
+    };
+
+    // Filter by date range if provided
+    if (startDate && endDate) {
+      whereClause.date = {
+        [Op.between]: [startDate, endDate]
+      };
+    }
+
+    // Build amenity filter
+    const amenityWhere: any = {};
+    if (calendarGroup !== undefined) {
+      if (calendarGroup === '') {
+        // Filter for amenities with no calendar group (null)
+        amenityWhere.calendarGroup = null;
+      } else {
+        amenityWhere.calendarGroup = calendarGroup;
+      }
+    }
+    if (amenityId) {
+      amenityWhere.id = amenityId;
+    }
 
     // Fetch reservations with associations for current community
     const reservations = await Reservation.findAll({
-      where: {
-        communityId
-      },
+      where: whereClause,
       include: [
         {
           model: Amenity,
           as: 'amenity',
-          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity']
+          where: Object.keys(amenityWhere).length > 0 ? amenityWhere : undefined,
+          required: true,
+          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'calendarGroup', 'displayColor']
         },
         {
           model: User,
