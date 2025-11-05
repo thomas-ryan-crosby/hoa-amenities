@@ -120,6 +120,12 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
         payload.publicDeposit = null;
       }
 
+      // Add operational fields
+      payload.daysOfOperation = formData.daysOfOperation.length > 0 ? formData.daysOfOperation : null;
+      payload.hoursOfOperation = formData.hoursOfOperation.open24Hours ? { open24Hours: true } : { open: formData.hoursOfOperation.open, close: formData.hoursOfOperation.close };
+      payload.displayColor = formData.displayColor;
+      payload.janitorialRequired = formData.janitorialRequired;
+
       if (editingAmenity) {
         // Update existing
         await axios.put(`${apiUrl}/api/amenities/${editingAmenity.id}`, payload, {
