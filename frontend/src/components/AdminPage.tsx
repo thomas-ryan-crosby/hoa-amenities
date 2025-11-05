@@ -168,6 +168,32 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
 
   const handleEdit = (amenity: Amenity) => {
     setEditingAmenity(amenity);
+    
+    // Parse days of operation
+    let daysOfOp: string[] = [];
+    if (amenity.daysOfOperation) {
+      try {
+        daysOfOp = typeof amenity.daysOfOperation === 'string' ? JSON.parse(amenity.daysOfOperation) : amenity.daysOfOperation;
+      } catch (e) {
+        daysOfOp = [];
+      }
+    }
+    
+    // Parse hours of operation
+    let hoursOfOp = { open: '09:00', close: '17:00', open24Hours: false };
+    if (amenity.hoursOfOperation) {
+      try {
+        const parsed = typeof amenity.hoursOfOperation === 'string' ? JSON.parse(amenity.hoursOfOperation) : amenity.hoursOfOperation;
+        if (parsed.open24Hours) {
+          hoursOfOp = { open: '00:00', close: '23:59', open24Hours: true };
+        } else {
+          hoursOfOp = { open: parsed.open || '09:00', close: parsed.close || '17:00', open24Hours: false };
+        }
+      } catch (e) {
+        // Use defaults
+      }
+    }
+    
     setFormData({
       name: amenity.name,
       description: amenity.description || '',
@@ -177,7 +203,11 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
       calendarGroup: amenity.calendarGroup || '',
       isPublic: amenity.isPublic || false,
       publicReservationFee: amenity.publicReservationFee !== null && amenity.publicReservationFee !== undefined ? String(amenity.publicReservationFee) : '',
-      publicDeposit: amenity.publicDeposit !== null && amenity.publicDeposit !== undefined ? String(amenity.publicDeposit) : ''
+      publicDeposit: amenity.publicDeposit !== null && amenity.publicDeposit !== undefined ? String(amenity.publicDeposit) : '',
+      daysOfOperation: daysOfOp,
+      hoursOfOperation: hoursOfOp,
+      displayColor: amenity.displayColor || '#355B45',
+      janitorialRequired: amenity.janitorialRequired !== undefined ? amenity.janitorialRequired : true
     });
     setShowModal(true);
   };
