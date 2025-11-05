@@ -648,6 +648,154 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                 )}
               </div>
 
+              {/* Days of Operation */}
+              <div style={{ marginBottom: '1rem' }}>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                  Days of Operation
+                </label>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                  {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map(day => (
+                    <label key={day} style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', cursor: 'pointer' }}>
+                      <input
+                        type="checkbox"
+                        checked={formData.daysOfOperation.includes(day)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setFormData({ ...formData, daysOfOperation: [...formData.daysOfOperation, day] });
+                          } else {
+                            setFormData({ ...formData, daysOfOperation: formData.daysOfOperation.filter(d => d !== day) });
+                          }
+                        }}
+                        style={{ cursor: 'pointer' }}
+                      />
+                      <span style={{ fontSize: '0.875rem', textTransform: 'capitalize' }}>{day}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Hours of Operation */}
+              <div style={{ marginBottom: '1rem' }}>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                  Hours of Operation
+                </label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', cursor: 'pointer' }}>
+                  <input
+                    type="checkbox"
+                    checked={formData.hoursOfOperation.open24Hours}
+                    onChange={(e) => setFormData({
+                      ...formData,
+                      hoursOfOperation: { ...formData.hoursOfOperation, open24Hours: e.target.checked }
+                    })}
+                    style={{ cursor: 'pointer' }}
+                  />
+                  <span style={{ fontSize: '0.875rem' }}>Open 24 Hours</span>
+                </label>
+                {!formData.hoursOfOperation.open24Hours && (
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                    <div>
+                      <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.875rem', color: '#6b7280' }}>
+                        Open Time
+                      </label>
+                      <input
+                        type="time"
+                        value={formData.hoursOfOperation.open}
+                        onChange={(e) => setFormData({
+                          ...formData,
+                          hoursOfOperation: { ...formData.hoursOfOperation, open: e.target.value }
+                        })}
+                        style={{
+                          width: '100%',
+                          padding: '0.5rem',
+                          border: '1px solid #d1d5db',
+                          borderRadius: '0.375rem',
+                          fontSize: '1rem'
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.875rem', color: '#6b7280' }}>
+                        Close Time
+                      </label>
+                      <input
+                        type="time"
+                        value={formData.hoursOfOperation.close}
+                        onChange={(e) => setFormData({
+                          ...formData,
+                          hoursOfOperation: { ...formData.hoursOfOperation, close: e.target.value }
+                        })}
+                        style={{
+                          width: '100%',
+                          padding: '0.5rem',
+                          border: '1px solid #d1d5db',
+                          borderRadius: '0.375rem',
+                          fontSize: '1rem'
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Display Color */}
+              <div style={{ marginBottom: '1rem' }}>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
+                  Display Color
+                </label>
+                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                  <input
+                    type="color"
+                    value={formData.displayColor}
+                    onChange={(e) => setFormData({ ...formData, displayColor: e.target.value })}
+                    style={{
+                      width: '60px',
+                      height: '40px',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '0.375rem',
+                      cursor: 'pointer'
+                    }}
+                  />
+                  <input
+                    type="text"
+                    value={formData.displayColor}
+                    onChange={(e) => setFormData({ ...formData, displayColor: e.target.value })}
+                    placeholder="#355B45"
+                    style={{
+                      flex: 1,
+                      padding: '0.5rem',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '0.375rem',
+                      fontSize: '1rem'
+                    }}
+                  />
+                </div>
+                <p style={{ fontSize: '0.875rem', color: '#6b7280', marginTop: '0.25rem' }}>
+                  This color will be used to display reservations on the calendar
+                </p>
+              </div>
+
+              {/* Janitorial Required */}
+              <div style={{ marginBottom: '1rem', padding: '1rem', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '0.375rem' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                  <input
+                    type="checkbox"
+                    checked={formData.janitorialRequired}
+                    onChange={(e) => setFormData({ ...formData, janitorialRequired: e.target.checked })}
+                    style={{
+                      width: '20px',
+                      height: '20px',
+                      cursor: 'pointer'
+                    }}
+                  />
+                  <span style={{ fontWeight: 500, color: '#374151' }}>
+                    Janitorial Approval Required
+                  </span>
+                </label>
+                <p style={{ fontSize: '0.875rem', color: '#6b7280', marginTop: '0.5rem', marginLeft: '1.75rem' }}>
+                  If checked, reservations will require janitorial approval before being confirmed.
+                </p>
+              </div>
+
               <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
                 <button
                   type="button"

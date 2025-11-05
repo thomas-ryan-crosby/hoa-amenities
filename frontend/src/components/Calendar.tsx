@@ -1224,25 +1224,60 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
             ))}
           </div>
           
-          {/* Amenity Filter */}
+          {/* Calendar Group Filter */}
           {amenities.length > 0 ? (
-            <select
-              value={selectedAmenity}
-              onChange={(e) => setSelectedAmenity(e.target.value === 'all' ? 'all' : parseInt(e.target.value))}
-              style={{ 
-                padding: isMobile ? '0.75rem' : '8px', 
-                border: '1px solid #d1d5db', 
-                borderRadius: '4px',
-                fontSize: isMobile ? '1rem' : '14px',
-                minHeight: '44px',
-                width: isMobile ? '100%' : 'auto'
-              }}
-            >
-              <option value="all">All Amenities</option>
-              {amenities.map(amenity => (
-                <option key={amenity.id} value={amenity.id}>{amenity.name}</option>
-              ))}
-            </select>
+            <>
+              <select
+                value={selectedCalendarGroup}
+                onChange={(e) => {
+                  setSelectedCalendarGroup(e.target.value);
+                  setSelectedAmenity('all'); // Reset amenity when changing calendar group
+                }}
+                style={{ 
+                  padding: isMobile ? '0.75rem' : '8px', 
+                  border: '1px solid #d1d5db', 
+                  borderRadius: '4px',
+                  fontSize: isMobile ? '1rem' : '14px',
+                  minHeight: '44px',
+                  width: isMobile ? '100%' : 'auto',
+                  marginRight: isMobile ? '0' : '0.5rem',
+                  marginBottom: isMobile ? '0.5rem' : '0'
+                }}
+              >
+                <option value="all">All Calendars</option>
+                {Array.from(new Set(amenities.map(a => a.calendarGroup).filter(Boolean))).map(group => (
+                  <option key={group as string} value={group as string}>{group}</option>
+                ))}
+                {amenities.some(a => !a.calendarGroup) && (
+                  <option value="default">Default Calendar</option>
+                )}
+              </select>
+              
+              {/* Amenity Filter (filtered by selected calendar group) */}
+              <select
+                value={selectedAmenity}
+                onChange={(e) => setSelectedAmenity(e.target.value === 'all' ? 'all' : parseInt(e.target.value))}
+                style={{ 
+                  padding: isMobile ? '0.75rem' : '8px', 
+                  border: '1px solid #d1d5db', 
+                  borderRadius: '4px',
+                  fontSize: isMobile ? '1rem' : '14px',
+                  minHeight: '44px',
+                  width: isMobile ? '100%' : 'auto'
+                }}
+              >
+                <option value="all">All Amenities</option>
+                {amenities
+                  .filter(amenity => {
+                    if (selectedCalendarGroup === 'all') return true;
+                    if (selectedCalendarGroup === 'default') return !amenity.calendarGroup;
+                    return amenity.calendarGroup === selectedCalendarGroup;
+                  })
+                  .map(amenity => (
+                    <option key={amenity.id} value={amenity.id}>{amenity.name}</option>
+                  ))}
+              </select>
+            </>
           ) : (
             <div style={{
               padding: isMobile ? '0.75rem' : '8px 12px',
