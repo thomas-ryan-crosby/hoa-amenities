@@ -68,7 +68,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
       setLoading(false);
       setEvents([]);
     }
-  }, [currentDate, selectedAmenity, amenities, refreshTrigger]);
+  }, [currentDate, selectedAmenity, selectedCalendarGroup, amenities, refreshTrigger]);
 
   const fetchAmenities = async () => {
     try {
@@ -345,19 +345,39 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
           const isToday = day.toDateString() === new Date().toDateString();
           const isPast = day < new Date(new Date().setHours(0, 0, 0, 0));
           
-          // Group events by amenity
-          // Filter events - include "Pool + Clubroom" in both Clubroom and Pool columns
-          const clubroomEvents = dayEvents.filter(event => 
-            event.amenityName === 'Clubroom' || event.amenityName === 'Pool + Clubroom'
-          );
-          const poolEvents = dayEvents.filter(event => 
-            event.amenityName === 'Pool' || event.amenityName === 'Pool + Clubroom'
-          );
-          const otherEvents = dayEvents.filter(event => 
-            event.amenityName !== 'Clubroom' && 
-            event.amenityName !== 'Pool' && 
-            event.amenityName !== 'Pool + Clubroom'
-          );
+          // Filter events by selected calendar group
+          let filteredDayEvents = dayEvents;
+          
+          if (selectedCalendarGroup !== 'all') {
+            // Get amenities in the selected calendar group
+            const groupAmenities = amenities.filter(amenity => {
+              if (selectedCalendarGroup === 'default') {
+                return !amenity.calendarGroup;
+              }
+              return amenity.calendarGroup === selectedCalendarGroup;
+            });
+            
+            const groupAmenityIds = groupAmenities.map(a => a.id);
+            const groupAmenityNames = groupAmenities.map(a => a.name);
+            
+            // Filter events to only show those from amenities in the selected calendar group
+            filteredDayEvents = dayEvents.filter(event => {
+              // Check if event's amenity is in the selected group
+              return groupAmenityNames.includes(event.amenityName);
+            });
+          }
+          
+          // Get amenities for the current calendar group view
+          const currentGroupAmenities = selectedCalendarGroup === 'all' 
+            ? amenities 
+            : selectedCalendarGroup === 'default'
+            ? amenities.filter(a => !a.calendarGroup)
+            : amenities.filter(a => a.calendarGroup === selectedCalendarGroup);
+          
+          // Filter out amenities that don't match selectedAmenity filter
+          const displayAmenities = selectedAmenity === 'all'
+            ? currentGroupAmenities
+            : currentGroupAmenities.filter(a => a.id === selectedAmenity);
           
           // Calculate date string for this cell
           const year = day.getFullYear();
@@ -404,26 +424,38 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
               
               
               {/* Events - Side-by-side blocks */}
-              <div style={{ 
-                position: 'absolute', 
-                bottom: '4px', 
-                left: '4px', 
-                right: '4px',
-                top: '30px', // Constrain to cell height
-                display: 'flex',
-                gap: '2px',
-                zIndex: 1,
-                overflow: 'hidden' // Prevent overflow
-              }}>
-                {/* Clubroom events - Always left half (50% width) */}
+              {displayAmenities.length > 0 && (
                 <div style={{ 
-                  flex: '0 0 calc(50% - 1px)', 
-                  display: 'flex', 
-                  flexDirection: 'column',
-                  maxWidth: 'calc(50% - 1px)',
-                  overflow: 'hidden'
+                  position: 'absolute', 
+                  bottom: '4px', 
+                  left: '4px', 
+                  right: '4px',
+                  top: '30px', // Constrain to cell height
+                  display: 'flex',
+                  gap: '2px',
+                  zIndex: 1,
+                  overflow: 'hidden' // Prevent overflow
                 }}>
-                  {dayEvents.filter(event => event.amenityName === 'Clubroom' || event.amenityName === 'Pool + Clubroom').slice(0, 2).map((event, eventIndex) => {
+                  {displayAmenities.map((amenity, amenityIndex) => {
+                    const amenityEvents = filteredDayEvents.filter(event => event.amenityName === amenity.name);
+                    const amenityCleaningEvents = filteredDayEvents.filter(event => 
+                      event.amenityName === amenity.name && 
+                      event.cleaningTime && 
+                      event.cleaningTime.start && 
+                      event.cleaningTime.end
+                    );
+                    const amenityWidth = `${100 / displayAmenities.length}%`;
+                    
+                    return (
+                      <div key={amenity.id} style={{ 
+                        flex: `0 0 calc(${amenityWidth} - 2px)`, 
+                        display: 'flex', 
+                        flexDirection: 'column',
+                        maxWidth: `calc(${amenityWidth} - 2px)`,
+                        overflow: 'hidden'
+                      }}>
+                        {/* Regular events for this amenity */}
+                        {amenityEvents.slice(0, 2).map((event, eventIndex) => {
                     // Simple morning/afternoon logic
                     const eventStart = new Date(event.start);
                     const eventEnd = new Date(event.end);
@@ -467,11 +499,11 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                     
                     return (
                       <div
-                        key={`clubroom-${eventIndex}`}
+                        key={`${amenity.id}-${eventIndex}`}
                         onClick={(e) => handleEventClick(event, e)}
                         style={{
                           width: '100%',
-                          backgroundColor: '#9333ea', // Purple for Clubroom
+                          backgroundColor: event.color || amenity.displayColor || '#6b7280',
                           borderRadius: '4px',
                           padding: '2px',
                           color: 'white',
@@ -491,7 +523,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                           textDecoration: isCompleted ? 'line-through' : 'none', // Strikethrough for completed
                           border: isCompleted ? '1px dashed rgba(255,255,255,0.5)' : 'none' // Dashed border for completed
                         }}
-                        title={`Clubroom - ${event.title} (${new Date(event.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(event.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}) - Status: ${event.status}${isCompleted ? ' (Completed)' : ''}`}
+                        title={`${amenity.name} - ${event.title} (${new Date(event.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(event.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}) - Status: ${event.status}${isCompleted ? ' (Completed)' : ''}`}
                       >
                         {/* Status indicator */}
                         <div style={{
@@ -527,10 +559,10 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                         </div>
                       </div>
                     );
-                  })}
-                  
-                  {/* Cleaning blocks for Clubroom events */}
-                  {dayEvents.filter(event => (event.amenityName === 'Clubroom' || event.amenityName === 'Pool + Clubroom') && event.cleaningTime && event.cleaningTime.start && event.cleaningTime.end).map((event, cleanIndex) => {
+                        })}
+                        
+                        {/* Cleaning blocks for this amenity */}
+                        {amenityCleaningEvents.map((event, cleanIndex) => {
                     const cleaningStart = new Date(event.cleaningTime!.start);
                     const cleaningEnd = new Date(event.cleaningTime!.end);
                     const cleanStartHour = cleaningStart.getHours();
@@ -549,7 +581,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                     
                     return (
                       <div
-                        key={`cleaning-clubroom-${cleanIndex}`}
+                        key={`cleaning-${amenity.id}-${cleanIndex}`}
                         style={{
                           width: '100%',
                           backgroundColor: '#fca5a5', // Light red for cleaning
@@ -572,7 +604,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                           opacity: isCompleted ? 0.4 : 0.8, // More transparent if completed
                           textDecoration: isCompleted ? 'line-through' : 'none' // Strikethrough for completed
                         }}
-                        title={`Cleaning Time - Clubroom unavailable (${new Date(event.cleaningTime!.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(event.cleaningTime!.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})${isCompleted ? ' - Completed' : ''}`}
+                        title={`Cleaning Time - ${amenity.name} unavailable (${new Date(event.cleaningTime!.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(event.cleaningTime!.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})${isCompleted ? ' - Completed' : ''}`}
                       >
                         <div style={{ 
                           textAlign: 'center',
@@ -592,121 +624,12 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                         </div>
                       </div>
                     );
-                  })}
-                </div>
-                
-                {/* Pool events - Always right half (50% width) */}
-                <div style={{ 
-                  flex: '0 0 calc(50% - 1px)', 
-                  display: 'flex', 
-                  flexDirection: 'column',
-                  maxWidth: 'calc(50% - 1px)',
-                  overflow: 'hidden'
-                }}>
-                  {dayEvents.filter(event => event.amenityName === 'Pool' || event.amenityName === 'Pool + Clubroom').slice(0, 2).map((event, eventIndex) => {
-                    // Simple morning/afternoon logic
-                    const eventStart = new Date(event.start);
-                    const eventEnd = new Date(event.end);
-                    const startHour = eventStart.getHours();
-                    const endHour = eventEnd.getHours();
-                    
-                    // Determine height based on timing
-                    let heightStyle;
-                    if (startHour < 12 && endHour < 12) {
-                      // Morning only - smaller height
-                      heightStyle = { minHeight: '20px', maxHeight: '25px' };
-                    } else if (startHour >= 12 && endHour >= 12) {
-                      // Afternoon only - smaller height
-                      heightStyle = { minHeight: '20px', maxHeight: '25px' };
-                    } else {
-                      // Morning to afternoon - larger height
-                      heightStyle = { minHeight: '35px', maxHeight: '40px' };
-                    }
-                    
-                    // Determine status color
-                    let statusColor;
-                    switch (event.status) {
-                      case 'NEW':
-                        statusColor = '#6b7280'; // Grey
-                        break;
-                      case 'JANITORIAL_APPROVED':
-                        statusColor = '#f59e0b'; // Yellow
-                        break;
-                      case 'FULLY_APPROVED':
-                        statusColor = '#10b981'; // Green
-                        break;
-                      default:
-                        statusColor = '#6b7280'; // Grey
-                    }
-
-                    // Check if event is completed
-                    const isCompleted = event.status === 'COMPLETED';
-                    
-                    return (
-                      <div
-                        key={`pool-${eventIndex}`}
-                        onClick={(e) => handleEventClick(event, e)}
-                        style={{
-                          width: '100%',
-                          backgroundColor: '#3b82f6', // Blue for Pool
-                          borderRadius: '4px',
-                          padding: '2px',
-                          color: 'white',
-                          fontSize: '7px',
-                          fontWeight: '500',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                          wordWrap: 'break-word',
-                          overflowWrap: 'break-word',
-                          marginBottom: '1px',
-                          position: 'relative', // Ensure status indicator positions relative to this block
-                          boxSizing: 'border-box', // Include padding and border in width calculation
-                          ...heightStyle,
-                          opacity: isCompleted ? 0.5 : 1, // Make completed events more transparent
-                          textDecoration: isCompleted ? 'line-through' : 'none', // Strikethrough for completed
-                          border: isCompleted ? '1px dashed rgba(255,255,255,0.5)' : 'none' // Dashed border for completed
-                        }}
-                        title={`Pool - ${event.title} (${new Date(event.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(event.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}) - Status: ${event.status}${isCompleted ? ' (Completed)' : ''}`}
-                      >
-                        {/* Status indicator */}
-                        <div style={{
-                          position: 'absolute',
-                          top: '1px',
-                          right: '1px',
-                          width: '4px',
-                          height: '4px',
-                          backgroundColor: statusColor,
-                          borderRadius: '50%',
-                          border: '1px solid white'
-                        }}></div>
-                        
-                        <div style={{ 
-                          textAlign: 'center',
-                          lineHeight: '1.2',
-                          width: '100%',
-                          overflow: 'hidden',
-                          paddingRight: '6px' // Make room for status indicator
-                        }}>
-                          {/* Show actual event name for admin/janitorial, or title for others */}
-                          {(isAdmin || isJanitorial) && event.eventName && event.isPrivate
-                            ? `${event.eventName} (Private)`
-                            : event.title}
-                        <div style={{ 
-                          fontSize: '5px', 
-                          color: 'red', 
-                          marginTop: '1px',
-                          fontWeight: 'bold'
-                        }}>
-                          {!isMobile && `DB: ${event.date} | ${new Date(event.partyTime.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(event.partyTime.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
-                        </div>
-                        </div>
+                        })}
                       </div>
                     );
                   })}
                 </div>
-              </div>
+              )}
               
             </div>
           );
@@ -809,8 +732,40 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                   return eventDate.toDateString() === day.toDateString();
                 });
                 
+                // Filter events by selected calendar group
+                let filteredDayEvents = dayEvents;
+                
+                if (selectedCalendarGroup !== 'all') {
+                  // Get amenities in the selected calendar group
+                  const groupAmenities = amenities.filter(amenity => {
+                    if (selectedCalendarGroup === 'default') {
+                      return !amenity.calendarGroup;
+                    }
+                    return amenity.calendarGroup === selectedCalendarGroup;
+                  });
+                  
+                  const groupAmenityNames = groupAmenities.map(a => a.name);
+                  
+                  // Filter events to only show those from amenities in the selected calendar group
+                  filteredDayEvents = dayEvents.filter(event => {
+                    return groupAmenityNames.includes(event.amenityName);
+                  });
+                }
+                
+                // Get amenities for the current calendar group view
+                const currentGroupAmenities = selectedCalendarGroup === 'all' 
+                  ? amenities 
+                  : selectedCalendarGroup === 'default'
+                  ? amenities.filter(a => !a.calendarGroup)
+                  : amenities.filter(a => a.calendarGroup === selectedCalendarGroup);
+                
+                // Filter out amenities that don't match selectedAmenity filter
+                const displayAmenities = selectedAmenity === 'all'
+                  ? currentGroupAmenities
+                  : currentGroupAmenities.filter(a => a.id === selectedAmenity);
+                
                 // Find events that span this time slot
-                const spanningEvents = dayEvents.filter(event => {
+                const spanningEvents = filteredDayEvents.filter(event => {
                   const eventStart = new Date(event.start);
                   const eventEnd = new Date(event.end);
                   const timeSlotStart = timeIndex * 2;
@@ -819,9 +774,14 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                   return eventStart.getHours() < timeSlotEnd && eventEnd.getHours() > timeSlotStart;
                 });
                 
-                // Find cleaning times that span this time slot (for clubroom only)
-                const spanningCleaningEvents = dayEvents.filter(event => {
-                  if ((event.amenityName !== 'Clubroom' && event.amenityName !== 'Pool + Clubroom') || !event.cleaningTime || !event.cleaningTime.start || !event.cleaningTime.end) {
+                // Find cleaning times that span this time slot
+                const spanningCleaningEvents = filteredDayEvents.filter(event => {
+                  if (!event.cleaningTime || !event.cleaningTime.start || !event.cleaningTime.end) {
+                    return false;
+                  }
+                  // Check if event's amenity is in display amenities
+                  const eventAmenity = displayAmenities.find(a => a.name === event.amenityName);
+                  if (!eventAmenity) {
                     return false;
                   }
                   const cleaningStart = new Date(event.cleaningTime.start);
@@ -850,25 +810,32 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                       }
                     }}
                   >
-                    {/* Render spanning events as fixed 50% width blocks */}
-                    <div style={{ 
-                      position: 'absolute', 
-                      top: '2px', 
-                      left: '2px', 
-                      right: '2px', 
-                      bottom: '2px',
-                      display: 'flex',
-                      gap: '2px',
-                      zIndex: 1
-                    }}>
-                      {/* Clubroom events - Always left half (50% width) */}
+                    {/* Render spanning events dynamically based on calendar group */}
+                    {displayAmenities.length > 0 && (
                       <div style={{ 
-                        flex: '0 0 50%', 
-                        display: 'flex', 
-                        flexDirection: 'column',
-                        maxWidth: '50%'
+                        position: 'absolute', 
+                        top: '2px', 
+                        left: '2px', 
+                        right: '2px', 
+                        bottom: '2px',
+                        display: 'flex',
+                        gap: '2px',
+                        zIndex: 1
                       }}>
-                        {spanningEvents.filter(event => event.amenityName === 'Clubroom' || event.amenityName === 'Pool + Clubroom').map((event, eventIndex) => {
+                        {displayAmenities.map((amenity, amenityIndex) => {
+                          const amenityEvents = spanningEvents.filter(event => event.amenityName === amenity.name);
+                          const amenityCleaningEvents = spanningCleaningEvents.filter(event => event.amenityName === amenity.name);
+                          const amenityWidth = `${100 / displayAmenities.length}%`;
+                          
+                          return (
+                            <div key={amenity.id} style={{ 
+                              flex: `0 0 calc(${amenityWidth} - 2px)`, 
+                              display: 'flex', 
+                              flexDirection: 'column',
+                              maxWidth: `calc(${amenityWidth} - 2px)`,
+                              overflow: 'hidden'
+                            }}>
+                              {amenityEvents.map((event, eventIndex) => {
                           const eventStart = new Date(event.start);
                           const eventEnd = new Date(event.end);
                           const timeSlotStart = timeIndex * 2;
@@ -901,12 +868,12 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                           
                           return (
                             <div
-                              key={`clubroom-${eventIndex}`}
+                              key={`${amenity.id}-${eventIndex}`}
                               onClick={(e) => handleEventClick(event, e)}
                               style={{
                                 width: '100%',
                                 height: `${Math.max(heightPercent, 20)}%`,
-                                backgroundColor: '#9333ea', // Purple for Clubroom
+                                backgroundColor: event.color || amenity.displayColor || '#6b7280',
                                 borderRadius: '6px',
                                 padding: '2px',
                                 color: 'white',
@@ -924,7 +891,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                                 textDecoration: isCompleted ? 'line-through' : 'none', // Strikethrough for completed
                                 border: isCompleted ? '1px dashed rgba(255,255,255,0.5)' : 'none' // Dashed border for completed
                               }}
-                              title={`Clubroom - ${event.title} (${new Date(event.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(event.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}) - Status: ${event.status}${isCompleted ? ' (Completed)' : ''}`}
+                              title={`${amenity.name} - ${event.title} (${new Date(event.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(event.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}) - Status: ${event.status}${isCompleted ? ' (Completed)' : ''}`}
                             >
                               {/* Status indicator */}
                               <div style={{
@@ -964,8 +931,8 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                           );
                         })}
                         
-                        {/* Cleaning blocks for Clubroom events */}
-                        {spanningCleaningEvents.map((event, cleanIndex) => {
+                              {/* Cleaning blocks for this amenity */}
+                              {amenityCleaningEvents.map((event, cleanIndex) => {
                           const cleaningStart = new Date(event.cleaningTime!.start);
                           const cleaningEnd = new Date(event.cleaningTime!.end);
                           const timeSlotStart = timeIndex * 2;
@@ -988,7 +955,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                           
                           return (
                             <div
-                              key={`cleaning-clubroom-${cleanIndex}-${timeIndex}`}
+                              key={`cleaning-${amenity.id}-${cleanIndex}-${timeIndex}`}
                               style={{
                                 width: '100%',
                                 height: `${Math.max(heightPercent, 20)}%`,
@@ -1010,7 +977,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                                 opacity: isCompleted ? 0.4 : 0.8, // More transparent if completed
                                 textDecoration: isCompleted ? 'line-through' : 'none' // Strikethrough for completed
                               }}
-                              title={`Cleaning Time - Clubroom unavailable (${new Date(event.cleaningTime!.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(event.cleaningTime!.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})${isCompleted ? ' - Completed' : ''}`}
+                              title={`Cleaning Time - ${amenity.name} unavailable (${new Date(event.cleaningTime!.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(event.cleaningTime!.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})${isCompleted ? ' - Completed' : ''}`}
                             >
                               <div style={{ 
                                 textAlign: 'center',
@@ -1030,113 +997,12 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                               </div>
                             </div>
                           );
-                        })}
-                      </div>
-                      
-                      {/* Pool events - Always right half (50% width) */}
-                      <div style={{ 
-                        flex: '0 0 50%', 
-                        display: 'flex', 
-                        flexDirection: 'column',
-                        maxWidth: '50%'
-                      }}>
-                        {spanningEvents.filter(event => event.amenityName === 'Pool' || event.amenityName === 'Pool + Clubroom').map((event, eventIndex) => {
-                          const eventStart = new Date(event.start);
-                          const eventEnd = new Date(event.end);
-                          const timeSlotStart = timeIndex * 2;
-                          const timeSlotEnd = (timeIndex + 1) * 2;
-                          
-                          // Calculate height based on duration within this time slot
-                          const eventStartHour = Math.max(eventStart.getHours(), timeSlotStart);
-                          const eventEndHour = Math.min(eventEnd.getHours(), timeSlotEnd);
-                          const durationInSlot = eventEndHour - eventStartHour;
-                          const heightPercent = (durationInSlot / 2) * 100; // 2-hour slots
-                          
-                          // Determine status color
-                          let statusColor;
-                          switch (event.status) {
-                            case 'NEW':
-                              statusColor = '#6b7280'; // Grey
-                              break;
-                            case 'JANITORIAL_APPROVED':
-                              statusColor = '#f59e0b'; // Yellow
-                              break;
-                            case 'FULLY_APPROVED':
-                              statusColor = '#10b981'; // Green
-                              break;
-                            default:
-                              statusColor = '#6b7280'; // Grey
-                          }
-
-                          // Check if event is completed
-                          const isCompleted = event.status === 'COMPLETED';
-                          
-                          return (
-                            <div
-                              key={`pool-${eventIndex}`}
-                              onClick={(e) => handleEventClick(event, e)}
-                              style={{
-                                width: '100%',
-                                height: `${Math.max(heightPercent, 20)}%`,
-                                backgroundColor: '#3b82f6', // Blue for Pool
-                                borderRadius: '6px',
-                                padding: '2px',
-                                color: 'white',
-                                fontSize: '8px',
-                                fontWeight: '500',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                                marginBottom: '1px',
-                                wordWrap: 'break-word',
-                                overflowWrap: 'break-word',
-                                position: 'relative',
-                                opacity: isCompleted ? 0.5 : 1, // Make completed events more transparent
-                                textDecoration: isCompleted ? 'line-through' : 'none', // Strikethrough for completed
-                                border: isCompleted ? '1px dashed rgba(255,255,255,0.5)' : 'none' // Dashed border for completed
-                              }}
-                              title={`Pool - ${event.title} (${new Date(event.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(event.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}) - Status: ${event.status}${isCompleted ? ' (Completed)' : ''}`}
-                            >
-                              {/* Status indicator */}
-                              <div style={{
-                                position: 'absolute',
-                                top: '2px',
-                                right: '2px',
-                                width: '6px',
-                                height: '6px',
-                                backgroundColor: statusColor,
-                                borderRadius: '50%',
-                                border: '1px solid white'
-                              }}></div>
-                              
-                              <div style={{ 
-                                textAlign: 'center',
-                                lineHeight: '1.1',
-                                width: '100%',
-                                overflow: 'hidden',
-                                paddingRight: '8px' // Make room for status indicator
-                              }}>
-                                {/* Show actual event name for admin/janitorial, or title for others */}
-                                {(isAdmin || isJanitorial) && event.eventName && event.isPrivate
-                                  ? `${event.eventName} (Private)`
-                                  : event.title}
-                                {!isMobile && (
-                                  <div style={{ 
-                                    fontSize: '5px', 
-                                    color: 'red', 
-                                    marginTop: '1px',
-                                    fontWeight: 'bold'
-                                  }}>
-                                    {new Date(event.start).toLocaleDateString()} {new Date(event.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                  </div>
-                                )}
-                              </div>
+                              })}
                             </div>
                           );
                         })}
                       </div>
-                    </div>
+                    )}
                   </div>
                 );
               })}
