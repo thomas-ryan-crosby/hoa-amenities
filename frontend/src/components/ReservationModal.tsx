@@ -48,7 +48,9 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
   
   // Form state
   const [setupTimeStart, setSetupTimeStart] = useState<string>('');
-  const [partyTimeEnd, setPartyTimeEnd] = useState<string>('');
+  const [setupTimeEnd, setSetupTimeEnd] = useState<string>('');
+  const [reservationTimeStart, setReservationTimeStart] = useState<string>('');
+  const [reservationTimeEnd, setReservationTimeEnd] = useState<string>('');
   const [guestCount, setGuestCount] = useState<number>(1);
   const [eventName, setEventName] = useState<string>('');
   const [isPrivate, setIsPrivate] = useState<boolean>(false);
@@ -122,7 +124,9 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
     setSelectedAmenity(amenityId);
     // Reset form when amenity changes
     setSetupTimeStart('');
-    setPartyTimeEnd('');
+    setSetupTimeEnd('');
+    setReservationTimeStart('');
+    setReservationTimeEnd('');
   };
 
   // Round time to nearest 30 minutes
@@ -138,20 +142,30 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
     return `${String(roundedHours).padStart(2, '0')}:${String(roundedMins).padStart(2, '0')}`;
   };
 
-  const handleSetupTimeChange = (time: string) => {
+  const handleSetupTimeStartChange = (time: string) => {
     const roundedTime = roundToNearest30Minutes(time);
     setSetupTimeStart(roundedTime);
   };
 
-  const handlePartyTimeEndChange = (time: string) => {
+  const handleSetupTimeEndChange = (time: string) => {
     const roundedTime = roundToNearest30Minutes(time);
-    setPartyTimeEnd(roundedTime);
+    setSetupTimeEnd(roundedTime);
+  };
+
+  const handleReservationTimeStartChange = (time: string) => {
+    const roundedTime = roundToNearest30Minutes(time);
+    setReservationTimeStart(roundedTime);
+  };
+
+  const handleReservationTimeEndChange = (time: string) => {
+    const roundedTime = roundToNearest30Minutes(time);
+    setReservationTimeEnd(roundedTime);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!selectedAmenity || !setupTimeStart || !partyTimeEnd) {
+    if (!selectedAmenity || !setupTimeStart || !setupTimeEnd || !reservationTimeStart || !reservationTimeEnd) {
       setError('Please fill in all required fields');
       return;
     }
@@ -168,16 +182,18 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
       const totalDeposit = parseFloat(String(selectedAmenityData?.deposit)) || 0;
 
       // Ensure times are rounded to nearest 30 minutes (safety check)
-      const roundedSetupTime = roundToNearest30Minutes(setupTimeStart);
-      const roundedPartyTimeEnd = roundToNearest30Minutes(partyTimeEnd);
+      const roundedSetupStart = roundToNearest30Minutes(setupTimeStart);
+      const roundedSetupEnd = roundToNearest30Minutes(setupTimeEnd);
+      const roundedReservationStart = roundToNearest30Minutes(reservationTimeStart);
+      const roundedReservationEnd = roundToNearest30Minutes(reservationTimeEnd);
       
       const reservationData = {
         amenityId: selectedAmenity,
         date: reservationDate,
-        setupTimeStart: `${reservationDate}T${roundedSetupTime}:00`,
-        setupTimeEnd: `${reservationDate}T${roundedSetupTime}:00`, // Same as start for now
-        partyTimeStart: `${reservationDate}T${roundedSetupTime}:00`, // Party starts when setup starts
-        partyTimeEnd: `${reservationDate}T${roundedPartyTimeEnd}:00`,
+        setupTimeStart: `${reservationDate}T${roundedSetupStart}:00`,
+        setupTimeEnd: `${reservationDate}T${roundedSetupEnd}:00`,
+        partyTimeStart: `${reservationDate}T${roundedReservationStart}:00`,
+        partyTimeEnd: `${reservationDate}T${roundedReservationEnd}:00`,
         guestCount,
         eventName: eventName || null,
         isPrivate: isPrivate,
@@ -199,7 +215,9 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
       setSelectedAmenity(null);
       setReservationDate(selectedDate); // Reset to original selected date
       setSetupTimeStart('');
-      setPartyTimeEnd('');
+      setSetupTimeEnd('');
+      setReservationTimeStart('');
+      setReservationTimeEnd('');
       setGuestCount(1);
       setEventName('');
       setIsPrivate(false);
@@ -350,7 +368,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
                 <span style={{ color: '#6b7280', fontSize: '12px' }}> (Charged at booking)</span>
               </p>
               <p style={{ margin: '4px 0 0 0', fontSize: '14px', color: '#6b7280', fontStyle: 'italic' }}>
-                <strong>Damage Assessment:</strong> Damage fees will be assessed after conclusion of the party. If damages are noted, you are responsible for the amount of the repairs.
+                <strong>Damage Assessment:</strong> Damage fees will be assessed after conclusion of the reservation. If damages are noted, you are responsible for the amount of the repairs.
               </p>
             </div>
           )}
@@ -363,7 +381,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
             <input
               type="time"
               value={setupTimeStart}
-              onChange={(e) => handleSetupTimeChange(e.target.value)}
+              onChange={(e) => handleSetupTimeStartChange(e.target.value)}
               step="1800"
               style={{
                 width: '100%',
@@ -375,19 +393,19 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
               required
             />
             <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#6b7280' }}>
-              When you plan to start setting up for your party
+              When you plan to start setting up
             </p>
           </div>
 
-          {/* Party End Time */}
+          {/* Setup End Time */}
           <div style={{ marginBottom: '20px' }}>
             <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
-              Party End Time *
+              Setup End Time *
             </label>
             <input
               type="time"
-              value={partyTimeEnd}
-              onChange={(e) => handlePartyTimeEndChange(e.target.value)}
+              value={setupTimeEnd}
+              onChange={(e) => handleSetupTimeEndChange(e.target.value)}
               step="1800"
               style={{
                 width: '100%',
@@ -399,14 +417,62 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
               required
             />
             <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#6b7280' }}>
-              When your party will end
+              When setup will be complete
             </p>
           </div>
 
-          {/* Event Name */}
+          {/* Reservation Start Time */}
           <div style={{ marginBottom: '20px' }}>
             <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
-              Event Name *
+              Reservation Start Time *
+            </label>
+            <input
+              type="time"
+              value={reservationTimeStart}
+              onChange={(e) => handleReservationTimeStartChange(e.target.value)}
+              step="1800"
+              style={{
+                width: '100%',
+                padding: '8px',
+                border: '1px solid #d1d5db',
+                borderRadius: '4px',
+                fontSize: '16px'
+              }}
+              required
+            />
+            <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#6b7280' }}>
+              When your reservation begins
+            </p>
+          </div>
+
+          {/* Reservation End Time */}
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
+              Reservation End Time *
+            </label>
+            <input
+              type="time"
+              value={reservationTimeEnd}
+              onChange={(e) => handleReservationTimeEndChange(e.target.value)}
+              step="1800"
+              style={{
+                width: '100%',
+                padding: '8px',
+                border: '1px solid #d1d5db',
+                borderRadius: '4px',
+                fontSize: '16px'
+              }}
+              required
+            />
+            <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#6b7280' }}>
+              When your reservation ends
+            </p>
+          </div>
+
+          {/* Reservation Name */}
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
+              Reservation Name *
             </label>
             <input
               type="text"

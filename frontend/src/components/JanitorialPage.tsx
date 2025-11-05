@@ -94,9 +94,9 @@ const JanitorialPage: React.FC = () => {
       const reservation = reservations.find(r => r.id === reservationId);
       if (reservation) {
         setSelectedReservation(reservation);
-        // Set default cleaning time (2 hours after party ends)
-        const partyEndTime = new Date(reservation.partyTimeEnd);
-        const defaultCleaningStart = new Date(partyEndTime.getTime() + 30 * 60 * 1000); // 30 minutes after party
+        // Set default cleaning time (2 hours after reservation ends)
+        const reservationEndTime = new Date(reservation.partyTimeEnd);
+        const defaultCleaningStart = new Date(reservationEndTime.getTime() + 30 * 60 * 1000); // 30 minutes after reservation
         const defaultCleaningEnd = new Date(defaultCleaningStart.getTime() + 2 * 60 * 60 * 1000); // 2 hours later
         
         setCleaningTime({
@@ -316,6 +316,7 @@ const JanitorialPage: React.FC = () => {
   };
 
   const formatTime = (dateTimeString: string): string => {
+    if (!dateTimeString) return '';
     return new Date(dateTimeString).toLocaleTimeString('en-US', {
       hour: '2-digit',
       minute: '2-digit'
@@ -514,12 +515,12 @@ const JanitorialPage: React.FC = () => {
                     Setup Time
                   </h4>
                   <p style={{ margin: 0, fontSize: '14px', color: '#6b7280' }}>
-                    {formatTime(reservation.setupTimeStart)} - {formatTime(reservation.setupTimeEnd)}
+                    {formatTime(reservation.setupTimeStart)} - {formatTime(reservation.setupTimeEnd || reservation.setupTimeStart)}
                   </p>
                 </div>
                 <div>
                   <h4 style={{ fontSize: '14px', fontWeight: 'bold', color: '#374151', margin: '0 0 4px 0' }}>
-                    Party Time
+                    Reservation Time
                   </h4>
                   <p style={{ margin: 0, fontSize: '14px', color: '#6b7280' }}>
                     {formatTime(reservation.partyTimeStart)} - {formatTime(reservation.partyTimeEnd)}
@@ -679,10 +680,10 @@ const JanitorialPage: React.FC = () => {
                 <strong>Reservation:</strong> {selectedReservation.amenity.name} on {new Date(selectedReservation.date).toLocaleDateString()}
               </p>
               <p style={{ color: '#6b7280', marginBottom: '0.5rem' }}>
-                <strong>Party Time:</strong> {new Date(selectedReservation.partyTimeStart).toLocaleTimeString()} - {new Date(selectedReservation.partyTimeEnd).toLocaleTimeString()}
+                <strong>Reservation Time:</strong> {new Date(selectedReservation.partyTimeStart).toLocaleTimeString()} - {new Date(selectedReservation.partyTimeEnd).toLocaleTimeString()}
               </p>
               <p style={{ color: '#6b7280', marginBottom: '1rem' }}>
-                <strong>Party Ends:</strong> {new Date(selectedReservation.partyTimeEnd).toLocaleString()}
+                <strong>Reservation Ends:</strong> {new Date(selectedReservation.partyTimeEnd).toLocaleString()}
               </p>
             </div>
 

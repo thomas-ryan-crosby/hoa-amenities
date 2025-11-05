@@ -546,14 +546,14 @@ router.put('/:id/approve', authenticateToken, async (req: any, res) => {
       return res.status(404).json({ message: 'Reservation not found or does not belong to your community' });
     }
 
-    // Validate cleaning time is after party end time
+    // Validate cleaning time is after reservation end time
     if (cleaningTimeStart && cleaningTimeEnd) {
       const partyEndTime = new Date(reservation.partyTimeEnd);
       const cleaningStartTime = new Date(cleaningTimeStart);
       
       if (cleaningStartTime <= partyEndTime) {
         return res.status(400).json({ 
-          message: 'Cleaning time must start after the party ends' 
+          message: 'Cleaning time must start after the reservation ends' 
         });
       }
 

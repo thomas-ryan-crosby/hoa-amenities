@@ -175,6 +175,7 @@ const ReservationsPage: React.FC = () => {
   };
 
   const formatTime = (dateTimeString: string): string => {
+    if (!dateTimeString) return '';
     return new Date(dateTimeString).toLocaleTimeString('en-US', {
       hour: '2-digit',
       minute: '2-digit'
@@ -424,12 +425,12 @@ const ReservationsPage: React.FC = () => {
                     Setup Time
                   </h4>
                   <p style={{ margin: 0, fontSize: '14px', color: '#6b7280' }}>
-                    {formatTime(reservation.setupTimeStart)} - {formatTime(reservation.setupTimeEnd)}
+                    {formatTime(reservation.setupTimeStart)} - {formatTime(reservation.setupTimeEnd || reservation.setupTimeStart)}
                   </p>
                 </div>
                 <div>
                   <h4 style={{ fontSize: '14px', fontWeight: 'bold', color: '#374151', margin: '0 0 4px 0' }}>
-                    Party Time
+                    Reservation Time
                   </h4>
                   <p style={{ margin: 0, fontSize: '14px', color: '#6b7280' }}>
                     {formatTime(reservation.partyTimeStart)} - {formatTime(reservation.partyTimeEnd)}

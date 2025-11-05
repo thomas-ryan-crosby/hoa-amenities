@@ -1316,7 +1316,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
       {isAuthenticated && (
         <div style={{ marginTop: '20px', padding: '15px', backgroundColor: '#f0f9ff', border: '1px solid #0ea5e9', borderRadius: '8px' }}>
           <p style={{ margin: 0, fontSize: '14px', color: '#0c4a6e' }}>
-            💡 <strong>Tip:</strong> Click on any future date to make a reservation. Simply set your setup start time and party end time. Past dates are greyed out and cannot be booked.
+            💡 <strong>Tip:</strong> Click on any future date to make a reservation. Simply set your setup times and reservation times. Past dates are greyed out and cannot be booked.
           </p>
         </div>
       )}
@@ -1417,7 +1417,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                   </p>
                 </div>
                 <div>
-                  <h4 style={{ margin: '0 0 4px 0', fontSize: '14px', fontWeight: '600', color: '#374151' }}>Party Time</h4>
+                  <h4 style={{ margin: '0 0 4px 0', fontSize: '14px', fontWeight: '600', color: '#374151' }}>Reservation Time</h4>
                   <p style={{ margin: 0, fontSize: '16px', color: '#1f2937' }}>
                     {new Date(selectedEvent.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - 
                     {new Date(selectedEvent.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
