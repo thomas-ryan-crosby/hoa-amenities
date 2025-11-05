@@ -184,7 +184,7 @@ router.get('/events', authenticateToken, async (req: any, res) => {
       return {
         id: reservation.id,
         title: displayTitle,
-        start: reservation.setupTimeStart,
+        start: reservation.partyTimeStart,
         end: reservation.partyTimeEnd,
         date: dateStr,
         amenityId: reservation.amenityId,
@@ -195,10 +195,6 @@ router.get('/events', authenticateToken, async (req: any, res) => {
         status: reservation.status,
         eventName: eventName || null,
         isPrivate: isPrivate || false,
-        setupTime: {
-          start: reservation.setupTimeStart,
-          end: reservation.setupTimeEnd
-        },
         partyTime: {
           start: reservation.partyTimeStart,
           end: reservation.partyTimeEnd

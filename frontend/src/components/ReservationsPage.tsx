@@ -422,14 +422,6 @@ const ReservationsPage: React.FC = () => {
               <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '16px' }}>
                 <div>
                   <h4 style={{ fontSize: '14px', fontWeight: 'bold', color: '#374151', margin: '0 0 4px 0' }}>
-                    Setup Time
-                  </h4>
-                  <p style={{ margin: 0, fontSize: '14px', color: '#6b7280' }}>
-                    {formatTime(reservation.setupTimeStart)} - {formatTime(reservation.setupTimeEnd || reservation.setupTimeStart)}
-                  </p>
-                </div>
-                <div>
-                  <h4 style={{ fontSize: '14px', fontWeight: 'bold', color: '#374151', margin: '0 0 4px 0' }}>
                     Reservation Time
                   </h4>
                   <p style={{ margin: 0, fontSize: '14px', color: '#6b7280' }}>

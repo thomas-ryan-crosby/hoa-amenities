@@ -47,8 +47,6 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
   const [error, setError] = useState<string | null>(null);
   
   // Form state
-  const [setupTimeStart, setSetupTimeStart] = useState<string>('');
-  const [setupTimeEnd, setSetupTimeEnd] = useState<string>('');
   const [reservationTimeStart, setReservationTimeStart] = useState<string>('');
   const [reservationTimeEnd, setReservationTimeEnd] = useState<string>('');
   const [guestCount, setGuestCount] = useState<number>(1);
@@ -123,8 +121,6 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
   const handleAmenityChange = (amenityId: number) => {
     setSelectedAmenity(amenityId);
     // Reset form when amenity changes
-    setSetupTimeStart('');
-    setSetupTimeEnd('');
     setReservationTimeStart('');
     setReservationTimeEnd('');
   };
@@ -142,16 +138,6 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
     return `${String(roundedHours).padStart(2, '0')}:${String(roundedMins).padStart(2, '0')}`;
   };
 
-  const handleSetupTimeStartChange = (time: string) => {
-    const roundedTime = roundToNearest30Minutes(time);
-    setSetupTimeStart(roundedTime);
-  };
-
-  const handleSetupTimeEndChange = (time: string) => {
-    const roundedTime = roundToNearest30Minutes(time);
-    setSetupTimeEnd(roundedTime);
-  };
-
   const handleReservationTimeStartChange = (time: string) => {
     const roundedTime = roundToNearest30Minutes(time);
     setReservationTimeStart(roundedTime);
@@ -165,7 +151,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!selectedAmenity || !setupTimeStart || !setupTimeEnd || !reservationTimeStart || !reservationTimeEnd) {
+    if (!selectedAmenity || !reservationTimeStart || !reservationTimeEnd) {
       setError('Please fill in all required fields');
       return;
     }
@@ -182,16 +168,15 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
       const totalDeposit = parseFloat(String(selectedAmenityData?.deposit)) || 0;
 
       // Ensure times are rounded to nearest 30 minutes (safety check)
-      const roundedSetupStart = roundToNearest30Minutes(setupTimeStart);
-      const roundedSetupEnd = roundToNearest30Minutes(setupTimeEnd);
       const roundedReservationStart = roundToNearest30Minutes(reservationTimeStart);
       const roundedReservationEnd = roundToNearest30Minutes(reservationTimeEnd);
       
+      // Setup times are set to same as reservation times (setup/cleanup time should be included in reservation times)
       const reservationData = {
         amenityId: selectedAmenity,
         date: reservationDate,
-        setupTimeStart: `${reservationDate}T${roundedSetupStart}:00`,
-        setupTimeEnd: `${reservationDate}T${roundedSetupEnd}:00`,
+        setupTimeStart: `${reservationDate}T${roundedReservationStart}:00`,
+        setupTimeEnd: `${reservationDate}T${roundedReservationStart}:00`,
         partyTimeStart: `${reservationDate}T${roundedReservationStart}:00`,
         partyTimeEnd: `${reservationDate}T${roundedReservationEnd}:00`,
         guestCount,
@@ -214,8 +199,6 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
       // Reset form
       setSelectedAmenity(null);
       setReservationDate(selectedDate); // Reset to original selected date
-      setSetupTimeStart('');
-      setSetupTimeEnd('');
       setReservationTimeStart('');
       setReservationTimeEnd('');
       setGuestCount(1);
@@ -373,54 +356,6 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
             </div>
           )}
 
-          {/* Setup Start Time */}
-          <div style={{ marginBottom: '20px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
-              Setup Start Time *
-            </label>
-            <input
-              type="time"
-              value={setupTimeStart}
-              onChange={(e) => handleSetupTimeStartChange(e.target.value)}
-              step="1800"
-              style={{
-                width: '100%',
-                padding: '8px',
-                border: '1px solid #d1d5db',
-                borderRadius: '4px',
-                fontSize: '16px'
-              }}
-              required
-            />
-            <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#6b7280' }}>
-              When you plan to start setting up
-            </p>
-          </div>
-
-          {/* Setup End Time */}
-          <div style={{ marginBottom: '20px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
-              Setup End Time *
-            </label>
-            <input
-              type="time"
-              value={setupTimeEnd}
-              onChange={(e) => handleSetupTimeEndChange(e.target.value)}
-              step="1800"
-              style={{
-                width: '100%',
-                padding: '8px',
-                border: '1px solid #d1d5db',
-                borderRadius: '4px',
-                fontSize: '16px'
-              }}
-              required
-            />
-            <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#6b7280' }}>
-              When setup will be complete
-            </p>
-          </div>
-
           {/* Reservation Start Time */}
           <div style={{ marginBottom: '20px' }}>
             <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
@@ -441,7 +376,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
               required
             />
             <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#6b7280' }}>
-              When your reservation begins
+              Include any setup time needed in your start time
             </p>
           </div>
 
@@ -465,7 +400,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
               required
             />
             <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#6b7280' }}>
-              When your reservation ends
+              Include any cleanup time needed in your end time
             </p>
           </div>
 
