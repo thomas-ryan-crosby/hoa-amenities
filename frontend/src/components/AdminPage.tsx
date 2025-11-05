@@ -26,6 +26,10 @@ interface Amenity {
   isPublic?: boolean;
   publicReservationFee?: number | string | null;
   publicDeposit?: number | string | null;
+  daysOfOperation?: string | null;
+  hoursOfOperation?: string | null;
+  displayColor?: string;
+  janitorialRequired?: boolean;
   isActive: boolean;
 }
 
@@ -48,7 +52,11 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
     calendarGroup: '',
     isPublic: false,
     publicReservationFee: '',
-    publicDeposit: ''
+    publicDeposit: '',
+    daysOfOperation: [] as string[],
+    hoursOfOperation: { open: '09:00', close: '17:00', open24Hours: false },
+    displayColor: '#355B45',
+    janitorialRequired: true
   });
 
   useEffect(() => {
@@ -139,7 +147,11 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
         calendarGroup: '',
         isPublic: false,
         publicReservationFee: '',
-        publicDeposit: ''
+        publicDeposit: '',
+        daysOfOperation: [],
+        hoursOfOperation: { open: '09:00', close: '17:00', open24Hours: false },
+        displayColor: '#355B45',
+        janitorialRequired: true
       });
       fetchAmenities();
     } catch (error: any) {
@@ -197,7 +209,11 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
       calendarGroup: '',
       isPublic: false,
       publicReservationFee: '',
-      publicDeposit: ''
+      publicDeposit: '',
+      daysOfOperation: [],
+      hoursOfOperation: { open: '09:00', close: '17:00', open24Hours: false },
+      displayColor: '#355B45',
+      janitorialRequired: true
     });
     setShowModal(true);
   };

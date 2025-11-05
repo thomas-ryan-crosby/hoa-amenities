@@ -33,6 +33,8 @@ interface Amenity {
   deposit: number | string;
   capacity: number;
   calendarGroup?: string | null;
+  displayColor?: string;
+  janitorialRequired?: boolean;
 }
 
 interface CalendarProps {
@@ -45,6 +47,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
   const isMobile = useMobile();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState<'month' | 'week'>('month');
+  const [selectedCalendarGroup, setSelectedCalendarGroup] = useState<string | 'all'>('all');
   const [selectedAmenity, setSelectedAmenity] = useState<number | 'all'>('all');
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [amenities, setAmenities] = useState<Amenity[]>([]);

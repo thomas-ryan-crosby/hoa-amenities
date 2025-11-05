@@ -44,7 +44,7 @@ router.get('/', authenticateToken, async (req: any, res) => {
 
     const amenities = await Amenity.findAll({
       where: whereClause,
-      attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'calendarGroup', 'isPublic', 'publicReservationFee', 'publicDeposit', 'isActive']
+      attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'calendarGroup', 'isPublic', 'publicReservationFee', 'publicDeposit', 'daysOfOperation', 'hoursOfOperation', 'displayColor', 'janitorialRequired', 'isActive']
     });
     
     console.log('✅ Found amenities:', amenities.length, 'items');
@@ -67,7 +67,7 @@ router.get('/:id', authenticateToken, async (req: any, res) => {
         id,
         communityId 
       },
-      attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'calendarGroup']
+      attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'calendarGroup', 'isPublic', 'publicReservationFee', 'publicDeposit', 'daysOfOperation', 'hoursOfOperation', 'displayColor', 'janitorialRequired']
     });
     
     if (!amenity) {
@@ -85,7 +85,7 @@ router.get('/:id', authenticateToken, async (req: any, res) => {
 router.post('/', authenticateToken, requireAdmin, async (req: any, res) => {
   try {
     const communityId = req.user.currentCommunityId;
-    const { name, description, reservationFee, deposit, capacity, calendarGroup, isPublic, publicReservationFee, publicDeposit } = req.body;
+    const { name, description, reservationFee, deposit, capacity, calendarGroup, isPublic, publicReservationFee, publicDeposit, daysOfOperation, hoursOfOperation, displayColor, janitorialRequired } = req.body;
 
     if (!name || reservationFee === undefined || deposit === undefined || !capacity) {
       return res.status(400).json({ message: 'Name, reservation fee, deposit, and capacity are required' });
@@ -122,6 +122,10 @@ router.post('/', authenticateToken, requireAdmin, async (req: any, res) => {
         isPublic: isPublic === true,
         publicReservationFee: publicReservationFee !== undefined && publicReservationFee !== '' ? parseFloat(publicReservationFee) : null,
         publicDeposit: publicDeposit !== undefined && publicDeposit !== '' ? parseFloat(publicDeposit) : null,
+        daysOfOperation: daysOfOperation ? (typeof daysOfOperation === 'string' ? daysOfOperation : JSON.stringify(daysOfOperation)) : null,
+        hoursOfOperation: hoursOfOperation ? (typeof hoursOfOperation === 'string' ? hoursOfOperation : JSON.stringify(hoursOfOperation)) : null,
+        displayColor: displayColor || '#355B45',
+        janitorialRequired: janitorialRequired !== undefined ? janitorialRequired === true : true,
         isActive: true
       });
 
@@ -137,7 +141,11 @@ router.post('/', authenticateToken, requireAdmin, async (req: any, res) => {
         calendarGroup: amenity.calendarGroup,
         isPublic: amenity.isPublic,
         publicReservationFee: amenity.publicReservationFee,
-        publicDeposit: amenity.publicDeposit
+        publicDeposit: amenity.publicDeposit,
+        daysOfOperation: amenity.daysOfOperation,
+        hoursOfOperation: amenity.hoursOfOperation,
+        displayColor: amenity.displayColor,
+        janitorialRequired: amenity.janitorialRequired
       }
     });
   } catch (error) {
@@ -197,6 +205,14 @@ router.put('/:id', authenticateToken, requireAdmin, async (req: any, res) => {
     if (publicDeposit !== undefined) {
       amenity.publicDeposit = publicDeposit !== null && publicDeposit !== '' ? parseFloat(publicDeposit) : null;
     }
+    if (daysOfOperation !== undefined) {
+      amenity.daysOfOperation = daysOfOperation ? (typeof daysOfOperation === 'string' ? daysOfOperation : JSON.stringify(daysOfOperation)) : null;
+    }
+    if (hoursOfOperation !== undefined) {
+      amenity.hoursOfOperation = hoursOfOperation ? (typeof hoursOfOperation === 'string' ? hoursOfOperation : JSON.stringify(hoursOfOperation)) : null;
+    }
+    if (displayColor !== undefined) amenity.displayColor = displayColor || '#355B45';
+    if (janitorialRequired !== undefined) amenity.janitorialRequired = janitorialRequired === true;
     if (isActive !== undefined) amenity.isActive = isActive;
 
     await amenity.save();
@@ -214,6 +230,10 @@ router.put('/:id', authenticateToken, requireAdmin, async (req: any, res) => {
         isPublic: amenity.isPublic,
         publicReservationFee: amenity.publicReservationFee,
         publicDeposit: amenity.publicDeposit,
+        daysOfOperation: amenity.daysOfOperation,
+        hoursOfOperation: amenity.hoursOfOperation,
+        displayColor: amenity.displayColor,
+        janitorialRequired: amenity.janitorialRequired,
         isActive: amenity.isActive
       }
     });

@@ -13,6 +13,10 @@ export interface AmenityAttributes {
   isPublic: boolean; // Whether amenity can be booked by non-community members
   publicReservationFee: number | null; // Different price for public users (null = same as reservationFee)
   publicDeposit: number | null; // Different deposit for public users (null = same as deposit)
+  daysOfOperation: string | null; // JSON string of days (e.g., ["monday", "tuesday", "wednesday"])
+  hoursOfOperation: string | null; // JSON string of {open: "09:00", close: "17:00"} or {open24Hours: true}
+  displayColor: string; // Hex color code for calendar display (e.g., "#355B45")
+  janitorialRequired: boolean; // Whether janitorial approval is required
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -32,6 +36,10 @@ export class Amenity extends Model<AmenityAttributes, AmenityCreationAttributes>
   public isPublic!: boolean;
   public publicReservationFee!: number | null;
   public publicDeposit!: number | null;
+  public daysOfOperation!: string | null;
+  public hoursOfOperation!: string | null;
+  public displayColor!: string;
+  public janitorialRequired!: boolean;
   public isActive!: boolean;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -92,6 +100,26 @@ Amenity.init(
       type: DataTypes.DECIMAL(10, 2),
       allowNull: true, // Null means use deposit for public users
       defaultValue: null,
+    },
+    daysOfOperation: {
+      type: DataTypes.TEXT,
+      allowNull: true, // JSON string of days
+      defaultValue: null,
+    },
+    hoursOfOperation: {
+      type: DataTypes.TEXT,
+      allowNull: true, // JSON string of hours
+      defaultValue: null,
+    },
+    displayColor: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: '#355B45', // Default green color
+    },
+    janitorialRequired: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true,
     },
     isActive: {
       type: DataTypes.BOOLEAN,

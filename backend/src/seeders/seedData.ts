@@ -35,6 +35,10 @@ export async function seedDatabase() {
         isPublic: false,
         publicReservationFee: null,
         publicDeposit: null,
+        daysOfOperation: null,
+        hoursOfOperation: null,
+        displayColor: '#355B45',
+        janitorialRequired: true,
         isActive: true
       }
     });
@@ -51,6 +55,10 @@ export async function seedDatabase() {
         isPublic: false,
         publicReservationFee: null,
         publicDeposit: null,
+        daysOfOperation: null,
+        hoursOfOperation: null,
+        displayColor: '#355B45',
+        janitorialRequired: true,
         isActive: true
       }
     });
@@ -67,6 +75,10 @@ export async function seedDatabase() {
         isPublic: false,
         publicReservationFee: null,
         publicDeposit: null,
+        daysOfOperation: null,
+        hoursOfOperation: null,
+        displayColor: '#355B45',
+        janitorialRequired: true,
         isActive: true
       }
     });
