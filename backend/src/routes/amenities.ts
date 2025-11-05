@@ -159,7 +159,22 @@ router.put('/:id', authenticateToken, requireAdmin, async (req: any, res) => {
   try {
     const { id } = req.params;
     const communityId = req.user.currentCommunityId;
-    const { name, description, reservationFee, deposit, capacity, calendarGroup, isPublic, publicReservationFee, publicDeposit, isActive } = req.body;
+    const { 
+      name, 
+      description, 
+      reservationFee, 
+      deposit, 
+      capacity, 
+      calendarGroup, 
+      isPublic, 
+      publicReservationFee, 
+      publicDeposit, 
+      daysOfOperation, 
+      hoursOfOperation, 
+      displayColor, 
+      janitorialRequired, 
+      isActive 
+    } = req.body;
 
     if (!communityId) {
       return res.status(403).json({ message: 'No community selected' });
