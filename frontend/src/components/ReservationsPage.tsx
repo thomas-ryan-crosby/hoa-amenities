@@ -147,13 +147,13 @@ const ReservationsPage: React.FC = () => {
     // For NEW and JANITORIAL_APPROVED, determine what approvals are still needed
     const amenity = reservation.amenity;
     const needsJanitorial = amenity.janitorialRequired !== false && reservation.status === 'NEW';
-    const needsAdmin = amenity.approvalRequired !== false && reservation.status !== 'FULLY_APPROVED';
+    const needsAdmin = amenity.approvalRequired !== false && reservation.status === 'JANITORIAL_APPROVED';
     
     const pendingApprovals: string[] = [];
     if (needsJanitorial) {
       pendingApprovals.push('Janitorial');
     }
-    if (needsAdmin && reservation.status === 'JANITORIAL_APPROVED') {
+    if (needsAdmin) {
       pendingApprovals.push('Admin');
     }
     
