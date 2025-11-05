@@ -253,7 +253,8 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
       daysOfOperation: [],
       hoursOfOperation: { open: '09:00', close: '17:00', open24Hours: false },
       displayColor: '#355B45',
-      janitorialRequired: true
+      janitorialRequired: true,
+      approvalRequired: true
     });
     setShowModal(true);
   };
