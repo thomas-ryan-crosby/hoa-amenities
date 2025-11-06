@@ -1149,7 +1149,7 @@ router.post('/:id/propose-modification', authenticateToken, async (req: any, res
     `) as any[];
     
     const existingModColumns = modificationColumns[0].map((row: any) => row.column_name);
-    existingModColumns.forEach(col => attributes.push(col));
+    existingModColumns.forEach((col: string) => attributes.push(col));
 
     // Find reservation (must belong to current community and be unconfirmed)
     const reservation = await Reservation.findOne({
