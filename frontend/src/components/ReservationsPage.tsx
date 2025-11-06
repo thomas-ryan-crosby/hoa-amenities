@@ -17,6 +17,12 @@ interface Reservation {
   status: 'NEW' | 'JANITORIAL_APPROVED' | 'FULLY_APPROVED' | 'CANCELLED' | 'COMPLETED';
   totalFee: number | string;
   totalDeposit: number | string;
+  // Modification Proposal Fields
+  modificationStatus?: 'NONE' | 'PENDING' | 'ACCEPTED' | 'REJECTED' | null;
+  proposedDate?: string | null;
+  proposedPartyTimeStart?: string | null;
+  proposedPartyTimeEnd?: string | null;
+  modificationReason?: string | null;
   amenity: {
     id: number;
     name: string;
@@ -66,6 +72,50 @@ const ReservationsPage: React.FC = () => {
   const handleModifyReservation = (reservation: Reservation) => {
     // TODO: Open modification modal with pre-filled data
     alert(`Modification feature coming soon!\n\nYou will be able to modify:\n- Event name\n- Date\n- Times\n- Guest count\n- Special requirements\n\nModification fees apply based on timing:\n- Within 1 month: $10 fee\n- Within 1 week: $50 fee\n- Within 48 hours: Full booking amount`);
+  };
+
+  const handleAcceptModification = async (reservation: Reservation) => {
+    try {
+      setActionLoading(reservation.id);
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      const token = localStorage.getItem('token');
+      
+      await axios.put(`${apiUrl}/api/reservations/${reservation.id}/accept-modification`, {}, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      // Refresh reservations
+      fetchReservations();
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to accept modification');
+      console.error('Error accepting modification:', err);
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleRejectModification = async (reservation: Reservation) => {
+    try {
+      setActionLoading(reservation.id);
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      const token = localStorage.getItem('token');
+      
+      await axios.put(`${apiUrl}/api/reservations/${reservation.id}/reject-modification`, {}, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      // Refresh reservations
+      fetchReservations();
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to reject modification');
+      console.error('Error rejecting modification:', err);
+    } finally {
+      setActionLoading(null);
+    }
   };
 
   const handleCancelReservation = async (reservation: Reservation) => {
@@ -135,6 +185,10 @@ const ReservationsPage: React.FC = () => {
   };
 
   const getStatusText = (reservation: Reservation): string => {
+    // Show modification status if pending
+    if (reservation.modificationStatus === 'PENDING') {
+      return 'Modification Proposed - Awaiting Your Response';
+    }
     if (reservation.status === 'CANCELLED') {
       return 'Cancelled';
     }
@@ -370,7 +424,7 @@ const ReservationsPage: React.FC = () => {
                 }}>
                   <span
                     style={{
-                      backgroundColor: reservation.status === 'FULLY_APPROVED' ? '#10b981' : reservation.status === 'COMPLETED' ? '#6b7280' : reservation.status === 'CANCELLED' ? '#ef4444' : '#f59e0b',
+                      backgroundColor: reservation.modificationStatus === 'PENDING' ? '#3b82f6' : reservation.status === 'FULLY_APPROVED' ? '#10b981' : reservation.status === 'COMPLETED' ? '#6b7280' : reservation.status === 'CANCELLED' ? '#ef4444' : '#f59e0b',
                       color: 'white',
                       padding: isMobile ? '0.5rem 0.75rem' : '4px 12px',
                       borderRadius: '20px',
@@ -382,6 +436,48 @@ const ReservationsPage: React.FC = () => {
                   >
                     {getStatusText(reservation)}
                   </span>
+                  {reservation.modificationStatus === 'PENDING' && (
+                    <>
+                      <button
+                        onClick={() => handleAcceptModification(reservation)}
+                        disabled={actionLoading === reservation.id}
+                        style={{
+                          backgroundColor: actionLoading === reservation.id ? '#9ca3af' : '#10b981',
+                          color: 'white',
+                          padding: isMobile ? '0.75rem 1rem' : '6px 12px',
+                          borderRadius: '4px',
+                          border: 'none',
+                          cursor: actionLoading === reservation.id ? 'not-allowed' : 'pointer',
+                          fontSize: isMobile ? '1rem' : '12px',
+                          minHeight: '44px',
+                          width: isMobile ? '100%' : 'auto'
+                        }}
+                      >
+                        {actionLoading === reservation.id ? 'Processing...' : 'Accept Modification'}
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (window.confirm('Rejecting this modification will cancel your reservation. You will need to book a new reservation if you want to proceed. Are you sure you want to reject this modification?')) {
+                            handleRejectModification(reservation);
+                          }
+                        }}
+                        disabled={actionLoading === reservation.id}
+                        style={{
+                          backgroundColor: actionLoading === reservation.id ? '#9ca3af' : '#ef4444',
+                          color: 'white',
+                          padding: isMobile ? '0.75rem 1rem' : '6px 12px',
+                          borderRadius: '4px',
+                          border: 'none',
+                          cursor: actionLoading === reservation.id ? 'not-allowed' : 'pointer',
+                          fontSize: isMobile ? '1rem' : '12px',
+                          minHeight: '44px',
+                          width: isMobile ? '100%' : 'auto'
+                        }}
+                      >
+                        {actionLoading === reservation.id ? 'Processing...' : 'Reject & Cancel'}
+                      </button>
+                    </>
+                  )}
                   {(reservation.status === 'NEW' || reservation.status === 'JANITORIAL_APPROVED') && (
                     <button
                       onClick={() => handleCancelReservation(reservation)}
@@ -402,6 +498,43 @@ const ReservationsPage: React.FC = () => {
                   )}
                 </div>
               </div>
+
+              {/* Proposed Modification Alert */}
+              {reservation.modificationStatus === 'PENDING' && (
+                <div style={{ 
+                  marginBottom: '16px', 
+                  padding: '16px', 
+                  backgroundColor: '#eff6ff', 
+                  border: '1px solid #3b82f6', 
+                  borderRadius: '8px' 
+                }}>
+                  <h4 style={{ fontSize: '16px', fontWeight: 'bold', color: '#1e40af', margin: '0 0 8px 0' }}>
+                    ⚠️ Modification Proposed
+                  </h4>
+                  <p style={{ margin: '0 0 12px 0', fontSize: '14px', color: '#1e40af' }}>
+                    {reservation.modificationReason}
+                  </p>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '12px' }}>
+                    <div style={{ padding: '8px', backgroundColor: 'white', borderRadius: '4px' }}>
+                      <p style={{ margin: '0 0 4px 0', fontSize: '12px', color: '#6b7280', fontWeight: 'bold' }}>Current Time:</p>
+                      <p style={{ margin: 0, fontSize: '14px', color: '#374151' }}>
+                        {formatTimeRange(reservation.partyTimeStart, reservation.partyTimeEnd)}
+                      </p>
+                    </div>
+                    <div style={{ padding: '8px', backgroundColor: '#dbeafe', borderRadius: '4px' }}>
+                      <p style={{ margin: '0 0 4px 0', fontSize: '12px', color: '#1e40af', fontWeight: 'bold' }}>Proposed Time:</p>
+                      <p style={{ margin: 0, fontSize: '14px', color: '#1e40af', fontWeight: '600' }}>
+                        {reservation.proposedPartyTimeStart && reservation.proposedPartyTimeEnd 
+                          ? formatTimeRange(reservation.proposedPartyTimeStart, reservation.proposedPartyTimeEnd)
+                          : 'N/A'}
+                      </p>
+                    </div>
+                  </div>
+                  <p style={{ margin: '12px 0 0 0', fontSize: '12px', color: '#1e40af', fontStyle: 'italic' }}>
+                    You can accept the modified time, or reject it to cancel your reservation.
+                  </p>
+                </div>
+              )}
 
               {/* Details Grid */}
               <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '16px' }}>

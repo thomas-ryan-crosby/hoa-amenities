@@ -34,6 +34,14 @@ export interface ReservationAttributes {
   damageReviewedBy?: number | null; // User ID of admin who reviewed
   damageAssessedAt?: Date | null;
   damageReviewedAt?: Date | null;
+  // Modification Proposal Fields
+  modificationStatus?: 'NONE' | 'PENDING' | 'ACCEPTED' | 'REJECTED' | null;
+  proposedDate?: Date | null;
+  proposedPartyTimeStart?: Date | null;
+  proposedPartyTimeEnd?: Date | null;
+  modificationReason?: string | null;
+  modificationProposedBy?: number | null;
+  modificationProposedAt?: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -73,6 +81,14 @@ export class Reservation extends Model<ReservationAttributes, ReservationCreatio
   public damageReviewedBy?: number | null;
   public damageAssessedAt?: Date | null;
   public damageReviewedAt?: Date | null;
+  // Modification Proposal Fields
+  public modificationStatus?: 'NONE' | 'PENDING' | 'ACCEPTED' | 'REJECTED' | null;
+  public proposedDate?: Date | null;
+  public proposedPartyTimeStart?: Date | null;
+  public proposedPartyTimeEnd?: Date | null;
+  public modificationReason?: string | null;
+  public modificationProposedBy?: number | null;
+  public modificationProposedAt?: Date | null;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
@@ -227,6 +243,40 @@ Reservation.init(
       allowNull: true,
     },
     damageReviewedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    // Modification Proposal Fields
+    modificationStatus: {
+      type: DataTypes.ENUM('NONE', 'PENDING', 'ACCEPTED', 'REJECTED'),
+      allowNull: true,
+      defaultValue: 'NONE',
+    },
+    proposedDate: {
+      type: DataTypes.DATEONLY,
+      allowNull: true,
+    },
+    proposedPartyTimeStart: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    proposedPartyTimeEnd: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    modificationReason: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    modificationProposedBy: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'users',
+        key: 'id',
+      },
+    },
+    modificationProposedAt: {
       type: DataTypes.DATE,
       allowNull: true,
     },

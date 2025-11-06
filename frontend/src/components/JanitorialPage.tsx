@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 import { useMobile } from '../hooks/useMobile';
 import { formatDate, formatTime, formatTimeRange } from '../utils/dateTimeUtils';
+import SimpleTimeSelector from './SimpleTimeSelector';
 
 interface Reservation {
   id: number;
@@ -20,6 +21,12 @@ interface Reservation {
   totalDeposit: number | string;
   cleaningTimeStart?: string;
   cleaningTimeEnd?: string;
+  // Modification Proposal Fields
+  modificationStatus?: 'NONE' | 'PENDING' | 'ACCEPTED' | 'REJECTED' | null;
+  proposedDate?: string | null;
+  proposedPartyTimeStart?: string | null;
+  proposedPartyTimeEnd?: string | null;
+  modificationReason?: string | null;
   // Damage Assessment Fields
   damageAssessed?: boolean;
   damageAssessmentPending?: boolean;
@@ -64,6 +71,13 @@ const JanitorialPage: React.FC = () => {
     amount: '',
     description: '',
     notes: ''
+  });
+  const [showModificationModal, setShowModificationModal] = useState(false);
+  const [modificationProposal, setModificationProposal] = useState({
+    proposedDate: '',
+    proposedPartyTimeStart: '',
+    proposedPartyTimeEnd: '',
+    modificationReason: ''
   });
 
   useEffect(() => {
@@ -282,6 +296,79 @@ const JanitorialPage: React.FC = () => {
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to reject reservation');
       console.error('Error rejecting reservation:', err);
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleProposeModification = (reservation: Reservation) => {
+    setSelectedReservation(reservation);
+    // Pre-fill with current reservation times
+    const currentStart = new Date(reservation.partyTimeStart);
+    const currentEnd = new Date(reservation.partyTimeEnd);
+    const startTime = `${String(currentStart.getHours()).padStart(2, '0')}:${String(currentStart.getMinutes()).padStart(2, '0')}`;
+    const endTime = `${String(currentEnd.getHours()).padStart(2, '0')}:${String(currentEnd.getMinutes()).padStart(2, '0')}`;
+    
+    setModificationProposal({
+      proposedDate: reservation.date,
+      proposedPartyTimeStart: startTime,
+      proposedPartyTimeEnd: endTime,
+      modificationReason: ''
+    });
+    setShowModificationModal(true);
+  };
+
+  const handleModificationSubmit = async () => {
+    if (!selectedReservation) return;
+    
+    // Validate
+    if (!modificationProposal.proposedPartyTimeStart || !modificationProposal.proposedPartyTimeEnd || !modificationProposal.modificationReason.trim()) {
+      setError('Please fill in all required fields: proposed times and reason');
+      return;
+    }
+    
+    try {
+      setActionLoading(selectedReservation.id);
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      const token = localStorage.getItem('token');
+      
+      // Convert times to ISO strings
+      const [startHours, startMinutes] = modificationProposal.proposedPartyTimeStart.split(':').map(Number);
+      const [endHours, endMinutes] = modificationProposal.proposedPartyTimeEnd.split(':').map(Number);
+      
+      const proposedDate = new Date(selectedReservation.date);
+      const proposedDateObj = new Date(proposedDate.getFullYear(), proposedDate.getMonth(), proposedDate.getDate());
+      
+      const proposedStartDateTime = new Date(proposedDateObj);
+      proposedStartDateTime.setHours(startHours, startMinutes, 0, 0);
+      
+      const proposedEndDateTime = new Date(proposedDateObj);
+      proposedEndDateTime.setHours(endHours, endMinutes, 0, 0);
+      
+      await axios.post(`${apiUrl}/api/reservations/${selectedReservation.id}/propose-modification`, {
+        proposedDate: modificationProposal.proposedDate,
+        proposedPartyTimeStart: proposedStartDateTime.toISOString(),
+        proposedPartyTimeEnd: proposedEndDateTime.toISOString(),
+        modificationReason: modificationProposal.modificationReason.trim()
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      // Close modal and refresh
+      setShowModificationModal(false);
+      setSelectedReservation(null);
+      setModificationProposal({
+        proposedDate: '',
+        proposedPartyTimeStart: '',
+        proposedPartyTimeEnd: '',
+        modificationReason: ''
+      });
+      fetchReservations();
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to propose modification');
+      console.error('Error proposing modification:', err);
     } finally {
       setActionLoading(null);
     }
@@ -580,6 +667,24 @@ const JanitorialPage: React.FC = () => {
                     }}
                   >
                     {actionLoading === reservation.id ? 'Processing...' : 'Reject'}
+                  </button>
+                )}
+                {reservation.status === 'NEW' && reservation.modificationStatus !== 'PENDING' && (
+                  <button
+                    onClick={() => handleProposeModification(reservation)}
+                    disabled={actionLoading === reservation.id}
+                    style={{
+                      backgroundColor: actionLoading === reservation.id ? '#9ca3af' : '#3b82f6',
+                      color: 'white',
+                      padding: '8px 16px',
+                      borderRadius: '4px',
+                      border: 'none',
+                      cursor: actionLoading === reservation.id ? 'not-allowed' : 'pointer',
+                      fontSize: '14px',
+                      fontWeight: 'bold'
+                    }}
+                  >
+                    Propose Modification
                   </button>
                 )}
                 {(reservation.status === 'FULLY_APPROVED' || reservation.status === 'JANITORIAL_APPROVED') && (
@@ -967,6 +1072,129 @@ const JanitorialPage: React.FC = () => {
                 }}
               >
                 Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modification Proposal Modal */}
+      {showModificationModal && selectedReservation && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            padding: '2rem',
+            borderRadius: '8px',
+            maxWidth: '600px',
+            width: '90%',
+            maxHeight: '90vh',
+            overflow: 'auto'
+          }}>
+            <h2 style={{ marginBottom: '1rem', color: '#1f2937' }}>
+              Propose Modification
+            </h2>
+            
+            <div style={{ marginBottom: '1rem', padding: '12px', backgroundColor: '#f0f9ff', border: '1px solid #0ea5e9', borderRadius: '4px' }}>
+              <p style={{ margin: '0 0 4px 0', color: '#0c4a6e', fontWeight: 'bold' }}>Current Reservation:</p>
+              <p style={{ margin: '0 0 4px 0', color: '#0c4a6e' }}>
+                <strong>Date:</strong> {formatDate(selectedReservation.date)}
+              </p>
+              <p style={{ margin: 0, color: '#0c4a6e' }}>
+                <strong>Time:</strong> {formatTimeRange(selectedReservation.partyTimeStart, selectedReservation.partyTimeEnd)}
+              </p>
+            </div>
+
+            <div style={{ marginBottom: '1rem' }}>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', color: '#374151' }}>
+                Proposed Start Time *
+              </label>
+              <SimpleTimeSelector
+                value={modificationProposal.proposedPartyTimeStart}
+                onChange={(time) => setModificationProposal(prev => ({ ...prev, proposedPartyTimeStart: time }))}
+              />
+            </div>
+
+            <div style={{ marginBottom: '1rem' }}>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', color: '#374151' }}>
+                Proposed End Time *
+              </label>
+              <SimpleTimeSelector
+                value={modificationProposal.proposedPartyTimeEnd}
+                onChange={(time) => setModificationProposal(prev => ({ ...prev, proposedPartyTimeEnd: time }))}
+              />
+            </div>
+
+            <div style={{ marginBottom: '1.5rem' }}>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', color: '#374151' }}>
+                Reason for Modification *
+              </label>
+              <textarea
+                value={modificationProposal.modificationReason}
+                onChange={(e) => setModificationProposal(prev => ({ ...prev, modificationReason: e.target.value }))}
+                rows={4}
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '4px',
+                  fontSize: '14px',
+                  resize: 'vertical'
+                }}
+                placeholder="Explain why this modification is needed..."
+              />
+            </div>
+
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
+              <button
+                onClick={() => {
+                  setShowModificationModal(false);
+                  setSelectedReservation(null);
+                  setModificationProposal({
+                    proposedDate: '',
+                    proposedPartyTimeStart: '',
+                    proposedPartyTimeEnd: '',
+                    modificationReason: ''
+                  });
+                }}
+                style={{
+                  backgroundColor: '#e5e7eb',
+                  color: '#374151',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '0.375rem',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: '0.875rem',
+                  fontWeight: '500'
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleModificationSubmit}
+                disabled={actionLoading === selectedReservation.id}
+                style={{
+                  backgroundColor: actionLoading === selectedReservation.id ? '#9ca3af' : '#3b82f6',
+                  color: 'white',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '0.375rem',
+                  border: 'none',
+                  cursor: actionLoading === selectedReservation.id ? 'not-allowed' : 'pointer',
+                  fontSize: '0.875rem',
+                  fontWeight: '500'
+                }}
+              >
+                {actionLoading === selectedReservation.id ? 'Submitting...' : 'Propose Modification'}
               </button>
             </div>
           </div>

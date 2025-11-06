@@ -1004,4 +1004,215 @@ router.get('/admin/damage-reviews', authenticateToken, async (req: any, res) => 
   }
 });
 
+// POST /api/reservations/:id/propose-modification - Propose modification to reservation
+router.post('/:id/propose-modification', authenticateToken, async (req: any, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+    const communityRole = req.user.communityRole;
+    const { proposedDate, proposedPartyTimeStart, proposedPartyTimeEnd, modificationReason } = req.body;
+
+    console.log('📝 Proposing modification for reservation:', id, 'by user:', userId);
+
+    // Check if user is janitorial or admin in current community
+    if (communityRole !== 'janitorial' && communityRole !== 'admin') {
+      return res.status(403).json({ message: 'Janitorial or admin access required' });
+    }
+
+    // Validate required fields
+    if (!proposedPartyTimeStart || !proposedPartyTimeEnd || !modificationReason) {
+      return res.status(400).json({ 
+        message: 'Missing required fields: proposedPartyTimeStart, proposedPartyTimeEnd, modificationReason' 
+      });
+    }
+
+    // Find reservation (must belong to current community and be unconfirmed)
+    const reservation = await Reservation.findOne({
+      where: {
+        id,
+        communityId: req.user.currentCommunityId,
+        status: 'NEW' // Only allow modifications for NEW (unconfirmed) reservations
+      },
+      include: [
+        {
+          model: Amenity,
+          as: 'amenity',
+          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity']
+        },
+        {
+          model: User,
+          as: 'user',
+          attributes: ['id', 'firstName', 'lastName', 'email', 'phone', 'address']
+        }
+      ]
+    }) as ReservationWithAssociations;
+
+    if (!reservation) {
+      return res.status(404).json({ 
+        message: 'Reservation not found, does not belong to your community, or is not in NEW status' 
+      });
+    }
+
+    // Check if there's already a pending modification
+    if (reservation.modificationStatus === 'PENDING') {
+      return res.status(400).json({ 
+        message: 'A modification proposal is already pending for this reservation' 
+      });
+    }
+
+    // Update reservation with proposed modification
+    await reservation.update({
+      modificationStatus: 'PENDING',
+      proposedDate: proposedDate || reservation.date, // Use existing date if not provided
+      proposedPartyTimeStart: new Date(proposedPartyTimeStart),
+      proposedPartyTimeEnd: new Date(proposedPartyTimeEnd),
+      modificationReason,
+      modificationProposedBy: userId,
+      modificationProposedAt: new Date()
+    });
+
+    console.log('✅ Modification proposed successfully');
+
+    return res.json({
+      message: 'Modification proposal created successfully',
+      reservation: reservation.toJSON()
+    });
+
+  } catch (error: any) {
+    console.error('❌ Error proposing modification:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// PUT /api/reservations/:id/accept-modification - Accept proposed modification
+router.put('/:id/accept-modification', authenticateToken, async (req: any, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+
+    console.log('✅ Accepting modification for reservation:', id, 'by user:', userId);
+
+    // Find reservation (must belong to user and have pending modification)
+    const reservation = await Reservation.findOne({
+      where: {
+        id,
+        userId, // User can only accept modifications for their own reservations
+        modificationStatus: 'PENDING'
+      },
+      include: [
+        {
+          model: Amenity,
+          as: 'amenity',
+          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity']
+        }
+      ]
+    }) as ReservationWithAssociations;
+
+    if (!reservation) {
+      return res.status(404).json({ 
+        message: 'Reservation not found, does not belong to you, or has no pending modification' 
+      });
+    }
+
+    // Check for conflicts with new proposed time
+    const conflictingReservation = await Reservation.findOne({
+      where: {
+        amenityId: reservation.amenityId,
+        communityId: reservation.communityId,
+        date: reservation.proposedDate || reservation.date,
+        status: {
+          [Op.in]: ['NEW', 'JANITORIAL_APPROVED', 'FULLY_APPROVED']
+        },
+        id: {
+          [Op.ne]: reservation.id // Exclude current reservation
+        },
+        [Op.or]: [
+          {
+            partyTimeStart: {
+              [Op.lt]: reservation.proposedPartyTimeEnd
+            },
+            partyTimeEnd: {
+              [Op.gt]: reservation.proposedPartyTimeStart
+            }
+          }
+        ]
+      }
+    });
+
+    if (conflictingReservation) {
+      return res.status(400).json({ 
+        message: 'The proposed time conflicts with an existing reservation' 
+      });
+    }
+
+    // Apply the modification: update reservation with proposed values
+    await reservation.update({
+      date: reservation.proposedDate || reservation.date,
+      partyTimeStart: reservation.proposedPartyTimeStart!,
+      partyTimeEnd: reservation.proposedPartyTimeEnd!,
+      setupTimeStart: reservation.proposedPartyTimeStart!, // Setup time same as reservation start
+      setupTimeEnd: reservation.proposedPartyTimeStart!, // Setup time same as reservation start
+      modificationStatus: 'ACCEPTED'
+    });
+
+    console.log('✅ Modification accepted successfully');
+
+    return res.json({
+      message: 'Modification accepted successfully',
+      reservation: reservation.toJSON()
+    });
+
+  } catch (error: any) {
+    console.error('❌ Error accepting modification:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// PUT /api/reservations/:id/reject-modification - Reject proposed modification (cancels reservation)
+router.put('/:id/reject-modification', authenticateToken, async (req: any, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+
+    console.log('❌ Rejecting modification for reservation:', id, 'by user:', userId);
+
+    // Find reservation (must belong to user and have pending modification)
+    const reservation = await Reservation.findOne({
+      where: {
+        id,
+        userId, // User can only reject modifications for their own reservations
+        modificationStatus: 'PENDING'
+      }
+    }) as ReservationWithAssociations;
+
+    if (!reservation) {
+      return res.status(404).json({ 
+        message: 'Reservation not found, does not belong to you, or has no pending modification' 
+      });
+    }
+
+    // When rejecting modification, cancel the entire reservation
+    // User will need to book a new reservation if they want to proceed
+    await reservation.update({
+      status: 'CANCELLED',
+      modificationStatus: 'REJECTED',
+      proposedDate: null,
+      proposedPartyTimeStart: null,
+      proposedPartyTimeEnd: null,
+      modificationReason: null
+    });
+
+    console.log('✅ Modification rejected - reservation cancelled');
+
+    return res.json({
+      message: 'Modification rejected. Reservation has been cancelled. You can book a new reservation if needed.',
+      reservation: reservation.toJSON()
+    });
+
+  } catch (error: any) {
+    console.error('❌ Error rejecting modification:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 export default router;
