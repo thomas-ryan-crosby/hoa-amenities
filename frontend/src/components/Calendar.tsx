@@ -1276,34 +1276,43 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
       </div>
 
       {/* Legend */}
-      <div style={{ marginTop: '20px', display: 'flex', gap: '20px', alignItems: 'center', flexWrap: 'wrap' }}>
-        <div style={{ fontSize: '14px', fontWeight: 'bold' }}>Legend:</div>
-        <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
-          {/* Amenity Types - Dynamically generated from amenities */}
-          {amenities.map(amenity => (
-            <div key={amenity.id} style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-              <div style={{ 
-                width: '12px', 
-                height: '12px', 
-                backgroundColor: amenity.displayColor || '#355B45', 
-                borderRadius: '2px' 
-              }}></div>
-              <span style={{ fontSize: '12px' }}>{amenity.name}</span>
+      <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#1f2937', marginBottom: '8px' }}>Legend</div>
+        
+        {/* Amenity Colors Section */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div style={{ fontSize: '14px', fontWeight: '600', color: '#374151', marginBottom: '4px' }}>Amenity Colors</div>
+          <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
+            {amenities.map(amenity => (
+              <div key={amenity.id} style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <div style={{ 
+                  width: '12px', 
+                  height: '12px', 
+                  backgroundColor: amenity.displayColor || '#355B45', 
+                  borderRadius: '2px' 
+                }}></div>
+                <span style={{ fontSize: '12px', color: '#6b7280' }}>{amenity.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        
+        {/* Status Colors Section */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div style={{ fontSize: '14px', fontWeight: '600', color: '#374151', marginBottom: '4px' }}>Status Indicators</div>
+          <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+              <div style={{ width: '8px', height: '8px', backgroundColor: '#6b7280', borderRadius: '50%', border: '1px solid white' }}></div>
+              <span style={{ fontSize: '12px', color: '#6b7280' }}>New</span>
             </div>
-          ))}
-          
-          {/* Status Indicators */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-            <div style={{ width: '8px', height: '8px', backgroundColor: '#6b7280', borderRadius: '50%', border: '1px solid white' }}></div>
-            <span style={{ fontSize: '12px' }}>New</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-            <div style={{ width: '8px', height: '8px', backgroundColor: '#f59e0b', borderRadius: '50%', border: '1px solid white' }}></div>
-            <span style={{ fontSize: '12px' }}>Janitorial Approved</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-            <div style={{ width: '8px', height: '8px', backgroundColor: '#10b981', borderRadius: '50%', border: '1px solid white' }}></div>
-            <span style={{ fontSize: '12px' }}>Fully Approved</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+              <div style={{ width: '8px', height: '8px', backgroundColor: '#f59e0b', borderRadius: '50%', border: '1px solid white' }}></div>
+              <span style={{ fontSize: '12px', color: '#6b7280' }}>Janitorial Approved</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+              <div style={{ width: '8px', height: '8px', backgroundColor: '#10b981', borderRadius: '50%', border: '1px solid white' }}></div>
+              <span style={{ fontSize: '12px', color: '#6b7280' }}>Fully Approved</span>
+            </div>
           </div>
         </div>
       </div>
