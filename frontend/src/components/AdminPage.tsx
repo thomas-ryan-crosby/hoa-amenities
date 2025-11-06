@@ -724,43 +724,23 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                 {!formData.hoursOfOperation.open24Hours && (
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                     <div>
-                      <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.875rem', color: '#6b7280' }}>
-                        Open Time
-                      </label>
-                      <input
-                        type="time"
+                      <SimpleTimeSelector
+                        label="Open Time"
                         value={formData.hoursOfOperation.open}
-                        onChange={(e) => setFormData({
+                        onChange={(time) => setFormData({
                           ...formData,
-                          hoursOfOperation: { ...formData.hoursOfOperation, open: e.target.value }
+                          hoursOfOperation: { ...formData.hoursOfOperation, open: time }
                         })}
-                        style={{
-                          width: '100%',
-                          padding: '0.5rem',
-                          border: '1px solid #d1d5db',
-                          borderRadius: '0.375rem',
-                          fontSize: '1rem'
-                        }}
                       />
                     </div>
                     <div>
-                      <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.875rem', color: '#6b7280' }}>
-                        Close Time
-                      </label>
-                      <input
-                        type="time"
+                      <SimpleTimeSelector
+                        label="Close Time"
                         value={formData.hoursOfOperation.close}
-                        onChange={(e) => setFormData({
+                        onChange={(time) => setFormData({
                           ...formData,
-                          hoursOfOperation: { ...formData.hoursOfOperation, close: e.target.value }
+                          hoursOfOperation: { ...formData.hoursOfOperation, close: time }
                         })}
-                        style={{
-                          width: '100%',
-                          padding: '0.5rem',
-                          border: '1px solid #d1d5db',
-                          borderRadius: '0.375rem',
-                          fontSize: '1rem'
-                        }}
                       />
                     </div>
                   </div>

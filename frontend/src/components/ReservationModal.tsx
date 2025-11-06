@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
+import SimpleTimeSelector from './SimpleTimeSelector';
 
 interface Amenity {
   id: number;
@@ -139,13 +140,13 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
   };
 
   const handleReservationTimeStartChange = (time: string) => {
-    const roundedTime = roundToNearest30Minutes(time);
-    setReservationTimeStart(roundedTime);
+    // SimpleTimeSelector already ensures 30-minute intervals
+    setReservationTimeStart(time);
   };
 
   const handleReservationTimeEndChange = (time: string) => {
-    const roundedTime = roundToNearest30Minutes(time);
-    setReservationTimeEnd(roundedTime);
+    // SimpleTimeSelector already ensures 30-minute intervals
+    setReservationTimeEnd(time);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -371,52 +372,26 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
           )}
 
           {/* Reservation Start Time */}
-          <div style={{ marginBottom: '20px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
-              Reservation Start Time *
-            </label>
-            <input
-              type="time"
-              value={reservationTimeStart}
-              onChange={(e) => handleReservationTimeStartChange(e.target.value)}
-              step="1800"
-              style={{
-                width: '100%',
-                padding: '8px',
-                border: '1px solid #d1d5db',
-                borderRadius: '4px',
-                fontSize: '16px'
-              }}
-              required
-            />
-            <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#6b7280' }}>
-              Include any setup time needed in your start time
-            </p>
-          </div>
+          <SimpleTimeSelector
+            label="Reservation Start Time"
+            value={reservationTimeStart}
+            onChange={handleReservationTimeStartChange}
+            required
+          />
+          <p style={{ margin: '-16px 0 16px 0', fontSize: '12px', color: '#6b7280' }}>
+            Include any setup time needed in your start time
+          </p>
 
           {/* Reservation End Time */}
-          <div style={{ marginBottom: '20px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
-              Reservation End Time *
-            </label>
-            <input
-              type="time"
-              value={reservationTimeEnd}
-              onChange={(e) => handleReservationTimeEndChange(e.target.value)}
-              step="1800"
-              style={{
-                width: '100%',
-                padding: '8px',
-                border: '1px solid #d1d5db',
-                borderRadius: '4px',
-                fontSize: '16px'
-              }}
-              required
-            />
-            <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: '#6b7280' }}>
-              Include any cleanup time needed in your end time
-            </p>
-          </div>
+          <SimpleTimeSelector
+            label="Reservation End Time"
+            value={reservationTimeEnd}
+            onChange={handleReservationTimeEndChange}
+            required
+          />
+          <p style={{ margin: '-16px 0 16px 0', fontSize: '12px', color: '#6b7280' }}>
+            Include any cleanup time needed in your end time
+          </p>
 
           {/* Reservation Name */}
           <div style={{ marginBottom: '20px' }}>
