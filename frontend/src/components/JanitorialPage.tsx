@@ -1182,14 +1182,29 @@ const JanitorialPage: React.FC = () => {
               </button>
               <button
                 onClick={handleModificationSubmit}
-                disabled={actionLoading === selectedReservation.id}
+                disabled={
+                  actionLoading === selectedReservation.id ||
+                  !modificationProposal.proposedPartyTimeStart ||
+                  !modificationProposal.proposedPartyTimeEnd ||
+                  !modificationProposal.modificationReason.trim()
+                }
                 style={{
-                  backgroundColor: actionLoading === selectedReservation.id ? '#9ca3af' : '#3b82f6',
+                  backgroundColor: (
+                    actionLoading === selectedReservation.id ||
+                    !modificationProposal.proposedPartyTimeStart ||
+                    !modificationProposal.proposedPartyTimeEnd ||
+                    !modificationProposal.modificationReason.trim()
+                  ) ? '#9ca3af' : '#3b82f6',
                   color: 'white',
                   padding: '0.5rem 1rem',
                   borderRadius: '0.375rem',
                   border: 'none',
-                  cursor: actionLoading === selectedReservation.id ? 'not-allowed' : 'pointer',
+                  cursor: (
+                    actionLoading === selectedReservation.id ||
+                    !modificationProposal.proposedPartyTimeStart ||
+                    !modificationProposal.proposedPartyTimeEnd ||
+                    !modificationProposal.modificationReason.trim()
+                  ) ? 'not-allowed' : 'pointer',
                   fontSize: '0.875rem',
                   fontWeight: '500'
                 }}

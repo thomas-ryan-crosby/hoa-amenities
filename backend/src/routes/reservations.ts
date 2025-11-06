@@ -1145,6 +1145,20 @@ router.post('/:id/propose-modification', authenticateToken, async (req: any, res
       });
     }
 
+    // Check if modification columns exist in the database
+    const columnCheck = await sequelize.query(`
+      SELECT column_name 
+      FROM information_schema.columns 
+      WHERE table_name = 'reservations' 
+      AND column_name = 'modificationStatus'
+    `) as any[];
+    
+    if (columnCheck[0].length === 0) {
+      return res.status(500).json({ 
+        message: 'Modification feature is not available. Please run the database migration first.' 
+      });
+    }
+
     // Check if there's already a pending modification
     if (reservation.modificationStatus === 'PENDING') {
       return res.status(400).json({ 
@@ -1172,7 +1186,11 @@ router.post('/:id/propose-modification', authenticateToken, async (req: any, res
 
   } catch (error: any) {
     console.error('❌ Error proposing modification:', error);
-    return res.status(500).json({ message: 'Internal server error' });
+    console.error('❌ Error details:', error.message);
+    console.error('❌ Error stack:', error.stack);
+    return res.status(500).json({ 
+      message: error.message || 'Internal server error' 
+    });
   }
 });
 
