@@ -1124,45 +1124,7 @@ router.post('/:id/propose-modification', authenticateToken, async (req: any, res
       });
     }
 
-    // Check if modification columns exist in the database FIRST
-    try {
-      const columnCheck = await sequelize.query(`
-        SELECT column_name 
-        FROM information_schema.columns 
-        WHERE table_schema = 'public'
-        AND table_name = 'reservations' 
-        AND column_name = 'modificationStatus'
-      `) as any[];
-      
-      // Sequelize query returns [rows, metadata] for SELECT queries
-      // Check if we have results
-      if (!columnCheck || !Array.isArray(columnCheck) || columnCheck.length === 0) {
-        console.error('❌ Column check returned unexpected result structure:', columnCheck);
-        return res.status(500).json({ 
-          message: 'Error checking database migration status. Please contact support.' 
-        });
-      }
-
-      const rows = columnCheck[0];
-      if (!rows || !Array.isArray(rows) || rows.length === 0) {
-        console.log('❌ modificationStatus column not found in database');
-        return res.status(500).json({ 
-          message: 'Modification feature is not available. Please run the database migration first.' 
-        });
-      }
-
-      console.log('✅ modificationStatus column found in database');
-    } catch (error: any) {
-      console.error('❌ Error checking for modificationStatus column:', error);
-      console.error('❌ Error details:', error.message);
-      console.error('❌ Error stack:', error.stack);
-      return res.status(500).json({ 
-        message: 'Error checking database migration status',
-        details: error.message || 'Unknown error occurred'
-      });
-    }
-
-    // Build attributes list excluding modification fields to avoid errors if columns don't exist
+    // Build attributes list - we'll try to update modification fields and catch errors if columns don't exist
     const attributes = [
       'id', 'date', 'setupTimeStart', 'setupTimeEnd', 'partyTimeStart', 'partyTimeEnd',
       'guestCount', 'specialRequirements', 'status', 'totalFee', 'totalDeposit',
@@ -1224,16 +1186,30 @@ router.post('/:id/propose-modification', authenticateToken, async (req: any, res
       });
     }
 
-    // Update reservation with proposed modification
-    await reservation.update({
-      modificationStatus: 'PENDING',
-      proposedDate: proposedDate || reservation.date, // Use existing date if not provided
-      proposedPartyTimeStart: new Date(proposedPartyTimeStart),
-      proposedPartyTimeEnd: new Date(proposedPartyTimeEnd),
-      modificationReason,
-      modificationProposedBy: userId,
-      modificationProposedAt: new Date()
-    });
+    // Try to update reservation with proposed modification
+    // If columns don't exist, this will throw an error which we'll catch below
+    try {
+      await reservation.update({
+        modificationStatus: 'PENDING',
+        proposedDate: proposedDate || reservation.date, // Use existing date if not provided
+        proposedPartyTimeStart: new Date(proposedPartyTimeStart),
+        proposedPartyTimeEnd: new Date(proposedPartyTimeEnd),
+        modificationReason,
+        modificationProposedBy: userId,
+        modificationProposedAt: new Date()
+      });
+    } catch (updateError: any) {
+      // Check if error is due to missing columns
+      if (updateError.message && updateError.message.includes('does not exist')) {
+        console.error('❌ Modification columns not found in database:', updateError.message);
+        return res.status(500).json({ 
+          message: 'Modification feature is not available. Please run the database migration first.',
+          details: 'The required database columns are missing.'
+        });
+      }
+      // Re-throw if it's a different error
+      throw updateError;
+    }
 
     console.log('✅ Modification proposed successfully');
 
