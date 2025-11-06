@@ -2,6 +2,7 @@ import express from 'express';
 import { Reservation, Amenity, User } from '../models';
 import { authenticateToken } from '../middleware/auth';
 import { Op } from 'sequelize';
+import { sequelize } from '../models';
 
 // Define interfaces for associated models
 interface ReservationWithAssociations extends Reservation {
@@ -32,8 +33,53 @@ router.get('/', authenticateToken, async (req: any, res) => {
       whereClause.amenityId = amenityId;
     }
 
+    // Build attributes list dynamically based on what columns exist
+    const attributes = [
+      'id', 'date', 'setupTimeStart', 'setupTimeEnd', 'partyTimeStart', 'partyTimeEnd',
+      'guestCount', 'specialRequirements', 'status', 'totalFee', 'totalDeposit',
+      'damageAssessed', 'damageAssessmentPending', 'damageAssessmentStatus', 'damageCharge', 'damageChargeAmount',
+      'eventName', 'isPrivate', 'communityId', 'amenityId', 'userId'
+    ];
+
+    // Check if modification fields exist before adding them
+    try {
+      const columnCheck = await sequelize.query(`
+        SELECT column_name 
+        FROM information_schema.columns 
+        WHERE table_name = 'reservations' 
+        AND column_name IN ('modificationStatus', 'proposedDate', 'proposedPartyTimeStart', 'proposedPartyTimeEnd', 'modificationReason', 'modificationProposedBy', 'modificationProposedAt')
+      `) as any[];
+      
+      const existingColumns = columnCheck[0].map((row: any) => row.column_name);
+      if (existingColumns.includes('modificationStatus')) {
+        attributes.push('modificationStatus');
+      }
+      if (existingColumns.includes('proposedDate')) {
+        attributes.push('proposedDate');
+      }
+      if (existingColumns.includes('proposedPartyTimeStart')) {
+        attributes.push('proposedPartyTimeStart');
+      }
+      if (existingColumns.includes('proposedPartyTimeEnd')) {
+        attributes.push('proposedPartyTimeEnd');
+      }
+      if (existingColumns.includes('modificationReason')) {
+        attributes.push('modificationReason');
+      }
+      if (existingColumns.includes('modificationProposedBy')) {
+        attributes.push('modificationProposedBy');
+      }
+      if (existingColumns.includes('modificationProposedAt')) {
+        attributes.push('modificationProposedAt');
+      }
+    } catch (error) {
+      // If check fails, continue without modification fields
+      console.log('⚠️ Could not check for modification columns, continuing without them');
+    }
+
     const reservations = await Reservation.findAll({
       where: whereClause,
+      attributes: attributes,
       include: [
         {
           model: Amenity,
@@ -51,8 +97,10 @@ router.get('/', authenticateToken, async (req: any, res) => {
       total: reservations.length
     });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('❌ Error fetching reservations:', error);
+    console.error('❌ Error details:', error.message);
+    console.error('❌ Error stack:', error.stack);
     return res.status(500).json({ message: 'Internal server error' });
   }
 });
@@ -95,9 +143,54 @@ router.get('/all', authenticateToken, async (req: any, res) => {
       amenityWhere.id = amenityId;
     }
 
+    // Build attributes list dynamically based on what columns exist
+    const attributes = [
+      'id', 'date', 'setupTimeStart', 'setupTimeEnd', 'partyTimeStart', 'partyTimeEnd',
+      'guestCount', 'specialRequirements', 'status', 'totalFee', 'totalDeposit',
+      'damageAssessed', 'damageAssessmentPending', 'damageAssessmentStatus', 'damageCharge', 'damageChargeAmount',
+      'eventName', 'isPrivate', 'communityId', 'amenityId', 'userId'
+    ];
+
+    // Check if modification fields exist before adding them
+    try {
+      const columnCheck = await sequelize.query(`
+        SELECT column_name 
+        FROM information_schema.columns 
+        WHERE table_name = 'reservations' 
+        AND column_name IN ('modificationStatus', 'proposedDate', 'proposedPartyTimeStart', 'proposedPartyTimeEnd', 'modificationReason', 'modificationProposedBy', 'modificationProposedAt')
+      `) as any[];
+      
+      const existingColumns = columnCheck[0].map((row: any) => row.column_name);
+      if (existingColumns.includes('modificationStatus')) {
+        attributes.push('modificationStatus');
+      }
+      if (existingColumns.includes('proposedDate')) {
+        attributes.push('proposedDate');
+      }
+      if (existingColumns.includes('proposedPartyTimeStart')) {
+        attributes.push('proposedPartyTimeStart');
+      }
+      if (existingColumns.includes('proposedPartyTimeEnd')) {
+        attributes.push('proposedPartyTimeEnd');
+      }
+      if (existingColumns.includes('modificationReason')) {
+        attributes.push('modificationReason');
+      }
+      if (existingColumns.includes('modificationProposedBy')) {
+        attributes.push('modificationProposedBy');
+      }
+      if (existingColumns.includes('modificationProposedAt')) {
+        attributes.push('modificationProposedAt');
+      }
+    } catch (error) {
+      // If check fails, continue without modification fields
+      console.log('⚠️ Could not check for modification columns, continuing without them');
+    }
+
     // Fetch reservations with associations for current community
     const reservations = await Reservation.findAll({
       where: whereClause,
+      attributes: attributes,
       include: [
         {
           model: Amenity,
@@ -112,7 +205,6 @@ router.get('/all', authenticateToken, async (req: any, res) => {
           attributes: ['id', 'firstName', 'lastName', 'email', 'phone', 'address']
         }
       ],
-      // All reservation fields (including eventName and isPrivate) are included by default
       order: [['date', 'ASC'], ['partyTimeStart', 'ASC']]
     });
 
