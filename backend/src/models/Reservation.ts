@@ -248,9 +248,12 @@ Reservation.init(
     },
     // Modification Proposal Fields
     modificationStatus: {
-      type: DataTypes.ENUM('NONE', 'PENDING', 'ACCEPTED', 'REJECTED'),
+      type: DataTypes.STRING(20),
       allowNull: true,
       defaultValue: 'NONE',
+      validate: {
+        isIn: [['NONE', 'PENDING', 'ACCEPTED', 'REJECTED']]
+      }
     },
     proposedDate: {
       type: DataTypes.DATEONLY,
