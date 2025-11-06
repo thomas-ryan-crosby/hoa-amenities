@@ -46,31 +46,34 @@ router.get('/', authenticateToken, async (req: any, res) => {
       const columnCheck = await sequelize.query(`
         SELECT column_name 
         FROM information_schema.columns 
-        WHERE table_name = 'reservations' 
+        WHERE table_schema = 'public'
+        AND table_name = 'reservations' 
         AND column_name IN ('modificationStatus', 'proposedDate', 'proposedPartyTimeStart', 'proposedPartyTimeEnd', 'modificationReason', 'modificationProposedBy', 'modificationProposedAt')
       `) as any[];
       
-      const existingColumns = columnCheck[0].map((row: any) => row.column_name);
-      if (existingColumns.includes('modificationStatus')) {
-        attributes.push('modificationStatus');
-      }
-      if (existingColumns.includes('proposedDate')) {
-        attributes.push('proposedDate');
-      }
-      if (existingColumns.includes('proposedPartyTimeStart')) {
-        attributes.push('proposedPartyTimeStart');
-      }
-      if (existingColumns.includes('proposedPartyTimeEnd')) {
-        attributes.push('proposedPartyTimeEnd');
-      }
-      if (existingColumns.includes('modificationReason')) {
-        attributes.push('modificationReason');
-      }
-      if (existingColumns.includes('modificationProposedBy')) {
-        attributes.push('modificationProposedBy');
-      }
-      if (existingColumns.includes('modificationProposedAt')) {
-        attributes.push('modificationProposedAt');
+      if (columnCheck && columnCheck[0] && Array.isArray(columnCheck[0])) {
+        const existingColumns = columnCheck[0].map((row: any) => row.column_name);
+        if (existingColumns.includes('modificationStatus')) {
+          attributes.push('modificationStatus');
+        }
+        if (existingColumns.includes('proposedDate')) {
+          attributes.push('proposedDate');
+        }
+        if (existingColumns.includes('proposedPartyTimeStart')) {
+          attributes.push('proposedPartyTimeStart');
+        }
+        if (existingColumns.includes('proposedPartyTimeEnd')) {
+          attributes.push('proposedPartyTimeEnd');
+        }
+        if (existingColumns.includes('modificationReason')) {
+          attributes.push('modificationReason');
+        }
+        if (existingColumns.includes('modificationProposedBy')) {
+          attributes.push('modificationProposedBy');
+        }
+        if (existingColumns.includes('modificationProposedAt')) {
+          attributes.push('modificationProposedAt');
+        }
       }
     } catch (error) {
       // If check fails, continue without modification fields
@@ -156,31 +159,34 @@ router.get('/all', authenticateToken, async (req: any, res) => {
       const columnCheck = await sequelize.query(`
         SELECT column_name 
         FROM information_schema.columns 
-        WHERE table_name = 'reservations' 
+        WHERE table_schema = 'public'
+        AND table_name = 'reservations' 
         AND column_name IN ('modificationStatus', 'proposedDate', 'proposedPartyTimeStart', 'proposedPartyTimeEnd', 'modificationReason', 'modificationProposedBy', 'modificationProposedAt')
       `) as any[];
       
-      const existingColumns = columnCheck[0].map((row: any) => row.column_name);
-      if (existingColumns.includes('modificationStatus')) {
-        attributes.push('modificationStatus');
-      }
-      if (existingColumns.includes('proposedDate')) {
-        attributes.push('proposedDate');
-      }
-      if (existingColumns.includes('proposedPartyTimeStart')) {
-        attributes.push('proposedPartyTimeStart');
-      }
-      if (existingColumns.includes('proposedPartyTimeEnd')) {
-        attributes.push('proposedPartyTimeEnd');
-      }
-      if (existingColumns.includes('modificationReason')) {
-        attributes.push('modificationReason');
-      }
-      if (existingColumns.includes('modificationProposedBy')) {
-        attributes.push('modificationProposedBy');
-      }
-      if (existingColumns.includes('modificationProposedAt')) {
-        attributes.push('modificationProposedAt');
+      if (columnCheck && columnCheck[0] && Array.isArray(columnCheck[0])) {
+        const existingColumns = columnCheck[0].map((row: any) => row.column_name);
+        if (existingColumns.includes('modificationStatus')) {
+          attributes.push('modificationStatus');
+        }
+        if (existingColumns.includes('proposedDate')) {
+          attributes.push('proposedDate');
+        }
+        if (existingColumns.includes('proposedPartyTimeStart')) {
+          attributes.push('proposedPartyTimeStart');
+        }
+        if (existingColumns.includes('proposedPartyTimeEnd')) {
+          attributes.push('proposedPartyTimeEnd');
+        }
+        if (existingColumns.includes('modificationReason')) {
+          attributes.push('modificationReason');
+        }
+        if (existingColumns.includes('modificationProposedBy')) {
+          attributes.push('modificationProposedBy');
+        }
+        if (existingColumns.includes('modificationProposedAt')) {
+          attributes.push('modificationProposedAt');
+        }
       }
     } catch (error) {
       // If check fails, continue without modification fields
@@ -1119,16 +1125,40 @@ router.post('/:id/propose-modification', authenticateToken, async (req: any, res
     }
 
     // Check if modification columns exist in the database FIRST
-    const columnCheck = await sequelize.query(`
-      SELECT column_name 
-      FROM information_schema.columns 
-      WHERE table_name = 'reservations' 
-      AND column_name = 'modificationStatus'
-    `) as any[];
-    
-    if (columnCheck[0].length === 0) {
+    try {
+      const columnCheck = await sequelize.query(`
+        SELECT column_name 
+        FROM information_schema.columns 
+        WHERE table_schema = 'public'
+        AND table_name = 'reservations' 
+        AND column_name = 'modificationStatus'
+      `) as any[];
+      
+      // Sequelize query returns [rows, metadata] for SELECT queries
+      // Check if we have results
+      if (!columnCheck || !Array.isArray(columnCheck) || columnCheck.length === 0) {
+        console.error('❌ Column check returned unexpected result structure:', columnCheck);
+        return res.status(500).json({ 
+          message: 'Error checking database migration status. Please contact support.' 
+        });
+      }
+
+      const rows = columnCheck[0];
+      if (!rows || !Array.isArray(rows) || rows.length === 0) {
+        console.log('❌ modificationStatus column not found in database');
+        return res.status(500).json({ 
+          message: 'Modification feature is not available. Please run the database migration first.' 
+        });
+      }
+
+      console.log('✅ modificationStatus column found in database');
+    } catch (error: any) {
+      console.error('❌ Error checking for modificationStatus column:', error);
+      console.error('❌ Error details:', error.message);
+      console.error('❌ Error stack:', error.stack);
       return res.status(500).json({ 
-        message: 'Modification feature is not available. Please run the database migration first.' 
+        message: 'Error checking database migration status',
+        details: error.message || 'Unknown error occurred'
       });
     }
 
@@ -1141,15 +1171,23 @@ router.post('/:id/propose-modification', authenticateToken, async (req: any, res
     ];
 
     // Add modification fields if they exist
-    const modificationColumns = await sequelize.query(`
-      SELECT column_name 
-      FROM information_schema.columns 
-      WHERE table_name = 'reservations' 
-      AND column_name IN ('modificationStatus', 'proposedDate', 'proposedPartyTimeStart', 'proposedPartyTimeEnd', 'modificationReason', 'modificationProposedBy', 'modificationProposedAt')
-    `) as any[];
-    
-    const existingModColumns = modificationColumns[0].map((row: any) => row.column_name);
-    existingModColumns.forEach((col: string) => attributes.push(col));
+    try {
+      const modificationColumns = await sequelize.query(`
+        SELECT column_name 
+        FROM information_schema.columns 
+        WHERE table_schema = 'public'
+        AND table_name = 'reservations' 
+        AND column_name IN ('modificationStatus', 'proposedDate', 'proposedPartyTimeStart', 'proposedPartyTimeEnd', 'modificationReason', 'modificationProposedBy', 'modificationProposedAt')
+      `) as any[];
+      
+      if (modificationColumns && modificationColumns[0] && Array.isArray(modificationColumns[0])) {
+        const existingModColumns = modificationColumns[0].map((row: any) => row.column_name);
+        existingModColumns.forEach((col: string) => attributes.push(col));
+      }
+    } catch (error) {
+      // If check fails, continue without modification fields
+      console.log('⚠️ Could not check for modification columns, continuing without them');
+    }
 
     // Find reservation (must belong to current community and be unconfirmed)
     const reservation = await Reservation.findOne({
