@@ -112,6 +112,7 @@ router.get('/all', authenticateToken, async (req: any, res) => {
           attributes: ['id', 'firstName', 'lastName', 'email', 'phone', 'address']
         }
       ],
+      // All reservation fields (including eventName and isPrivate) are included by default
       order: [['date', 'ASC'], ['partyTimeStart', 'ASC']]
     });
 

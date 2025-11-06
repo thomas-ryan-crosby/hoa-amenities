@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 import ReservationModal from './ReservationModal';
 import { useMobile } from '../hooks/useMobile';
+import { formatDate, formatTimeRange } from '../utils/dateTimeUtils';
 
 interface Reservation {
   id: number;
@@ -165,22 +166,6 @@ const ReservationsPage: React.FC = () => {
     return 'Unconfirmed';
   };
 
-  const formatDate = (dateString: string): string => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
-
-  const formatTime = (dateTimeString: string): string => {
-    if (!dateTimeString) return '';
-    return new Date(dateTimeString).toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
 
   const filteredReservations = filter === 'all' 
     ? reservations 
@@ -425,7 +410,7 @@ const ReservationsPage: React.FC = () => {
                     Reservation Time
                   </h4>
                   <p style={{ margin: 0, fontSize: '14px', color: '#6b7280' }}>
-                    {formatTime(reservation.partyTimeStart)} - {formatTime(reservation.partyTimeEnd)}
+                    {formatTimeRange(reservation.partyTimeStart, reservation.partyTimeEnd)}
                   </p>
                 </div>
                 <div>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 import { useMobile } from '../hooks/useMobile';
+import { formatDate, formatTime, formatTimeRange } from '../utils/dateTimeUtils';
 
 interface Reservation {
   id: number;
@@ -11,6 +12,8 @@ interface Reservation {
   partyTimeStart: string;
   partyTimeEnd: string;
   guestCount: number;
+  eventName?: string | null;
+  isPrivate?: boolean;
   specialRequirements?: string;
   status: 'NEW' | 'JANITORIAL_APPROVED' | 'FULLY_APPROVED' | 'CANCELLED' | 'COMPLETED';
   totalFee: number | string;
@@ -306,22 +309,6 @@ const JanitorialPage: React.FC = () => {
     return statusText[status as keyof typeof statusText] || status;
   };
 
-  const formatDate = (dateString: string): string => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
-
-  const formatTime = (dateTimeString: string): string => {
-    if (!dateTimeString) return '';
-    return new Date(dateTimeString).toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
 
   const canApprove = (reservation: Reservation): boolean => {
     if (isAdmin) {
@@ -483,8 +470,13 @@ const JanitorialPage: React.FC = () => {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
                 <div>
                   <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', margin: '0 0 4px 0' }}>
-                    {reservation.amenity.name}
+                    {reservation.eventName || reservation.amenity.name}
                   </h3>
+                  {reservation.eventName && (
+                    <p style={{ color: '#6b7280', margin: '0 0 4px 0', fontSize: '14px', fontStyle: 'italic' }}>
+                      {reservation.amenity.name}
+                    </p>
+                  )}
                   <p style={{ color: '#6b7280', margin: '0 0 4px 0', fontSize: '14px' }}>
                     {formatDate(reservation.date)}
                   </p>
@@ -515,7 +507,7 @@ const JanitorialPage: React.FC = () => {
                     Reservation Time
                   </h4>
                   <p style={{ margin: 0, fontSize: '14px', color: '#6b7280' }}>
-                    {formatTime(reservation.partyTimeStart)} - {formatTime(reservation.partyTimeEnd)}
+                    {formatTimeRange(reservation.partyTimeStart, reservation.partyTimeEnd)}
                   </p>
                 </div>
                 <div>
@@ -669,13 +661,13 @@ const JanitorialPage: React.FC = () => {
             
             <div style={{ marginBottom: '1rem' }}>
               <p style={{ color: '#6b7280', marginBottom: '0.5rem' }}>
-                <strong>Reservation:</strong> {selectedReservation.amenity.name} on {new Date(selectedReservation.date).toLocaleDateString()}
+                <strong>Reservation:</strong> {selectedReservation.eventName || selectedReservation.amenity.name} on {formatDate(selectedReservation.date)}
               </p>
               <p style={{ color: '#6b7280', marginBottom: '0.5rem' }}>
-                <strong>Reservation Time:</strong> {new Date(selectedReservation.partyTimeStart).toLocaleTimeString()} - {new Date(selectedReservation.partyTimeEnd).toLocaleTimeString()}
+                <strong>Reservation Time:</strong> {formatTimeRange(selectedReservation.partyTimeStart, selectedReservation.partyTimeEnd)}
               </p>
               <p style={{ color: '#6b7280', marginBottom: '1rem' }}>
-                <strong>Reservation Ends:</strong> {new Date(selectedReservation.partyTimeEnd).toLocaleString()}
+                <strong>Reservation Ends:</strong> {formatTime(selectedReservation.partyTimeEnd)}
               </p>
             </div>
 
@@ -871,7 +863,7 @@ const JanitorialPage: React.FC = () => {
             <p style={{ color: '#6b7280', marginBottom: '1.5rem' }}>
               <strong>Reservation:</strong> {selectedReservation.amenity.name} - {selectedReservation.user.firstName} {selectedReservation.user.lastName}
               <br />
-              <strong>Date:</strong> {new Date(selectedReservation.date).toLocaleDateString()}
+              <strong>Date:</strong> {formatDate(selectedReservation.date)}
               <br />
               <strong>Max Damage Fee:</strong> ${parseFloat(String(selectedReservation.amenity?.deposit || selectedReservation.totalDeposit)).toFixed(2)}
             </p>

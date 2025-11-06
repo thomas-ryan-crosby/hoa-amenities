@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 import { useMobile } from '../hooks/useMobile';
+import { parseDateString, formatDate, formatTime, formatTimeRange } from '../utils/dateTimeUtils';
 
 interface CalendarEvent {
   id: number;
@@ -250,18 +251,13 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
     }
   };
 
-  const formatDate = (date: Date): string => {
+  // Helper function to format date for display (overrides imported formatDate for Date objects)
+  const formatDateDisplay = (date: Date): string => {
     return date.toLocaleDateString('en-US', { 
       year: 'numeric', 
       month: 'long', 
       day: 'numeric' 
     });
-  };
-
-  // Helper function to safely parse YYYY-MM-DD date string without timezone issues
-  const parseDateString = (dateStr: string): Date => {
-    const [year, month, day] = dateStr.split('-').map(Number);
-    return new Date(year, month - 1, day); // month is 0-indexed
   };
 
   const getDaysInView = (): Date[] => {
@@ -1236,7 +1232,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
           width: isMobile ? '100%' : 'auto'
         }}>
           <h2 style={{ fontSize: isMobile ? '1.25rem' : '1.5rem', fontWeight: 'bold', margin: 0 }}>
-            {formatDate(currentDate)}
+            {formatDateDisplay(currentDate)}
           </h2>
           <button
             onClick={() => goToToday()}
@@ -1373,7 +1369,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                     width: '12px',
                     height: '12px',
                     borderRadius: '50%',
-                    backgroundColor: (selectedEvent.amenityName === 'Clubroom' || selectedEvent.amenityName === 'Pool + Clubroom') ? '#9333ea' : '#3b82f6'
+                    backgroundColor: selectedEvent.color || '#355B45'
                   }}></div>
                   <span style={{ fontSize: '18px', fontWeight: '600', color: '#1f2937' }}>
                     {selectedEvent.amenityName}
@@ -1419,8 +1415,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                 <div>
                   <h4 style={{ margin: '0 0 4px 0', fontSize: '14px', fontWeight: '600', color: '#374151' }}>Reservation Time</h4>
                   <p style={{ margin: 0, fontSize: '16px', color: '#1f2937' }}>
-                    {new Date(selectedEvent.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - 
-                    {new Date(selectedEvent.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    {formatTimeRange(selectedEvent.start, selectedEvent.end)}
                   </p>
                 </div>
               </div>
@@ -1448,8 +1443,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                 <div>
                   <h4 style={{ margin: '0 0 4px 0', fontSize: '14px', fontWeight: '600', color: '#374151' }}>Cleaning Time</h4>
                   <p style={{ margin: 0, fontSize: '16px', color: '#1f2937' }}>
-                    {new Date(selectedEvent.cleaningTime.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - 
-                    {new Date(selectedEvent.cleaningTime.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    {formatTimeRange(selectedEvent.cleaningTime.start, selectedEvent.cleaningTime.end)}
                   </p>
                 </div>
               )}
