@@ -1118,6 +1118,39 @@ router.post('/:id/propose-modification', authenticateToken, async (req: any, res
       });
     }
 
+    // Check if modification columns exist in the database FIRST
+    const columnCheck = await sequelize.query(`
+      SELECT column_name 
+      FROM information_schema.columns 
+      WHERE table_name = 'reservations' 
+      AND column_name = 'modificationStatus'
+    `) as any[];
+    
+    if (columnCheck[0].length === 0) {
+      return res.status(500).json({ 
+        message: 'Modification feature is not available. Please run the database migration first.' 
+      });
+    }
+
+    // Build attributes list excluding modification fields to avoid errors if columns don't exist
+    const attributes = [
+      'id', 'date', 'setupTimeStart', 'setupTimeEnd', 'partyTimeStart', 'partyTimeEnd',
+      'guestCount', 'specialRequirements', 'status', 'totalFee', 'totalDeposit',
+      'damageAssessed', 'damageAssessmentPending', 'damageAssessmentStatus', 'damageCharge', 'damageChargeAmount',
+      'eventName', 'isPrivate', 'communityId', 'amenityId', 'userId'
+    ];
+
+    // Add modification fields if they exist
+    const modificationColumns = await sequelize.query(`
+      SELECT column_name 
+      FROM information_schema.columns 
+      WHERE table_name = 'reservations' 
+      AND column_name IN ('modificationStatus', 'proposedDate', 'proposedPartyTimeStart', 'proposedPartyTimeEnd', 'modificationReason', 'modificationProposedBy', 'modificationProposedAt')
+    `) as any[];
+    
+    const existingModColumns = modificationColumns[0].map((row: any) => row.column_name);
+    existingModColumns.forEach(col => attributes.push(col));
+
     // Find reservation (must belong to current community and be unconfirmed)
     const reservation = await Reservation.findOne({
       where: {
@@ -1125,6 +1158,7 @@ router.post('/:id/propose-modification', authenticateToken, async (req: any, res
         communityId: req.user.currentCommunityId,
         status: 'NEW' // Only allow modifications for NEW (unconfirmed) reservations
       },
+      attributes: attributes,
       include: [
         {
           model: Amenity,
@@ -1145,22 +1179,8 @@ router.post('/:id/propose-modification', authenticateToken, async (req: any, res
       });
     }
 
-    // Check if modification columns exist in the database
-    const columnCheck = await sequelize.query(`
-      SELECT column_name 
-      FROM information_schema.columns 
-      WHERE table_name = 'reservations' 
-      AND column_name = 'modificationStatus'
-    `) as any[];
-    
-    if (columnCheck[0].length === 0) {
-      return res.status(500).json({ 
-        message: 'Modification feature is not available. Please run the database migration first.' 
-      });
-    }
-
-    // Check if there's already a pending modification
-    if (reservation.modificationStatus === 'PENDING') {
+    // Check if there's already a pending modification (only if column exists)
+    if (reservation.modificationStatus && reservation.modificationStatus === 'PENDING') {
       return res.status(400).json({ 
         message: 'A modification proposal is already pending for this reservation' 
       });
