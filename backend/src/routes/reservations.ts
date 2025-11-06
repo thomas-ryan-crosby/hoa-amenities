@@ -1115,11 +1115,23 @@ router.put('/:id/accept-modification', authenticateToken, async (req: any, res) 
     }
 
     // Check for conflicts with new proposed time
+    // Ensure proposed times are not null before checking conflicts
+    if (!reservation.proposedPartyTimeStart || !reservation.proposedPartyTimeEnd) {
+      return res.status(400).json({ 
+        message: 'Proposed times are missing' 
+      });
+    }
+
+    // Store in variables with type assertions after null check
+    const proposedStart: Date = reservation.proposedPartyTimeStart as Date;
+    const proposedEnd: Date = reservation.proposedPartyTimeEnd as Date;
+    const proposedDate = reservation.proposedDate || reservation.date;
+
     const conflictingReservation = await Reservation.findOne({
       where: {
         amenityId: reservation.amenityId,
         communityId: reservation.communityId,
-        date: reservation.proposedDate || reservation.date,
+        date: proposedDate,
         status: {
           [Op.in]: ['NEW', 'JANITORIAL_APPROVED', 'FULLY_APPROVED']
         },
@@ -1129,10 +1141,10 @@ router.put('/:id/accept-modification', authenticateToken, async (req: any, res) 
         [Op.or]: [
           {
             partyTimeStart: {
-              [Op.lt]: reservation.proposedPartyTimeEnd
+              [Op.lt]: proposedEnd
             },
             partyTimeEnd: {
-              [Op.gt]: reservation.proposedPartyTimeStart
+              [Op.gt]: proposedStart
             }
           }
         ]
@@ -1146,12 +1158,13 @@ router.put('/:id/accept-modification', authenticateToken, async (req: any, res) 
     }
 
     // Apply the modification: update reservation with proposed values
+    // At this point, we've already verified proposedPartyTimeStart and proposedPartyTimeEnd are not null
     await reservation.update({
-      date: reservation.proposedDate || reservation.date,
-      partyTimeStart: reservation.proposedPartyTimeStart!,
-      partyTimeEnd: reservation.proposedPartyTimeEnd!,
-      setupTimeStart: reservation.proposedPartyTimeStart!, // Setup time same as reservation start
-      setupTimeEnd: reservation.proposedPartyTimeStart!, // Setup time same as reservation start
+      date: proposedDate,
+      partyTimeStart: proposedStart,
+      partyTimeEnd: proposedEnd,
+      setupTimeStart: proposedStart, // Setup time same as reservation start
+      setupTimeEnd: proposedStart, // Setup time same as reservation start
       modificationStatus: 'ACCEPTED'
     });
 
