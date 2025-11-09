@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 import { useMobile } from '../hooks/useMobile';
-import { parseDateString, formatDate, formatTime, formatTimeRange } from '../utils/dateTimeUtils';
+import { parseDateString, formatTimeRange } from '../utils/dateTimeUtils';
 
 interface CalendarEvent {
   id: number;
@@ -44,7 +44,7 @@ interface CalendarProps {
 }
 
 const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
-  const { user, isAuthenticated, isAdmin, isJanitorial, token, currentCommunity } = useAuth();
+  const { isAuthenticated, isAdmin, isJanitorial, token, currentCommunity } = useAuth();
   const isMobile = useMobile();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState<'month' | 'week'>('month');
@@ -59,6 +59,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
 
   useEffect(() => {
     fetchAmenities();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -69,6 +70,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
       setLoading(false);
       setEvents([]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentDate, selectedAmenity, selectedCalendarGroup, amenities, refreshTrigger]);
 
   const fetchAmenities = async () => {
@@ -322,7 +324,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
     return (
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '1px', backgroundColor: '#e5e7eb' }}>
         {/* Header */}
-        {weekDays.map(day => (
+        {weekDays.map((day: string) => (
           <div key={day} style={{ 
             backgroundColor: '#f3f4f6', 
             padding: isMobile ? '0.5rem' : '8px', 
@@ -353,7 +355,6 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
               return amenity.calendarGroup === selectedCalendarGroup;
             });
             
-            const groupAmenityIds = groupAmenities.map(a => a.id);
             const groupAmenityNames = groupAmenities.map(a => a.name);
             
             // Filter events to only show those from amenities in the selected calendar group
@@ -470,9 +471,6 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                       // Morning to afternoon - larger height
                       heightStyle = { minHeight: '35px', maxHeight: '40px' };
                     }
-                    
-                    // Check if this event has cleaning time
-                    const hasCleaningTime = event.cleaningTime && event.cleaningTime.start && event.cleaningTime.end;
                     
                     // Determine status color
                     let statusColor;

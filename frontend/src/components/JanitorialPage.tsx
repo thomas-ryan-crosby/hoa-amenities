@@ -52,7 +52,7 @@ interface Reservation {
 }
 
 const JanitorialPage: React.FC = () => {
-  const { user, currentCommunity, isAdmin, isJanitorial } = useAuth();
+  const { currentCommunity, isAdmin, isJanitorial } = useAuth();
   const isMobile = useMobile();
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);

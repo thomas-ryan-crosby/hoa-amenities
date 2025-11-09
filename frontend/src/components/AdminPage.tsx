@@ -64,7 +64,7 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
 
   useEffect(() => {
     fetchAmenities();
-  }, [currentCommunity?.id]);
+  }, [currentCommunity?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchAmenities = async () => {
     if (!currentCommunity?.id) return;
@@ -896,7 +896,7 @@ const AdminPage: React.FC = () => {
       fetchDamageReviews();
     }
     // amenities tab will fetch its own data
-  }, [activeTab, currentCommunity?.id]);
+  }, [activeTab, currentCommunity?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchUsers = async () => {
     if (!currentCommunity?.id) {
@@ -1039,7 +1039,7 @@ const AdminPage: React.FC = () => {
       const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       const token = localStorage.getItem('token');
       
-      const response = await axios.put(
+      await axios.put(
         `${apiUrl}/api/reservations/${selectedReview.id}/review-damage-assessment`,
         {
           action: reviewAction,

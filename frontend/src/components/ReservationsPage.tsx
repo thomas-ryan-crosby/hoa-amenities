@@ -36,7 +36,7 @@ interface Reservation {
 }
 
 const ReservationsPage: React.FC = () => {
-  const { user, currentCommunity } = useAuth();
+  const { currentCommunity } = useAuth();
   const isMobile = useMobile();
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
@@ -174,16 +174,7 @@ const ReservationsPage: React.FC = () => {
     }
   };
 
-  const getStatusColor = (status: string): string => {
-    const colors = {
-      NEW: '#f59e0b',              // Orange
-      JANITORIAL_APPROVED: '#3b82f6',  // Blue
-      FULLY_APPROVED: '#10b981',   // Green
-      CANCELLED: '#ef4444',        // Red
-      COMPLETED: '#6b7280'         // Gray
-    };
-    return colors[status as keyof typeof colors] || '#6b7280';
-  };
+  // Removed unused getStatusColor function
 
   const getStatusText = (reservation: Reservation): string => {
     // Show modification status if pending

@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 
 const LandingHeader: React.FC = () => {
   const { isAuthenticated } = useAuth();
-  const navigate = useNavigate();
+  // const navigate = useNavigate(); // Removed unused variable
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 

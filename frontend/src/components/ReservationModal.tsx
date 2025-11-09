@@ -39,11 +39,11 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
   })(),
   onReservationCreated
 }) => {
-  const { user } = useAuth();
+  // const { user } = useAuth(); // Removed unused variable
   const [amenities, setAmenities] = useState<Amenity[]>([]);
   const [selectedAmenity, setSelectedAmenity] = useState<number | null>(null);
   const [reservationDate, setReservationDate] = useState<string>(selectedDate);
-  const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
+  const [, setTimeSlots] = useState<TimeSlot[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
@@ -76,6 +76,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
     if (selectedAmenity && isOpen) {
       fetchTimeSlots();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedAmenity, reservationDate, isOpen]);
 
   const fetchAmenities = async () => {

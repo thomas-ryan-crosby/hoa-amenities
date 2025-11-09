@@ -9,12 +9,11 @@ interface RegisterProps {
 const Register: React.FC<RegisterProps> = ({ onRegister }) => {
   const [step, setStep] = useState<'community-selection' | 'community-finder' | 'registration' | 'authorization' | 'payment'>('community-selection');
   const [communitySelection, setCommunitySelection] = useState<'existing' | 'interested' | null>(null);
-  const [interestedRole, setInterestedRole] = useState<'resident' | 'janitorial' | 'admin' | ''>('');
+  // Removed unused interestedRole and accessCodes state
   const [selectedCommunities, setSelectedCommunities] = useState<Array<{id: number, name: string, description?: string}>>([]);
   const [searchMethod, setSearchMethod] = useState<'zipcode' | 'accesscode'>('zipcode');
   const [zipCode, setZipCode] = useState('');
   const [accessCode, setAccessCode] = useState('');
-  const [accessCodes, setAccessCodes] = useState<string[]>(['']);
   const [searchResults, setSearchResults] = useState<Array<{id: number, name: string, description?: string, address?: string}>>([]);
   const [searching, setSearching] = useState(false);
   const [accessCodeSearched, setAccessCodeSearched] = useState(false);

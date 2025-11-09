@@ -23,7 +23,7 @@ interface UserProfile {
 }
 
 const ProfilePage: React.FC = () => {
-  const { user, login, communities, currentCommunity, refreshCommunities, switchCommunity } = useAuth();
+  const { currentCommunity, switchCommunity } = useAuth();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
