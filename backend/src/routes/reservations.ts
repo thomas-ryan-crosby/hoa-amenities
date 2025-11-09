@@ -1199,15 +1199,29 @@ router.post('/:id/propose-modification', authenticateToken, async (req: any, res
         modificationProposedAt: new Date()
       });
     } catch (updateError: any) {
-      // Check if error is due to missing columns
-      if (updateError.message && updateError.message.includes('does not exist')) {
-        console.error('❌ Modification columns not found in database:', updateError.message);
+      // Log the full error for debugging
+      console.error('❌ Error updating reservation with modification:', updateError);
+      console.error('❌ Error message:', updateError.message);
+      console.error('❌ Error name:', updateError.name);
+      console.error('❌ Error stack:', updateError.stack);
+      
+      // Check if error is due to missing columns (PostgreSQL error format)
+      const errorMessage = updateError.message || '';
+      const errorString = JSON.stringify(updateError);
+      
+      if (errorMessage.includes('does not exist') || 
+          errorMessage.includes('column') && errorMessage.includes('not found') ||
+          errorString.includes('does not exist') ||
+          errorMessage.includes('modificationStatus')) {
+        console.error('❌ Modification columns not found in database');
         return res.status(500).json({ 
           message: 'Modification feature is not available. Please run the database migration first.',
-          details: 'The required database columns are missing.'
+          details: `Database error: ${errorMessage.substring(0, 200)}`
         });
       }
-      // Re-throw if it's a different error
+      
+      // Re-throw if it's a different error so it gets caught by outer try-catch
+      console.error('❌ Unexpected error during update, re-throwing');
       throw updateError;
     }
 
