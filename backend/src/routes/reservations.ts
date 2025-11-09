@@ -1102,6 +1102,53 @@ router.get('/admin/damage-reviews', authenticateToken, async (req: any, res) => 
   }
 });
 
+// GET /api/reservations/diagnostic/columns - Diagnostic endpoint to check if modification columns exist
+router.get('/diagnostic/columns', authenticateToken, async (req: any, res) => {
+  try {
+    // Check if user is admin or janitorial
+    if (req.user.communityRole !== 'admin' && req.user.communityRole !== 'janitorial') {
+      return res.status(403).json({ message: 'Admin or janitorial access required' });
+    }
+
+    const columnCheck = await sequelize.query(`
+      SELECT column_name, data_type, is_nullable, column_default
+      FROM information_schema.columns 
+      WHERE table_schema = 'public'
+      AND table_name = 'reservations' 
+      AND column_name IN ('modificationStatus', 'proposedDate', 'proposedPartyTimeStart', 'proposedPartyTimeEnd', 'modificationReason', 'modificationProposedBy', 'modificationProposedAt')
+      ORDER BY column_name
+    `) as any[];
+
+    const columns = columnCheck[0] || [];
+    
+    return res.json({
+      columnsFound: columns.length,
+      columns: columns.map((row: any) => ({
+        name: row.column_name,
+        type: row.data_type,
+        nullable: row.is_nullable === 'YES',
+        default: row.column_default
+      })),
+      expectedColumns: [
+        'modificationStatus',
+        'proposedDate',
+        'proposedPartyTimeStart',
+        'proposedPartyTimeEnd',
+        'modificationReason',
+        'modificationProposedBy',
+        'modificationProposedAt'
+      ],
+      allColumnsExist: columns.length === 7
+    });
+  } catch (error: any) {
+    console.error('❌ Error checking columns:', error);
+    return res.status(500).json({ 
+      message: 'Error checking columns',
+      details: error.message 
+    });
+  }
+});
+
 // POST /api/reservations/:id/propose-modification - Propose modification to reservation
 router.post('/:id/propose-modification', authenticateToken, async (req: any, res) => {
   try {
@@ -1210,26 +1257,42 @@ router.post('/:id/propose-modification', authenticateToken, async (req: any, res
       console.error('❌ Error updating reservation with modification:', updateError);
       console.error('❌ Error message:', updateError.message);
       console.error('❌ Error name:', updateError.name);
+      console.error('❌ Error original:', updateError.original);
       console.error('❌ Error stack:', updateError.stack);
       
       // Check if error is due to missing columns (PostgreSQL error format)
-      const errorMessage = updateError.message || '';
-      const errorString = JSON.stringify(updateError);
+      // Sequelize wraps database errors in error.original
+      const originalError = updateError.original || updateError;
+      const errorMessage = String(originalError.message || updateError.message || '');
+      const errorCode = originalError.code || '';
       
-      if (errorMessage.includes('does not exist') || 
-          errorMessage.includes('column') && errorMessage.includes('not found') ||
-          errorString.includes('does not exist') ||
-          errorMessage.includes('modificationStatus')) {
+      // PostgreSQL error code 42703 = undefined_column
+      // PostgreSQL error message typically includes "column ... does not exist"
+      const isColumnMissingError = 
+        errorCode === '42703' ||
+        errorMessage.toLowerCase().includes('column') && errorMessage.toLowerCase().includes('does not exist') ||
+        errorMessage.toLowerCase().includes('column') && errorMessage.toLowerCase().includes('doesn\'t exist');
+      
+      if (isColumnMissingError) {
         console.error('❌ Modification columns not found in database');
+        console.error('❌ PostgreSQL error code:', errorCode);
+        console.error('❌ Full error message:', errorMessage);
         return res.status(500).json({ 
           message: 'Modification feature is not available. Please run the database migration first.',
-          details: `Database error: ${errorMessage.substring(0, 200)}`
+          details: `Database error: ${errorMessage.substring(0, 200)}`,
+          errorCode: errorCode
         });
       }
       
-      // Re-throw if it's a different error so it gets caught by outer try-catch
-      console.error('❌ Unexpected error during update, re-throwing');
-      throw updateError;
+      // If it's not a column missing error, return the actual error
+      console.error('❌ Unexpected error during update - not a column missing error');
+      const originalError = updateError.original || updateError;
+      const errorMessage = String(originalError.message || updateError.message || 'Unknown error');
+      return res.status(500).json({ 
+        message: 'Error proposing modification',
+        details: errorMessage.substring(0, 500),
+        errorCode: originalError.code || updateError.code || 'UNKNOWN'
+      });
     }
 
     console.log('✅ Modification proposed successfully');
@@ -1242,9 +1305,16 @@ router.post('/:id/propose-modification', authenticateToken, async (req: any, res
   } catch (error: any) {
     console.error('❌ Error proposing modification:', error);
     console.error('❌ Error details:', error.message);
+    console.error('❌ Error original:', error.original);
     console.error('❌ Error stack:', error.stack);
+    
+    const originalError = error.original || error;
+    const errorMessage = String(originalError.message || error.message || 'Internal server error');
+    
     return res.status(500).json({ 
-      message: error.message || 'Internal server error' 
+      message: errorMessage.substring(0, 200),
+      details: errorMessage.substring(0, 500),
+      errorCode: originalError.code || error.code || 'UNKNOWN'
     });
   }
 });
