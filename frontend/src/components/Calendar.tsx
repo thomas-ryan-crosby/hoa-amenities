@@ -634,7 +634,6 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
 
   const renderWeekView = () => {
     const days = getDaysInView();
-    const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     
     // Create exactly 12 time blocks from 0:00 to 24:00 (2-hour increments)
     const timeBlocks = [
