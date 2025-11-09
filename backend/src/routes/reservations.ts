@@ -1180,10 +1180,17 @@ router.post('/:id/propose-modification', authenticateToken, async (req: any, res
     }
 
     // Check if there's already a pending modification (only if column exists)
-    if (reservation.modificationStatus && reservation.modificationStatus === 'PENDING') {
-      return res.status(400).json({ 
-        message: 'A modification proposal is already pending for this reservation' 
-      });
+    // Use try-catch to safely check this property in case column doesn't exist
+    try {
+      if (reservation.modificationStatus && reservation.modificationStatus === 'PENDING') {
+        return res.status(400).json({ 
+          message: 'A modification proposal is already pending for this reservation' 
+        });
+      }
+    } catch (checkError: any) {
+      // If we can't read modificationStatus, column probably doesn't exist
+      // Continue to try the update, which will give us a better error
+      console.log('⚠️ Could not check modificationStatus, continuing to update');
     }
 
     // Try to update reservation with proposed modification
