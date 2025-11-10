@@ -1322,16 +1322,17 @@ router.post('/:id/propose-modification', authenticateToken, async (req: any, res
     // Use raw SQL with quoted identifiers to handle case sensitivity correctly
     // PostgreSQL stores unquoted identifiers in lowercase, but we need to match the exact case
     try {
-      // Use raw SQL to ensure column names match exactly (with quotes for case preservation)
+      // Use raw SQL with lowercase column names
+      // PostgreSQL stores unquoted identifiers in lowercase, so we need to match that
       await sequelize.query(`
         UPDATE reservations
-        SET "modificationStatus" = :modificationStatus,
-            "proposedDate" = :proposedDate,
-            "proposedPartyTimeStart" = :proposedPartyTimeStart,
-            "proposedPartyTimeEnd" = :proposedPartyTimeEnd,
-            "modificationReason" = :modificationReason,
-            "modificationProposedBy" = :modificationProposedBy,
-            "modificationProposedAt" = :modificationProposedAt
+        SET modificationstatus = :modificationStatus,
+            proposeddate = :proposedDate,
+            proposedpartytimestart = :proposedPartyTimeStart,
+            proposedpartytimeend = :proposedPartyTimeEnd,
+            modificationreason = :modificationReason,
+            modificationproposedby = :modificationProposedBy,
+            modificationproposedat = :modificationProposedAt
         WHERE id = :reservationId
       `, {
         replacements: {
