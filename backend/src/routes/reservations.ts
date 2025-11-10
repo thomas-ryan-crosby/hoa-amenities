@@ -1115,7 +1115,7 @@ router.get('/diagnostic/columns', authenticateToken, async (req: any, res) => {
       FROM information_schema.columns 
       WHERE table_schema = 'public'
       AND table_name = 'reservations' 
-      AND column_name IN ('modificationStatus', 'proposedDate', 'proposedPartyTimeStart', 'proposedPartyTimeEnd', 'modificationReason', 'modificationProposedBy', 'modificationProposedAt')
+      AND LOWER(column_name) IN ('modificationstatus', 'proposeddate', 'proposedpartytimestart', 'proposedpartytimeend', 'modificationreason', 'modificationproposedby', 'modificationproposedat')
       ORDER BY column_name
     `) as any[];
 
@@ -1228,38 +1228,76 @@ router.post('/:id/propose-modification', authenticateToken, async (req: any, res
 
     // PRE-FLIGHT CHECK: Verify modification columns exist in database
     // This prevents cryptic errors and gives clear feedback
+    // Use LOWER() for case-insensitive comparison since PostgreSQL stores unquoted identifiers in lowercase
     try {
       const columnCheck = await sequelize.query(`
-        SELECT column_name 
+        SELECT LOWER(column_name) as column_name 
         FROM information_schema.columns 
         WHERE table_schema = 'public'
         AND table_name = 'reservations' 
-        AND column_name IN ('modificationStatus', 'proposedDate', 'proposedPartyTimeStart', 'proposedPartyTimeEnd', 'modificationReason', 'modificationProposedBy', 'modificationProposedAt')
+        AND LOWER(column_name) IN ('modificationstatus', 'proposeddate', 'proposedpartytimestart', 'proposedpartytimeend', 'modificationreason', 'modificationproposedby', 'modificationproposedat')
       `) as any[];
       
       const existingColumns = columnCheck[0] || [];
-      const columnNames = existingColumns.map((row: any) => row.column_name);
+      const columnNames = existingColumns.map((row: any) => row.column_name.toLowerCase());
       const requiredColumns = [
-        'modificationStatus',
-        'proposedDate',
-        'proposedPartyTimeStart',
-        'proposedPartyTimeEnd',
-        'modificationReason',
-        'modificationProposedBy',
-        'modificationProposedAt'
+        'modificationstatus',
+        'proposeddate',
+        'proposedpartytimestart',
+        'proposedpartytimeend',
+        'modificationreason',
+        'modificationproposedby',
+        'modificationproposedat'
       ];
       
-      const missingColumns = requiredColumns.filter(col => !columnNames.includes(col));
+      const missingColumns = requiredColumns.filter(col => !columnNames.includes(col.toLowerCase()));
       
       if (missingColumns.length > 0) {
         console.error('❌ Missing modification columns:', missingColumns);
         console.error('❌ Existing columns:', columnNames);
+        // Map back to camelCase for display
+        const displayMissing = missingColumns.map(col => {
+          const mapping: { [key: string]: string } = {
+            'modificationstatus': 'modificationStatus',
+            'proposeddate': 'proposedDate',
+            'proposedpartytimestart': 'proposedPartyTimeStart',
+            'proposedpartytimeend': 'proposedPartyTimeEnd',
+            'modificationreason': 'modificationReason',
+            'modificationproposedby': 'modificationProposedBy',
+            'modificationproposedat': 'modificationProposedAt'
+          };
+          return mapping[col] || col;
+        });
+        const displayFound = columnNames.map((col: string) => {
+          const mapping: { [key: string]: string } = {
+            'modificationstatus': 'modificationStatus',
+            'proposeddate': 'proposedDate',
+            'proposedpartytimestart': 'proposedPartyTimeStart',
+            'proposedpartytimeend': 'proposedPartyTimeEnd',
+            'modificationreason': 'modificationReason',
+            'modificationproposedby': 'modificationProposedBy',
+            'modificationproposedat': 'modificationProposedAt'
+          };
+          return mapping[col] || col;
+        });
+        const displayRequired = requiredColumns.map(col => {
+          const mapping: { [key: string]: string } = {
+            'modificationstatus': 'modificationStatus',
+            'proposeddate': 'proposedDate',
+            'proposedpartytimestart': 'proposedPartyTimeStart',
+            'proposedpartytimeend': 'proposedPartyTimeEnd',
+            'modificationreason': 'modificationReason',
+            'modificationproposedby': 'modificationProposedBy',
+            'modificationproposedat': 'modificationProposedAt'
+          };
+          return mapping[col] || col;
+        });
         return res.status(500).json({
           message: 'Modification feature is not available. Please run the database migration first.',
-          details: `Missing columns: ${missingColumns.join(', ')}. Found ${columnNames.length} of ${requiredColumns.length} required columns.`,
-          missingColumns: missingColumns,
-          foundColumns: columnNames,
-          requiredColumns: requiredColumns
+          details: `Missing columns: ${displayMissing.join(', ')}. Found ${columnNames.length} of ${requiredColumns.length} required columns.`,
+          missingColumns: displayMissing,
+          foundColumns: displayFound,
+          requiredColumns: displayRequired
         });
       }
       
