@@ -6,44 +6,44 @@ DO $$
 BEGIN
     -- Add modificationStatus column
     IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
-                   WHERE table_schema = 'public' AND table_name = 'reservations' AND column_name = 'modificationStatus') THEN
+                   WHERE table_schema = 'public' AND table_name = 'reservations' AND LOWER(column_name) = 'modificationstatus') THEN
         ALTER TABLE reservations
         ADD COLUMN modificationStatus VARCHAR(20) DEFAULT 'NONE' CHECK (modificationStatus IN ('NONE', 'PENDING', 'ACCEPTED', 'REJECTED'));
     END IF;
     
     -- Add proposedDate column
     IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
-                   WHERE table_schema = 'public' AND table_name = 'reservations' AND column_name = 'proposedDate') THEN
+                   WHERE table_schema = 'public' AND table_name = 'reservations' AND LOWER(column_name) = 'proposeddate') THEN
         ALTER TABLE reservations ADD COLUMN proposedDate DATE NULL;
     END IF;
     
     -- Add proposedPartyTimeStart column
     IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
-                   WHERE table_schema = 'public' AND table_name = 'reservations' AND column_name = 'proposedPartyTimeStart') THEN
+                   WHERE table_schema = 'public' AND table_name = 'reservations' AND LOWER(column_name) = 'proposedpartytimestart') THEN
         ALTER TABLE reservations ADD COLUMN proposedPartyTimeStart TIMESTAMP NULL;
     END IF;
     
     -- Add proposedPartyTimeEnd column
     IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
-                   WHERE table_schema = 'public' AND table_name = 'reservations' AND column_name = 'proposedPartyTimeEnd') THEN
+                   WHERE table_schema = 'public' AND table_name = 'reservations' AND LOWER(column_name) = 'proposedpartytimeend') THEN
         ALTER TABLE reservations ADD COLUMN proposedPartyTimeEnd TIMESTAMP NULL;
     END IF;
     
     -- Add modificationReason column
     IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
-                   WHERE table_schema = 'public' AND table_name = 'reservations' AND column_name = 'modificationReason') THEN
+                   WHERE table_schema = 'public' AND table_name = 'reservations' AND LOWER(column_name) = 'modificationreason') THEN
         ALTER TABLE reservations ADD COLUMN modificationReason TEXT NULL;
     END IF;
     
     -- Add modificationProposedBy column
     IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
-                   WHERE table_schema = 'public' AND table_name = 'reservations' AND column_name = 'modificationProposedBy') THEN
+                   WHERE table_schema = 'public' AND table_name = 'reservations' AND LOWER(column_name) = 'modificationproposedby') THEN
         ALTER TABLE reservations ADD COLUMN modificationProposedBy INT NULL;
     END IF;
     
     -- Add modificationProposedAt column
     IF NOT EXISTS (SELECT 1 FROM information_schema.columns 
-                   WHERE table_schema = 'public' AND table_name = 'reservations' AND column_name = 'modificationProposedAt') THEN
+                   WHERE table_schema = 'public' AND table_name = 'reservations' AND LOWER(column_name) = 'modificationproposedat') THEN
         ALTER TABLE reservations ADD COLUMN modificationProposedAt TIMESTAMP NULL;
     END IF;
 END $$;
