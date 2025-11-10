@@ -49,10 +49,13 @@ router.get('/', authenticateToken, async (req: any, res) => {
         WHERE table_schema = 'public'
         AND table_name = 'reservations' 
         AND LOWER(column_name) IN ('modificationstatus', 'proposeddate', 'proposedpartytimestart', 'proposedpartytimeend', 'modificationreason', 'modificationproposedby', 'modificationproposedat')
-      `) as any[];
+      `, {
+        type: QueryTypes.SELECT
+      }) as any[];
       
-      if (columnCheck && columnCheck[0] && Array.isArray(columnCheck[0])) {
-        const existingColumns = columnCheck[0].map((row: any) => row.column_name.toLowerCase());
+      // Sequelize returns [rows, metadata], so columnCheck is already the rows array
+      if (columnCheck && Array.isArray(columnCheck) && columnCheck.length > 0) {
+        const existingColumns = columnCheck.map((row: any) => (row.column_name || '').toLowerCase());
         if (existingColumns.includes('modificationstatus')) {
           attributes.push('modificationStatus');
         }
@@ -75,9 +78,9 @@ router.get('/', authenticateToken, async (req: any, res) => {
           attributes.push('modificationProposedAt');
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       // If check fails, continue without modification fields
-      console.log('⚠️ Could not check for modification columns, continuing without them');
+      console.log('⚠️ Could not check for modification columns, continuing without them:', error?.message || error);
     }
 
     const reservations = await Reservation.findAll({
@@ -162,10 +165,13 @@ router.get('/all', authenticateToken, async (req: any, res) => {
         WHERE table_schema = 'public'
         AND table_name = 'reservations' 
         AND LOWER(column_name) IN ('modificationstatus', 'proposeddate', 'proposedpartytimestart', 'proposedpartytimeend', 'modificationreason', 'modificationproposedby', 'modificationproposedat')
-      `) as any[];
+      `, {
+        type: QueryTypes.SELECT
+      }) as any[];
       
-      if (columnCheck && columnCheck[0] && Array.isArray(columnCheck[0])) {
-        const existingColumns = columnCheck[0].map((row: any) => row.column_name.toLowerCase());
+      // Sequelize returns [rows, metadata], so columnCheck is already the rows array
+      if (columnCheck && Array.isArray(columnCheck) && columnCheck.length > 0) {
+        const existingColumns = columnCheck.map((row: any) => (row.column_name || '').toLowerCase());
         if (existingColumns.includes('modificationstatus')) {
           attributes.push('modificationStatus');
         }
@@ -188,9 +194,9 @@ router.get('/all', authenticateToken, async (req: any, res) => {
           attributes.push('modificationProposedAt');
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       // If check fails, continue without modification fields
-      console.log('⚠️ Could not check for modification columns, continuing without them');
+      console.log('⚠️ Could not check for modification columns, continuing without them:', error?.message || error);
     }
 
     // Fetch reservations with associations for current community
