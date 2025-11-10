@@ -1363,8 +1363,8 @@ router.post('/:id/propose-modification', authenticateToken, async (req: any, res
         type: QueryTypes.UPDATE
       });
       
-      // Reload the reservation to get updated data
-      await reservation.reload();
+      // Don't reload - the reservation object doesn't have modification fields in its attributes
+      // The update was successful, we can return the reservation as-is
     } catch (updateError: any) {
       // Log the full error for debugging
       console.error('❌ Error updating reservation with modification:', updateError);
