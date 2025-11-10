@@ -1,7 +1,7 @@
 import express from 'express';
 import { Reservation, Amenity, User } from '../models';
 import { authenticateToken } from '../middleware/auth';
-import { Op } from 'sequelize';
+import { Op, QueryTypes } from 'sequelize';
 import { sequelize } from '../models';
 
 // Define interfaces for associated models
@@ -1319,17 +1319,36 @@ router.post('/:id/propose-modification', authenticateToken, async (req: any, res
     }
 
     // Try to update reservation with proposed modification
-    // Columns should exist now, but catch any unexpected errors
+    // Use raw SQL with quoted identifiers to handle case sensitivity correctly
+    // PostgreSQL stores unquoted identifiers in lowercase, but we need to match the exact case
     try {
-      await reservation.update({
-        modificationStatus: 'PENDING',
-        proposedDate: proposedDate || reservation.date, // Use existing date if not provided
-        proposedPartyTimeStart: new Date(proposedPartyTimeStart),
-        proposedPartyTimeEnd: new Date(proposedPartyTimeEnd),
-        modificationReason,
-        modificationProposedBy: userId,
-        modificationProposedAt: new Date()
+      // Use raw SQL to ensure column names match exactly (with quotes for case preservation)
+      await sequelize.query(`
+        UPDATE reservations
+        SET "modificationStatus" = :modificationStatus,
+            "proposedDate" = :proposedDate,
+            "proposedPartyTimeStart" = :proposedPartyTimeStart,
+            "proposedPartyTimeEnd" = :proposedPartyTimeEnd,
+            "modificationReason" = :modificationReason,
+            "modificationProposedBy" = :modificationProposedBy,
+            "modificationProposedAt" = :modificationProposedAt
+        WHERE id = :reservationId
+      `, {
+        replacements: {
+          modificationStatus: 'PENDING',
+          proposedDate: proposedDate || reservation.date,
+          proposedPartyTimeStart: new Date(proposedPartyTimeStart).toISOString(),
+          proposedPartyTimeEnd: new Date(proposedPartyTimeEnd).toISOString(),
+          modificationReason: modificationReason,
+          modificationProposedBy: userId,
+          modificationProposedAt: new Date().toISOString(),
+          reservationId: id
+        },
+        type: QueryTypes.UPDATE
       });
+      
+      // Reload the reservation to get updated data
+      await reservation.reload();
     } catch (updateError: any) {
       // Log the full error for debugging
       console.error('❌ Error updating reservation with modification:', updateError);
