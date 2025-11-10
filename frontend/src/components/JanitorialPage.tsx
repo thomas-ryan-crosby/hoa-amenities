@@ -619,6 +619,43 @@ const JanitorialPage: React.FC = () => {
                 </div>
               </div>
 
+              {/* Pending Modification Alert for Janitorial */}
+              {reservation.modificationStatus === 'PENDING' && (
+                <div style={{ 
+                  marginBottom: '16px', 
+                  padding: '16px', 
+                  backgroundColor: '#fef3c7', 
+                  border: '2px solid #f59e0b', 
+                  borderRadius: '8px' 
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+                    <span style={{ fontSize: '20px', marginRight: '8px' }}>⚠️</span>
+                    <h4 style={{ fontSize: '16px', fontWeight: 'bold', color: '#92400e', margin: 0 }}>
+                      Modification Pending - Awaiting Resident Response
+                    </h4>
+                  </div>
+                  <p style={{ margin: '0 0 12px 0', fontSize: '14px', color: '#78350f' }}>
+                    <strong>Reason:</strong> {reservation.modificationReason}
+                  </p>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                    <div style={{ padding: '8px', backgroundColor: 'white', borderRadius: '4px' }}>
+                      <p style={{ margin: '0 0 4px 0', fontSize: '12px', color: '#6b7280', fontWeight: 'bold' }}>Original Time:</p>
+                      <p style={{ margin: 0, fontSize: '13px', color: '#374151' }}>
+                        {formatTimeRange(reservation.partyTimeStart, reservation.partyTimeEnd)}
+                      </p>
+                    </div>
+                    <div style={{ padding: '8px', backgroundColor: '#fef3c7', borderRadius: '4px', border: '1px solid #f59e0b' }}>
+                      <p style={{ margin: '0 0 4px 0', fontSize: '12px', color: '#92400e', fontWeight: 'bold' }}>Proposed Time:</p>
+                      <p style={{ margin: 0, fontSize: '13px', color: '#92400e', fontWeight: '600' }}>
+                        {reservation.proposedPartyTimeStart && reservation.proposedPartyTimeEnd 
+                          ? formatTimeRange(reservation.proposedPartyTimeStart, reservation.proposedPartyTimeEnd)
+                          : 'N/A'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Details Grid */}
               <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '16px' }}>
                 <div>
