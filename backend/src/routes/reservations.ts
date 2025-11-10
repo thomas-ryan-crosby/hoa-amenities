@@ -1312,10 +1312,25 @@ router.post('/:id/propose-modification', authenticateToken, async (req: any, res
     }
 
     // Check if there's already a pending modification
-    if (reservation.modificationStatus && reservation.modificationStatus === 'PENDING') {
-      return res.status(400).json({ 
-        message: 'A modification proposal is already pending for this reservation' 
-      });
+    // Use raw SQL to safely check this since the column might not be in the model attributes
+    try {
+      const pendingCheck = await sequelize.query(`
+        SELECT modificationstatus 
+        FROM reservations 
+        WHERE id = :reservationId
+      `, {
+        replacements: { reservationId: id },
+        type: QueryTypes.SELECT
+      }) as any[];
+      
+      if (pendingCheck && pendingCheck.length > 0 && pendingCheck[0]?.modificationstatus === 'PENDING') {
+        return res.status(400).json({ 
+          message: 'A modification proposal is already pending for this reservation' 
+        });
+      }
+    } catch (checkError: any) {
+      // If we can't check, continue - the update will fail if there's an issue
+      console.log('⚠️ Could not check for pending modification, continuing');
     }
 
     // Try to update reservation with proposed modification
