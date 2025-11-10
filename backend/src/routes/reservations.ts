@@ -42,6 +42,7 @@ router.get('/', authenticateToken, async (req: any, res) => {
     ];
 
     // Check if modification fields exist before adding them (use case-insensitive check)
+    // Only add them if they exist in the database AND in the model
     try {
       const columnCheck = await sequelize.query(`
         SELECT LOWER(column_name) as column_name 
@@ -53,9 +54,12 @@ router.get('/', authenticateToken, async (req: any, res) => {
         type: QueryTypes.SELECT
       }) as any[];
       
-      // Sequelize returns [rows, metadata], so columnCheck is already the rows array
+      // Sequelize with QueryTypes.SELECT returns just the rows array
       if (columnCheck && Array.isArray(columnCheck) && columnCheck.length > 0) {
         const existingColumns = columnCheck.map((row: any) => (row.column_name || '').toLowerCase());
+        
+        // Only add attributes that exist in both database and model
+        // The model defines these fields, so we can safely add them
         if (existingColumns.includes('modificationstatus')) {
           attributes.push('modificationStatus');
         }
@@ -80,7 +84,8 @@ router.get('/', authenticateToken, async (req: any, res) => {
       }
     } catch (error: any) {
       // If check fails, continue without modification fields
-      console.log('⚠️ Could not check for modification columns, continuing without them:', error?.message || error);
+      console.error('⚠️ Could not check for modification columns, continuing without them:', error?.message || error);
+      console.error('⚠️ Error stack:', error?.stack);
     }
 
     const reservations = await Reservation.findAll({
@@ -106,8 +111,14 @@ router.get('/', authenticateToken, async (req: any, res) => {
   } catch (error: any) {
     console.error('❌ Error fetching reservations:', error);
     console.error('❌ Error details:', error.message);
+    console.error('❌ Error name:', error.name);
     console.error('❌ Error stack:', error.stack);
-    return res.status(500).json({ message: 'Internal server error' });
+    console.error('❌ Error original:', error.original);
+    return res.status(500).json({ 
+      message: 'Internal server error',
+      details: error.message || 'Unknown error',
+      error: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 });
 
@@ -158,6 +169,7 @@ router.get('/all', authenticateToken, async (req: any, res) => {
     ];
 
     // Check if modification fields exist before adding them (use case-insensitive check)
+    // Only add them if they exist in the database AND in the model
     try {
       const columnCheck = await sequelize.query(`
         SELECT LOWER(column_name) as column_name 
@@ -169,9 +181,12 @@ router.get('/all', authenticateToken, async (req: any, res) => {
         type: QueryTypes.SELECT
       }) as any[];
       
-      // Sequelize returns [rows, metadata], so columnCheck is already the rows array
+      // Sequelize with QueryTypes.SELECT returns just the rows array
       if (columnCheck && Array.isArray(columnCheck) && columnCheck.length > 0) {
         const existingColumns = columnCheck.map((row: any) => (row.column_name || '').toLowerCase());
+        
+        // Only add attributes that exist in both database and model
+        // The model defines these fields, so we can safely add them
         if (existingColumns.includes('modificationstatus')) {
           attributes.push('modificationStatus');
         }
@@ -196,7 +211,8 @@ router.get('/all', authenticateToken, async (req: any, res) => {
       }
     } catch (error: any) {
       // If check fails, continue without modification fields
-      console.log('⚠️ Could not check for modification columns, continuing without them:', error?.message || error);
+      console.error('⚠️ Could not check for modification columns, continuing without them:', error?.message || error);
+      console.error('⚠️ Error stack:', error?.stack);
     }
 
     // Fetch reservations with associations for current community
@@ -230,8 +246,14 @@ router.get('/all', authenticateToken, async (req: any, res) => {
   } catch (error: any) {
     console.error('❌ Error fetching all reservations:', error);
     console.error('❌ Error details:', error.message);
+    console.error('❌ Error name:', error.name);
     console.error('❌ Error stack:', error.stack);
-    return res.status(500).json({ message: 'Internal server error' });
+    console.error('❌ Error original:', error.original);
+    return res.status(500).json({ 
+      message: 'Internal server error',
+      details: error.message || 'Unknown error',
+      error: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 });
 
