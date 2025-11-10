@@ -33,60 +33,18 @@ router.get('/', authenticateToken, async (req: any, res) => {
       whereClause.amenityId = amenityId;
     }
 
-    // Build attributes list dynamically based on what columns exist
+    // Build attributes list - include modification fields since they're in the model
+    // If columns don't exist in DB, Sequelize will handle it gracefully
     const attributes = [
       'id', 'date', 'setupTimeStart', 'setupTimeEnd', 'partyTimeStart', 'partyTimeEnd',
       'guestCount', 'specialRequirements', 'status', 'totalFee', 'totalDeposit',
       'damageAssessed', 'damageAssessmentPending', 'damageAssessmentStatus', 'damageCharge', 'damageChargeAmount',
-      'eventName', 'isPrivate', 'communityId', 'amenityId', 'userId'
+      'eventName', 'isPrivate', 'communityId', 'amenityId', 'userId',
+      // Modification fields - model defines these, so include them
+      // If DB columns don't exist, Sequelize will skip them
+      'modificationStatus', 'proposedDate', 'proposedPartyTimeStart', 'proposedPartyTimeEnd',
+      'modificationReason', 'modificationProposedBy', 'modificationProposedAt'
     ];
-
-    // Check if modification fields exist before adding them (use case-insensitive check)
-    // Only add them if they exist in the database AND in the model
-    try {
-      const columnCheck = await sequelize.query(`
-        SELECT LOWER(column_name) as column_name 
-        FROM information_schema.columns 
-        WHERE table_schema = 'public'
-        AND table_name = 'reservations' 
-        AND LOWER(column_name) IN ('modificationstatus', 'proposeddate', 'proposedpartytimestart', 'proposedpartytimeend', 'modificationreason', 'modificationproposedby', 'modificationproposedat')
-      `, {
-        type: QueryTypes.SELECT
-      }) as any[];
-      
-      // Sequelize with QueryTypes.SELECT returns just the rows array
-      if (columnCheck && Array.isArray(columnCheck) && columnCheck.length > 0) {
-        const existingColumns = columnCheck.map((row: any) => (row.column_name || '').toLowerCase());
-        
-        // Only add attributes that exist in both database and model
-        // The model defines these fields, so we can safely add them
-        if (existingColumns.includes('modificationstatus')) {
-          attributes.push('modificationStatus');
-        }
-        if (existingColumns.includes('proposeddate')) {
-          attributes.push('proposedDate');
-        }
-        if (existingColumns.includes('proposedpartytimestart')) {
-          attributes.push('proposedPartyTimeStart');
-        }
-        if (existingColumns.includes('proposedpartytimeend')) {
-          attributes.push('proposedPartyTimeEnd');
-        }
-        if (existingColumns.includes('modificationreason')) {
-          attributes.push('modificationReason');
-        }
-        if (existingColumns.includes('modificationproposedby')) {
-          attributes.push('modificationProposedBy');
-        }
-        if (existingColumns.includes('modificationproposedat')) {
-          attributes.push('modificationProposedAt');
-        }
-      }
-    } catch (error: any) {
-      // If check fails, continue without modification fields
-      console.error('⚠️ Could not check for modification columns, continuing without them:', error?.message || error);
-      console.error('⚠️ Error stack:', error?.stack);
-    }
 
     const reservations = await Reservation.findAll({
       where: whereClause,
@@ -160,60 +118,18 @@ router.get('/all', authenticateToken, async (req: any, res) => {
       amenityWhere.id = amenityId;
     }
 
-    // Build attributes list dynamically based on what columns exist
+    // Build attributes list - include modification fields since they're in the model
+    // If columns don't exist in DB, Sequelize will handle it gracefully
     const attributes = [
       'id', 'date', 'setupTimeStart', 'setupTimeEnd', 'partyTimeStart', 'partyTimeEnd',
       'guestCount', 'specialRequirements', 'status', 'totalFee', 'totalDeposit',
       'damageAssessed', 'damageAssessmentPending', 'damageAssessmentStatus', 'damageCharge', 'damageChargeAmount',
-      'eventName', 'isPrivate', 'communityId', 'amenityId', 'userId'
+      'eventName', 'isPrivate', 'communityId', 'amenityId', 'userId',
+      // Modification fields - model defines these, so include them
+      // If DB columns don't exist, Sequelize will skip them
+      'modificationStatus', 'proposedDate', 'proposedPartyTimeStart', 'proposedPartyTimeEnd',
+      'modificationReason', 'modificationProposedBy', 'modificationProposedAt'
     ];
-
-    // Check if modification fields exist before adding them (use case-insensitive check)
-    // Only add them if they exist in the database AND in the model
-    try {
-      const columnCheck = await sequelize.query(`
-        SELECT LOWER(column_name) as column_name 
-        FROM information_schema.columns 
-        WHERE table_schema = 'public'
-        AND table_name = 'reservations' 
-        AND LOWER(column_name) IN ('modificationstatus', 'proposeddate', 'proposedpartytimestart', 'proposedpartytimeend', 'modificationreason', 'modificationproposedby', 'modificationproposedat')
-      `, {
-        type: QueryTypes.SELECT
-      }) as any[];
-      
-      // Sequelize with QueryTypes.SELECT returns just the rows array
-      if (columnCheck && Array.isArray(columnCheck) && columnCheck.length > 0) {
-        const existingColumns = columnCheck.map((row: any) => (row.column_name || '').toLowerCase());
-        
-        // Only add attributes that exist in both database and model
-        // The model defines these fields, so we can safely add them
-        if (existingColumns.includes('modificationstatus')) {
-          attributes.push('modificationStatus');
-        }
-        if (existingColumns.includes('proposeddate')) {
-          attributes.push('proposedDate');
-        }
-        if (existingColumns.includes('proposedpartytimestart')) {
-          attributes.push('proposedPartyTimeStart');
-        }
-        if (existingColumns.includes('proposedpartytimeend')) {
-          attributes.push('proposedPartyTimeEnd');
-        }
-        if (existingColumns.includes('modificationreason')) {
-          attributes.push('modificationReason');
-        }
-        if (existingColumns.includes('modificationproposedby')) {
-          attributes.push('modificationProposedBy');
-        }
-        if (existingColumns.includes('modificationproposedat')) {
-          attributes.push('modificationProposedAt');
-        }
-      }
-    } catch (error: any) {
-      // If check fails, continue without modification fields
-      console.error('⚠️ Could not check for modification columns, continuing without them:', error?.message || error);
-      console.error('⚠️ Error stack:', error?.stack);
-    }
 
     // Fetch reservations with associations for current community
     const reservations = await Reservation.findAll({
