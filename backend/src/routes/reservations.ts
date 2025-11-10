@@ -1262,36 +1262,34 @@ router.post('/:id/propose-modification', authenticateToken, async (req: any, res
       
       // Check if error is due to missing columns (PostgreSQL error format)
       // Sequelize wraps database errors in error.original
-      const originalError = updateError.original || updateError;
-      const errorMessage = String(originalError.message || updateError.message || '');
-      const errorCode = originalError.code || '';
+      const updateOriginalError = updateError.original || updateError;
+      const updateErrorMessage = String(updateOriginalError.message || updateError.message || '');
+      const updateErrorCode = updateOriginalError.code || '';
       
       // PostgreSQL error code 42703 = undefined_column
       // PostgreSQL error message typically includes "column ... does not exist"
       const isColumnMissingError = 
-        errorCode === '42703' ||
-        errorMessage.toLowerCase().includes('column') && errorMessage.toLowerCase().includes('does not exist') ||
-        errorMessage.toLowerCase().includes('column') && errorMessage.toLowerCase().includes('doesn\'t exist');
+        updateErrorCode === '42703' ||
+        updateErrorMessage.toLowerCase().includes('column') && updateErrorMessage.toLowerCase().includes('does not exist') ||
+        updateErrorMessage.toLowerCase().includes('column') && updateErrorMessage.toLowerCase().includes('doesn\'t exist');
       
       if (isColumnMissingError) {
         console.error('❌ Modification columns not found in database');
-        console.error('❌ PostgreSQL error code:', errorCode);
-        console.error('❌ Full error message:', errorMessage);
+        console.error('❌ PostgreSQL error code:', updateErrorCode);
+        console.error('❌ Full error message:', updateErrorMessage);
         return res.status(500).json({ 
           message: 'Modification feature is not available. Please run the database migration first.',
-          details: `Database error: ${errorMessage.substring(0, 200)}`,
-          errorCode: errorCode
+          details: `Database error: ${updateErrorMessage.substring(0, 200)}`,
+          errorCode: updateErrorCode
         });
       }
       
       // If it's not a column missing error, return the actual error
       console.error('❌ Unexpected error during update - not a column missing error');
-      const originalError = updateError.original || updateError;
-      const errorMessage = String(originalError.message || updateError.message || 'Unknown error');
       return res.status(500).json({ 
         message: 'Error proposing modification',
-        details: errorMessage.substring(0, 500),
-        errorCode: originalError.code || updateError.code || 'UNKNOWN'
+        details: updateErrorMessage.substring(0, 500),
+        errorCode: updateErrorCode || updateError.code || 'UNKNOWN'
       });
     }
 
@@ -1308,13 +1306,13 @@ router.post('/:id/propose-modification', authenticateToken, async (req: any, res
     console.error('❌ Error original:', error.original);
     console.error('❌ Error stack:', error.stack);
     
-    const originalError = error.original || error;
-    const errorMessage = String(originalError.message || error.message || 'Internal server error');
+    const catchOriginalError = error.original || error;
+    const catchErrorMessage = String(catchOriginalError.message || error.message || 'Internal server error');
     
     return res.status(500).json({ 
-      message: errorMessage.substring(0, 200),
-      details: errorMessage.substring(0, 500),
-      errorCode: originalError.code || error.code || 'UNKNOWN'
+      message: catchErrorMessage.substring(0, 200),
+      details: catchErrorMessage.substring(0, 500),
+      errorCode: catchOriginalError.code || error.code || 'UNKNOWN'
     });
   }
 });
