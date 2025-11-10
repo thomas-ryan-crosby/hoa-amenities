@@ -367,8 +367,21 @@ const JanitorialPage: React.FC = () => {
       });
       fetchReservations();
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to propose modification');
+      const errorMessage = err.response?.data?.message || 'Failed to propose modification';
+      const errorDetails = err.response?.data?.details || '';
+      const errorCode = err.response?.data?.errorCode || '';
+      
       console.error('Error proposing modification:', err);
+      console.error('Error response data:', err.response?.data);
+      console.error('Error details:', errorDetails);
+      console.error('Error code:', errorCode);
+      
+      // Show detailed error if available
+      if (errorDetails) {
+        setError(`${errorMessage}\n\nDetails: ${errorDetails}\nError Code: ${errorCode}`);
+      } else {
+        setError(errorMessage);
+      }
     } finally {
       setActionLoading(null);
     }

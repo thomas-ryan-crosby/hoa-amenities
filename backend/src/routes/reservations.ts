@@ -1226,22 +1226,62 @@ router.post('/:id/propose-modification', authenticateToken, async (req: any, res
       });
     }
 
-    // Check if there's already a pending modification (only if column exists)
-    // Use try-catch to safely check this property in case column doesn't exist
+    // PRE-FLIGHT CHECK: Verify modification columns exist in database
+    // This prevents cryptic errors and gives clear feedback
     try {
-      if (reservation.modificationStatus && reservation.modificationStatus === 'PENDING') {
-        return res.status(400).json({ 
-          message: 'A modification proposal is already pending for this reservation' 
+      const columnCheck = await sequelize.query(`
+        SELECT column_name 
+        FROM information_schema.columns 
+        WHERE table_schema = 'public'
+        AND table_name = 'reservations' 
+        AND column_name IN ('modificationStatus', 'proposedDate', 'proposedPartyTimeStart', 'proposedPartyTimeEnd', 'modificationReason', 'modificationProposedBy', 'modificationProposedAt')
+      `) as any[];
+      
+      const existingColumns = columnCheck[0] || [];
+      const columnNames = existingColumns.map((row: any) => row.column_name);
+      const requiredColumns = [
+        'modificationStatus',
+        'proposedDate',
+        'proposedPartyTimeStart',
+        'proposedPartyTimeEnd',
+        'modificationReason',
+        'modificationProposedBy',
+        'modificationProposedAt'
+      ];
+      
+      const missingColumns = requiredColumns.filter(col => !columnNames.includes(col));
+      
+      if (missingColumns.length > 0) {
+        console.error('❌ Missing modification columns:', missingColumns);
+        console.error('❌ Existing columns:', columnNames);
+        return res.status(500).json({
+          message: 'Modification feature is not available. Please run the database migration first.',
+          details: `Missing columns: ${missingColumns.join(', ')}. Found ${columnNames.length} of ${requiredColumns.length} required columns.`,
+          missingColumns: missingColumns,
+          foundColumns: columnNames,
+          requiredColumns: requiredColumns
         });
       }
+      
+      console.log('✅ All modification columns verified:', columnNames);
     } catch (checkError: any) {
-      // If we can't read modificationStatus, column probably doesn't exist
-      // Continue to try the update, which will give us a better error
-      console.log('⚠️ Could not check modificationStatus, continuing to update');
+      console.error('❌ Error checking for modification columns:', checkError);
+      return res.status(500).json({
+        message: 'Error verifying database schema',
+        details: `Could not verify if modification columns exist: ${checkError.message || 'Unknown error'}`,
+        error: checkError.message
+      });
+    }
+
+    // Check if there's already a pending modification
+    if (reservation.modificationStatus && reservation.modificationStatus === 'PENDING') {
+      return res.status(400).json({ 
+        message: 'A modification proposal is already pending for this reservation' 
+      });
     }
 
     // Try to update reservation with proposed modification
-    // If columns don't exist, this will throw an error which we'll catch below
+    // Columns should exist now, but catch any unexpected errors
     try {
       await reservation.update({
         modificationStatus: 'PENDING',
