@@ -33,31 +33,57 @@ router.get('/', authenticateToken, async (req: any, res) => {
       whereClause.amenityId = amenityId;
     }
 
-    // Build attributes list - include modification fields since they're in the model
-    // If columns don't exist in DB, Sequelize will handle it gracefully
-    const attributes = [
+    // Build base attributes list
+    const baseAttributes = [
       'id', 'date', 'setupTimeStart', 'setupTimeEnd', 'partyTimeStart', 'partyTimeEnd',
       'guestCount', 'specialRequirements', 'status', 'totalFee', 'totalDeposit',
       'damageAssessed', 'damageAssessmentPending', 'damageAssessmentStatus', 'damageCharge', 'damageChargeAmount',
-      'eventName', 'isPrivate', 'communityId', 'amenityId', 'userId',
-      // Modification fields - model defines these, so include them
-      // If DB columns don't exist, Sequelize will skip them
-      'modificationStatus', 'proposedDate', 'proposedPartyTimeStart', 'proposedPartyTimeEnd',
-      'modificationReason', 'modificationProposedBy', 'modificationProposedAt'
+      'eventName', 'isPrivate', 'communityId', 'amenityId', 'userId'
     ];
 
-    const reservations = await Reservation.findAll({
-      where: whereClause,
-      attributes: attributes,
-      include: [
-        {
-          model: Amenity,
-          as: 'amenity',
-          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'calendarGroup', 'displayColor', 'janitorialRequired', 'approvalRequired']
-        }
-      ],
-      order: [['date', 'ASC'], ['partyTimeStart', 'ASC']]
-    });
+    // Try with modification fields first, fall back to base attributes if they don't exist
+    let reservations;
+    try {
+      const attributesWithModifications = [
+        ...baseAttributes,
+        'modificationStatus', 'proposedDate', 'proposedPartyTimeStart', 'proposedPartyTimeEnd',
+        'modificationReason', 'modificationProposedBy', 'modificationProposedAt'
+      ];
+      
+      reservations = await Reservation.findAll({
+        where: whereClause,
+        attributes: attributesWithModifications,
+        include: [
+          {
+            model: Amenity,
+            as: 'amenity',
+            attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'calendarGroup', 'displayColor', 'janitorialRequired', 'approvalRequired']
+          }
+        ],
+        order: [['date', 'ASC'], ['partyTimeStart', 'ASC']]
+      });
+    } catch (error: any) {
+      // If query fails (likely due to missing modification columns), retry without them
+      const errorMessage = String(error.message || '');
+      if (errorMessage.toLowerCase().includes('column') || errorMessage.toLowerCase().includes('does not exist')) {
+        console.log('⚠️ Modification columns not found, fetching without them');
+        reservations = await Reservation.findAll({
+          where: whereClause,
+          attributes: baseAttributes,
+          include: [
+            {
+              model: Amenity,
+              as: 'amenity',
+              attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'calendarGroup', 'displayColor', 'janitorialRequired', 'approvalRequired']
+            }
+          ],
+          order: [['date', 'ASC'], ['partyTimeStart', 'ASC']]
+        });
+      } else {
+        // Re-throw if it's a different error
+        throw error;
+      }
+    }
 
     console.log('✅ Found reservations:', reservations.length);
 
@@ -118,39 +144,71 @@ router.get('/all', authenticateToken, async (req: any, res) => {
       amenityWhere.id = amenityId;
     }
 
-    // Build attributes list - include modification fields since they're in the model
-    // If columns don't exist in DB, Sequelize will handle it gracefully
-    const attributes = [
+    // Build base attributes list
+    const baseAttributes = [
       'id', 'date', 'setupTimeStart', 'setupTimeEnd', 'partyTimeStart', 'partyTimeEnd',
       'guestCount', 'specialRequirements', 'status', 'totalFee', 'totalDeposit',
       'damageAssessed', 'damageAssessmentPending', 'damageAssessmentStatus', 'damageCharge', 'damageChargeAmount',
-      'eventName', 'isPrivate', 'communityId', 'amenityId', 'userId',
-      // Modification fields - model defines these, so include them
-      // If DB columns don't exist, Sequelize will skip them
-      'modificationStatus', 'proposedDate', 'proposedPartyTimeStart', 'proposedPartyTimeEnd',
-      'modificationReason', 'modificationProposedBy', 'modificationProposedAt'
+      'eventName', 'isPrivate', 'communityId', 'amenityId', 'userId'
     ];
 
-    // Fetch reservations with associations for current community
-    const reservations = await Reservation.findAll({
-      where: whereClause,
-      attributes: attributes,
-      include: [
-        {
-          model: Amenity,
-          as: 'amenity',
-          where: Object.keys(amenityWhere).length > 0 ? amenityWhere : undefined,
-          required: true,
-          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'calendarGroup', 'displayColor', 'janitorialRequired', 'approvalRequired']
-        },
-        {
-          model: User,
-          as: 'user',
-          attributes: ['id', 'firstName', 'lastName', 'email', 'phone', 'address']
-        }
-      ],
-      order: [['date', 'ASC'], ['partyTimeStart', 'ASC']]
-    });
+    // Try with modification fields first, fall back to base attributes if they don't exist
+    let reservations;
+    try {
+      const attributesWithModifications = [
+        ...baseAttributes,
+        'modificationStatus', 'proposedDate', 'proposedPartyTimeStart', 'proposedPartyTimeEnd',
+        'modificationReason', 'modificationProposedBy', 'modificationProposedAt'
+      ];
+      
+      reservations = await Reservation.findAll({
+        where: whereClause,
+        attributes: attributesWithModifications,
+        include: [
+          {
+            model: Amenity,
+            as: 'amenity',
+            where: Object.keys(amenityWhere).length > 0 ? amenityWhere : undefined,
+            required: true,
+            attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'calendarGroup', 'displayColor', 'janitorialRequired', 'approvalRequired']
+          },
+          {
+            model: User,
+            as: 'user',
+            attributes: ['id', 'firstName', 'lastName', 'email', 'phone', 'address']
+          }
+        ],
+        order: [['date', 'ASC'], ['partyTimeStart', 'ASC']]
+      });
+    } catch (error: any) {
+      // If query fails (likely due to missing modification columns), retry without them
+      const errorMessage = String(error.message || '');
+      if (errorMessage.toLowerCase().includes('column') || errorMessage.toLowerCase().includes('does not exist')) {
+        console.log('⚠️ Modification columns not found, fetching without them');
+        reservations = await Reservation.findAll({
+          where: whereClause,
+          attributes: baseAttributes,
+          include: [
+            {
+              model: Amenity,
+              as: 'amenity',
+              where: Object.keys(amenityWhere).length > 0 ? amenityWhere : undefined,
+              required: true,
+              attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'calendarGroup', 'displayColor', 'janitorialRequired', 'approvalRequired']
+            },
+            {
+              model: User,
+              as: 'user',
+              attributes: ['id', 'firstName', 'lastName', 'email', 'phone', 'address']
+            }
+          ],
+          order: [['date', 'ASC'], ['partyTimeStart', 'ASC']]
+        });
+      } else {
+        // Re-throw if it's a different error
+        throw error;
+      }
+    }
 
     console.log('✅ Found reservations:', reservations.length);
 
