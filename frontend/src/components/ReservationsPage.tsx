@@ -491,40 +491,61 @@ const ReservationsPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Proposed Modification Alert */}
+              {/* Proposed Modification Alert - Prominent Warning */}
               {reservation.modificationStatus === 'PENDING' && (
                 <div style={{ 
                   marginBottom: '16px', 
-                  padding: '16px', 
-                  backgroundColor: '#eff6ff', 
-                  border: '1px solid #3b82f6', 
-                  borderRadius: '8px' 
+                  padding: '20px', 
+                  backgroundColor: '#fef3c7', 
+                  border: '2px solid #f59e0b', 
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
                 }}>
-                  <h4 style={{ fontSize: '16px', fontWeight: 'bold', color: '#1e40af', margin: '0 0 8px 0' }}>
-                    ⚠️ Modification Proposed
-                  </h4>
-                  <p style={{ margin: '0 0 12px 0', fontSize: '14px', color: '#1e40af' }}>
-                    {reservation.modificationReason}
+                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
+                    <span style={{ fontSize: '24px', marginRight: '8px' }}>⚠️</span>
+                    <h4 style={{ fontSize: '18px', fontWeight: 'bold', color: '#92400e', margin: 0 }}>
+                      Action Required: Modification Proposed
+                    </h4>
+                  </div>
+                  <p style={{ margin: '0 0 16px 0', fontSize: '15px', color: '#78350f', fontWeight: '500' }}>
+                    A modification has been proposed for your reservation. Please review and respond:
                   </p>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '12px' }}>
-                    <div style={{ padding: '8px', backgroundColor: 'white', borderRadius: '4px' }}>
-                      <p style={{ margin: '0 0 4px 0', fontSize: '12px', color: '#6b7280', fontWeight: 'bold' }}>Current Time:</p>
-                      <p style={{ margin: 0, fontSize: '14px', color: '#374151' }}>
+                  <div style={{ marginBottom: '16px', padding: '12px', backgroundColor: 'white', borderRadius: '6px', border: '1px solid #fbbf24' }}>
+                    <p style={{ margin: '0 0 8px 0', fontSize: '13px', color: '#78350f', fontWeight: 'bold' }}>
+                      Reason for Modification:
+                    </p>
+                    <p style={{ margin: 0, fontSize: '14px', color: '#374151' }}>
+                      {reservation.modificationReason}
+                    </p>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+                    <div style={{ padding: '12px', backgroundColor: 'white', borderRadius: '6px', border: '1px solid #d1d5db' }}>
+                      <p style={{ margin: '0 0 6px 0', fontSize: '12px', color: '#6b7280', fontWeight: 'bold' }}>Current Reservation Time:</p>
+                      <p style={{ margin: 0, fontSize: '15px', color: '#374151', fontWeight: '500' }}>
                         {formatTimeRange(reservation.partyTimeStart, reservation.partyTimeEnd)}
                       </p>
                     </div>
-                    <div style={{ padding: '8px', backgroundColor: '#dbeafe', borderRadius: '4px' }}>
-                      <p style={{ margin: '0 0 4px 0', fontSize: '12px', color: '#1e40af', fontWeight: 'bold' }}>Proposed Time:</p>
-                      <p style={{ margin: 0, fontSize: '14px', color: '#1e40af', fontWeight: '600' }}>
+                    <div style={{ padding: '12px', backgroundColor: '#fef3c7', borderRadius: '6px', border: '2px solid #f59e0b' }}>
+                      <p style={{ margin: '0 0 6px 0', fontSize: '12px', color: '#92400e', fontWeight: 'bold' }}>Proposed New Time:</p>
+                      <p style={{ margin: 0, fontSize: '15px', color: '#92400e', fontWeight: '600' }}>
                         {reservation.proposedPartyTimeStart && reservation.proposedPartyTimeEnd 
                           ? formatTimeRange(reservation.proposedPartyTimeStart, reservation.proposedPartyTimeEnd)
                           : 'N/A'}
                       </p>
                     </div>
                   </div>
-                  <p style={{ margin: '12px 0 0 0', fontSize: '12px', color: '#1e40af', fontStyle: 'italic' }}>
-                    You can accept the modified time, or reject it to cancel your reservation.
-                  </p>
+                  <div style={{ 
+                    padding: '12px', 
+                    backgroundColor: '#fee2e2', 
+                    borderRadius: '6px', 
+                    border: '1px solid #f87171',
+                    marginTop: '12px'
+                  }}>
+                    <p style={{ margin: 0, fontSize: '13px', color: '#991b1b', fontWeight: '500' }}>
+                      <strong>Important:</strong> You must accept the modified time or reject it to cancel your reservation. 
+                      If you reject, you will need to book a new reservation.
+                    </p>
+                  </div>
                 </div>
               )}
 

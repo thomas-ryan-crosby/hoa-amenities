@@ -584,19 +584,38 @@ const JanitorialPage: React.FC = () => {
                     Requested by: {reservation.user.firstName} {reservation.user.lastName} ({reservation.user.email})
                   </p>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <span
-                    style={{
-                      backgroundColor: getStatusColor(reservation.status),
-                      color: 'white',
-                      padding: '4px 12px',
-                      borderRadius: '20px',
-                      fontSize: '12px',
-                      fontWeight: 'bold'
-                    }}
-                  >
-                    {getStatusText(reservation.status)}
-                  </span>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    {reservation.modificationStatus === 'PENDING' && (
+                      <span
+                        style={{
+                          backgroundColor: '#f59e0b',
+                          color: 'white',
+                          padding: '4px 12px',
+                          borderRadius: '20px',
+                          fontSize: '12px',
+                          fontWeight: 'bold',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px'
+                        }}
+                      >
+                        ⚠️ Modification Pending
+                      </span>
+                    )}
+                    <span
+                      style={{
+                        backgroundColor: getStatusColor(reservation.status),
+                        color: 'white',
+                        padding: '4px 12px',
+                        borderRadius: '20px',
+                        fontSize: '12px',
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      {getStatusText(reservation.status)}
+                    </span>
+                  </div>
                 </div>
               </div>
 
