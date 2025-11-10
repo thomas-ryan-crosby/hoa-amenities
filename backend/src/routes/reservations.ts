@@ -41,37 +41,37 @@ router.get('/', authenticateToken, async (req: any, res) => {
       'eventName', 'isPrivate', 'communityId', 'amenityId', 'userId'
     ];
 
-    // Check if modification fields exist before adding them
+    // Check if modification fields exist before adding them (use case-insensitive check)
     try {
       const columnCheck = await sequelize.query(`
-        SELECT column_name 
+        SELECT LOWER(column_name) as column_name 
         FROM information_schema.columns 
         WHERE table_schema = 'public'
         AND table_name = 'reservations' 
-        AND column_name IN ('modificationStatus', 'proposedDate', 'proposedPartyTimeStart', 'proposedPartyTimeEnd', 'modificationReason', 'modificationProposedBy', 'modificationProposedAt')
+        AND LOWER(column_name) IN ('modificationstatus', 'proposeddate', 'proposedpartytimestart', 'proposedpartytimeend', 'modificationreason', 'modificationproposedby', 'modificationproposedat')
       `) as any[];
       
       if (columnCheck && columnCheck[0] && Array.isArray(columnCheck[0])) {
-        const existingColumns = columnCheck[0].map((row: any) => row.column_name);
-        if (existingColumns.includes('modificationStatus')) {
+        const existingColumns = columnCheck[0].map((row: any) => row.column_name.toLowerCase());
+        if (existingColumns.includes('modificationstatus')) {
           attributes.push('modificationStatus');
         }
-        if (existingColumns.includes('proposedDate')) {
+        if (existingColumns.includes('proposeddate')) {
           attributes.push('proposedDate');
         }
-        if (existingColumns.includes('proposedPartyTimeStart')) {
+        if (existingColumns.includes('proposedpartytimestart')) {
           attributes.push('proposedPartyTimeStart');
         }
-        if (existingColumns.includes('proposedPartyTimeEnd')) {
+        if (existingColumns.includes('proposedpartytimeend')) {
           attributes.push('proposedPartyTimeEnd');
         }
-        if (existingColumns.includes('modificationReason')) {
+        if (existingColumns.includes('modificationreason')) {
           attributes.push('modificationReason');
         }
-        if (existingColumns.includes('modificationProposedBy')) {
+        if (existingColumns.includes('modificationproposedby')) {
           attributes.push('modificationProposedBy');
         }
-        if (existingColumns.includes('modificationProposedAt')) {
+        if (existingColumns.includes('modificationproposedat')) {
           attributes.push('modificationProposedAt');
         }
       }
@@ -154,37 +154,37 @@ router.get('/all', authenticateToken, async (req: any, res) => {
       'eventName', 'isPrivate', 'communityId', 'amenityId', 'userId'
     ];
 
-    // Check if modification fields exist before adding them
+    // Check if modification fields exist before adding them (use case-insensitive check)
     try {
       const columnCheck = await sequelize.query(`
-        SELECT column_name 
+        SELECT LOWER(column_name) as column_name 
         FROM information_schema.columns 
         WHERE table_schema = 'public'
         AND table_name = 'reservations' 
-        AND column_name IN ('modificationStatus', 'proposedDate', 'proposedPartyTimeStart', 'proposedPartyTimeEnd', 'modificationReason', 'modificationProposedBy', 'modificationProposedAt')
+        AND LOWER(column_name) IN ('modificationstatus', 'proposeddate', 'proposedpartytimestart', 'proposedpartytimeend', 'modificationreason', 'modificationproposedby', 'modificationproposedat')
       `) as any[];
       
       if (columnCheck && columnCheck[0] && Array.isArray(columnCheck[0])) {
-        const existingColumns = columnCheck[0].map((row: any) => row.column_name);
-        if (existingColumns.includes('modificationStatus')) {
+        const existingColumns = columnCheck[0].map((row: any) => row.column_name.toLowerCase());
+        if (existingColumns.includes('modificationstatus')) {
           attributes.push('modificationStatus');
         }
-        if (existingColumns.includes('proposedDate')) {
+        if (existingColumns.includes('proposeddate')) {
           attributes.push('proposedDate');
         }
-        if (existingColumns.includes('proposedPartyTimeStart')) {
+        if (existingColumns.includes('proposedpartytimestart')) {
           attributes.push('proposedPartyTimeStart');
         }
-        if (existingColumns.includes('proposedPartyTimeEnd')) {
+        if (existingColumns.includes('proposedpartytimeend')) {
           attributes.push('proposedPartyTimeEnd');
         }
-        if (existingColumns.includes('modificationReason')) {
+        if (existingColumns.includes('modificationreason')) {
           attributes.push('modificationReason');
         }
-        if (existingColumns.includes('modificationProposedBy')) {
+        if (existingColumns.includes('modificationproposedby')) {
           attributes.push('modificationProposedBy');
         }
-        if (existingColumns.includes('modificationProposedAt')) {
+        if (existingColumns.includes('modificationproposedat')) {
           attributes.push('modificationProposedAt');
         }
       }
@@ -1570,6 +1570,54 @@ router.put('/:id/reject-modification', authenticateToken, async (req: any, res) 
 
   } catch (error: any) {
     console.error('❌ Error rejecting modification:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// PUT /api/reservations/:id/cancel-modification - Cancel proposed modification (janitorial/admin only)
+router.put('/:id/cancel-modification', authenticateToken, async (req: any, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+    const communityRole = req.user.communityRole;
+
+    console.log('🔄 Canceling modification proposal for reservation:', id, 'by user:', userId);
+
+    // Check if user is janitorial or admin in current community
+    if (communityRole !== 'janitorial' && communityRole !== 'admin') {
+      return res.status(403).json({ message: 'Janitorial or admin access required' });
+    }
+
+    // Use raw SQL to clear modification fields
+    await sequelize.query(`
+      UPDATE reservations
+      SET modificationstatus = 'NONE',
+          proposeddate = NULL,
+          proposedpartytimestart = NULL,
+          proposedpartytimeend = NULL,
+          modificationreason = NULL,
+          modificationproposedby = NULL,
+          modificationproposedat = NULL
+      WHERE id = :reservationId
+        AND communityid = :communityId
+        AND modificationstatus = 'PENDING'
+    `, {
+      replacements: {
+        reservationId: id,
+        communityId: req.user.currentCommunityId
+      },
+      type: QueryTypes.UPDATE
+    });
+
+    console.log('✅ Modification proposal canceled successfully');
+
+    return res.json({
+      message: 'Modification proposal canceled. Reservation returned to original time.',
+      reservation: { id: parseInt(id) }
+    });
+
+  } catch (error: any) {
+    console.error('❌ Error canceling modification:', error);
     return res.status(500).json({ message: 'Internal server error' });
   }
 });

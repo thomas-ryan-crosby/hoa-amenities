@@ -318,6 +318,46 @@ const JanitorialPage: React.FC = () => {
     setShowModificationModal(true);
   };
 
+  const handleCancelModification = async (reservation: Reservation) => {
+    try {
+      setActionLoading(reservation.id);
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      const token = localStorage.getItem('token');
+      
+      await axios.put(`${apiUrl}/api/reservations/${reservation.id}/cancel-modification`, {}, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      setShowModificationModal(false);
+      setModificationProposal({
+        proposedDate: '',
+        proposedPartyTimeStart: '',
+        proposedPartyTimeEnd: '',
+        modificationReason: ''
+      });
+      fetchReservations();
+    } catch (err: any) {
+      const errorMessage = err.response?.data?.message || 'Failed to cancel modification';
+      const errorDetails = err.response?.data?.details || '';
+      const errorCode = err.response?.data?.errorCode || '';
+      
+      console.error('Error canceling modification:', err);
+      console.error('Error response data:', err.response?.data);
+      console.error('Error details:', errorDetails);
+      console.error('Error code:', errorCode);
+      
+      if (errorDetails) {
+        setError(`${errorMessage}\n\nDetails: ${errorDetails}\nError Code: ${errorCode}`);
+      } else {
+        setError(errorMessage);
+      }
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
   const handleModificationSubmit = async () => {
     if (!selectedReservation) return;
     
@@ -736,6 +776,24 @@ const JanitorialPage: React.FC = () => {
                     }}
                   >
                     {actionLoading === reservation.id ? 'Processing...' : 'Reject'}
+                  </button>
+                )}
+                {reservation.status === 'NEW' && reservation.modificationStatus === 'PENDING' && (
+                  <button
+                    onClick={() => handleCancelModification(reservation)}
+                    disabled={actionLoading === reservation.id}
+                    style={{
+                      backgroundColor: actionLoading === reservation.id ? '#9ca3af' : '#f59e0b',
+                      color: 'white',
+                      padding: '8px 16px',
+                      borderRadius: '4px',
+                      border: 'none',
+                      cursor: actionLoading === reservation.id ? 'not-allowed' : 'pointer',
+                      fontSize: '14px',
+                      fontWeight: 'bold'
+                    }}
+                  >
+                    {actionLoading === reservation.id ? 'Processing...' : 'Cancel Proposed Modification - Return Party to original time'}
                   </button>
                 )}
                 {reservation.status === 'NEW' && reservation.modificationStatus !== 'PENDING' && (
