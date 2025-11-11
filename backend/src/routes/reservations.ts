@@ -1,7 +1,7 @@
 import express from 'express';
 import { Reservation, Amenity, User } from '../models';
 import { authenticateToken } from '../middleware/auth';
-import { Op, QueryTypes } from 'sequelize';
+import { Op, QueryTypes, col } from 'sequelize';
 import { sequelize } from '../models';
 
 // Define interfaces for associated models
@@ -33,56 +33,44 @@ router.get('/', authenticateToken, async (req: any, res) => {
       whereClause.amenityId = amenityId;
     }
 
-    // Build base attributes list
-    const baseAttributes = [
+    // Build attributes list - include modification fields since columns exist in database
+    // Use explicit column mapping to ensure camelCase attributes map to lowercase database columns
+    const attributes: any[] = [
       'id', 'date', 'setupTimeStart', 'setupTimeEnd', 'partyTimeStart', 'partyTimeEnd',
       'guestCount', 'specialRequirements', 'status', 'totalFee', 'totalDeposit',
       'damageAssessed', 'damageAssessmentPending', 'damageAssessmentStatus', 'damageCharge', 'damageChargeAmount',
-      'eventName', 'isPrivate', 'communityId', 'amenityId', 'userId'
+      'eventName', 'isPrivate', 'communityId', 'amenityId', 'userId',
+      // Modification fields - explicitly map camelCase to lowercase database columns
+      [col('modificationstatus'), 'modificationStatus'],
+      [col('proposeddate'), 'proposedDate'],
+      [col('proposedpartytimestart'), 'proposedPartyTimeStart'],
+      [col('proposedpartytimeend'), 'proposedPartyTimeEnd'],
+      [col('modificationreason'), 'modificationReason'],
+      [col('modificationproposedby'), 'modificationProposedBy'],
+      [col('modificationproposedat'), 'modificationProposedAt']
     ];
+    
+    const reservations = await Reservation.findAll({
+      where: whereClause,
+      attributes: attributes,
+      include: [
+        {
+          model: Amenity,
+          as: 'amenity',
+          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'calendarGroup', 'displayColor', 'janitorialRequired', 'approvalRequired']
+        }
+      ],
+      order: [['date', 'ASC'], ['partyTimeStart', 'ASC']],
+      raw: false // Ensure Sequelize includes all fields in response
+    });
 
-    // Try with modification fields first, fall back to base attributes if they don't exist
-    let reservations;
-    try {
-      const attributesWithModifications = [
-        ...baseAttributes,
-        'modificationStatus', 'proposedDate', 'proposedPartyTimeStart', 'proposedPartyTimeEnd',
-        'modificationReason', 'modificationProposedBy', 'modificationProposedAt'
-      ];
-      
-      reservations = await Reservation.findAll({
-        where: whereClause,
-        attributes: attributesWithModifications,
-        include: [
-          {
-            model: Amenity,
-            as: 'amenity',
-            attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'calendarGroup', 'displayColor', 'janitorialRequired', 'approvalRequired']
-          }
-        ],
-        order: [['date', 'ASC'], ['partyTimeStart', 'ASC']]
-      });
-    } catch (error: any) {
-      // If query fails (likely due to missing modification columns), retry without them
-      const errorMessage = String(error.message || '');
-      if (errorMessage.toLowerCase().includes('column') || errorMessage.toLowerCase().includes('does not exist')) {
-        console.log('⚠️ Modification columns not found, fetching without them');
-        reservations = await Reservation.findAll({
-          where: whereClause,
-          attributes: baseAttributes,
-          include: [
-            {
-              model: Amenity,
-              as: 'amenity',
-              attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'calendarGroup', 'displayColor', 'janitorialRequired', 'approvalRequired']
-            }
-          ],
-          order: [['date', 'ASC'], ['partyTimeStart', 'ASC']]
-        });
-      } else {
-        // Re-throw if it's a different error
-        throw error;
-      }
+    // DEBUG: Log what fields are actually present
+    if (reservations.length > 0) {
+      const sample = reservations[0];
+      const sampleJson = sample.toJSON ? sample.toJSON() : sample;
+      console.log('🔍 Sample reservation fields:', Object.keys(sampleJson));
+      console.log('🔍 Sample modificationStatus:', sampleJson.modificationStatus);
+      console.log('🔍 Sample proposedPartyTimeStart:', sampleJson.proposedPartyTimeStart);
     }
 
     console.log('✅ Found reservations:', reservations.length);
@@ -144,70 +132,51 @@ router.get('/all', authenticateToken, async (req: any, res) => {
       amenityWhere.id = amenityId;
     }
 
-    // Build base attributes list
-    const baseAttributes = [
+    // Build attributes list - include modification fields since columns exist in database
+    // Use explicit column mapping to ensure camelCase attributes map to lowercase database columns
+    const attributes: any[] = [
       'id', 'date', 'setupTimeStart', 'setupTimeEnd', 'partyTimeStart', 'partyTimeEnd',
       'guestCount', 'specialRequirements', 'status', 'totalFee', 'totalDeposit',
       'damageAssessed', 'damageAssessmentPending', 'damageAssessmentStatus', 'damageCharge', 'damageChargeAmount',
-      'eventName', 'isPrivate', 'communityId', 'amenityId', 'userId'
+      'eventName', 'isPrivate', 'communityId', 'amenityId', 'userId',
+      // Modification fields - explicitly map camelCase to lowercase database columns
+      [col('modificationstatus'), 'modificationStatus'],
+      [col('proposeddate'), 'proposedDate'],
+      [col('proposedpartytimestart'), 'proposedPartyTimeStart'],
+      [col('proposedpartytimeend'), 'proposedPartyTimeEnd'],
+      [col('modificationreason'), 'modificationReason'],
+      [col('modificationproposedby'), 'modificationProposedBy'],
+      [col('modificationproposedat'), 'modificationProposedAt']
     ];
+    
+    const reservations = await Reservation.findAll({
+      where: whereClause,
+      attributes: attributes,
+      include: [
+        {
+          model: Amenity,
+          as: 'amenity',
+          where: Object.keys(amenityWhere).length > 0 ? amenityWhere : undefined,
+          required: true,
+          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'calendarGroup', 'displayColor', 'janitorialRequired', 'approvalRequired']
+        },
+        {
+          model: User,
+          as: 'user',
+          attributes: ['id', 'firstName', 'lastName', 'email', 'phone', 'address']
+        }
+      ],
+      order: [['date', 'ASC'], ['partyTimeStart', 'ASC']],
+      raw: false // Ensure Sequelize includes all fields in response
+    });
 
-    // Try with modification fields first, fall back to base attributes if they don't exist
-    let reservations;
-    try {
-      const attributesWithModifications = [
-        ...baseAttributes,
-        'modificationStatus', 'proposedDate', 'proposedPartyTimeStart', 'proposedPartyTimeEnd',
-        'modificationReason', 'modificationProposedBy', 'modificationProposedAt'
-      ];
-      
-      reservations = await Reservation.findAll({
-        where: whereClause,
-        attributes: attributesWithModifications,
-        include: [
-          {
-            model: Amenity,
-            as: 'amenity',
-            where: Object.keys(amenityWhere).length > 0 ? amenityWhere : undefined,
-            required: true,
-            attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'calendarGroup', 'displayColor', 'janitorialRequired', 'approvalRequired']
-          },
-          {
-            model: User,
-            as: 'user',
-            attributes: ['id', 'firstName', 'lastName', 'email', 'phone', 'address']
-          }
-        ],
-        order: [['date', 'ASC'], ['partyTimeStart', 'ASC']]
-      });
-    } catch (error: any) {
-      // If query fails (likely due to missing modification columns), retry without them
-      const errorMessage = String(error.message || '');
-      if (errorMessage.toLowerCase().includes('column') || errorMessage.toLowerCase().includes('does not exist')) {
-        console.log('⚠️ Modification columns not found, fetching without them');
-        reservations = await Reservation.findAll({
-          where: whereClause,
-          attributes: baseAttributes,
-          include: [
-            {
-              model: Amenity,
-              as: 'amenity',
-              where: Object.keys(amenityWhere).length > 0 ? amenityWhere : undefined,
-              required: true,
-              attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'calendarGroup', 'displayColor', 'janitorialRequired', 'approvalRequired']
-            },
-            {
-              model: User,
-              as: 'user',
-              attributes: ['id', 'firstName', 'lastName', 'email', 'phone', 'address']
-            }
-          ],
-          order: [['date', 'ASC'], ['partyTimeStart', 'ASC']]
-        });
-      } else {
-        // Re-throw if it's a different error
-        throw error;
-      }
+    // DEBUG: Log what fields are actually present
+    if (reservations.length > 0) {
+      const sample = reservations[0];
+      const sampleJson = sample.toJSON ? sample.toJSON() : sample;
+      console.log('🔍 Sample reservation fields (all):', Object.keys(sampleJson));
+      console.log('🔍 Sample modificationStatus:', sampleJson.modificationStatus);
+      console.log('🔍 Sample proposedPartyTimeStart:', sampleJson.proposedPartyTimeStart);
     }
 
     console.log('✅ Found reservations:', reservations.length);
