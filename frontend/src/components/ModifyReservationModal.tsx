@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import SimpleTimeSelector from './SimpleTimeSelector';
 import PaymentConfirmationModal from './PaymentConfirmationModal';
@@ -55,54 +55,8 @@ const ModifyReservationModal: React.FC<ModifyReservationModalProps> = ({
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [modifiedReservation, setModifiedReservation] = useState<any>(null);
 
-  // Initialize form from reservation when modal opens
-  useEffect(() => {
-    if (isOpen && reservation) {
-      // Parse date from ISO string
-      const dateObj = new Date(reservation.date);
-      const year = dateObj.getFullYear();
-      const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-      const day = String(dateObj.getDate()).padStart(2, '0');
-      setReservationDate(`${year}-${month}-${day}`);
-      
-      // Parse times from ISO strings
-      const startTime = new Date(reservation.partyTimeStart);
-      const endTime = new Date(reservation.partyTimeEnd);
-      
-      const startHours = String(startTime.getHours()).padStart(2, '0');
-      const startMinutes = String(startTime.getMinutes()).padStart(2, '0');
-      setReservationTimeStart(`${startHours}:${startMinutes}`);
-      
-      const endHours = String(endTime.getHours()).padStart(2, '0');
-      const endMinutes = String(endTime.getMinutes()).padStart(2, '0');
-      setReservationTimeEnd(`${endHours}:${endMinutes}`);
-      
-      setGuestCount(reservation.guestCount);
-      setEventName(reservation.eventName || '');
-      setIsPrivate(reservation.isPrivate || false);
-      setSpecialRequirements(reservation.specialRequirements || '');
-      
-      // Reset fee calculation
-      setModificationFee(null);
-      setModificationFeeReason('');
-      
-      // Calculate initial fee
-      calculateModificationFee();
-    }
-  }, [isOpen, reservation]);
-
-  // Calculate modification fee when relevant fields change
-  useEffect(() => {
-    if (isOpen && reservation && reservationDate) {
-      const timeoutId = setTimeout(() => {
-        calculateModificationFee();
-      }, 500); // Debounce by 500ms
-      
-      return () => clearTimeout(timeoutId);
-    }
-  }, [reservationDate, isOpen]);
-
-  const calculateModificationFee = async () => {
+  // Memoize calculateModificationFee to avoid dependency issues
+  const calculateModificationFee = useCallback(async () => {
     if (!reservation || !reservationDate) return;
     
     try {
