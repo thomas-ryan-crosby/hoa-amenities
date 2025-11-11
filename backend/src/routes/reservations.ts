@@ -1351,12 +1351,23 @@ router.get('/admin/damage-reviews', authenticateToken, async (req: any, res) => 
     }
 
     // Find all reservations with pending damage assessments for current community
+    // Use explicit attributes to avoid modification fields
     const reservations = await Reservation.findAll({
       where: {
         communityId,
         damageAssessmentPending: true,
         damageAssessmentStatus: 'PENDING'
       },
+      attributes: [
+        'id', 'date', 'setupTimeStart', 'setupTimeEnd', 'partyTimeStart', 'partyTimeEnd',
+        'guestCount', 'specialRequirements', 'status', 'totalFee', 'totalDeposit',
+        'eventName', 'isPrivate', 'communityId', 'amenityId', 'userId',
+        'damageAssessed', 'damageAssessmentPending', 'damageAssessmentStatus',
+        'damageCharge', 'damageChargeAmount', 'damageChargeAdjusted',
+        'damageDescription', 'damageNotes', 'adminDamageNotes',
+        'damageAssessedBy', 'damageReviewedBy', 'damageAssessedAt', 'damageReviewedAt'
+        // Explicitly exclude modification fields
+      ],
       include: [
         {
           model: Amenity,
