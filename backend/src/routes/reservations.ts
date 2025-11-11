@@ -318,6 +318,8 @@ router.post('/', authenticateToken, async (req: any, res) => {
     const totalDeposit = amenity.deposit;
 
     // Create reservation
+    // Use fields option to explicitly specify which fields to include
+    // This prevents Sequelize from trying to set default values for modification fields that don't exist
     const reservation = await Reservation.create({
       userId,
       amenityId,
@@ -334,6 +336,13 @@ router.post('/', authenticateToken, async (req: any, res) => {
       status: 'NEW',
       totalFee,
       totalDeposit
+    }, {
+      fields: [
+        'userId', 'amenityId', 'communityId', 'date', 'setupTimeStart', 'setupTimeEnd',
+        'partyTimeStart', 'partyTimeEnd', 'guestCount', 'eventName', 'isPrivate',
+        'specialRequirements', 'status', 'totalFee', 'totalDeposit'
+        // Explicitly exclude modification fields to avoid "column does not exist" errors
+      ]
     });
 
     // Fetch the created reservation with amenity details
