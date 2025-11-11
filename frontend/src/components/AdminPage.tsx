@@ -1117,28 +1117,29 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
               )}
 
               {/* Fee Structure Configuration */}
-              <div style={{ marginBottom: '1rem', padding: '1rem', backgroundColor: '#f0f9ff', border: '1px solid #3b82f6', borderRadius: '0.375rem' }}>
-                <h3 style={{ fontSize: '1rem', fontWeight: 600, color: '#1e40af', marginBottom: '1rem' }}>
-                  Fee Structure Configuration
-                </h3>
-                
-                <div style={{ marginBottom: '1rem' }}>
-                  <ToggleSwitch
-                    checked={formData.cancellationFeeEnabled}
-                    onChange={(checked) => setFormData({ ...formData, cancellationFeeEnabled: checked })}
-                    label="Enable Cancellation Fees"
-                  />
-                </div>
+              {(formData.cancellationFeeEnabled || formData.modificationFeeEnabled || editingAmenity) && (
+                <div style={{ marginBottom: '1rem', padding: '1rem', backgroundColor: '#f0f9ff', border: '1px solid #3b82f6', borderRadius: '0.375rem' }}>
+                  <h3 style={{ fontSize: '1rem', fontWeight: 600, color: '#1e40af', marginBottom: '1rem' }}>
+                    Fee Structure Configuration
+                  </h3>
+                  
+                  <div style={{ marginBottom: '1rem' }}>
+                    <ToggleSwitch
+                      checked={formData.cancellationFeeEnabled}
+                      onChange={(checked) => setFormData({ ...formData, cancellationFeeEnabled: checked })}
+                      label="Enable Cancellation Fees"
+                    />
+                  </div>
 
-                <div style={{ marginBottom: '1rem' }}>
-                  <ToggleSwitch
-                    checked={formData.modificationFeeEnabled}
-                    onChange={(checked) => setFormData({ ...formData, modificationFeeEnabled: checked })}
-                    label="Enable Modification Fees"
-                  />
-                </div>
+                  <div style={{ marginBottom: '1rem' }}>
+                    <ToggleSwitch
+                      checked={formData.modificationFeeEnabled}
+                      onChange={(checked) => setFormData({ ...formData, modificationFeeEnabled: checked })}
+                      label="Enable Modification Fees"
+                    />
+                  </div>
 
-                {formData.cancellationFeeEnabled && (
+                  {formData.cancellationFeeEnabled && (
                   <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: 'white', borderRadius: '0.375rem', border: '1px solid #e5e7eb' }}>
                     <h4 style={{ fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.75rem', color: '#374151' }}>
                       Cancellation Fee Structure:
@@ -1198,14 +1199,15 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                   </div>
                 )}
                 
-                {!formData.cancellationFeeEnabled && !formData.modificationFeeEnabled && (
-                  <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: '#f9fafb', borderRadius: '0.375rem', border: '1px solid #e5e7eb', textAlign: 'center' }}>
-                    <p style={{ fontSize: '0.875rem', color: '#6b7280', margin: 0, fontStyle: 'italic' }}>
-                      Fee structures are disabled. Enable cancellation or modification fees above to configure fee structures.
-                    </p>
-                  </div>
-                )}
-              </div>
+                  {!formData.cancellationFeeEnabled && !formData.modificationFeeEnabled && (
+                    <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: '#f9fafb', borderRadius: '0.375rem', border: '1px solid #e5e7eb', textAlign: 'center' }}>
+                      <p style={{ fontSize: '0.875rem', color: '#6b7280', margin: 0, fontStyle: 'italic' }}>
+                        Fee structures are disabled. Enable cancellation or modification fees above to configure fee structures.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
 
               <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
                 <button
