@@ -136,14 +136,13 @@ const ModifyReservationModal: React.FC<ModifyReservationModalProps> = ({
       // Mark as initialized
       initializedRef.current = reservationKey;
       
-      // Calculate initial fee - call directly without including in dependencies
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+      // Calculate initial fee
       calculateModificationFee();
     } else if (!isOpen) {
       // Reset when modal closes
       initializedRef.current = null;
     }
-  }, [isOpen, reservation?.id]); // Only depend on isOpen and reservation.id
+  }, [isOpen, reservation, calculateModificationFee]); // Include all dependencies
 
   // Calculate modification fee when relevant fields change
   useEffect(() => {
