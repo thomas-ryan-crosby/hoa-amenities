@@ -1506,28 +1506,65 @@ router.put('/:id/accept-modification', authenticateToken, async (req: any, res) 
 
     // Apply the modification: update reservation with proposed values using raw SQL
     // At this point, we've already verified proposedPartyTimeStart and proposedPartyTimeEnd are not null
-    await sequelize.query(`
-      UPDATE reservations
-      SET date = :proposedDate,
-          "partyTimeStart" = :proposedStart,
-          "partyTimeEnd" = :proposedEnd,
-          "setupTimeStart" = :proposedStart,
-          "setupTimeEnd" = :proposedStart,
-          modificationstatus = 'ACCEPTED',
-          proposeddate = NULL,
-          proposedpartytimestart = NULL,
-          proposedpartytimeend = NULL,
-          modificationreason = NULL
-      WHERE id = :reservationId
-    `, {
-      replacements: {
-        proposedDate: proposedDate,
-        proposedStart: proposedStart.toISOString(),
-        proposedEnd: proposedEnd.toISOString(),
-        reservationId: id
-      },
-      type: QueryTypes.UPDATE
-    });
+    // Try both quoted (camelCase) and unquoted (lowercase) column names to handle different table schemas
+    try {
+      await sequelize.query(`
+        UPDATE reservations
+        SET date = :proposedDate,
+            "partyTimeStart" = :proposedStart,
+            "partyTimeEnd" = :proposedEnd,
+            "setupTimeStart" = :proposedStart,
+            "setupTimeEnd" = :proposedStart,
+            modificationstatus = 'ACCEPTED',
+            proposeddate = NULL,
+            proposedpartytimestart = NULL,
+            proposedpartytimeend = NULL,
+            modificationreason = NULL,
+            modificationproposedby = NULL,
+            modificationproposedat = NULL
+        WHERE id = :reservationId
+      `, {
+        replacements: {
+          proposedDate: proposedDate,
+          proposedStart: proposedStart.toISOString(),
+          proposedEnd: proposedEnd.toISOString(),
+          reservationId: id
+        },
+        type: QueryTypes.UPDATE
+      });
+    } catch (updateError: any) {
+      // If quoted columns fail, try lowercase (unquoted) column names
+      const errorMessage = String(updateError.message || '').toLowerCase();
+      if (errorMessage.includes('column') && (errorMessage.includes('does not exist') || errorMessage.includes('undefined'))) {
+        console.log('⚠️ Quoted column names failed, trying lowercase...');
+        await sequelize.query(`
+          UPDATE reservations
+          SET date = :proposedDate,
+              partytimestart = :proposedStart,
+              partytimeend = :proposedEnd,
+              setuptimestart = :proposedStart,
+              setuptimeend = :proposedStart,
+              modificationstatus = 'ACCEPTED',
+              proposeddate = NULL,
+              proposedpartytimestart = NULL,
+              proposedpartytimeend = NULL,
+              modificationreason = NULL,
+              modificationproposedby = NULL,
+              modificationproposedat = NULL
+          WHERE id = :reservationId
+        `, {
+          replacements: {
+            proposedDate: proposedDate,
+            proposedStart: proposedStart.toISOString(),
+            proposedEnd: proposedEnd.toISOString(),
+            reservationId: id
+          },
+          type: QueryTypes.UPDATE
+        });
+      } else {
+        throw updateError;
+      }
+    }
 
     // Fetch updated reservation to return
     const updatedReservation = await Reservation.findOne({
