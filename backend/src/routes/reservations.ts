@@ -616,7 +616,7 @@ router.put('/:id/modify', authenticateToken, async (req: any, res) => {
         {
           model: Amenity,
           as: 'amenity',
-          attributes: ['id', 'name', 'reservationFee', 'deposit']
+          attributes: ['id', 'name', 'reservationFee', 'deposit', 'modificationFeeEnabled', 'modificationFeeStructure']
         }
       ]
     });
@@ -632,10 +632,14 @@ router.put('/:id/modify', authenticateToken, async (req: any, res) => {
       });
     }
 
-    // Calculate modification fee
+    // Calculate modification fee using amenity fee structure
+    // TODO: Track modification count to determine if this is first change or additional
+    // For now, assume it's the first change
     const modificationFee = calculateModificationFee(
       new Date(reservation.date),
-      parseFloat(String(reservation.totalFee))
+      parseFloat(String(reservation.totalFee)),
+      reservation.amenity,
+      true // isFirstChange - TODO: implement modification count tracking
     );
 
     // Update reservation
