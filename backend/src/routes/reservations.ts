@@ -689,7 +689,7 @@ router.delete('/:id', authenticateToken, async (req: any, res) => {
         {
           model: Amenity,
           as: 'amenity',
-          attributes: ['id', 'name', 'reservationFee', 'deposit']
+          attributes: ['id', 'name', 'reservationFee', 'deposit', 'cancellationFeeEnabled', 'cancellationFeeStructure']
         }
       ]
     });
