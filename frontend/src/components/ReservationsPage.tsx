@@ -353,15 +353,6 @@ const ReservationsPage: React.FC = () => {
             {reservations.filter(r => r.status === 'FULLY_APPROVED').length}
           </div>
         </div>
-        <div style={{ backgroundColor: 'white', padding: isMobile ? '1rem' : '20px', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-          <h3 style={{ margin: '0 0 10px 0', color: '#6b7280', fontSize: isMobile ? '0.95rem' : '1rem' }}>Total Cost</h3>
-          <div style={{ fontSize: isMobile ? '1.75rem' : '2rem', fontWeight: 600, color: '#355B45', fontFamily: 'Inter, sans-serif' }}>
-            ${reservations.reduce((sum, r) => sum + parseFloat(String(r.totalFee)), 0).toFixed(2)}
-          </div>
-    <p style={{ margin: '8px 0 0 0', fontSize: isMobile ? '0.8rem' : '0.875rem', color: '#6b7280', fontStyle: 'italic' }}>
-      Damage fees will be assessed after conclusion of the party. If damages are noted, you are responsible for the amount of the repairs.
-    </p>
-        </div>
       </div>
 
       {/* Reservations List */}
