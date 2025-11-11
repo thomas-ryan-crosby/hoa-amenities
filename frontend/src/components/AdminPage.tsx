@@ -594,19 +594,91 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                 <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
                   Calendar Group
                 </label>
-                <input
-                  type="text"
-                  value={formData.calendarGroup}
-                  onChange={(e) => setFormData({ ...formData, calendarGroup: e.target.value })}
-                  placeholder="e.g., Pool + Clubroom, Tennis Courts, Ballfield"
-                  style={{
-                    width: '100%',
-                    padding: '0.5rem',
-                    border: '1px solid #d1d5db',
-                    borderRadius: '0.375rem',
-                    fontSize: '1rem'
-                  }}
-                />
+                {formData.calendarGroup === '__NEW__' ? (
+                  <>
+                    <input
+                      type="text"
+                      value={formData.newCalendarGroup || ''}
+                      onChange={(e) => setFormData({ ...formData, newCalendarGroup: e.target.value })}
+                      placeholder="Enter new calendar group name"
+                      style={{
+                        width: '100%',
+                        padding: '0.5rem',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '0.375rem',
+                        fontSize: '1rem',
+                        marginBottom: '0.5rem'
+                      }}
+                      autoFocus
+                    />
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (formData.newCalendarGroup && formData.newCalendarGroup.trim()) {
+                            setFormData({ ...formData, calendarGroup: formData.newCalendarGroup.trim(), newCalendarGroup: '' });
+                          } else {
+                            setFormData({ ...formData, calendarGroup: '', newCalendarGroup: '' });
+                          }
+                        }}
+                        style={{
+                          padding: '0.5rem 1rem',
+                          backgroundColor: '#10b981',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '0.375rem',
+                          cursor: 'pointer',
+                          fontSize: '0.875rem',
+                          fontWeight: 500
+                        }}
+                      >
+                        Use This Name
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setFormData({ ...formData, calendarGroup: '', newCalendarGroup: '' })}
+                        style={{
+                          padding: '0.5rem 1rem',
+                          backgroundColor: '#6b7280',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '0.375rem',
+                          cursor: 'pointer',
+                          fontSize: '0.875rem',
+                          fontWeight: 500
+                        }}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <select
+                    value={formData.calendarGroup || ''}
+                    onChange={(e) => {
+                      if (e.target.value === '__NEW__') {
+                        setFormData({ ...formData, calendarGroup: '__NEW__', newCalendarGroup: '' });
+                      } else {
+                        setFormData({ ...formData, calendarGroup: e.target.value || '' });
+                      }
+                    }}
+                    style={{
+                      width: '100%',
+                      padding: '0.5rem',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '0.375rem',
+                      fontSize: '1rem'
+                    }}
+                  >
+                    <option value="">Default Calendar (no group)</option>
+                    {Array.from(new Set(amenities.map(a => a.calendarGroup).filter(Boolean))).map(group => (
+                      <option key={group as string} value={group as string}>{group}</option>
+                    ))}
+                    <option value="__NEW__" style={{ fontWeight: 'bold', borderTop: '1px solid #d1d5db', paddingTop: '0.5rem' }}>
+                      + ADD NEW
+                    </option>
+                  </select>
+                )}
                 <p style={{ fontSize: '0.875rem', color: '#6b7280', marginTop: '0.25rem' }}>
                   Amenities with the same calendar group will appear on the same calendar view. Leave empty for default calendar.
                 </p>
