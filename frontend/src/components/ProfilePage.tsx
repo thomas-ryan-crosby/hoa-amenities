@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
+import ToggleSwitch from './ToggleSwitch';
 
 interface Community {
   id: number;
@@ -19,7 +20,35 @@ interface UserProfile {
   address?: string;
   role: 'resident' | 'janitorial' | 'admin';
   isActive: boolean;
+  notificationPreferences?: Record<string, boolean>;
   createdAt: string;
+}
+
+interface NotificationPreferences {
+  // Reservation notifications
+  reservationCreated?: boolean;
+  reservationApproved?: boolean;
+  reservationRejected?: boolean;
+  reservationCancelled?: boolean;
+  reservationCompleted?: boolean;
+  // Modification notifications
+  modificationProposed?: boolean;
+  modificationAccepted?: boolean;
+  modificationRejected?: boolean;
+  reservationModified?: boolean;
+  // Reminder notifications
+  upcomingReservationReminder24h?: boolean;
+  upcomingReservationReminder7d?: boolean;
+  // Approval workflow (staff)
+  newReservationRequiresApproval?: boolean;
+  reservationPendingAdminApproval?: boolean;
+  reservationApprovedStaff?: boolean;
+  // Damage assessment
+  damageAssessmentRequired?: boolean;
+  damageAssessmentReviewed?: boolean;
+  // System notifications
+  accountActivity?: boolean;
+  systemAnnouncements?: boolean;
 }
 
 const ProfilePage: React.FC = () => {
@@ -48,10 +77,62 @@ const ProfilePage: React.FC = () => {
     confirmPassword: ''
   });
 
+  // Notification preferences states
+  const [notificationPreferences, setNotificationPreferences] = useState<NotificationPreferences>({});
+  const [savingNotifications, setSavingNotifications] = useState(false);
+
   useEffect(() => {
     fetchProfile();
     fetchCommunities();
+    fetchNotificationPreferences();
   }, []);
+
+  const fetchNotificationPreferences = async () => {
+    try {
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      const token = localStorage.getItem('token');
+      
+      const response = await axios.get(`${apiUrl}/api/auth/notification-preferences`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      setNotificationPreferences(response.data.preferences || {});
+    } catch (error: any) {
+      console.error('Error fetching notification preferences:', error);
+    }
+  };
+
+  const handleNotificationPreferenceChange = async (key: string, value: boolean) => {
+    const updatedPreferences = {
+      ...notificationPreferences,
+      [key]: value
+    };
+    
+    setNotificationPreferences(updatedPreferences);
+
+    // Save immediately
+    try {
+      setSavingNotifications(true);
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      const token = localStorage.getItem('token');
+      
+      await axios.put(`${apiUrl}/api/auth/notification-preferences`, {
+        preferences: updatedPreferences
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+    } catch (error: any) {
+      console.error('Error saving notification preferences:', error);
+      // Revert on error
+      setNotificationPreferences(notificationPreferences);
+    } finally {
+      setSavingNotifications(false);
+    }
+  };
 
   const fetchCommunities = async () => {
     try {

@@ -17,6 +17,7 @@ export interface UserAttributes {
   passwordResetToken?: string | null;
   passwordResetTokenExpires?: Date | null;
   passwordResetRequestedAt?: Date | null;
+  notificationPreferences?: Record<string, boolean> | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -114,6 +115,11 @@ User.init(
     passwordResetRequestedAt: {
       type: DataTypes.DATE,
       allowNull: true,
+    },
+    notificationPreferences: {
+      type: DataTypes.JSONB,
+      allowNull: true,
+      defaultValue: {},
     },
     createdAt: {
       type: DataTypes.DATE,

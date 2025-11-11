@@ -717,6 +717,9 @@ router.get('/profile', authenticateToken, async (req: any, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
+    // Get notification preferences, defaulting to empty object if null
+    const notificationPreferences = user.notificationPreferences || {};
+
     return res.json({
       user: {
         id: user.id,
@@ -726,6 +729,7 @@ router.get('/profile', authenticateToken, async (req: any, res) => {
         phone: user.phone,
         address: user.address,
         isActive: user.isActive,
+        notificationPreferences,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt
       }
@@ -755,6 +759,9 @@ router.put('/profile', authenticateToken, async (req: any, res) => {
     if (address !== undefined) user.address = address && address.trim() ? address.trim() : null;
 
     await user.save();
+
+    // Get notification preferences for response
+    const notificationPreferences = user.notificationPreferences || {};
 
     return res.json({
       message: 'Profile updated successfully',
