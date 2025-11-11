@@ -530,92 +530,6 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
               {editingAmenity ? 'Edit Amenity' : 'Create Amenity'}
             </h2>
             
-            {/* Approval change warning (before save) */}
-            {approvalChangeWarning && approvalChangeWarning.show && (
-              <div style={{
-                backgroundColor: '#fef3c7',
-                border: '2px solid #f59e0b',
-                color: '#92400e',
-                padding: '1rem',
-                borderRadius: '0.5rem',
-                marginBottom: '1.5rem',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '1rem'
-              }}>
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
-                  <span style={{ fontSize: '1.25rem' }}>⚠️</span>
-                  <div style={{ flex: 1 }}>
-                    <strong style={{ fontSize: '1rem', display: 'block', marginBottom: '0.5rem' }}>Approval Requirement Change</strong>
-                    <p style={{ margin: 0, fontSize: '0.875rem' }}>
-                      {approvalChangeWarning.message}
-                    </p>
-                    <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.75rem', fontStyle: 'italic' }}>
-                      {approvalChangeWarning.message.includes('Removing') 
-                        ? 'Note: Any outstanding non-approved reservations will be automatically approved when approval requirements are removed.'
-                        : 'Note: Any fully approved reservations will be moved to unconfirmed status when approval requirements are enabled.'}
-                    </p>
-                  </div>
-                </div>
-                <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      // Revert to original values
-                      setFormData({
-                        ...formData,
-                        janitorialRequired: approvalChangeWarning.originalJanitorial,
-                        approvalRequired: approvalChangeWarning.originalAdmin
-                      });
-                      setApprovalChangeWarning(null);
-                    }}
-                    style={{
-                      padding: '0.5rem 1rem',
-                      backgroundColor: '#f3f4f6',
-                      color: '#374151',
-                      border: 'none',
-                      borderRadius: '0.375rem',
-                      fontSize: '0.875rem',
-                      fontWeight: 600,
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Revert Changes
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      // Proceed with changes - apply the pending change
-                      if (approvalChangeWarning) {
-                        setFormData({
-                          ...formData,
-                          janitorialRequired: approvalChangeWarning.newJanitorial !== undefined 
-                            ? approvalChangeWarning.newJanitorial 
-                            : formData.janitorialRequired,
-                          approvalRequired: approvalChangeWarning.newAdmin !== undefined 
-                            ? approvalChangeWarning.newAdmin 
-                            : formData.approvalRequired
-                        });
-                      }
-                      setApprovalChangeWarning(null);
-                    }}
-                    style={{
-                      padding: '0.5rem 1rem',
-                      backgroundColor: '#355B45',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '0.375rem',
-                      fontSize: '0.875rem',
-                      fontWeight: 600,
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Proceed
-                  </button>
-                </div>
-              </div>
-            )}
-            
             {/* Auto-approval notification (after save) */}
             {autoApprovalNotification && (
               <div style={{
@@ -1142,6 +1056,92 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                   </p>
                 </div>
               </div>
+
+              {/* Approval change warning (before save) - appears directly below Approval Requirements */}
+              {approvalChangeWarning && approvalChangeWarning.show && (
+                <div style={{
+                  backgroundColor: '#fef3c7',
+                  border: '2px solid #f59e0b',
+                  color: '#92400e',
+                  padding: '1rem',
+                  borderRadius: '0.5rem',
+                  marginBottom: '1.5rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '1rem'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem' }}>
+                    <span style={{ fontSize: '1.25rem' }}>⚠️</span>
+                    <div style={{ flex: 1 }}>
+                      <strong style={{ fontSize: '1rem', display: 'block', marginBottom: '0.5rem' }}>Approval Requirement Change</strong>
+                      <p style={{ margin: 0, fontSize: '0.875rem' }}>
+                        {approvalChangeWarning.message}
+                      </p>
+                      <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.75rem', fontStyle: 'italic' }}>
+                        {approvalChangeWarning.message.includes('Removing') 
+                          ? 'Note: Any outstanding non-approved reservations will be automatically approved when approval requirements are removed.'
+                          : 'Note: Any fully approved reservations will be moved to unconfirmed status when approval requirements are enabled.'}
+                      </p>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        // Revert to original values
+                        setFormData({
+                          ...formData,
+                          janitorialRequired: approvalChangeWarning.originalJanitorial,
+                          approvalRequired: approvalChangeWarning.originalAdmin
+                        });
+                        setApprovalChangeWarning(null);
+                      }}
+                      style={{
+                        padding: '0.5rem 1rem',
+                        backgroundColor: '#f3f4f6',
+                        color: '#374151',
+                        border: 'none',
+                        borderRadius: '0.375rem',
+                        fontSize: '0.875rem',
+                        fontWeight: 600,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Revert Changes
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        // Proceed with changes - apply the pending change
+                        if (approvalChangeWarning) {
+                          setFormData({
+                            ...formData,
+                            janitorialRequired: approvalChangeWarning.newJanitorial !== undefined 
+                              ? approvalChangeWarning.newJanitorial 
+                              : formData.janitorialRequired,
+                            approvalRequired: approvalChangeWarning.newAdmin !== undefined 
+                              ? approvalChangeWarning.newAdmin 
+                              : formData.approvalRequired
+                          });
+                        }
+                        setApprovalChangeWarning(null);
+                      }}
+                      style={{
+                        padding: '0.5rem 1rem',
+                        backgroundColor: '#355B45',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '0.375rem',
+                        fontSize: '0.875rem',
+                        fontWeight: 600,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Proceed
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {/* Fee Structure Configuration */}
               <div style={{ marginBottom: '1rem', padding: '1rem', backgroundColor: '#f0f9ff', border: '1px solid #3b82f6', borderRadius: '0.375rem' }}>
