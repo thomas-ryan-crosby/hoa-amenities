@@ -786,21 +786,13 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
               </div>
 
               <div style={{ marginBottom: '1rem', padding: '1rem', backgroundColor: '#f0f9f4', border: '1px solid #355B45', borderRadius: '0.375rem' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', marginBottom: formData.isPublic ? '1rem' : '0' }}>
-                  <input
-                    type="checkbox"
+                <div style={{ marginBottom: formData.isPublic ? '1rem' : '0' }}>
+                  <ToggleSwitch
                     checked={formData.isPublic}
-                    onChange={(e) => setFormData({ ...formData, isPublic: e.target.checked })}
-                    style={{
-                      width: '20px',
-                      height: '20px',
-                      cursor: 'pointer'
-                    }}
+                    onChange={(checked) => setFormData({ ...formData, isPublic: checked })}
+                    label="Public Amenity (bookable by non-community members)"
                   />
-                  <span style={{ fontWeight: 500, color: '#374151' }}>
-                    Public Amenity (bookable by non-community members)
-                  </span>
-                </label>
+                </div>
                 {formData.isPublic && (
                   <div style={{ marginTop: '1rem', paddingLeft: '1.75rem' }}>
                     <p style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '1rem' }}>
