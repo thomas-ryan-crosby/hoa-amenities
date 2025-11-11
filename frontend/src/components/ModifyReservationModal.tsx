@@ -92,10 +92,11 @@ const ModifyReservationModal: React.FC<ModifyReservationModalProps> = ({
   }, [reservation, reservationDate]);
 
   // Initialize form from reservation when modal opens
+  // Only depend on isOpen and reservation.id to prevent re-initialization
   useEffect(() => {
     if (isOpen && reservation) {
       // Only initialize once per reservation
-      const reservationKey = `${reservation.id}-${isOpen}`;
+      const reservationKey = `${reservation.id}`;
       if (initializedRef.current === reservationKey) {
         return; // Already initialized for this reservation
       }
@@ -135,13 +136,14 @@ const ModifyReservationModal: React.FC<ModifyReservationModalProps> = ({
       // Mark as initialized
       initializedRef.current = reservationKey;
       
-      // Calculate initial fee
+      // Calculate initial fee - call directly without including in dependencies
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       calculateModificationFee();
     } else if (!isOpen) {
       // Reset when modal closes
       initializedRef.current = null;
     }
-  }, [isOpen, reservation, calculateModificationFee]);
+  }, [isOpen, reservation?.id]); // Only depend on isOpen and reservation.id
 
   // Calculate modification fee when relevant fields change
   useEffect(() => {
@@ -352,8 +354,20 @@ const ModifyReservationModal: React.FC<ModifyReservationModalProps> = ({
             </label>
             <input
               type="date"
-              value={reservationDate}
-              onChange={(e) => setReservationDate(e.target.value)}
+              key={`date-${reservation?.id}`}
+              value={reservationDate || ''}
+              onChange={(e) => {
+                const newDate = e.target.value;
+                console.log('Date changed from', reservationDate, 'to', newDate);
+                setReservationDate(newDate);
+              }}
+              onBlur={(e) => {
+                // Ensure date is set on blur as well
+                if (e.target.value && e.target.value !== reservationDate) {
+                  console.log('Date blur - setting to', e.target.value);
+                  setReservationDate(e.target.value);
+                }
+              }}
               min={(() => {
                 const today = new Date();
                 const year = today.getFullYear();
