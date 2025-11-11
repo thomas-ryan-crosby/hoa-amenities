@@ -265,7 +265,9 @@ router.put('/:id', authenticateToken, requireAdmin, async (req: any, res) => {
 
     await amenity.save();
 
-    // If approval requirements were removed, auto-approve existing reservations
+    // IMPORTANT: If approval requirements were removed, auto-approve existing reservations
+    // NOTE: Any outstanding non-approved reservations will be auto-approved if approvals are removed from the amenity.
+    // This ensures that existing reservations don't get stuck in approval workflows when the amenity no longer requires them.
     const { Reservation } = require('../models');
     const { Op } = require('sequelize');
     

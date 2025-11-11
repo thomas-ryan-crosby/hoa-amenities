@@ -322,6 +322,8 @@ router.post('/', authenticateToken, async (req: any, res) => {
     // Determine initial status based on approval requirements
     // If no janitorial approval required, check if admin approval is required
     // If neither is required, go directly to FULLY_APPROVED
+    // NOTE: If an amenity's approval requirements are changed later, existing non-approved reservations
+    // will be automatically approved when the amenity is updated (see amenities.ts PUT /:id endpoint)
     let initialStatus: 'NEW' | 'JANITORIAL_APPROVED' | 'FULLY_APPROVED' = 'NEW';
     if (!amenity.janitorialRequired) {
       // No janitorial approval needed
