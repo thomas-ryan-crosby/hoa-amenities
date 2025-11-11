@@ -609,12 +609,16 @@ router.get('/:id/modify/calculate-fee', authenticateToken, async (req: any, res)
     console.log('💰 Calculating modification fee for reservation:', id);
 
     // Find reservation with explicit attributes to avoid loading non-existent columns
+    // Use col() mapping for modificationCount in case column doesn't exist yet
     const reservation = await Reservation.findOne({
       where: { 
         id: id,
         userId: userId
       },
-      attributes: ['id', 'date', 'totalFee', 'amenityId', 'modificationCount'],
+      attributes: [
+        'id', 'date', 'totalFee', 'amenityId',
+        [col('modificationcount'), 'modificationCount']
+      ],
       include: [
         {
           model: Amenity,
@@ -698,12 +702,16 @@ router.put('/:id/modify', authenticateToken, async (req: any, res) => {
     console.log('📝 Modifying reservation:', id, 'for user:', userId);
 
     // Find reservation with explicit attributes
+    // Use col() mapping for modificationCount in case column doesn't exist yet
     const reservation = await Reservation.findOne({
       where: { 
         id: id,
         userId: userId
       },
-      attributes: ['id', 'date', 'totalFee', 'amenityId', 'modificationCount', 'status', 'communityId'],
+      attributes: [
+        'id', 'date', 'totalFee', 'amenityId', 'status', 'communityId',
+        [col('modificationcount'), 'modificationCount']
+      ],
       include: [
         {
           model: Amenity,
@@ -790,7 +798,20 @@ router.put('/:id/modify', authenticateToken, async (req: any, res) => {
     }
 
     // Always update modificationCount and updatedAt
-    updateFields.push('modificationcount = :newModificationCount');
+    // Check if modificationcount column exists before trying to update it
+    const columnCheck = await sequelize.query(`
+      SELECT column_name 
+      FROM information_schema.columns 
+      WHERE table_schema = 'public' 
+      AND table_name = 'reservations' 
+      AND LOWER(column_name) = 'modificationcount'
+    `, {
+      type: QueryTypes.SELECT
+    }) as any[];
+
+    if (columnCheck.length > 0) {
+      updateFields.push('modificationcount = :newModificationCount');
+    }
     updateFields.push('"updatedAt" = :now');
 
     // Execute raw SQL update
@@ -807,11 +828,13 @@ router.put('/:id/modify', authenticateToken, async (req: any, res) => {
     });
 
     // Fetch updated reservation with details (explicitly exclude modification fields that may not exist)
+    // Use col() mapping for modificationCount in case column doesn't exist yet
     const updatedReservation = await Reservation.findByPk(id, {
       attributes: [
         'id', 'date', 'setupTimeStart', 'setupTimeEnd', 'partyTimeStart', 'partyTimeEnd',
         'guestCount', 'specialRequirements', 'status', 'totalFee', 'totalDeposit',
-        'eventName', 'isPrivate', 'communityId', 'amenityId', 'userId', 'modificationCount'
+        'eventName', 'isPrivate', 'communityId', 'amenityId', 'userId',
+        [col('modificationcount'), 'modificationCount']
       ],
       include: [
         {
