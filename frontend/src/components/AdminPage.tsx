@@ -254,6 +254,7 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
       deposit: '',
       capacity: '50',
       calendarGroup: '',
+      newCalendarGroup: '',
       isPublic: false,
       publicReservationFee: '',
       publicDeposit: '',
