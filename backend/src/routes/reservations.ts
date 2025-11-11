@@ -619,7 +619,7 @@ router.put('/:id/modify', authenticateToken, async (req: any, res) => {
           attributes: ['id', 'name', 'reservationFee', 'deposit', 'modificationFeeEnabled', 'modificationFeeStructure']
         }
       ]
-    });
+    }) as ReservationWithAssociations;
 
     if (!reservation) {
       return res.status(404).json({ message: 'Reservation not found' });
@@ -692,7 +692,7 @@ router.delete('/:id', authenticateToken, async (req: any, res) => {
           attributes: ['id', 'name', 'reservationFee', 'deposit', 'cancellationFeeEnabled', 'cancellationFeeStructure']
         }
       ]
-    });
+    }) as ReservationWithAssociations;
 
     if (!reservation) {
       return res.status(404).json({ message: 'Reservation not found' });

@@ -22,6 +22,19 @@ export async function seedDatabase() {
       console.log('✅ Created sanctuary community for seeding');
     }
 
+    // Default fee structures (suggested premium HOA structure)
+    const defaultCancellationFeeStructure = JSON.stringify({
+      cancelOver14Days: { fee: 0, type: 'refund' },
+      cancel7To14Days: { fee: 50, type: 'fixed' },
+      cancelUnder7Days: { fee: 0, type: 'full_fee' },
+      noShow: { fee: 0, type: 'full_fee' }
+    });
+    
+    const defaultModificationFeeStructure = JSON.stringify({
+      firstChangeOver7Days: { fee: 0, type: 'free' },
+      additionalChange: { fee: 25, type: 'fixed' }
+    });
+
     // Create amenities (or find existing) - include communityId
     const [clubroom, clubroomCreated] = await Amenity.findOrCreate({
       where: { name: 'Clubroom', communityId: sanctuaryCommunity.id },
@@ -40,6 +53,10 @@ export async function seedDatabase() {
         displayColor: '#355B45',
         janitorialRequired: true,
         approvalRequired: true,
+        cancellationFeeEnabled: true,
+        cancellationFeeStructure: defaultCancellationFeeStructure,
+        modificationFeeEnabled: true,
+        modificationFeeStructure: defaultModificationFeeStructure,
         isActive: true
       }
     });
@@ -61,6 +78,10 @@ export async function seedDatabase() {
         displayColor: '#355B45',
         janitorialRequired: true,
         approvalRequired: true,
+        cancellationFeeEnabled: true,
+        cancellationFeeStructure: defaultCancellationFeeStructure,
+        modificationFeeEnabled: true,
+        modificationFeeStructure: defaultModificationFeeStructure,
         isActive: true
       }
     });
@@ -82,6 +103,10 @@ export async function seedDatabase() {
         displayColor: '#355B45',
         janitorialRequired: true,
         approvalRequired: true,
+        cancellationFeeEnabled: true,
+        cancellationFeeStructure: defaultCancellationFeeStructure,
+        modificationFeeEnabled: true,
+        modificationFeeStructure: defaultModificationFeeStructure,
         isActive: true
       }
     });
