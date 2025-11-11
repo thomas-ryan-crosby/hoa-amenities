@@ -150,8 +150,6 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
         // Check if any reservations were auto-approved
         if (response.data.autoApprovedCount > 0 && response.data.autoApprovedMessage) {
           setAutoApprovalNotification(response.data.autoApprovedMessage);
-          // Clear notification after 10 seconds
-          setTimeout(() => setAutoApprovalNotification(null), 10000);
         }
       } else {
         // Create new
@@ -162,8 +160,13 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
         });
       }
 
-      setShowModal(false);
-      setEditingAmenity(null);
+      // Don't close modal if there's an auto-approval notification - let user see it and manually close
+      if (response.data?.autoApprovedCount > 0 && response.data?.autoApprovedMessage) {
+        // Keep modal open to show notification
+      } else {
+        setShowModal(false);
+        setEditingAmenity(null);
+      }
       setFormData({
         name: '',
         description: '',
