@@ -1472,7 +1472,10 @@ router.put('/:id/accept-modification', authenticateToken, async (req: any, res) 
     // Store in variables with type assertions after null check
     const proposedStart: Date = reservation.proposedPartyTimeStart as Date;
     const proposedEnd: Date = reservation.proposedPartyTimeEnd as Date;
-    const proposedDate = reservation.proposedDate || reservation.date;
+    // proposedDate should be a Date object or string - format it properly for PostgreSQL
+    const proposedDate = reservation.proposedDate 
+      ? (reservation.proposedDate instanceof Date ? reservation.proposedDate.toISOString().split('T')[0] : String(reservation.proposedDate))
+      : (reservation.date instanceof Date ? reservation.date.toISOString().split('T')[0] : String(reservation.date));
 
     const conflictingReservation = await Reservation.findOne({
       where: {
