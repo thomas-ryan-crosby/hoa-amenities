@@ -1535,32 +1535,50 @@ router.put('/:id/accept-modification', authenticateToken, async (req: any, res) 
     } catch (updateError: any) {
       // If quoted columns fail, try lowercase (unquoted) column names
       const errorMessage = String(updateError.message || '').toLowerCase();
-      if (errorMessage.includes('column') && (errorMessage.includes('does not exist') || errorMessage.includes('undefined'))) {
+      const originalError = updateError.original || updateError;
+      const pgErrorCode = originalError.code || '';
+      
+      console.error('❌ First UPDATE attempt failed:', {
+        message: updateError.message,
+        code: pgErrorCode,
+        original: originalError.message
+      });
+      
+      if (errorMessage.includes('column') && (errorMessage.includes('does not exist') || errorMessage.includes('undefined')) || pgErrorCode === '42703') {
         console.log('⚠️ Quoted column names failed, trying lowercase...');
-        await sequelize.query(`
-          UPDATE reservations
-          SET date = :proposedDate,
-              partytimestart = :proposedStart,
-              partytimeend = :proposedEnd,
-              setuptimestart = :proposedStart,
-              setuptimeend = :proposedStart,
-              modificationstatus = 'ACCEPTED',
-              proposeddate = NULL,
-              proposedpartytimestart = NULL,
-              proposedpartytimeend = NULL,
-              modificationreason = NULL,
-              modificationproposedby = NULL,
-              modificationproposedat = NULL
-          WHERE id = :reservationId
-        `, {
-          replacements: {
-            proposedDate: proposedDate,
-            proposedStart: proposedStart.toISOString(),
-            proposedEnd: proposedEnd.toISOString(),
-            reservationId: id
-          },
-          type: QueryTypes.UPDATE
-        });
+        try {
+          await sequelize.query(`
+            UPDATE reservations
+            SET date = :proposedDate,
+                partytimestart = :proposedStart,
+                partytimeend = :proposedEnd,
+                setuptimestart = :proposedStart,
+                setuptimeend = :proposedStart,
+                modificationstatus = 'ACCEPTED',
+                proposeddate = NULL,
+                proposedpartytimestart = NULL,
+                proposedpartytimeend = NULL,
+                modificationreason = NULL,
+                modificationproposedby = NULL,
+                modificationproposedat = NULL
+            WHERE id = :reservationId
+          `, {
+            replacements: {
+              proposedDate: proposedDate,
+              proposedStart: proposedStart.toISOString(),
+              proposedEnd: proposedEnd.toISOString(),
+              reservationId: id
+            },
+            type: QueryTypes.UPDATE
+          });
+        } catch (fallbackError: any) {
+          console.error('❌ Fallback UPDATE also failed:', {
+            message: fallbackError.message,
+            code: fallbackError.original?.code || '',
+            original: fallbackError.original?.message || ''
+          });
+          throw fallbackError;
+        }
       } else {
         throw updateError;
       }
@@ -1594,10 +1612,18 @@ router.put('/:id/accept-modification', authenticateToken, async (req: any, res) 
   } catch (error: any) {
     console.error('❌ Error accepting modification:', error);
     console.error('❌ Error details:', error.message);
+    console.error('❌ Error original:', error.original);
     console.error('❌ Error stack:', error.stack);
+    
+    const originalError = error.original || error;
+    const errorMessage = originalError.message || error.message || 'Unknown error';
+    const errorCode = originalError.code || error.code || 'UNKNOWN';
+    
     return res.status(500).json({ 
       message: 'Internal server error',
-      details: error.message || 'Unknown error'
+      details: errorMessage,
+      errorCode: errorCode,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
 });
