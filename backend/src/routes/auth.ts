@@ -825,4 +825,99 @@ router.put('/change-password', authenticateToken, async (req: any, res) => {
   }
 });
 
+// Helper function to get default notification preferences based on role
+function getDefaultNotificationPreferences(role: 'resident' | 'janitorial' | 'admin'): Record<string, boolean> {
+  const defaults: Record<string, boolean> = {
+    // System notifications (always on)
+    accountActivity: true,
+    systemAnnouncements: true,
+  };
+
+  if (role === 'resident') {
+    // Resident defaults
+    defaults.reservationCreated = true;
+    defaults.reservationApproved = true;
+    defaults.reservationRejected = true;
+    defaults.reservationCancelled = true;
+    defaults.modificationProposed = true;
+    defaults.modificationAccepted = true;
+    defaults.modificationRejected = true;
+    defaults.reservationModified = true;
+    defaults.upcomingReservationReminder24h = true;
+    defaults.damageAssessmentReviewed = true;
+    defaults.reservationCompleted = false;
+    defaults.upcomingReservationReminder7d = false;
+  } else if (role === 'janitorial') {
+    // Janitorial defaults
+    defaults.newReservationRequiresApproval = true;
+    defaults.damageAssessmentRequired = true;
+    defaults.reservationApprovedStaff = false;
+  } else if (role === 'admin') {
+    // Admin defaults
+    defaults.newReservationRequiresApproval = true;
+    defaults.reservationPendingAdminApproval = true;
+    defaults.damageAssessmentRequired = true;
+    defaults.reservationApprovedStaff = false;
+  }
+
+  return defaults;
+}
+
+// GET /api/auth/notification-preferences - Get user notification preferences
+router.get('/notification-preferences', authenticateToken, async (req: any, res) => {
+  try {
+    const userId = req.user.id;
+    const user = await User.findByPk(userId, {
+      attributes: ['id', 'role', 'notificationPreferences']
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // If user has no preferences set, return defaults based on role
+    const preferences = user.notificationPreferences || getDefaultNotificationPreferences(user.role);
+
+    return res.json({
+      preferences,
+      role: user.role
+    });
+  } catch (error: any) {
+    console.error('Error fetching notification preferences:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// PUT /api/auth/notification-preferences - Update user notification preferences
+router.put('/notification-preferences', authenticateToken, async (req: any, res) => {
+  try {
+    const userId = req.user.id;
+    const { preferences } = req.body;
+
+    if (!preferences || typeof preferences !== 'object') {
+      return res.status(400).json({ message: 'Invalid preferences format' });
+    }
+
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Merge with existing preferences (don't overwrite, just update)
+    const currentPreferences = user.notificationPreferences || {};
+    const updatedPreferences = { ...currentPreferences, ...preferences };
+
+    user.notificationPreferences = updatedPreferences;
+    await user.save();
+
+    return res.json({
+      message: 'Notification preferences updated successfully',
+      preferences: updatedPreferences
+    });
+  } catch (error: any) {
+    console.error('Error updating notification preferences:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 export default router;
