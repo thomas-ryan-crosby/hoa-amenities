@@ -32,6 +32,8 @@ interface Amenity {
   displayColor?: string;
   janitorialRequired?: boolean;
   approvalRequired?: boolean;
+  cancellationFeeEnabled?: boolean;
+  modificationFeeEnabled?: boolean;
   isActive: boolean;
 }
 
