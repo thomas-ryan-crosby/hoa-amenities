@@ -85,7 +85,12 @@ router.get('/:id', authenticateToken, async (req: any, res) => {
 router.post('/', authenticateToken, requireAdmin, async (req: any, res) => {
   try {
     const communityId = req.user.currentCommunityId;
-    const { name, description, reservationFee, deposit, capacity, calendarGroup, isPublic, publicReservationFee, publicDeposit, daysOfOperation, hoursOfOperation, displayColor, janitorialRequired, approvalRequired } = req.body;
+    const { 
+      name, description, reservationFee, deposit, capacity, calendarGroup, isPublic, 
+      publicReservationFee, publicDeposit, daysOfOperation, hoursOfOperation, displayColor, 
+      janitorialRequired, approvalRequired,
+      cancellationFeeEnabled, modificationFeeEnabled
+    } = req.body;
 
     if (!name || reservationFee === undefined || deposit === undefined || !capacity) {
       return res.status(400).json({ message: 'Name, reservation fee, deposit, and capacity are required' });
@@ -111,6 +116,19 @@ router.post('/', authenticateToken, requireAdmin, async (req: any, res) => {
       return res.status(403).json({ message: 'No community selected' });
     }
 
+      // Default fee structures (suggested premium HOA structure)
+      const defaultCancellationFeeStructure = JSON.stringify({
+        cancelOver14Days: { fee: 0, type: 'refund' },
+        cancel7To14Days: { fee: 50, type: 'fixed' },
+        cancelUnder7Days: { fee: 0, type: 'full_fee' },
+        noShow: { fee: 0, type: 'full_fee' }
+      });
+      
+      const defaultModificationFeeStructure = JSON.stringify({
+        firstChangeOver7Days: { fee: 0, type: 'free' },
+        additionalChange: { fee: 25, type: 'fixed' }
+      });
+
       const amenity = await Amenity.create({
         name,
         description: description || null,
@@ -127,6 +145,10 @@ router.post('/', authenticateToken, requireAdmin, async (req: any, res) => {
         displayColor: displayColor || '#355B45',
         janitorialRequired: janitorialRequired !== undefined ? janitorialRequired === true : true,
         approvalRequired: approvalRequired !== undefined ? approvalRequired === true : true,
+        cancellationFeeEnabled: cancellationFeeEnabled !== undefined ? cancellationFeeEnabled === true : true,
+        cancellationFeeStructure: defaultCancellationFeeStructure,
+        modificationFeeEnabled: modificationFeeEnabled !== undefined ? modificationFeeEnabled === true : true,
+        modificationFeeStructure: defaultModificationFeeStructure,
         isActive: true
       });
 
@@ -175,6 +197,8 @@ router.put('/:id', authenticateToken, requireAdmin, async (req: any, res) => {
       displayColor, 
       janitorialRequired,
       approvalRequired,
+      cancellationFeeEnabled,
+      modificationFeeEnabled,
       isActive 
     } = req.body;
 
@@ -231,6 +255,8 @@ router.put('/:id', authenticateToken, requireAdmin, async (req: any, res) => {
     if (displayColor !== undefined) amenity.displayColor = displayColor || '#355B45';
     if (janitorialRequired !== undefined) amenity.janitorialRequired = janitorialRequired === true;
     if (approvalRequired !== undefined) amenity.approvalRequired = approvalRequired === true;
+    if (cancellationFeeEnabled !== undefined) amenity.cancellationFeeEnabled = cancellationFeeEnabled === true;
+    if (modificationFeeEnabled !== undefined) amenity.modificationFeeEnabled = modificationFeeEnabled === true;
     if (isActive !== undefined) amenity.isActive = isActive;
 
     await amenity.save();

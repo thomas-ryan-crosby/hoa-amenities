@@ -60,7 +60,9 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
     hoursOfOperation: { open: '09:00', close: '17:00', open24Hours: false },
     displayColor: '#355B45',
     janitorialRequired: true,
-    approvalRequired: true
+    approvalRequired: true,
+    cancellationFeeEnabled: true,
+    modificationFeeEnabled: true
   });
 
   useEffect(() => {
@@ -166,7 +168,9 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
         hoursOfOperation: { open: '09:00', close: '17:00', open24Hours: false },
         displayColor: '#355B45',
         janitorialRequired: true,
-        approvalRequired: true
+        approvalRequired: true,
+        cancellationFeeEnabled: true,
+        modificationFeeEnabled: true
       });
       fetchAmenities();
     } catch (error: any) {
@@ -218,7 +222,9 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
       hoursOfOperation: hoursOfOp,
       displayColor: amenity.displayColor || '#355B45',
       janitorialRequired: amenity.janitorialRequired !== undefined ? amenity.janitorialRequired : true,
-      approvalRequired: amenity.approvalRequired !== undefined ? amenity.approvalRequired : true
+      approvalRequired: amenity.approvalRequired !== undefined ? amenity.approvalRequired : true,
+      cancellationFeeEnabled: amenity.cancellationFeeEnabled !== undefined ? amenity.cancellationFeeEnabled : true,
+      modificationFeeEnabled: amenity.modificationFeeEnabled !== undefined ? amenity.modificationFeeEnabled : true
     });
     setShowModal(true);
   };
@@ -262,7 +268,9 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
       hoursOfOperation: { open: '09:00', close: '17:00', open24Hours: false },
       displayColor: '#355B45',
       janitorialRequired: true,
-      approvalRequired: true
+      approvalRequired: true,
+      cancellationFeeEnabled: true,
+      modificationFeeEnabled: true
     });
     setShowModal(true);
   };
@@ -913,6 +921,102 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                     If checked, reservations will require admin approval after janitorial approval.
                   </p>
                 </div>
+              </div>
+
+              {/* Fee Structure Configuration */}
+              <div style={{ marginBottom: '1rem', padding: '1rem', backgroundColor: '#f0f9ff', border: '1px solid #3b82f6', borderRadius: '0.375rem' }}>
+                <h3 style={{ fontSize: '1rem', fontWeight: 600, color: '#1e40af', marginBottom: '1rem' }}>
+                  Fee Structure Configuration
+                </h3>
+                
+                <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                    <input
+                      type="checkbox"
+                      checked={formData.cancellationFeeEnabled}
+                      onChange={(e) => setFormData({ ...formData, cancellationFeeEnabled: e.target.checked })}
+                      style={{
+                        width: '20px',
+                        height: '20px',
+                        cursor: 'pointer'
+                      }}
+                    />
+                    <span style={{ fontWeight: 500, color: '#374151' }}>
+                      Enable Cancellation Fees
+                    </span>
+                  </label>
+                </div>
+
+                <div style={{ marginBottom: '1rem' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                    <input
+                      type="checkbox"
+                      checked={formData.modificationFeeEnabled}
+                      onChange={(e) => setFormData({ ...formData, modificationFeeEnabled: e.target.checked })}
+                      style={{
+                        width: '20px',
+                        height: '20px',
+                        cursor: 'pointer'
+                      }}
+                    />
+                    <span style={{ fontWeight: 500, color: '#374151' }}>
+                      Enable Modification Fees
+                    </span>
+                  </label>
+                </div>
+
+                {(formData.cancellationFeeEnabled || formData.modificationFeeEnabled) && (
+                  <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: 'white', borderRadius: '0.375rem', border: '1px solid #e5e7eb' }}>
+                    <p style={{ fontSize: '0.875rem', fontWeight: 600, color: '#374151', marginBottom: '0.75rem' }}>
+                      Default Fee Structure (Applied when enabled):
+                    </p>
+                    <table style={{ width: '100%', fontSize: '0.875rem', borderCollapse: 'collapse' }}>
+                      <thead>
+                        <tr style={{ borderBottom: '1px solid #e5e7eb' }}>
+                          <th style={{ textAlign: 'left', padding: '0.5rem', color: '#6b7280', fontWeight: 500 }}>Action</th>
+                          <th style={{ textAlign: 'left', padding: '0.5rem', color: '#6b7280', fontWeight: 500 }}>Fee</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {formData.cancellationFeeEnabled && (
+                          <>
+                            <tr>
+                              <td style={{ padding: '0.5rem', color: '#374151' }}>Cancel &gt;14 days</td>
+                              <td style={{ padding: '0.5rem', color: '#374151' }}>Full refund</td>
+                            </tr>
+                            <tr style={{ backgroundColor: '#f9fafb' }}>
+                              <td style={{ padding: '0.5rem', color: '#374151' }}>Cancel 7–14 days</td>
+                              <td style={{ padding: '0.5rem', color: '#374151' }}>$50 admin fee</td>
+                            </tr>
+                            <tr>
+                              <td style={{ padding: '0.5rem', color: '#374151' }}>Cancel &lt;7 days</td>
+                              <td style={{ padding: '0.5rem', color: '#374151' }}>Full rental fee / deposit forfeited</td>
+                            </tr>
+                            <tr style={{ backgroundColor: '#f9fafb' }}>
+                              <td style={{ padding: '0.5rem', color: '#374151' }}>No-show</td>
+                              <td style={{ padding: '0.5rem', color: '#374151' }}>Full rental fee</td>
+                            </tr>
+                          </>
+                        )}
+                        {formData.modificationFeeEnabled && (
+                          <>
+                            <tr>
+                              <td style={{ padding: '0.5rem', color: '#374151' }}>One date/time change &gt;7 days</td>
+                              <td style={{ padding: '0.5rem', color: '#374151' }}>No charge</td>
+                            </tr>
+                            <tr style={{ backgroundColor: '#f9fafb' }}>
+                              <td style={{ padding: '0.5rem', color: '#374151' }}>Additional change</td>
+                              <td style={{ padding: '0.5rem', color: '#374151' }}>$25 each</td>
+                            </tr>
+                          </>
+                        )}
+                      </tbody>
+                    </table>
+                    <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.75rem', fontStyle: 'italic' }}>
+                      Note: You can customize these fees per amenity in the future.
+                    </p>
+                  </div>
+                )}
               </div>
 
               <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
