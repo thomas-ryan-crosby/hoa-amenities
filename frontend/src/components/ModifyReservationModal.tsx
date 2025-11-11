@@ -92,12 +92,15 @@ const ModifyReservationModal: React.FC<ModifyReservationModalProps> = ({
   // Initialize form from reservation when modal opens
   useEffect(() => {
     if (isOpen && reservation) {
-      // Parse date from ISO string
-      const dateObj = new Date(reservation.date);
-      const year = dateObj.getFullYear();
-      const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-      const day = String(dateObj.getDate()).padStart(2, '0');
-      setReservationDate(`${year}-${month}-${day}`);
+      // Parse date directly from string (YYYY-MM-DD format) to avoid timezone issues
+      // reservation.date is a DATE type from database, not a datetime
+      let dateStr = reservation.date;
+      if (dateStr.includes('T')) {
+        // If it's an ISO datetime string, extract just the date part
+        dateStr = dateStr.split('T')[0];
+      }
+      // Ensure it's in YYYY-MM-DD format
+      setReservationDate(dateStr);
       
       // Parse times from ISO strings
       const startTime = new Date(reservation.partyTimeStart);
@@ -226,11 +229,11 @@ const ModifyReservationModal: React.FC<ModifyReservationModalProps> = ({
   if (!isOpen || !reservation) return null;
 
   // Check if any fields have changed
-  const originalDate = new Date(reservation.date);
-  const originalYear = originalDate.getFullYear();
-  const originalMonth = String(originalDate.getMonth() + 1).padStart(2, '0');
-  const originalDay = String(originalDate.getDate()).padStart(2, '0');
-  const originalDateStr = `${originalYear}-${originalMonth}-${originalDay}`;
+  // Parse original date directly from string to avoid timezone issues
+  let originalDateStr = reservation.date;
+  if (originalDateStr.includes('T')) {
+    originalDateStr = originalDateStr.split('T')[0];
+  }
   
   const originalStartTime = new Date(reservation.partyTimeStart);
   const originalEndTime = new Date(reservation.partyTimeEnd);
