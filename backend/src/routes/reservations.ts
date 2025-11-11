@@ -331,7 +331,14 @@ router.post('/', authenticateToken, async (req: any, res) => {
     });
 
     // Fetch the created reservation with amenity details
+    // Explicitly exclude modification fields since they may not exist in the database
     const createdReservation = await Reservation.findByPk(reservation.id, {
+      attributes: [
+        'id', 'date', 'setupTimeStart', 'setupTimeEnd', 'partyTimeStart', 'partyTimeEnd',
+        'guestCount', 'specialRequirements', 'status', 'totalFee', 'totalDeposit',
+        'eventName', 'isPrivate', 'communityId', 'amenityId', 'userId'
+        // Explicitly exclude modification fields to avoid "column does not exist" errors
+      ],
       include: [
         {
           model: Amenity,
