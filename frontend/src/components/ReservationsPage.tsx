@@ -90,8 +90,20 @@ const ReservationsPage: React.FC = () => {
       // Refresh reservations
       fetchReservations();
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to accept modification');
+      const errorMessage = err.response?.data?.message || 'Failed to accept modification';
+      const errorDetails = err.response?.data?.details || '';
+      const errorCode = err.response?.data?.errorCode || '';
+      
       console.error('Error accepting modification:', err);
+      console.error('Error response data:', err.response?.data);
+      console.error('Error details:', errorDetails);
+      console.error('Error code:', errorCode);
+      
+      if (errorDetails) {
+        setError(`${errorMessage}\n\nDetails: ${errorDetails}\nError Code: ${errorCode}`);
+      } else {
+        setError(errorMessage);
+      }
     } finally {
       setActionLoading(null);
     }

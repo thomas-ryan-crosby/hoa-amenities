@@ -1462,16 +1462,29 @@ router.put('/:id/accept-modification', authenticateToken, async (req: any, res) 
     }
 
     // Check for conflicts with new proposed time
-    // Ensure proposed times are not null before checking conflicts
-    if (!reservation.proposedPartyTimeStart || !reservation.proposedPartyTimeEnd) {
+    // Get proposed times - they might be accessed via getDataValue if using col() mapping
+    const proposedPartyTimeStart = (reservation as any).getDataValue 
+      ? (reservation as any).getDataValue('proposedPartyTimeStart') 
+      : reservation.proposedPartyTimeStart;
+    const proposedPartyTimeEnd = (reservation as any).getDataValue 
+      ? (reservation as any).getDataValue('proposedPartyTimeEnd') 
+      : reservation.proposedPartyTimeEnd;
+    
+    if (!proposedPartyTimeStart || !proposedPartyTimeEnd) {
+      console.error('❌ Proposed times missing:', {
+        proposedPartyTimeStart,
+        proposedPartyTimeEnd,
+        reservationKeys: Object.keys(reservation.toJSON ? reservation.toJSON() : reservation)
+      });
       return res.status(400).json({ 
-        message: 'Proposed times are missing' 
+        message: 'Proposed times are missing',
+        details: 'The reservation does not have proposed party times set'
       });
     }
 
     // Store in variables with type assertions after null check
-    const proposedStart: Date = reservation.proposedPartyTimeStart as Date;
-    const proposedEnd: Date = reservation.proposedPartyTimeEnd as Date;
+    const proposedStart: Date = new Date(proposedPartyTimeStart);
+    const proposedEnd: Date = new Date(proposedPartyTimeEnd);
     // proposedDate should be a Date object or string - format it properly for PostgreSQL
     const proposedDate = reservation.proposedDate 
       ? (reservation.proposedDate instanceof Date ? reservation.proposedDate.toISOString().split('T')[0] : String(reservation.proposedDate))
