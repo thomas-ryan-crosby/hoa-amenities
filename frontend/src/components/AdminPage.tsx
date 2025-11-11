@@ -252,8 +252,8 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
       displayColor: amenity.displayColor || '#355B45',
       janitorialRequired: amenity.janitorialRequired !== undefined ? amenity.janitorialRequired : true,
       approvalRequired: amenity.approvalRequired !== undefined ? amenity.approvalRequired : true,
-      cancellationFeeEnabled: amenity.cancellationFeeEnabled !== undefined ? amenity.cancellationFeeEnabled : true,
-      modificationFeeEnabled: amenity.modificationFeeEnabled !== undefined ? amenity.modificationFeeEnabled : true
+      cancellationFeeEnabled: amenity.cancellationFeeEnabled !== undefined ? amenity.cancellationFeeEnabled : false,
+      modificationFeeEnabled: amenity.modificationFeeEnabled !== undefined ? amenity.modificationFeeEnabled : false
     });
     setShowModal(true);
   };
