@@ -772,7 +772,10 @@ router.put('/profile', authenticateToken, async (req: any, res) => {
         firstName: user.firstName,
         lastName: user.lastName,
         phone: user.phone,
-        address: user.address
+        address: user.address,
+        role: user.role,
+        isActive: user.isActive,
+        notificationPreferences
       }
     });
 
