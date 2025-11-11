@@ -637,12 +637,19 @@ router.put('/:id/approve', authenticateToken, async (req: any, res) => {
       });
     }
 
-    // Find reservation (must belong to current community)
+    // Find reservation (must belong to current community) - use explicit attributes to avoid modification fields
     const reservation = await Reservation.findOne({
       where: {
         id,
         communityId: req.user.currentCommunityId
       },
+      attributes: [
+        'id', 'date', 'setupTimeStart', 'setupTimeEnd', 'partyTimeStart', 'partyTimeEnd',
+        'guestCount', 'specialRequirements', 'status', 'totalFee', 'totalDeposit',
+        'eventName', 'isPrivate', 'communityId', 'amenityId', 'userId',
+        'cleaningTimeStart', 'cleaningTimeEnd'
+        // Explicitly exclude modification fields
+      ],
       include: [
         {
           model: Amenity,
@@ -700,23 +707,69 @@ router.put('/:id/approve', authenticateToken, async (req: any, res) => {
       });
     }
 
-    // Update reservation status and cleaning time
-    const updateData: any = { status: newStatus };
+    // Update reservation using raw SQL to avoid accessing modification fields
+    const now = new Date().toISOString();
     if (cleaningTimeStart && cleaningTimeEnd) {
-      updateData.cleaningTimeStart = new Date(cleaningTimeStart);
-      updateData.cleaningTimeEnd = new Date(cleaningTimeEnd);
+      await sequelize.query(`
+        UPDATE reservations
+        SET status = :newStatus,
+            "cleaningTimeStart" = :cleaningTimeStart,
+            "cleaningTimeEnd" = :cleaningTimeEnd,
+            "updatedAt" = :now
+        WHERE id = :reservationId
+      `, {
+        replacements: {
+          newStatus,
+          cleaningTimeStart: new Date(cleaningTimeStart).toISOString(),
+          cleaningTimeEnd: new Date(cleaningTimeEnd).toISOString(),
+          now,
+          reservationId: id
+        },
+        type: QueryTypes.UPDATE
+      });
+    } else {
+      await sequelize.query(`
+        UPDATE reservations
+        SET status = :newStatus,
+            "updatedAt" = :now
+        WHERE id = :reservationId
+      `, {
+        replacements: {
+          newStatus,
+          now,
+          reservationId: id
+        },
+        type: QueryTypes.UPDATE
+      });
     }
-    
-    await reservation.update(updateData);
+
+    // Fetch updated reservation to return
+    const updatedReservation = await Reservation.findByPk(id, {
+      attributes: [
+        'id', 'date', 'setupTimeStart', 'setupTimeEnd', 'partyTimeStart', 'partyTimeEnd',
+        'guestCount', 'specialRequirements', 'status', 'totalFee', 'totalDeposit',
+        'eventName', 'isPrivate', 'communityId', 'amenityId', 'userId',
+        'cleaningTimeStart', 'cleaningTimeEnd'
+      ],
+      include: [
+        {
+          model: Amenity,
+          as: 'amenity',
+          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'approvalRequired']
+        },
+        {
+          model: User,
+          as: 'user',
+          attributes: ['id', 'firstName', 'lastName', 'email', 'phone', 'address']
+        }
+      ]
+    });
 
     console.log('✅ Reservation approved:', id, 'new status:', newStatus);
 
     return res.json({
       message: 'Reservation approved successfully',
-      reservation: {
-        ...reservation.toJSON(),
-        status: newStatus
-      }
+      reservation: updatedReservation?.toJSON() || { id: parseInt(id), status: newStatus }
     });
 
   } catch (error) {
@@ -740,12 +793,18 @@ router.put('/:id/reject', authenticateToken, async (req: any, res) => {
       return res.status(403).json({ message: 'Janitorial access required' });
     }
 
-    // Find reservation (must belong to current community)
+    // Find reservation (must belong to current community) - use explicit attributes to avoid modification fields
     const reservation = await Reservation.findOne({
       where: {
         id,
         communityId: req.user.currentCommunityId
       },
+      attributes: [
+        'id', 'date', 'setupTimeStart', 'setupTimeEnd', 'partyTimeStart', 'partyTimeEnd',
+        'guestCount', 'specialRequirements', 'status', 'totalFee', 'totalDeposit',
+        'eventName', 'isPrivate', 'communityId', 'amenityId', 'userId'
+        // Explicitly exclude modification fields
+      ],
       include: [
         {
           model: Amenity,
@@ -771,20 +830,53 @@ router.put('/:id/reject', authenticateToken, async (req: any, res) => {
       });
     }
 
-    // Update reservation status to cancelled
-    await reservation.update({ 
-      status: 'CANCELLED',
-      specialRequirements: reason ? `${reservation.specialRequirements || ''}\n\nRejection reason: ${reason}`.trim() : reservation.specialRequirements
+    // Update reservation using raw SQL to avoid accessing modification fields
+    const now = new Date().toISOString();
+    const updatedSpecialRequirements = reason 
+      ? `${reservation.specialRequirements || ''}\n\nRejection reason: ${reason}`.trim() 
+      : reservation.specialRequirements;
+
+    await sequelize.query(`
+      UPDATE reservations
+      SET status = 'CANCELLED',
+          "specialRequirements" = :specialRequirements,
+          "updatedAt" = :now
+      WHERE id = :reservationId
+    `, {
+      replacements: {
+        specialRequirements: updatedSpecialRequirements,
+        now,
+        reservationId: id
+      },
+      type: QueryTypes.UPDATE
+    });
+
+    // Fetch updated reservation to return
+    const updatedReservation = await Reservation.findByPk(id, {
+      attributes: [
+        'id', 'date', 'setupTimeStart', 'setupTimeEnd', 'partyTimeStart', 'partyTimeEnd',
+        'guestCount', 'specialRequirements', 'status', 'totalFee', 'totalDeposit',
+        'eventName', 'isPrivate', 'communityId', 'amenityId', 'userId'
+      ],
+      include: [
+        {
+          model: Amenity,
+          as: 'amenity',
+          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'approvalRequired']
+        },
+        {
+          model: User,
+          as: 'user',
+          attributes: ['id', 'firstName', 'lastName', 'email', 'phone', 'address']
+        }
+      ]
     });
 
     console.log('✅ Reservation rejected:', id);
 
     return res.json({
       message: 'Reservation rejected successfully',
-      reservation: {
-        ...reservation.toJSON(),
-        status: 'CANCELLED'
-      }
+      reservation: updatedReservation?.toJSON() || { id: parseInt(id), status: 'CANCELLED' }
     });
 
   } catch (error) {
