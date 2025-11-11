@@ -851,6 +851,360 @@ const ProfilePage: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Email Notification Settings */}
+      <div style={{
+        backgroundColor: 'white',
+        padding: '1.5rem',
+        borderRadius: '0.5rem',
+        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+        marginBottom: '1.5rem'
+      }}>
+        <h2 style={{ fontSize: '1.25rem', fontWeight: '600', color: '#1f2937', marginBottom: '1rem' }}>
+          Email Notification Settings
+        </h2>
+        <p style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '1.5rem' }}>
+          Choose which email notifications you'd like to receive. You can change these settings at any time.
+        </p>
+
+        {profile.role === 'resident' && (
+          <>
+            {/* Reservation Notifications */}
+            <div style={{ marginBottom: '2rem' }}>
+              <h3 style={{ fontSize: '1rem', fontWeight: '600', color: '#374151', marginBottom: '1rem', paddingBottom: '0.5rem', borderBottom: '1px solid #e5e7eb' }}>
+                Reservation Notifications
+              </h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: '500', color: '#1f2937', marginBottom: '0.25rem' }}>
+                      Reservation Created
+                    </div>
+                    <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>
+                      Receive confirmation when you create a reservation
+                    </div>
+                  </div>
+                  <ToggleSwitch
+                    checked={notificationPreferences.reservationCreated ?? true}
+                    onChange={(checked) => handleNotificationPreferenceChange('reservationCreated', checked)}
+                  />
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: '500', color: '#1f2937', marginBottom: '0.25rem' }}>
+                      Reservation Approved
+                    </div>
+                    <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>
+                      Receive confirmation when your reservation is fully approved
+                    </div>
+                  </div>
+                  <ToggleSwitch
+                    checked={notificationPreferences.reservationApproved ?? true}
+                    onChange={(checked) => handleNotificationPreferenceChange('reservationApproved', checked)}
+                  />
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: '500', color: '#1f2937', marginBottom: '0.25rem' }}>
+                      Reservation Rejected
+                    </div>
+                    <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>
+                      Receive notification if your reservation is rejected
+                    </div>
+                  </div>
+                  <ToggleSwitch
+                    checked={notificationPreferences.reservationRejected ?? true}
+                    onChange={(checked) => handleNotificationPreferenceChange('reservationRejected', checked)}
+                  />
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: '500', color: '#1f2937', marginBottom: '0.25rem' }}>
+                      Reservation Cancelled
+                    </div>
+                    <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>
+                      Receive confirmation when a reservation is cancelled
+                    </div>
+                  </div>
+                  <ToggleSwitch
+                    checked={notificationPreferences.reservationCancelled ?? true}
+                    onChange={(checked) => handleNotificationPreferenceChange('reservationCancelled', checked)}
+                  />
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: '500', color: '#1f2937', marginBottom: '0.25rem' }}>
+                      Reservation Completed
+                    </div>
+                    <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>
+                      Receive a thank you message after your reservation is completed
+                    </div>
+                  </div>
+                  <ToggleSwitch
+                    checked={notificationPreferences.reservationCompleted ?? false}
+                    onChange={(checked) => handleNotificationPreferenceChange('reservationCompleted', checked)}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Modification Notifications */}
+            <div style={{ marginBottom: '2rem' }}>
+              <h3 style={{ fontSize: '1rem', fontWeight: '600', color: '#374151', marginBottom: '1rem', paddingBottom: '0.5rem', borderBottom: '1px solid #e5e7eb' }}>
+                Modification Notifications
+              </h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: '500', color: '#1f2937', marginBottom: '0.25rem' }}>
+                      Modification Proposed
+                    </div>
+                    <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>
+                      Receive notification when staff proposes a modification to your reservation
+                    </div>
+                  </div>
+                  <ToggleSwitch
+                    checked={notificationPreferences.modificationProposed ?? true}
+                    onChange={(checked) => handleNotificationPreferenceChange('modificationProposed', checked)}
+                  />
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: '500', color: '#1f2937', marginBottom: '0.25rem' }}>
+                      Modification Accepted
+                    </div>
+                    <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>
+                      Receive confirmation when you accept a proposed modification
+                    </div>
+                  </div>
+                  <ToggleSwitch
+                    checked={notificationPreferences.modificationAccepted ?? true}
+                    onChange={(checked) => handleNotificationPreferenceChange('modificationAccepted', checked)}
+                  />
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: '500', color: '#1f2937', marginBottom: '0.25rem' }}>
+                      Modification Rejected
+                    </div>
+                    <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>
+                      Receive confirmation when you reject a proposed modification
+                    </div>
+                  </div>
+                  <ToggleSwitch
+                    checked={notificationPreferences.modificationRejected ?? true}
+                    onChange={(checked) => handleNotificationPreferenceChange('modificationRejected', checked)}
+                  />
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: '500', color: '#1f2937', marginBottom: '0.25rem' }}>
+                      Reservation Modified
+                    </div>
+                    <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>
+                      Receive confirmation when you modify your own reservation
+                    </div>
+                  </div>
+                  <ToggleSwitch
+                    checked={notificationPreferences.reservationModified ?? true}
+                    onChange={(checked) => handleNotificationPreferenceChange('reservationModified', checked)}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Reminder Notifications */}
+            <div style={{ marginBottom: '2rem' }}>
+              <h3 style={{ fontSize: '1rem', fontWeight: '600', color: '#374151', marginBottom: '1rem', paddingBottom: '0.5rem', borderBottom: '1px solid #e5e7eb' }}>
+                Reminder Notifications
+              </h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: '500', color: '#1f2937', marginBottom: '0.25rem' }}>
+                      Upcoming Reservation (24 hours)
+                    </div>
+                    <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>
+                      Receive a reminder 24 hours before your reservation
+                    </div>
+                  </div>
+                  <ToggleSwitch
+                    checked={notificationPreferences.upcomingReservationReminder24h ?? true}
+                    onChange={(checked) => handleNotificationPreferenceChange('upcomingReservationReminder24h', checked)}
+                  />
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: '500', color: '#1f2937', marginBottom: '0.25rem' }}>
+                      Upcoming Reservation (7 days)
+                    </div>
+                    <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>
+                      Receive a reminder 7 days before your reservation
+                    </div>
+                  </div>
+                  <ToggleSwitch
+                    checked={notificationPreferences.upcomingReservationReminder7d ?? false}
+                    onChange={(checked) => handleNotificationPreferenceChange('upcomingReservationReminder7d', checked)}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Damage Assessment */}
+            <div style={{ marginBottom: '2rem' }}>
+              <h3 style={{ fontSize: '1rem', fontWeight: '600', color: '#374151', marginBottom: '1rem', paddingBottom: '0.5rem', borderBottom: '1px solid #e5e7eb' }}>
+                Damage Assessment
+              </h3>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontWeight: '500', color: '#1f2937', marginBottom: '0.25rem' }}>
+                    Damage Assessment Reviewed
+                  </div>
+                  <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>
+                    Receive notification when a damage assessment is reviewed
+                  </div>
+                </div>
+                <ToggleSwitch
+                  checked={notificationPreferences.damageAssessmentReviewed ?? true}
+                  onChange={(checked) => handleNotificationPreferenceChange('damageAssessmentReviewed', checked)}
+                />
+              </div>
+            </div>
+          </>
+        )}
+
+        {(profile.role === 'janitorial' || profile.role === 'admin') && (
+          <>
+            {/* Approval Workflow Notifications */}
+            <div style={{ marginBottom: '2rem' }}>
+              <h3 style={{ fontSize: '1rem', fontWeight: '600', color: '#374151', marginBottom: '1rem', paddingBottom: '0.5rem', borderBottom: '1px solid #e5e7eb' }}>
+                Approval Workflow Notifications
+              </h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: '500', color: '#1f2937', marginBottom: '0.25rem' }}>
+                      New Reservation Requires Approval
+                    </div>
+                    <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>
+                      Receive notification when a new reservation requires your approval
+                    </div>
+                  </div>
+                  <ToggleSwitch
+                    checked={notificationPreferences.newReservationRequiresApproval ?? true}
+                    onChange={(checked) => handleNotificationPreferenceChange('newReservationRequiresApproval', checked)}
+                  />
+                </div>
+
+                {profile.role === 'admin' && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontWeight: '500', color: '#1f2937', marginBottom: '0.25rem' }}>
+                        Reservation Pending Admin Approval
+                      </div>
+                      <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>
+                        Receive notification when a reservation is pending admin approval
+                      </div>
+                    </div>
+                    <ToggleSwitch
+                      checked={notificationPreferences.reservationPendingAdminApproval ?? true}
+                      onChange={(checked) => handleNotificationPreferenceChange('reservationPendingAdminApproval', checked)}
+                    />
+                  </div>
+                )}
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: '500', color: '#1f2937', marginBottom: '0.25rem' }}>
+                      Reservation Approved (Staff)
+                    </div>
+                    <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>
+                      Receive notification when a reservation you approved is fully approved
+                    </div>
+                  </div>
+                  <ToggleSwitch
+                    checked={notificationPreferences.reservationApprovedStaff ?? false}
+                    onChange={(checked) => handleNotificationPreferenceChange('reservationApprovedStaff', checked)}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Damage Assessment */}
+            <div style={{ marginBottom: '2rem' }}>
+              <h3 style={{ fontSize: '1rem', fontWeight: '600', color: '#374151', marginBottom: '1rem', paddingBottom: '0.5rem', borderBottom: '1px solid #e5e7eb' }}>
+                Damage Assessment
+              </h3>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontWeight: '500', color: '#1f2937', marginBottom: '0.25rem' }}>
+                    Damage Assessment Required
+                  </div>
+                  <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>
+                    Receive notification when a damage assessment is required
+                  </div>
+                </div>
+                <ToggleSwitch
+                  checked={notificationPreferences.damageAssessmentRequired ?? true}
+                  onChange={(checked) => handleNotificationPreferenceChange('damageAssessmentRequired', checked)}
+                />
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* System Notifications */}
+        <div style={{ marginBottom: '1rem' }}>
+          <h3 style={{ fontSize: '1rem', fontWeight: '600', color: '#374151', marginBottom: '1rem', paddingBottom: '0.5rem', borderBottom: '1px solid #e5e7eb' }}>
+            System Notifications
+          </h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontWeight: '500', color: '#1f2937', marginBottom: '0.25rem' }}>
+                  Account Activity
+                </div>
+                <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>
+                  Receive notifications for security-related account changes (password changes, etc.)
+                </div>
+              </div>
+              <ToggleSwitch
+                checked={notificationPreferences.accountActivity ?? true}
+                onChange={(checked) => handleNotificationPreferenceChange('accountActivity', checked)}
+              />
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontWeight: '500', color: '#1f2937', marginBottom: '0.25rem' }}>
+                  System Announcements
+                </div>
+                <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>
+                  Receive important system announcements and policy updates
+                </div>
+              </div>
+              <ToggleSwitch
+                checked={notificationPreferences.systemAnnouncements ?? true}
+                onChange={(checked) => handleNotificationPreferenceChange('systemAnnouncements', checked)}
+              />
+            </div>
+          </div>
+        </div>
+
+        {savingNotifications && (
+          <div style={{ fontSize: '0.875rem', color: '#6b7280', fontStyle: 'italic', marginTop: '1rem' }}>
+            Saving preferences...
+          </div>
+        )}
+      </div>
     </div>
   );
 };
