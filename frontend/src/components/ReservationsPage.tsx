@@ -363,7 +363,7 @@ const ReservationsPage: React.FC = () => {
       </div>
 
       {/* Reservations List */}
-      {filteredReservations.length === 0 ? (
+      {filteredUpcoming.length === 0 && filteredPast.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '50px', backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
           <h3 style={{ color: '#6b7280', marginBottom: '10px' }}>No reservations found</h3>
           <p style={{ color: '#9ca3af' }}>
