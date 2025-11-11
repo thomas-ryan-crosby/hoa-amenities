@@ -1039,14 +1039,25 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                         const newValue = e.target.checked;
                         const oldValue = editingAmenity?.janitorialRequired ?? formData.janitorialRequired;
                         
-                        // If unchecking janitorial requirement, show warning
-                        if (!newValue && oldValue && editingAmenity) {
-                          setApprovalChangeWarning({
-                            show: true,
-                            message: 'Removing janitorial approval requirement will auto-approve all NEW reservations for this amenity.',
-                            originalJanitorial: oldValue,
-                            originalAdmin: formData.approvalRequired
-                          });
+                        // If changing janitorial requirement, show warning
+                        if (editingAmenity && newValue !== oldValue) {
+                          if (!newValue && oldValue) {
+                            // Unchecking - will auto-approve
+                            setApprovalChangeWarning({
+                              show: true,
+                              message: 'Removing janitorial approval requirement will auto-approve all NEW reservations for this amenity.',
+                              originalJanitorial: oldValue,
+                              originalAdmin: formData.approvalRequired
+                            });
+                          } else if (newValue && !oldValue) {
+                            // Checking - will move to unconfirmed
+                            setApprovalChangeWarning({
+                              show: true,
+                              message: 'Enabling janitorial approval requirement will move all FULLY_APPROVED reservations to NEW (requiring approval).',
+                              originalJanitorial: oldValue,
+                              originalAdmin: formData.approvalRequired
+                            });
+                          }
                         } else {
                           setFormData({ ...formData, janitorialRequired: newValue });
                         }
@@ -1074,14 +1085,25 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                         const newValue = e.target.checked;
                         const oldValue = editingAmenity?.approvalRequired ?? formData.approvalRequired;
                         
-                        // If unchecking admin approval requirement, show warning
-                        if (!newValue && oldValue && editingAmenity) {
-                          setApprovalChangeWarning({
-                            show: true,
-                            message: 'Removing admin approval requirement will auto-approve all JANITORIAL_APPROVED reservations for this amenity.',
-                            originalJanitorial: formData.janitorialRequired,
-                            originalAdmin: oldValue
-                          });
+                        // If changing admin approval requirement, show warning
+                        if (editingAmenity && newValue !== oldValue) {
+                          if (!newValue && oldValue) {
+                            // Unchecking - will auto-approve
+                            setApprovalChangeWarning({
+                              show: true,
+                              message: 'Removing admin approval requirement will auto-approve all JANITORIAL_APPROVED reservations for this amenity.',
+                              originalJanitorial: formData.janitorialRequired,
+                              originalAdmin: oldValue
+                            });
+                          } else if (newValue && !oldValue) {
+                            // Checking - will move to unconfirmed
+                            setApprovalChangeWarning({
+                              show: true,
+                              message: 'Enabling admin approval requirement will move all FULLY_APPROVED reservations to unconfirmed status (requiring approval).',
+                              originalJanitorial: formData.janitorialRequired,
+                              originalAdmin: oldValue
+                            });
+                          }
                         } else {
                           setFormData({ ...formData, approvalRequired: newValue });
                         }
