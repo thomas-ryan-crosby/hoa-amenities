@@ -153,9 +153,15 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
           }
         });
         
-        // Check if any reservations were auto-approved
+        // Check if any reservations were auto-approved or moved to unconfirmed
         if (response.data.autoApprovedCount > 0 && response.data.autoApprovedMessage) {
-          setAutoApprovalNotification(response.data.autoApprovedMessage);
+          let message = response.data.autoApprovedMessage;
+          if (response.data.unconfirmedCount > 0 && response.data.unconfirmedMessage) {
+            message += '\n\n' + response.data.unconfirmedMessage;
+          }
+          setAutoApprovalNotification(message);
+        } else if (response.data.unconfirmedCount > 0 && response.data.unconfirmedMessage) {
+          setAutoApprovalNotification(response.data.unconfirmedMessage);
         }
       } else {
         // Create new
