@@ -180,12 +180,15 @@ const JanitorialPage: React.FC = () => {
     const startTimeParts = parseTime(cleaningTime.startTime);
     const endTimeParts = parseTime(cleaningTime.endTime);
     
-    // Create full datetime by combining reservation date with selected time
-    const reservationDate = new Date(selectedReservation.date);
-    const startDateTime = new Date(reservationDate);
+    // Get reservation end time first to use its date context
+    const reservationEndTime = new Date(selectedReservation.partyTimeEnd);
+    
+    // Create full datetime by combining reservation end date with selected cleaning time
+    // Use the same date as the reservation end time to ensure proper comparison
+    const startDateTime = new Date(reservationEndTime);
     startDateTime.setHours(startTimeParts.hours, startTimeParts.minutes, 0, 0);
     
-    const endDateTime = new Date(reservationDate);
+    const endDateTime = new Date(reservationEndTime);
     endDateTime.setHours(endTimeParts.hours, endTimeParts.minutes, 0, 0);
     
     // If end time is earlier than start time, assume it's the next day
@@ -209,9 +212,20 @@ const JanitorialPage: React.FC = () => {
     }
     
     // Validate cleaning starts after reservation ends
-    const reservationEndTime = new Date(selectedReservation.partyTimeEnd);
-    if (startDateTime <= reservationEndTime) {
-      setError('Cleaning time must start after the reservation ends');
+    // Add a small buffer (1 minute) to account for rounding/parsing differences
+    const oneMinute = 60 * 1000;
+    if (startDateTime.getTime() <= (reservationEndTime.getTime() + oneMinute)) {
+      const reservationEndStr = reservationEndTime.toLocaleTimeString('en-US', { 
+        hour: 'numeric', 
+        minute: '2-digit',
+        hour12: true 
+      });
+      const cleaningStartStr = startDateTime.toLocaleTimeString('en-US', { 
+        hour: 'numeric', 
+        minute: '2-digit',
+        hour12: true 
+      });
+      setError(`Cleaning time must start after the reservation ends. Reservation ends at ${reservationEndStr}, cleaning starts at ${cleaningStartStr}`);
       return;
     }
     
