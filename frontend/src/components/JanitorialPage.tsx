@@ -79,6 +79,7 @@ const JanitorialPage: React.FC = () => {
     proposedPartyTimeEnd: '',
     modificationReason: ''
   });
+  const [showPastReservations, setShowPastReservations] = useState(false);
 
   useEffect(() => {
     fetchReservations();
@@ -518,9 +519,36 @@ const JanitorialPage: React.FC = () => {
     return reservation.status === 'NEW' || reservation.status === 'JANITORIAL_APPROVED';
   };
 
-  const filteredReservations = filter === 'all' 
-    ? reservations 
-    : reservations.filter(r => r.status === filter);
+  // Separate reservations into upcoming and past/completed/cancelled
+  const now = new Date();
+  now.setHours(0, 0, 0, 0); // Reset to start of day for comparison
+  
+  const upcomingReservations = reservations.filter(r => {
+    const reservationDate = new Date(r.date);
+    reservationDate.setHours(0, 0, 0, 0);
+    const isPast = reservationDate < now;
+    const isCompleted = r.status === 'COMPLETED';
+    const isCancelled = r.status === 'CANCELLED';
+    return !isPast && !isCompleted && !isCancelled;
+  });
+  
+  const pastReservations = reservations.filter(r => {
+    const reservationDate = new Date(r.date);
+    reservationDate.setHours(0, 0, 0, 0);
+    const isPast = reservationDate < now;
+    const isCompleted = r.status === 'COMPLETED';
+    const isCancelled = r.status === 'CANCELLED';
+    return isPast || isCompleted || isCancelled;
+  });
+  
+  // Apply filter if not 'all'
+  const filteredUpcoming = filter === 'all' 
+    ? upcomingReservations 
+    : upcomingReservations.filter(r => r.status === filter);
+  
+  const filteredPast = filter === 'all' 
+    ? pastReservations 
+    : pastReservations.filter(r => r.status === filter);
 
   if (loading) {
     return (
@@ -638,7 +666,7 @@ const JanitorialPage: React.FC = () => {
       </div>
 
       {/* Reservations List */}
-      {filteredReservations.length === 0 ? (
+      {filteredUpcoming.length === 0 && filteredPast.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '50px', backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
           <h3 style={{ color: '#6b7280', marginBottom: '10px' }}>No reservations found</h3>
           <p style={{ color: '#9ca3af' }}>
@@ -650,7 +678,13 @@ const JanitorialPage: React.FC = () => {
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          {filteredReservations.map((reservation) => (
+          {/* Upcoming Reservations */}
+          {filteredUpcoming.length > 0 && (
+            <>
+              <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: '0 0 16px 0', color: '#1f2937' }}>
+                Upcoming Reservations
+              </h2>
+              {filteredUpcoming.map((reservation) => (
             <div
               key={reservation.id}
               style={{
@@ -916,6 +950,141 @@ const JanitorialPage: React.FC = () => {
               </div>
             </div>
           ))}
+            </>
+          )}
+
+          {/* Past/Completed/Cancelled Reservations - Collapsible */}
+          {filteredPast.length > 0 && (
+            <div style={{ marginTop: '40px' }}>
+              <button
+                onClick={() => setShowPastReservations(!showPastReservations)}
+                style={{
+                  width: '100%',
+                  padding: '16px',
+                  backgroundColor: '#f3f4f6',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  fontSize: '1rem',
+                  fontWeight: '600',
+                  color: '#374151',
+                  marginBottom: showPastReservations ? '16px' : '0'
+                }}
+              >
+                <span>
+                  {showPastReservations ? '▼' : '▶'} Past, Completed & Cancelled Reservations ({filteredPast.length})
+                </span>
+              </button>
+              
+              {showPastReservations && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '16px' }}>
+                  {filteredPast.map((reservation) => (
+                    <div
+                      key={reservation.id}
+                      style={{
+                        backgroundColor: 'white',
+                        borderRadius: '8px',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                        padding: '24px',
+                        border: '1px solid #e5e7eb',
+                        opacity: 0.8
+                      }}
+                    >
+                      {/* Header */}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+                        <div>
+                          <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', margin: '0 0 4px 0' }}>
+                            {reservation.eventName || reservation.amenity.name}
+                          </h3>
+                          {reservation.eventName && (
+                            <p style={{ color: '#6b7280', margin: '0 0 4px 0', fontSize: '14px', fontStyle: 'italic' }}>
+                              {reservation.amenity.name}
+                            </p>
+                          )}
+                          <p style={{ color: '#6b7280', margin: '0 0 4px 0', fontSize: '14px' }}>
+                            {formatDate(reservation.date)}
+                          </p>
+                          <p style={{ color: '#9ca3af', margin: 0, fontSize: '12px' }}>
+                            Requested by: {reservation.user.firstName} {reservation.user.lastName} ({reservation.user.email})
+                          </p>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px' }}>
+                          <span
+                            style={{
+                              backgroundColor: getStatusColor(reservation.status),
+                              color: 'white',
+                              padding: '4px 12px',
+                              borderRadius: '20px',
+                              fontSize: '12px',
+                              fontWeight: 'bold'
+                            }}
+                          >
+                            {getStatusText(reservation.status)}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Details Grid */}
+                      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '16px' }}>
+                        <div>
+                          <h4 style={{ fontSize: '14px', fontWeight: 'bold', color: '#374151', margin: '0 0 4px 0' }}>
+                            Reservation Time
+                          </h4>
+                          <p style={{ margin: 0, fontSize: '14px', color: '#6b7280' }}>
+                            {formatTimeRange(reservation.partyTimeStart, reservation.partyTimeEnd)}
+                          </p>
+                        </div>
+                        <div>
+                          <h4 style={{ fontSize: '14px', fontWeight: 'bold', color: '#374151', margin: '0 0 4px 0' }}>
+                            Guest Count
+                          </h4>
+                          <p style={{ margin: 0, fontSize: '14px', color: '#6b7280' }}>
+                            {reservation.guestCount} people
+                          </p>
+                        </div>
+                        <div>
+                          <h4 style={{ fontSize: '14px', fontWeight: 'bold', color: '#374151', margin: '0 0 4px 0' }}>
+                            Total Cost
+                          </h4>
+                          <p style={{ margin: 0, fontSize: '14px', color: '#6b7280' }}>
+                            <strong>Reservation Fee:</strong> ${parseFloat(String(reservation.totalFee)).toFixed(2)}
+                            <span style={{ fontSize: '12px', color: '#9ca3af' }}> (PAID)</span>
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Special Requirements */}
+                      {reservation.specialRequirements && (
+                        <div style={{ marginBottom: '16px', padding: '12px', backgroundColor: '#f9fafb', borderRadius: '4px' }}>
+                          <h4 style={{ fontSize: '14px', fontWeight: 'bold', color: '#374151', margin: '0 0 4px 0' }}>
+                            Special Requirements
+                          </h4>
+                          <p style={{ margin: 0, fontSize: '14px', color: '#6b7280' }}>
+                            {reservation.specialRequirements}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* No reservations message */}
+          {filteredUpcoming.length === 0 && filteredPast.length === 0 && (
+            <div style={{ textAlign: 'center', padding: '50px', color: '#6b7280', backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+              <p>
+                {filter === 'all'
+                  ? 'No reservations found.'
+                  : `No reservations with status "${filter}" found.`
+                }
+              </p>
+            </div>
+          )}
         </div>
       )}
 
