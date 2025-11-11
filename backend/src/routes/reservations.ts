@@ -1490,29 +1490,32 @@ router.put('/:id/accept-modification', authenticateToken, async (req: any, res) 
       ? (reservation.proposedDate instanceof Date ? reservation.proposedDate.toISOString().split('T')[0] : String(reservation.proposedDate))
       : (reservation.date instanceof Date ? reservation.date.toISOString().split('T')[0] : String(reservation.date));
 
-    const conflictingReservation = await Reservation.findOne({
-      where: {
+    // Check for conflicts using raw SQL to avoid column name issues
+    const conflictingReservationResult = await sequelize.query(`
+      SELECT id FROM reservations
+      WHERE "amenityId" = :amenityId
+        AND "communityId" = :communityId
+        AND date = :proposedDate
+        AND status IN ('NEW', 'JANITORIAL_APPROVED', 'FULLY_APPROVED')
+        AND id != :reservationId
+        AND (
+          ("partyTimeStart" < :proposedEnd AND "partyTimeEnd" > :proposedStart)
+          OR (partytimestart < :proposedEnd AND partytimeend > :proposedStart)
+        )
+      LIMIT 1
+    `, {
+      replacements: {
         amenityId: reservation.amenityId,
         communityId: reservation.communityId,
-        date: proposedDate,
-        status: {
-          [Op.in]: ['NEW', 'JANITORIAL_APPROVED', 'FULLY_APPROVED']
-        },
-        id: {
-          [Op.ne]: reservation.id // Exclude current reservation
-        },
-        [Op.or]: [
-          {
-            partyTimeStart: {
-              [Op.lt]: proposedEnd
-            },
-            partyTimeEnd: {
-              [Op.gt]: proposedStart
-            }
-          }
-        ]
-      }
-    });
+        proposedDate: proposedDate,
+        proposedStart: proposedStart.toISOString(),
+        proposedEnd: proposedEnd.toISOString(),
+        reservationId: reservation.id
+      },
+      type: QueryTypes.SELECT
+    }) as any[];
+
+    const conflictingReservation = conflictingReservationResult && conflictingReservationResult.length > 0 ? { id: conflictingReservationResult[0].id } : null;
 
     if (conflictingReservation) {
       return res.status(400).json({ 
