@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 // import { useAuth } from '../contexts/AuthContext'; // Removed unused import
 import SimpleTimeSelector from './SimpleTimeSelector';
+import PaymentConfirmationModal from './PaymentConfirmationModal';
 
 interface Amenity {
   id: number;
