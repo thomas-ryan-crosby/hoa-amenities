@@ -622,7 +622,9 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                         type="button"
                         onClick={() => {
                           if (formData.newCalendarGroup && formData.newCalendarGroup.trim()) {
-                            setFormData({ ...formData, calendarGroup: formData.newCalendarGroup.trim(), newCalendarGroup: '' });
+                            const newGroupName = formData.newCalendarGroup.trim();
+                            // Set calendarGroup to the new name (not __NEW__) so it persists
+                            setFormData({ ...formData, calendarGroup: newGroupName, newCalendarGroup: '' });
                           } else {
                             setFormData({ ...formData, calendarGroup: '', newCalendarGroup: '' });
                           }
@@ -660,7 +662,7 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                   </>
                 ) : (
                   <select
-                    value={formData.calendarGroup || ''}
+                    value={formData.calendarGroup === '__NEW__' ? '__NEW__' : (formData.calendarGroup || '')}
                     onChange={(e) => {
                       if (e.target.value === '__NEW__') {
                         setFormData({ ...formData, calendarGroup: '__NEW__', newCalendarGroup: '' });
@@ -680,6 +682,12 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                     {Array.from(new Set(amenities.map(a => a.calendarGroup).filter(Boolean))).map(group => (
                       <option key={group as string} value={group as string}>{group}</option>
                     ))}
+                    {/* Show the new calendar group name if it's not in the list yet but is set in formData */}
+                    {formData.calendarGroup && 
+                     formData.calendarGroup !== '__NEW__' && 
+                     !amenities.some(a => a.calendarGroup === formData.calendarGroup) && (
+                      <option value={formData.calendarGroup}>{formData.calendarGroup}</option>
+                    )}
                     <option value="__NEW__" style={{ fontWeight: 'bold', borderTop: '1px solid #d1d5db', paddingTop: '0.5rem' }}>
                       + ADD NEW
                     </option>
