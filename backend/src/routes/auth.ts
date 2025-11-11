@@ -728,6 +728,7 @@ router.get('/profile', authenticateToken, async (req: any, res) => {
         lastName: user.lastName,
         phone: user.phone,
         address: user.address,
+        role: user.role,
         isActive: user.isActive,
         notificationPreferences,
         createdAt: user.createdAt,
