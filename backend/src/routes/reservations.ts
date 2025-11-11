@@ -705,10 +705,12 @@ router.delete('/:id', authenticateToken, async (req: any, res) => {
       });
     }
 
-    // Calculate cancellation fee
-    const cancellationFee = calculateModificationFee(
+    // Calculate cancellation fee using amenity fee structure
+    const cancellationFee = calculateCancellationFee(
       new Date(reservation.date),
-      parseFloat(String(reservation.totalFee))
+      parseFloat(String(reservation.totalFee)),
+      parseFloat(String(reservation.totalDeposit)),
+      reservation.amenity
     );
 
     // Update status to cancelled
