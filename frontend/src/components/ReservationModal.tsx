@@ -54,6 +54,8 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
   const [eventName, setEventName] = useState<string>('');
   const [isPrivate, setIsPrivate] = useState<boolean>(false);
   const [specialRequirements, setSpecialRequirements] = useState<string>('');
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [createdReservation, setCreatedReservation] = useState<any>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -212,21 +214,15 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
 
       console.log('Reservation created:', response.data);
       
-      // Reset form
-      setSelectedAmenity(null);
-      setReservationDate(selectedDate); // Reset to original selected date
-      setReservationTimeStart('');
-      setReservationTimeEnd('');
-      setGuestCount(1);
-      setEventName('');
-      setIsPrivate(false);
-      setSpecialRequirements('');
+      // Store created reservation data for payment modal
+      setCreatedReservation({
+        reservation: response.data.reservation,
+        totalFee: totalFee,
+        totalDeposit: totalDeposit
+      });
       
-      // Close modal and refresh calendar
-      onClose();
-      if (onReservationCreated) {
-        onReservationCreated();
-      }
+      // Show payment confirmation modal instead of closing immediately
+      setShowPaymentModal(true);
       
     } catch (err: any) {
       const errorMessage = err.response?.data?.message || 'Failed to create reservation';
@@ -537,6 +533,60 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
           </div>
         </form>
       </div>
+
+      {/* Payment Confirmation Modal */}
+      {showPaymentModal && createdReservation && (
+        <PaymentConfirmationModal
+          isOpen={showPaymentModal}
+          onClose={() => {
+            setShowPaymentModal(false);
+            // Reset form
+            setSelectedAmenity(null);
+            setReservationDate(selectedDate);
+            setReservationTimeStart('');
+            setReservationTimeEnd('');
+            setGuestCount(1);
+            setEventName('');
+            setIsPrivate(false);
+            setSpecialRequirements('');
+            setCreatedReservation(null);
+            // Close reservation modal
+            onClose();
+          }}
+          onConfirm={() => {
+            // Reset form
+            setSelectedAmenity(null);
+            setReservationDate(selectedDate);
+            setReservationTimeStart('');
+            setReservationTimeEnd('');
+            setGuestCount(1);
+            setEventName('');
+            setIsPrivate(false);
+            setSpecialRequirements('');
+            setCreatedReservation(null);
+            // Close payment modal
+            setShowPaymentModal(false);
+            // Close reservation modal
+            onClose();
+            // Refresh calendar
+            if (onReservationCreated) {
+              onReservationCreated();
+            }
+          }}
+          paymentItems={[
+            {
+              label: 'Reservation Fee',
+              amount: createdReservation.totalFee
+            },
+            {
+              label: 'Deposit',
+              amount: createdReservation.totalDeposit
+            }
+          ]}
+          title="Payment Confirmation"
+          description="Please review the payment summary below. You will be required to pay this amount to complete your reservation."
+        />
+      )}
     </div>
   );
 };

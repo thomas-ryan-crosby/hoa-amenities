@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import SimpleTimeSelector from './SimpleTimeSelector';
+import PaymentConfirmationModal from './PaymentConfirmationModal';
 import { formatDate, formatTime } from '../utils/dateTimeUtils';
 
 interface Reservation {
@@ -51,6 +52,8 @@ const ModifyReservationModal: React.FC<ModifyReservationModalProps> = ({
   const [modificationFee, setModificationFee] = useState<number | null>(null);
   const [modificationFeeReason, setModificationFeeReason] = useState<string>('');
   const [modificationCount, setModificationCount] = useState<number>(0);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [modifiedReservation, setModifiedReservation] = useState<any>(null);
 
   // Initialize form from reservation when modal opens
   useEffect(() => {
@@ -183,10 +186,22 @@ const ModifyReservationModal: React.FC<ModifyReservationModalProps> = ({
 
       console.log('Reservation modified:', response.data);
       
-      // Close modal and refresh
-      onClose();
-      if (onReservationModified) {
-        onReservationModified();
+      // Store modified reservation data for payment modal
+      setModifiedReservation({
+        reservation: response.data.reservation,
+        modificationFee: response.data.modificationFee || 0,
+        modificationFeeReason: response.data.modificationFeeReason || ''
+      });
+      
+      // Show payment confirmation modal if there's a fee, otherwise just close
+      if (response.data.modificationFee && response.data.modificationFee > 0) {
+        setShowPaymentModal(true);
+      } else {
+        // No fee, close immediately
+        onClose();
+        if (onReservationModified) {
+          onReservationModified();
+        }
       }
       
     } catch (err: any) {
@@ -528,6 +543,37 @@ const ModifyReservationModal: React.FC<ModifyReservationModalProps> = ({
           </div>
         </form>
       </div>
+
+      {/* Payment Confirmation Modal */}
+      {showPaymentModal && modifiedReservation && modifiedReservation.modificationFee > 0 && (
+        <PaymentConfirmationModal
+          isOpen={showPaymentModal}
+          onClose={() => {
+            setShowPaymentModal(false);
+            setModifiedReservation(null);
+            // Close modify modal
+            onClose();
+          }}
+          onConfirm={() => {
+            setShowPaymentModal(false);
+            setModifiedReservation(null);
+            // Close modify modal
+            onClose();
+            // Refresh reservations
+            if (onReservationModified) {
+              onReservationModified();
+            }
+          }}
+          paymentItems={[
+            {
+              label: 'Modification Fee',
+              amount: modifiedReservation.modificationFee
+            }
+          ]}
+          title="Modification Payment Confirmation"
+          description={`${modifiedReservation.modificationFeeReason || 'A modification fee applies to this change.'} Please review the payment summary below.`}
+        />
+      )}
     </div>
   );
 };
