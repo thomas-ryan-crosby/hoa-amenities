@@ -80,6 +80,14 @@ const ProfilePage: React.FC = () => {
   // Notification preferences states
   const [notificationPreferences, setNotificationPreferences] = useState<NotificationPreferences>({});
   const [savingNotifications, setSavingNotifications] = useState(false);
+  const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({
+    reservations: true,
+    modifications: true,
+    reminders: true,
+    approvalWorkflow: true,
+    damageAssessment: true,
+    system: true
+  });
 
   useEffect(() => {
     fetchProfile();
@@ -870,11 +878,28 @@ const ProfilePage: React.FC = () => {
         {profile.role === 'resident' && (
           <>
             {/* Reservation Notifications */}
-            <div style={{ marginBottom: '2rem' }}>
-              <h3 style={{ fontSize: '1rem', fontWeight: '600', color: '#374151', marginBottom: '1rem', paddingBottom: '0.5rem', borderBottom: '1px solid #e5e7eb' }}>
-                Reservation Notifications
-              </h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{ marginBottom: '1.5rem', border: '1px solid #e5e7eb', borderRadius: '0.5rem', overflow: 'hidden' }}>
+              <div
+                onClick={() => setExpandedCategories({ ...expandedCategories, reservations: !expandedCategories.reservations })}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '1rem',
+                  backgroundColor: '#f9fafb',
+                  cursor: 'pointer',
+                  borderBottom: expandedCategories.reservations ? '1px solid #e5e7eb' : 'none'
+                }}
+              >
+                <h3 style={{ fontSize: '1rem', fontWeight: '600', color: '#374151', margin: 0 }}>
+                  Reservation Notifications
+                </h3>
+                <span style={{ fontSize: '1.25rem', color: '#6b7280' }}>
+                  {expandedCategories.reservations ? '−' : '+'}
+                </span>
+              </div>
+              {expandedCategories.reservations && (
+                <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontWeight: '500', color: '#1f2937', marginBottom: '0.25rem' }}>
@@ -949,15 +974,33 @@ const ProfilePage: React.FC = () => {
                     onChange={(checked) => handleNotificationPreferenceChange('reservationCompleted', checked)}
                   />
                 </div>
-              </div>
+                </div>
+              )}
             </div>
 
             {/* Modification Notifications */}
-            <div style={{ marginBottom: '2rem' }}>
-              <h3 style={{ fontSize: '1rem', fontWeight: '600', color: '#374151', marginBottom: '1rem', paddingBottom: '0.5rem', borderBottom: '1px solid #e5e7eb' }}>
-                Modification Notifications
-              </h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{ marginBottom: '1.5rem', border: '1px solid #e5e7eb', borderRadius: '0.5rem', overflow: 'hidden' }}>
+              <div
+                onClick={() => setExpandedCategories({ ...expandedCategories, modifications: !expandedCategories.modifications })}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '1rem',
+                  backgroundColor: '#f9fafb',
+                  cursor: 'pointer',
+                  borderBottom: expandedCategories.modifications ? '1px solid #e5e7eb' : 'none'
+                }}
+              >
+                <h3 style={{ fontSize: '1rem', fontWeight: '600', color: '#374151', margin: 0 }}>
+                  Modification Notifications
+                </h3>
+                <span style={{ fontSize: '1.25rem', color: '#6b7280' }}>
+                  {expandedCategories.modifications ? '−' : '+'}
+                </span>
+              </div>
+              {expandedCategories.modifications && (
+                <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontWeight: '500', color: '#1f2937', marginBottom: '0.25rem' }}>
@@ -1017,15 +1060,33 @@ const ProfilePage: React.FC = () => {
                     onChange={(checked) => handleNotificationPreferenceChange('reservationModified', checked)}
                   />
                 </div>
-              </div>
+                </div>
+              )}
             </div>
 
             {/* Reminder Notifications */}
-            <div style={{ marginBottom: '2rem' }}>
-              <h3 style={{ fontSize: '1rem', fontWeight: '600', color: '#374151', marginBottom: '1rem', paddingBottom: '0.5rem', borderBottom: '1px solid #e5e7eb' }}>
-                Reminder Notifications
-              </h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{ marginBottom: '1.5rem', border: '1px solid #e5e7eb', borderRadius: '0.5rem', overflow: 'hidden' }}>
+              <div
+                onClick={() => setExpandedCategories({ ...expandedCategories, reminders: !expandedCategories.reminders })}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '1rem',
+                  backgroundColor: '#f9fafb',
+                  cursor: 'pointer',
+                  borderBottom: expandedCategories.reminders ? '1px solid #e5e7eb' : 'none'
+                }}
+              >
+                <h3 style={{ fontSize: '1rem', fontWeight: '600', color: '#374151', margin: 0 }}>
+                  Reminder Notifications
+                </h3>
+                <span style={{ fontSize: '1.25rem', color: '#6b7280' }}>
+                  {expandedCategories.reminders ? '−' : '+'}
+                </span>
+              </div>
+              {expandedCategories.reminders && (
+                <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontWeight: '500', color: '#1f2937', marginBottom: '0.25rem' }}>
@@ -1074,9 +1135,11 @@ const ProfilePage: React.FC = () => {
                 </div>
                 <ToggleSwitch
                   checked={notificationPreferences.damageAssessmentReviewed ?? true}
-                  onChange={(checked) => handleNotificationPreferenceChange('damageAssessmentReviewed', checked)}
-                />
-              </div>
+                    onChange={(checked) => handleNotificationPreferenceChange('damageAssessmentReviewed', checked)}
+                  />
+                  </div>
+                </div>
+              )}
             </div>
           </>
         )}
@@ -1084,11 +1147,28 @@ const ProfilePage: React.FC = () => {
         {(profile.role === 'janitorial' || profile.role === 'admin') && (
           <>
             {/* Approval Workflow Notifications */}
-            <div style={{ marginBottom: '2rem' }}>
-              <h3 style={{ fontSize: '1rem', fontWeight: '600', color: '#374151', marginBottom: '1rem', paddingBottom: '0.5rem', borderBottom: '1px solid #e5e7eb' }}>
-                Approval Workflow Notifications
-              </h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{ marginBottom: '1.5rem', border: '1px solid #e5e7eb', borderRadius: '0.5rem', overflow: 'hidden' }}>
+              <div
+                onClick={() => setExpandedCategories({ ...expandedCategories, approvalWorkflow: !expandedCategories.approvalWorkflow })}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '1rem',
+                  backgroundColor: '#f9fafb',
+                  cursor: 'pointer',
+                  borderBottom: expandedCategories.approvalWorkflow ? '1px solid #e5e7eb' : 'none'
+                }}
+              >
+                <h3 style={{ fontSize: '1rem', fontWeight: '600', color: '#374151', margin: 0 }}>
+                  Approval Workflow Notifications
+                </h3>
+                <span style={{ fontSize: '1.25rem', color: '#6b7280' }}>
+                  {expandedCategories.approvalWorkflow ? '−' : '+'}
+                </span>
+              </div>
+              {expandedCategories.approvalWorkflow && (
+                <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontWeight: '500', color: '#1f2937', marginBottom: '0.25rem' }}>
@@ -1154,19 +1234,38 @@ const ProfilePage: React.FC = () => {
                 </div>
                 <ToggleSwitch
                   checked={notificationPreferences.damageAssessmentRequired ?? true}
-                  onChange={(checked) => handleNotificationPreferenceChange('damageAssessmentRequired', checked)}
-                />
-              </div>
+                    onChange={(checked) => handleNotificationPreferenceChange('damageAssessmentRequired', checked)}
+                  />
+                  </div>
+                </div>
+              )}
             </div>
           </>
         )}
 
         {/* System Notifications */}
-        <div style={{ marginBottom: '1rem' }}>
-          <h3 style={{ fontSize: '1rem', fontWeight: '600', color: '#374151', marginBottom: '1rem', paddingBottom: '0.5rem', borderBottom: '1px solid #e5e7eb' }}>
-            System Notifications
-          </h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <div style={{ marginBottom: '1rem', border: '1px solid #e5e7eb', borderRadius: '0.5rem', overflow: 'hidden' }}>
+          <div
+            onClick={() => setExpandedCategories({ ...expandedCategories, system: !expandedCategories.system })}
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              padding: '1rem',
+              backgroundColor: '#f9fafb',
+              cursor: 'pointer',
+              borderBottom: expandedCategories.system ? '1px solid #e5e7eb' : 'none'
+            }}
+          >
+            <h3 style={{ fontSize: '1rem', fontWeight: '600', color: '#374151', margin: 0 }}>
+              System Notifications
+            </h3>
+            <span style={{ fontSize: '1.25rem', color: '#6b7280' }}>
+              {expandedCategories.system ? '−' : '+'}
+            </span>
+          </div>
+          {expandedCategories.system && (
+            <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div style={{ flex: 1 }}>
                 <div style={{ fontWeight: '500', color: '#1f2937', marginBottom: '0.25rem' }}>
@@ -1196,7 +1295,8 @@ const ProfilePage: React.FC = () => {
                 onChange={(checked) => handleNotificationPreferenceChange('systemAnnouncements', checked)}
               />
             </div>
-          </div>
+            </div>
+          )}
         </div>
 
         {savingNotifications && (
