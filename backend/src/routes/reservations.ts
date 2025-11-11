@@ -353,9 +353,22 @@ router.post('/', authenticateToken, async (req: any, res) => {
       reservation: createdReservation
     });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('❌ Error creating reservation:', error);
-    return res.status(500).json({ message: 'Internal server error' });
+    console.error('❌ Error details:', error.message);
+    console.error('❌ Error original:', error.original);
+    console.error('❌ Error stack:', error.stack);
+    
+    const originalError = error.original || error;
+    const errorMessage = originalError.message || error.message || 'Unknown error';
+    const errorCode = originalError.code || error.code || 'UNKNOWN';
+    
+    return res.status(500).json({ 
+      message: 'Internal server error',
+      details: errorMessage,
+      errorCode: errorCode,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 });
 

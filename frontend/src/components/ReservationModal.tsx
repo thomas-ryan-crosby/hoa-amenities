@@ -229,8 +229,20 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
       }
       
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to create reservation');
+      const errorMessage = err.response?.data?.message || 'Failed to create reservation';
+      const errorDetails = err.response?.data?.details || '';
+      const errorCode = err.response?.data?.errorCode || '';
+      
       console.error('Error creating reservation:', err);
+      console.error('Error response data:', err.response?.data);
+      console.error('Error details:', errorDetails);
+      console.error('Error code:', errorCode);
+      
+      if (errorDetails) {
+        setError(`${errorMessage}\n\nDetails: ${errorDetails}\nError Code: ${errorCode}`);
+      } else {
+        setError(errorMessage);
+      }
     } finally {
       setLoading(false);
     }
