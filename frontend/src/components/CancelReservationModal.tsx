@@ -32,31 +32,20 @@ const CancelReservationModal: React.FC<CancelReservationModalProps> = ({
   } | null>(null);
   const [acknowledged, setAcknowledged] = useState(false);
 
-  // Fetch cancellation fee when modal opens
+  // Reset state when modal opens/closes
   useEffect(() => {
     if (isOpen && reservation) {
-      fetchCancellationInfo();
+      // Reset state when modal opens
+      setCancellationInfo(null);
+      setAcknowledged(false);
+      setError(null);
     } else {
+      // Reset state when modal closes
       setCancellationInfo(null);
       setAcknowledged(false);
       setError(null);
     }
   }, [isOpen, reservation]);
-
-  const fetchCancellationInfo = async () => {
-    if (!reservation) return;
-
-    try {
-      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-      const token = localStorage.getItem('token');
-      
-      // We'll calculate the fee on the backend when cancelling
-      // For now, just set up the modal
-      setCancellationInfo(null);
-    } catch (err: any) {
-      console.error('Error fetching cancellation info:', err);
-    }
-  };
 
   const handleCancel = async () => {
     if (!reservation || !acknowledged) return;
