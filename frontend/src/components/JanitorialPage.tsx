@@ -62,8 +62,8 @@ const JanitorialPage: React.FC = () => {
   const [showCleaningTimeModal, setShowCleaningTimeModal] = useState(false);
   const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null);
   const [cleaningTime, setCleaningTime] = useState({
-    start: '',
-    end: ''
+    startTime: '', // Format: "HH:MM" (24-hour)
+    endTime: ''   // Format: "HH:MM" (24-hour)
   });
   const [showPartyCompleteModal, setShowPartyCompleteModal] = useState(false);
   const [showDamageAssessmentModal, setShowDamageAssessmentModal] = useState(false);
@@ -111,14 +111,21 @@ const JanitorialPage: React.FC = () => {
       const reservation = reservations.find(r => r.id === reservationId);
       if (reservation) {
         setSelectedReservation(reservation);
-        // Set default cleaning time (2 hours after reservation ends)
+        // Set default cleaning time (30 minutes after reservation ends, then 2 hours later)
         const reservationEndTime = new Date(reservation.partyTimeEnd);
         const defaultCleaningStart = new Date(reservationEndTime.getTime() + 30 * 60 * 1000); // 30 minutes after reservation
         const defaultCleaningEnd = new Date(defaultCleaningStart.getTime() + 2 * 60 * 60 * 1000); // 2 hours later
         
+        // Format as HH:MM for SimpleTimeSelector
+        const formatTime = (date: Date): string => {
+          const hours = date.getHours();
+          const minutes = date.getMinutes();
+          return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+        };
+        
         setCleaningTime({
-          start: defaultCleaningStart.toISOString().slice(0, 16), // Format for datetime-local input
-          end: defaultCleaningEnd.toISOString().slice(0, 16)
+          startTime: formatTime(defaultCleaningStart),
+          endTime: formatTime(defaultCleaningEnd)
         });
         setShowCleaningTimeModal(true);
       }
@@ -159,20 +166,41 @@ const JanitorialPage: React.FC = () => {
     if (!selectedReservation) return;
     
     // Validate cleaning time
-    if (!cleaningTime.start || !cleaningTime.end) {
+    if (!cleaningTime.startTime || !cleaningTime.endTime) {
       setError('Please select both cleaning start and end times');
       return;
     }
     
-    const startTime = new Date(cleaningTime.start);
-    const endTime = new Date(cleaningTime.end);
+    // Parse time strings (HH:MM format) and combine with reservation date
+    const parseTime = (timeStr: string): { hours: number; minutes: number } => {
+      const [hours, minutes] = timeStr.split(':').map(Number);
+      return { hours, minutes };
+    };
     
-    if (startTime >= endTime) {
+    const startTimeParts = parseTime(cleaningTime.startTime);
+    const endTimeParts = parseTime(cleaningTime.endTime);
+    
+    // Create full datetime by combining reservation date with selected time
+    const reservationDate = new Date(selectedReservation.date);
+    const startDateTime = new Date(reservationDate);
+    startDateTime.setHours(startTimeParts.hours, startTimeParts.minutes, 0, 0);
+    
+    const endDateTime = new Date(reservationDate);
+    endDateTime.setHours(endTimeParts.hours, endTimeParts.minutes, 0, 0);
+    
+    // If end time is earlier than start time, assume it's the next day
+    if (endDateTime <= startDateTime) {
+      endDateTime.setDate(endDateTime.getDate() + 1);
+    }
+    
+    // Validate end time is after start time
+    if (endDateTime <= startDateTime) {
       setError('Cleaning end time must be after start time');
       return;
     }
     
-    const duration = endTime.getTime() - startTime.getTime();
+    // Validate duration is at least 2 hours
+    const duration = endDateTime.getTime() - startDateTime.getTime();
     const twoHours = 2 * 60 * 60 * 1000;
     
     if (duration < twoHours) {
@@ -180,9 +208,22 @@ const JanitorialPage: React.FC = () => {
       return;
     }
     
+    // Validate cleaning starts after reservation ends
+    const reservationEndTime = new Date(selectedReservation.partyTimeEnd);
+    if (startDateTime <= reservationEndTime) {
+      setError('Cleaning time must start after the reservation ends');
+      return;
+    }
+    
+    // Format as ISO strings for backend
+    const cleaningTimeData = {
+      start: startDateTime.toISOString(),
+      end: endDateTime.toISOString()
+    };
+    
     // Close modal and approve with cleaning time
     setShowCleaningTimeModal(false);
-    await approveReservation(selectedReservation.id, cleaningTime);
+    await approveReservation(selectedReservation.id, cleaningTimeData);
   };
 
   const handleCleaningTimeCancel = () => {
@@ -904,40 +945,20 @@ const JanitorialPage: React.FC = () => {
             </div>
 
             <div style={{ marginBottom: '1rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', color: '#374151' }}>
-                Cleaning Start Time
-              </label>
-              <input
-                type="datetime-local"
-                value={cleaningTime.start}
-                onChange={(e) => setCleaningTime(prev => ({ ...prev, start: e.target.value }))}
-                style={{
-                  width: '100%',
-                  padding: '0.5rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.375rem',
-                  fontSize: '1rem',
-                  boxSizing: 'border-box'
-                }}
+              <SimpleTimeSelector
+                label="Cleaning Start Time"
+                value={cleaningTime.startTime}
+                onChange={(value) => setCleaningTime(prev => ({ ...prev, startTime: value }))}
+                required
               />
             </div>
 
             <div style={{ marginBottom: '1.5rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', color: '#374151' }}>
-                Cleaning End Time
-              </label>
-              <input
-                type="datetime-local"
-                value={cleaningTime.end}
-                onChange={(e) => setCleaningTime(prev => ({ ...prev, end: e.target.value }))}
-                style={{
-                  width: '100%',
-                  padding: '0.5rem',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '0.375rem',
-                  fontSize: '1rem',
-                  boxSizing: 'border-box'
-                }}
+              <SimpleTimeSelector
+                label="Cleaning End Time"
+                value={cleaningTime.endTime}
+                onChange={(value) => setCleaningTime(prev => ({ ...prev, endTime: value }))}
+                required
               />
             </div>
 
