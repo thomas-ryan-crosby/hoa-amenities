@@ -15,6 +15,8 @@ interface Reservation {
   partyTimeStart: string;
   partyTimeEnd: string;
   guestCount: number;
+  eventName?: string | null;
+  isPrivate?: boolean;
   specialRequirements?: string;
   status: 'NEW' | 'JANITORIAL_APPROVED' | 'FULLY_APPROVED' | 'CANCELLED' | 'COMPLETED';
   totalFee: number | string;
