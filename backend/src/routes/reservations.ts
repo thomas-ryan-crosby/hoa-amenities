@@ -317,37 +317,45 @@ router.post('/', authenticateToken, async (req: any, res) => {
     const totalFee = amenity.reservationFee;
     const totalDeposit = amenity.deposit;
 
-    // Create reservation
-    // Use fields option to explicitly specify which fields to include
-    // This prevents Sequelize from trying to set default values for modification fields that don't exist
-    const reservation = await Reservation.create({
-      userId,
-      amenityId,
-      communityId: amenity.communityId, // Get communityId from amenity
-      date,
-      setupTimeStart,
-      setupTimeEnd,
-      partyTimeStart,
-      partyTimeEnd,
-      guestCount,
-      eventName: eventName || null,
-      isPrivate: isPrivate === true || isPrivate === 'true',
-      specialRequirements: specialRequirements || null,
-      status: 'NEW',
-      totalFee,
-      totalDeposit
-    }, {
-      fields: [
-        'userId', 'amenityId', 'communityId', 'date', 'setupTimeStart', 'setupTimeEnd',
-        'partyTimeStart', 'partyTimeEnd', 'guestCount', 'eventName', 'isPrivate',
-        'specialRequirements', 'status', 'totalFee', 'totalDeposit'
-        // Explicitly exclude modification fields to avoid "column does not exist" errors
-      ]
-    });
+    // Create reservation using raw SQL to avoid Sequelize trying to access modificationStatus column
+    const [insertResult] = await sequelize.query(`
+      INSERT INTO reservations (
+        "userId", "amenityId", "communityId", date,
+        "setupTimeStart", "setupTimeEnd", "partyTimeStart", "partyTimeEnd",
+        "guestCount", "eventName", "isPrivate", "specialRequirements",
+        status, "totalFee", "totalDeposit"
+      ) VALUES (
+        :userId, :amenityId, :communityId, :date,
+        :setupTimeStart, :setupTimeEnd, :partyTimeStart, :partyTimeEnd,
+        :guestCount, :eventName, :isPrivate, :specialRequirements,
+        :status, :totalFee, :totalDeposit
+      ) RETURNING id
+    `, {
+      replacements: {
+        userId,
+        amenityId,
+        communityId: amenity.communityId,
+        date,
+        setupTimeStart,
+        setupTimeEnd,
+        partyTimeStart,
+        partyTimeEnd,
+        guestCount,
+        eventName: eventName || null,
+        isPrivate: isPrivate === true || isPrivate === 'true',
+        specialRequirements: specialRequirements || null,
+        status: 'NEW',
+        totalFee,
+        totalDeposit
+      },
+      type: QueryTypes.INSERT
+    }) as any[];
+
+    const reservationId = insertResult[0].id;
 
     // Fetch the created reservation with amenity details
     // Explicitly exclude modification fields since they may not exist in the database
-    const createdReservation = await Reservation.findByPk(reservation.id, {
+    const createdReservation = await Reservation.findByPk(reservationId, {
       attributes: [
         'id', 'date', 'setupTimeStart', 'setupTimeEnd', 'partyTimeStart', 'partyTimeEnd',
         'guestCount', 'specialRequirements', 'status', 'totalFee', 'totalDeposit',
