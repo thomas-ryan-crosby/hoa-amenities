@@ -883,18 +883,16 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                 <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
                   Hours of Operation
                 </label>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', cursor: 'pointer' }}>
-                  <input
-                    type="checkbox"
+                <div style={{ marginBottom: '0.5rem' }}>
+                  <ToggleSwitch
                     checked={formData.hoursOfOperation.open24Hours}
-                    onChange={(e) => setFormData({
+                    onChange={(checked) => setFormData({
                       ...formData,
-                      hoursOfOperation: { ...formData.hoursOfOperation, open24Hours: e.target.checked }
+                      hoursOfOperation: { ...formData.hoursOfOperation, open24Hours: checked }
                     })}
-                    style={{ cursor: 'pointer' }}
+                    label="Open 24 Hours"
                   />
-                  <span style={{ fontSize: '0.875rem' }}>Open 24 Hours</span>
-                </label>
+                </div>
                 {!formData.hoursOfOperation.open24Hours && (
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                     <div>
@@ -961,12 +959,10 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
               {/* Approval Requirements */}
               <div style={{ marginBottom: '1rem', padding: '1rem', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '0.375rem' }}>
                 <div style={{ marginBottom: '1rem' }}>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
-                    <input
-                      type="checkbox"
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
+                    <ToggleSwitch
                       checked={formData.janitorialRequired}
-                      onChange={(e) => {
-                        const newValue = e.target.checked;
+                      onChange={(newValue) => {
                         const oldValue = editingAmenity?.janitorialRequired ?? formData.janitorialRequired;
                         
                         // If changing janitorial requirement, show warning
@@ -994,27 +990,18 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                           setFormData({ ...formData, janitorialRequired: newValue });
                         }
                       }}
-                      style={{
-                        width: '20px',
-                        height: '20px',
-                        cursor: 'pointer'
-                      }}
+                      label="Janitorial Approval Required"
                     />
-                    <span style={{ fontWeight: 500, color: '#374151' }}>
-                      Janitorial Approval Required
-                    </span>
-                  </label>
-                  <p style={{ fontSize: '0.875rem', color: '#6b7280', marginTop: '0.5rem', marginLeft: '1.75rem' }}>
-                    If checked, reservations will require janitorial approval before being confirmed.
+                  </div>
+                  <p style={{ fontSize: '0.875rem', color: '#6b7280', marginTop: '0.5rem', marginLeft: '3rem' }}>
+                    If enabled, reservations will require janitorial approval before being confirmed.
                   </p>
                 </div>
                 <div>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
-                    <input
-                      type="checkbox"
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
+                    <ToggleSwitch
                       checked={formData.approvalRequired}
-                      onChange={(e) => {
-                        const newValue = e.target.checked;
+                      onChange={(newValue) => {
                         const oldValue = editingAmenity?.approvalRequired ?? formData.approvalRequired;
                         
                         // If changing admin approval requirement, show warning
@@ -1042,18 +1029,11 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                           setFormData({ ...formData, approvalRequired: newValue });
                         }
                       }}
-                      style={{
-                        width: '20px',
-                        height: '20px',
-                        cursor: 'pointer'
-                      }}
+                      label="Admin Approval Required"
                     />
-                    <span style={{ fontWeight: 500, color: '#374151' }}>
-                      Admin Approval Required
-                    </span>
-                  </label>
-                  <p style={{ fontSize: '0.875rem', color: '#6b7280', marginTop: '0.5rem', marginLeft: '1.75rem' }}>
-                    If checked, reservations will require admin approval after janitorial approval.
+                  </div>
+                  <p style={{ fontSize: '0.875rem', color: '#6b7280', marginTop: '0.5rem', marginLeft: '3rem' }}>
+                    If enabled, reservations will require admin approval after janitorial approval.
                   </p>
                 </div>
               </div>
@@ -1151,21 +1131,11 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                 </h3>
                 
                 <div style={{ marginBottom: '1rem' }}>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
-                    <input
-                      type="checkbox"
-                      checked={formData.cancellationFeeEnabled}
-                      onChange={(e) => setFormData({ ...formData, cancellationFeeEnabled: e.target.checked })}
-                      style={{
-                        width: '20px',
-                        height: '20px',
-                        cursor: 'pointer'
-                      }}
-                    />
-                    <span style={{ fontWeight: 500, color: '#374151' }}>
-                      Enable Cancellation Fees
-                    </span>
-                  </label>
+                  <ToggleSwitch
+                    checked={formData.cancellationFeeEnabled}
+                    onChange={(checked) => setFormData({ ...formData, cancellationFeeEnabled: checked })}
+                    label="Enable Cancellation Fees"
+                  />
                 </div>
 
                 <div style={{ marginBottom: '1rem' }}>
