@@ -253,6 +253,10 @@ router.put('/:id', authenticateToken, requireAdmin, async (req: any, res) => {
       amenity.hoursOfOperation = hoursOfOperation ? (typeof hoursOfOperation === 'string' ? hoursOfOperation : JSON.stringify(hoursOfOperation)) : null;
     }
     if (displayColor !== undefined) amenity.displayColor = displayColor || '#355B45';
+    // Store old values to check if approval requirements changed
+    const oldJanitorialRequired = amenity.janitorialRequired;
+    const oldApprovalRequired = amenity.approvalRequired;
+    
     if (janitorialRequired !== undefined) amenity.janitorialRequired = janitorialRequired === true;
     if (approvalRequired !== undefined) amenity.approvalRequired = approvalRequired === true;
     if (cancellationFeeEnabled !== undefined) amenity.cancellationFeeEnabled = cancellationFeeEnabled === true;
@@ -260,6 +264,48 @@ router.put('/:id', authenticateToken, requireAdmin, async (req: any, res) => {
     if (isActive !== undefined) amenity.isActive = isActive;
 
     await amenity.save();
+
+    // If approval requirements were removed, auto-approve existing reservations
+    const { Reservation } = require('../models');
+    const { Op } = require('sequelize');
+    
+    // Check if janitorial requirement was removed
+    if (janitorialRequired !== undefined && oldJanitorialRequired === true && janitorialRequired === false) {
+      // Auto-approve all NEW reservations for this amenity
+      // If admin approval is also not required, go directly to FULLY_APPROVED
+      // Otherwise, go to JANITORIAL_APPROVED (which means it's ready for admin approval)
+      const newStatus = amenity.approvalRequired ? 'JANITORIAL_APPROVED' : 'FULLY_APPROVED';
+      
+      await Reservation.update(
+        { status: newStatus },
+        {
+          where: {
+            amenityId: amenity.id,
+            status: 'NEW',
+            communityId: communityId
+          }
+        }
+      );
+      
+      console.log(`✅ Auto-approved NEW reservations for amenity ${amenity.id} to status ${newStatus}`);
+    }
+    
+    // Check if admin approval requirement was removed
+    if (approvalRequired !== undefined && oldApprovalRequired === true && approvalRequired === false) {
+      // Auto-approve all JANITORIAL_APPROVED reservations for this amenity
+      await Reservation.update(
+        { status: 'FULLY_APPROVED' },
+        {
+          where: {
+            amenityId: amenity.id,
+            status: 'JANITORIAL_APPROVED',
+            communityId: communityId
+          }
+        }
+      );
+      
+      console.log(`✅ Auto-approved JANITORIAL_APPROVED reservations for amenity ${amenity.id} to FULLY_APPROVED`);
+    }
 
     return res.json({
       message: 'Amenity updated successfully',

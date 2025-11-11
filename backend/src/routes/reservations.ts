@@ -319,6 +319,28 @@ router.post('/', authenticateToken, async (req: any, res) => {
     const totalFee = amenity.reservationFee;
     const totalDeposit = amenity.deposit;
 
+    // Determine initial status based on approval requirements
+    // If no janitorial approval required, check if admin approval is required
+    // If neither is required, go directly to FULLY_APPROVED
+    let initialStatus: 'NEW' | 'JANITORIAL_APPROVED' | 'FULLY_APPROVED' = 'NEW';
+    if (!amenity.janitorialRequired) {
+      // No janitorial approval needed
+      if (!amenity.approvalRequired) {
+        // No admin approval needed either - auto-approve
+        initialStatus = 'FULLY_APPROVED';
+      } else {
+        // Admin approval needed, but skip janitorial step
+        initialStatus = 'JANITORIAL_APPROVED';
+      }
+    } else if (!amenity.approvalRequired) {
+      // Janitorial approval needed, but no admin approval
+      // Will go from NEW -> JANITORIAL_APPROVED (which is effectively FULLY_APPROVED)
+      initialStatus = 'NEW';
+    } else {
+      // Both approvals needed
+      initialStatus = 'NEW';
+    }
+
     // Create reservation using raw SQL to avoid Sequelize trying to access modificationStatus column
     const now = new Date().toISOString();
     const [insertResult] = await sequelize.query(`
@@ -347,7 +369,7 @@ router.post('/', authenticateToken, async (req: any, res) => {
         eventName: eventName || null,
         isPrivate: isPrivate === true || isPrivate === 'true',
         specialRequirements: specialRequirements || null,
-        status: 'NEW',
+        status: initialStatus,
         totalFee,
         totalDeposit,
         now

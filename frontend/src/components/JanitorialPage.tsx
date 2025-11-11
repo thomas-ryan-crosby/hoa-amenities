@@ -42,6 +42,8 @@ interface Reservation {
     reservationFee: number | string;
     deposit: number | string;
     capacity: number;
+    janitorialRequired?: boolean;
+    approvalRequired?: boolean;
   };
   user: {
     id: number;
@@ -541,10 +543,22 @@ const JanitorialPage: React.FC = () => {
     return isPast || isCompleted || isCancelled;
   });
   
+  // Filter out reservations that don't need janitorial approval
+  // Only show reservations where:
+  // 1. The amenity requires janitorial approval (janitorialRequired !== false)
+  // 2. AND the reservation status is NEW (needs janitorial approval)
+  // OR
+  // 3. The reservation status is JANITORIAL_APPROVED (needs admin approval if admin approval is required)
+  const reservationsNeedingApproval = upcomingReservations.filter(r => {
+    const needsJanitorial = r.amenity.janitorialRequired !== false && r.status === 'NEW';
+    const needsAdmin = r.amenity.approvalRequired !== false && r.status === 'JANITORIAL_APPROVED';
+    return needsJanitorial || needsAdmin;
+  });
+  
   // Apply filter if not 'all'
   const filteredUpcoming = filter === 'all' 
-    ? upcomingReservations 
-    : upcomingReservations.filter(r => r.status === filter);
+    ? reservationsNeedingApproval 
+    : reservationsNeedingApproval.filter(r => r.status === filter);
   
   const filteredPast = filter === 'all' 
     ? pastReservations 
