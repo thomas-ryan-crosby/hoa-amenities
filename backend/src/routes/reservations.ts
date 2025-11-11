@@ -1037,12 +1037,20 @@ router.post('/:id/assess-damages', authenticateToken, async (req: any, res) => {
       return res.status(400).json({ message: 'Damage description is required' });
     }
 
-    // Find reservation (must belong to current community)
+    // Find reservation (must belong to current community) - use explicit attributes to avoid modification fields
     const reservation = await Reservation.findOne({
       where: {
         id,
         communityId: req.user.currentCommunityId
       },
+      attributes: [
+        'id', 'date', 'setupTimeStart', 'setupTimeEnd', 'partyTimeStart', 'partyTimeEnd',
+        'guestCount', 'specialRequirements', 'status', 'totalFee', 'totalDeposit',
+        'eventName', 'isPrivate', 'communityId', 'amenityId', 'userId',
+        'damageAssessed', 'damageAssessmentPending', 'damageAssessmentStatus',
+        'damageChargeAmount', 'damageDescription', 'damageNotes'
+        // Explicitly exclude modification fields
+      ],
       include: [
         {
           model: Amenity,
@@ -1078,23 +1086,64 @@ router.post('/:id/assess-damages', authenticateToken, async (req: any, res) => {
       });
     }
 
-    // Update reservation with damage assessment
-    await reservation.update({
-      damageAssessed: true,
-      damageAssessmentPending: true,
-      damageAssessmentStatus: 'PENDING',
-      damageChargeAmount: damageAmount,
-      damageDescription: description.trim(),
-      damageNotes: notes ? notes.trim() : null,
-      damageAssessedBy: userId,
-      damageAssessedAt: new Date()
+    // Update reservation using raw SQL to avoid accessing modification fields
+    const now = new Date().toISOString();
+    const damageAssessedAt = new Date().toISOString();
+    
+    await sequelize.query(`
+      UPDATE reservations
+      SET "damageAssessed" = true,
+          "damageAssessmentPending" = true,
+          "damageAssessmentStatus" = 'PENDING',
+          "damageChargeAmount" = :damageAmount,
+          "damageDescription" = :damageDescription,
+          "damageNotes" = :damageNotes,
+          "damageAssessedBy" = :damageAssessedBy,
+          "damageAssessedAt" = :damageAssessedAt,
+          "updatedAt" = :now
+      WHERE id = :reservationId
+    `, {
+      replacements: {
+        damageAmount,
+        damageDescription: description.trim(),
+        damageNotes: notes ? notes.trim() : null,
+        damageAssessedBy: userId,
+        damageAssessedAt,
+        now,
+        reservationId: id
+      },
+      type: QueryTypes.UPDATE
+    });
+
+    // Fetch updated reservation to return
+    const updatedReservation = await Reservation.findByPk(id, {
+      attributes: [
+        'id', 'date', 'setupTimeStart', 'setupTimeEnd', 'partyTimeStart', 'partyTimeEnd',
+        'guestCount', 'specialRequirements', 'status', 'totalFee', 'totalDeposit',
+        'eventName', 'isPrivate', 'communityId', 'amenityId', 'userId',
+        'damageAssessed', 'damageAssessmentPending', 'damageAssessmentStatus',
+        'damageChargeAmount', 'damageDescription', 'damageNotes',
+        'damageAssessedBy', 'damageAssessedAt'
+      ],
+      include: [
+        {
+          model: Amenity,
+          as: 'amenity',
+          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'approvalRequired']
+        },
+        {
+          model: User,
+          as: 'user',
+          attributes: ['id', 'firstName', 'lastName', 'email', 'phone', 'address']
+        }
+      ]
     });
 
     console.log('✅ Damage assessment submitted:', id, 'amount:', damageAmount);
 
     return res.json({
       message: 'Damage assessment submitted for admin review',
-      reservation: reservation.toJSON()
+      reservation: updatedReservation?.toJSON() || { id: parseInt(id) }
     });
 
   } catch (error) {
