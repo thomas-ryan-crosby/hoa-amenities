@@ -907,8 +907,20 @@ router.delete('/:id', authenticateToken, async (req: any, res) => {
       reservation.amenity
     );
 
-    // Update status to cancelled
-    await reservation.update({ status: 'CANCELLED' });
+    // Update status to cancelled using raw SQL to avoid column issues
+    const now = new Date().toISOString();
+    await sequelize.query(`
+      UPDATE reservations
+      SET status = 'CANCELLED', "updatedAt" = :now
+      WHERE id = :id AND "userId" = :userId
+    `, {
+      replacements: {
+        id,
+        userId,
+        now
+      },
+      type: QueryTypes.UPDATE
+    });
 
     console.log('✅ Reservation cancelled:', id);
 
@@ -919,9 +931,13 @@ router.delete('/:id', authenticateToken, async (req: any, res) => {
       refundAmount: cancellationFee.refundAmount
     });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('❌ Error cancelling reservation:', error);
-    return res.status(500).json({ message: 'Internal server error' });
+    return res.status(500).json({ 
+      message: 'Internal server error',
+      details: error.message,
+      errorCode: error.code || 'UNKNOWN'
+    });
   }
 });
 

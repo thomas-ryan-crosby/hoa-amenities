@@ -54,6 +54,7 @@ const ModifyReservationModal: React.FC<ModifyReservationModalProps> = ({
   const [modificationCount, setModificationCount] = useState<number>(0);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [modifiedReservation, setModifiedReservation] = useState<any>(null);
+  const [originalDateStr, setOriginalDateStr] = useState<string>('');
 
   // Memoize calculateModificationFee to avoid dependency issues
   const calculateModificationFee = useCallback(async () => {
@@ -101,6 +102,7 @@ const ModifyReservationModal: React.FC<ModifyReservationModalProps> = ({
       }
       // Ensure it's in YYYY-MM-DD format
       setReservationDate(dateStr);
+      setOriginalDateStr(dateStr); // Store original date for comparison
       
       // Parse times from ISO strings
       const startTime = new Date(reservation.partyTimeStart);
@@ -229,12 +231,6 @@ const ModifyReservationModal: React.FC<ModifyReservationModalProps> = ({
   if (!isOpen || !reservation) return null;
 
   // Check if any fields have changed
-  // Parse original date directly from string to avoid timezone issues
-  let originalDateStr = reservation.date;
-  if (originalDateStr.includes('T')) {
-    originalDateStr = originalDateStr.split('T')[0];
-  }
-  
   const originalStartTime = new Date(reservation.partyTimeStart);
   const originalEndTime = new Date(reservation.partyTimeEnd);
   const originalStartHours = String(originalStartTime.getHours()).padStart(2, '0');

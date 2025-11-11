@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 import ReservationModal from './ReservationModal';
 import ModifyReservationModal from './ModifyReservationModal';
+import CancelReservationModal from './CancelReservationModal';
 import { useMobile } from '../hooks/useMobile';
 import { formatDate, formatTimeRange } from '../utils/dateTimeUtils';
 
@@ -46,6 +47,8 @@ const ReservationsPage: React.FC = () => {
   const [showReservationModal, setShowReservationModal] = useState(false);
   const [showModifyModal, setShowModifyModal] = useState(false);
   const [selectedReservationForModify, setSelectedReservationForModify] = useState<Reservation | null>(null);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [selectedReservationForCancel, setSelectedReservationForCancel] = useState<Reservation | null>(null);
   const [filter, setFilter] = useState<'all' | 'NEW' | 'JANITORIAL_APPROVED' | 'FULLY_APPROVED' | 'CANCELLED' | 'COMPLETED'>('all');
 
   useEffect(() => {
@@ -134,59 +137,9 @@ const ReservationsPage: React.FC = () => {
     }
   };
 
-  const handleCancelReservation = async (reservation: Reservation) => {
-    // Calculate cancellation fee on frontend first for display
-    const reservationDate = new Date(reservation.date);
-    const now = new Date();
-    const hoursUntilReservation = (reservationDate.getTime() - now.getTime()) / (1000 * 60 * 60);
-    const daysUntilReservation = Math.floor(hoursUntilReservation / 24);
-    
-    let cancellationFee = 0;
-    let feeReason = '';
-    
-    if (hoursUntilReservation < 48) {
-      cancellationFee = parseFloat(String(reservation.totalFee));
-      feeReason = 'Within 48 hours - full booking amount';
-    } else if (daysUntilReservation < 7) {
-      cancellationFee = 50.00;
-      feeReason = 'Within 1 week - $50 modification/cancellation fee';
-    } else if (daysUntilReservation < 30) {
-      cancellationFee = 10.00;
-      feeReason = 'Within 1 month - $10 modification/cancellation fee';
-    } else {
-      feeReason = 'More than 1 month away - no fee';
-    }
-    
-    const confirmMessage = cancellationFee > 0
-      ? `Are you sure you want to cancel this reservation?\n\nCancellation Fee: $${cancellationFee.toFixed(2)}\nReason: ${feeReason}\n\nClick OK to confirm cancellation.`
-      : `Are you sure you want to cancel this reservation?\n\nNo cancellation fee will be charged.\nReason: ${feeReason}`;
-    
-    if (!window.confirm(confirmMessage)) {
-      return;
-    }
-
-    try {
-      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-      const token = localStorage.getItem('token');
-      
-      await axios.delete(`${apiUrl}/api/reservations/${reservation.id}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      
-      // Refresh reservations
-      fetchReservations();
-      
-      if (cancellationFee > 0) {
-        alert(`Reservation cancelled successfully.\n\nCancellation Fee: $${cancellationFee.toFixed(2)}\nReason: ${feeReason}`);
-      } else {
-        alert('Reservation cancelled successfully. No fee charged.');
-      }
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to cancel reservation');
-      console.error('Error cancelling reservation:', err);
-    }
+  const handleCancelReservation = (reservation: Reservation) => {
+    setSelectedReservationForCancel(reservation);
+    setShowCancelModal(true);
   };
 
   // Removed unused getStatusColor function
@@ -684,6 +637,23 @@ const ReservationsPage: React.FC = () => {
           onReservationModified={() => {
             setShowModifyModal(false);
             setSelectedReservationForModify(null);
+            fetchReservations(); // Refresh the list
+          }}
+        />
+      )}
+
+      {/* Cancel Reservation Modal */}
+      {showCancelModal && selectedReservationForCancel && (
+        <CancelReservationModal
+          isOpen={showCancelModal}
+          onClose={() => {
+            setShowCancelModal(false);
+            setSelectedReservationForCancel(null);
+          }}
+          reservation={selectedReservationForCancel}
+          onReservationCancelled={() => {
+            setShowCancelModal(false);
+            setSelectedReservationForCancel(null);
             fetchReservations(); // Refresh the list
           }}
         />
