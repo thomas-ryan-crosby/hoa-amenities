@@ -1175,12 +1175,22 @@ router.put('/:id/review-damage-assessment', authenticateToken, async (req: any, 
       return res.status(400).json({ message: 'Adjusted amount is required and must be greater than 0' });
     }
 
-    // Find reservation (must belong to current community)
+    // Find reservation (must belong to current community) - use explicit attributes to avoid modification fields
     const reservation = await Reservation.findOne({
       where: {
         id,
         communityId: req.user.currentCommunityId
       },
+      attributes: [
+        'id', 'date', 'setupTimeStart', 'setupTimeEnd', 'partyTimeStart', 'partyTimeEnd',
+        'guestCount', 'specialRequirements', 'status', 'totalFee', 'totalDeposit',
+        'eventName', 'isPrivate', 'communityId', 'amenityId', 'userId',
+        'damageAssessed', 'damageAssessmentPending', 'damageAssessmentStatus',
+        'damageCharge', 'damageChargeAmount', 'damageChargeAdjusted',
+        'damageDescription', 'damageNotes', 'adminDamageNotes',
+        'damageAssessedBy', 'damageReviewedBy', 'damageAssessedAt', 'damageReviewedAt'
+        // Explicitly exclude modification fields
+      ],
       include: [
         {
           model: Amenity,
@@ -1209,17 +1219,31 @@ router.put('/:id/review-damage-assessment', authenticateToken, async (req: any, 
     // Process action
     let finalCharge = 0;
     let newStatus: 'APPROVED' | 'ADJUSTED' | 'DENIED';
-    const updateData: any = {
+    const now = new Date().toISOString();
+    const damageReviewedAt = new Date().toISOString();
+    
+    let updateQuery = '';
+    let replacements: any = {
       damageReviewedBy: userId,
-      damageReviewedAt: new Date(),
-      damageAssessmentPending: false
+      damageReviewedAt,
+      now,
+      reservationId: id
     };
 
     if (action === 'approve') {
       newStatus = 'APPROVED';
       finalCharge = parseFloat(String(reservation.damageChargeAmount || 0));
-      updateData.damageAssessmentStatus = 'APPROVED';
-      updateData.damageCharge = finalCharge;
+      updateQuery = `
+        UPDATE reservations
+        SET "damageAssessmentStatus" = 'APPROVED',
+            "damageCharge" = :finalCharge,
+            "damageReviewedBy" = :damageReviewedBy,
+            "damageReviewedAt" = :damageReviewedAt,
+            "damageAssessmentPending" = false,
+            "updatedAt" = :now
+        WHERE id = :reservationId
+      `;
+      replacements.finalCharge = finalCharge;
       
     } else if (action === 'adjust') {
       newStatus = 'ADJUSTED';
@@ -1233,24 +1257,69 @@ router.put('/:id/review-damage-assessment', authenticateToken, async (req: any, 
       }
       
       finalCharge = adjustedAmount;
-      updateData.damageAssessmentStatus = 'ADJUSTED';
-      updateData.damageCharge = finalCharge;
-      updateData.damageChargeAdjusted = adjustedAmount;
-      if (adminNotes) {
-        updateData.adminDamageNotes = adminNotes.trim();
-      }
+      updateQuery = `
+        UPDATE reservations
+        SET "damageAssessmentStatus" = 'ADJUSTED',
+            "damageCharge" = :finalCharge,
+            "damageChargeAdjusted" = :adjustedAmount,
+            "adminDamageNotes" = :adminNotes,
+            "damageReviewedBy" = :damageReviewedBy,
+            "damageReviewedAt" = :damageReviewedAt,
+            "damageAssessmentPending" = false,
+            "updatedAt" = :now
+        WHERE id = :reservationId
+      `;
+      replacements.finalCharge = finalCharge;
+      replacements.adjustedAmount = adjustedAmount;
+      replacements.adminNotes = adminNotes ? adminNotes.trim() : null;
       
     } else if (action === 'deny') {
       newStatus = 'DENIED';
       finalCharge = 0;
-      updateData.damageAssessmentStatus = 'DENIED';
-      updateData.damageCharge = null;
-      if (adminNotes) {
-        updateData.adminDamageNotes = adminNotes.trim();
-      }
+      updateQuery = `
+        UPDATE reservations
+        SET "damageAssessmentStatus" = 'DENIED',
+            "damageCharge" = NULL,
+            "adminDamageNotes" = :adminNotes,
+            "damageReviewedBy" = :damageReviewedBy,
+            "damageReviewedAt" = :damageReviewedAt,
+            "damageAssessmentPending" = false,
+            "updatedAt" = :now
+        WHERE id = :reservationId
+      `;
+      replacements.adminNotes = adminNotes ? adminNotes.trim() : null;
     }
 
-    await reservation.update(updateData);
+    // Update using raw SQL to avoid accessing modification fields
+    await sequelize.query(updateQuery, {
+      replacements,
+      type: QueryTypes.UPDATE
+    });
+
+    // Fetch updated reservation to return
+    const updatedReservation = await Reservation.findByPk(id, {
+      attributes: [
+        'id', 'date', 'setupTimeStart', 'setupTimeEnd', 'partyTimeStart', 'partyTimeEnd',
+        'guestCount', 'specialRequirements', 'status', 'totalFee', 'totalDeposit',
+        'eventName', 'isPrivate', 'communityId', 'amenityId', 'userId',
+        'damageAssessed', 'damageAssessmentPending', 'damageAssessmentStatus',
+        'damageCharge', 'damageChargeAmount', 'damageChargeAdjusted',
+        'damageDescription', 'damageNotes', 'adminDamageNotes',
+        'damageAssessedBy', 'damageReviewedBy', 'damageAssessedAt', 'damageReviewedAt'
+      ],
+      include: [
+        {
+          model: Amenity,
+          as: 'amenity',
+          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'approvalRequired']
+        },
+        {
+          model: User,
+          as: 'user',
+          attributes: ['id', 'firstName', 'lastName', 'email', 'phone', 'address']
+        }
+      ]
+    });
 
     console.log('✅ Damage assessment reviewed:', id, 'action:', action, 'charge:', finalCharge);
 
@@ -1259,7 +1328,7 @@ router.put('/:id/review-damage-assessment', authenticateToken, async (req: any, 
 
     return res.json({
       message: `Damage assessment ${action}d successfully`,
-      reservation: reservation.toJSON(),
+      reservation: updatedReservation?.toJSON() || { id: parseInt(id) },
       chargeAmount: finalCharge,
       charged: action !== 'deny'
     });
