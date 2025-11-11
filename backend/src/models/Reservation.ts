@@ -42,6 +42,7 @@ export interface ReservationAttributes {
   modificationReason?: string | null;
   modificationProposedBy?: number | null;
   modificationProposedAt?: Date | null;
+  modificationCount?: number; // Track number of times reservation has been modified
   createdAt: Date;
   updatedAt: Date;
 }
@@ -89,6 +90,7 @@ export class Reservation extends Model<ReservationAttributes, ReservationCreatio
   public modificationReason?: string | null;
   public modificationProposedBy?: number | null;
   public modificationProposedAt?: Date | null;
+  public modificationCount?: number;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
@@ -283,6 +285,11 @@ Reservation.init(
     modificationProposedAt: {
       type: DataTypes.DATE,
       allowNull: true,
+    },
+    modificationCount: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue: 0,
     },
     createdAt: {
       type: DataTypes.DATE,

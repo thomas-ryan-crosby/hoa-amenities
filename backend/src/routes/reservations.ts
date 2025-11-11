@@ -47,7 +47,8 @@ router.get('/', authenticateToken, async (req: any, res) => {
       [col('proposedpartytimeend'), 'proposedPartyTimeEnd'],
       [col('modificationreason'), 'modificationReason'],
       [col('modificationproposedby'), 'modificationProposedBy'],
-      [col('modificationproposedat'), 'modificationProposedAt']
+      [col('modificationproposedat'), 'modificationProposedAt'],
+      [col('modificationcount'), 'modificationCount']
     ];
     
     const reservations = await Reservation.findAll({
@@ -146,7 +147,8 @@ router.get('/all', authenticateToken, async (req: any, res) => {
       [col('proposedpartytimeend'), 'proposedPartyTimeEnd'],
       [col('modificationreason'), 'modificationReason'],
       [col('modificationproposedby'), 'modificationProposedBy'],
-      [col('modificationproposedat'), 'modificationProposedAt']
+      [col('modificationproposedat'), 'modificationProposedAt'],
+      [col('modificationcount'), 'modificationCount']
     ];
     
     const reservations = await Reservation.findAll({
@@ -597,26 +599,116 @@ function calculateModificationFee(
   return { fee, reason };
 }
 
+// GET /api/reservations/:id/modify/calculate-fee - Calculate modification fee before submitting
+router.get('/:id/modify/calculate-fee', authenticateToken, async (req: any, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+    const { newDate } = req.query; // Optional: new date if changing date
+
+    console.log('💰 Calculating modification fee for reservation:', id);
+
+    // Find reservation with explicit attributes to avoid loading non-existent columns
+    const reservation = await Reservation.findOne({
+      where: { 
+        id: id,
+        userId: userId
+      },
+      attributes: ['id', 'date', 'totalFee', 'amenityId', 'modificationCount'],
+      include: [
+        {
+          model: Amenity,
+          as: 'amenity',
+          attributes: ['id', 'name', 'modificationFeeEnabled', 'modificationFeeStructure']
+        }
+      ]
+    }) as ReservationWithAssociations;
+
+    if (!reservation) {
+      return res.status(404).json({ message: 'Reservation not found' });
+    }
+
+    // Don't allow modification of completed/cancelled reservations
+    const statusCheck = await sequelize.query(`
+      SELECT status FROM reservations WHERE id = :id
+    `, {
+      replacements: { id },
+      type: QueryTypes.SELECT
+    }) as any[];
+
+    if (statusCheck.length === 0) {
+      return res.status(404).json({ message: 'Reservation not found' });
+    }
+
+    if (statusCheck[0].status === 'COMPLETED' || statusCheck[0].status === 'CANCELLED') {
+      return res.status(400).json({ 
+        message: 'Cannot modify completed or cancelled reservations' 
+      });
+    }
+
+    // Determine if this is first change or additional
+    const modificationCount = reservation.modificationCount || 0;
+    const isFirstChange = modificationCount === 0;
+
+    // Use new date if provided, otherwise use existing date
+    const reservationDate = newDate ? new Date(newDate as string) : new Date(reservation.date);
+
+    // Calculate modification fee
+    const modificationFee = calculateModificationFee(
+      reservationDate,
+      parseFloat(String(reservation.totalFee)),
+      reservation.amenity,
+      isFirstChange
+    );
+
+    return res.json({
+      modificationFee: modificationFee.fee,
+      modificationFeeReason: modificationFee.reason,
+      isFirstChange,
+      modificationCount
+    });
+
+  } catch (error: any) {
+    console.error('❌ Error calculating modification fee:', error);
+    return res.status(500).json({ 
+      message: 'Internal server error',
+      details: error.message,
+      errorCode: error.code || 'UNKNOWN'
+    });
+  }
+});
+
 // PUT /api/reservations/:id/modify - Modify reservation with fee calculation
 router.put('/:id/modify', authenticateToken, async (req: any, res) => {
   try {
     const { id } = req.params;
     const userId = req.user.id;
-    const updateData = req.body;
+    const {
+      date,
+      setupTimeStart,
+      setupTimeEnd,
+      partyTimeStart,
+      partyTimeEnd,
+      guestCount,
+      eventName,
+      isPrivate,
+      specialRequirements
+    } = req.body;
 
     console.log('📝 Modifying reservation:', id, 'for user:', userId);
 
-    // Find reservation
+    // Find reservation with explicit attributes
     const reservation = await Reservation.findOne({
       where: { 
         id: id,
-        userId: userId // Ensure user can only modify their own reservations
+        userId: userId
       },
+      attributes: ['id', 'date', 'totalFee', 'amenityId', 'modificationCount', 'status', 'communityId'],
       include: [
         {
           model: Amenity,
           as: 'amenity',
-          attributes: ['id', 'name', 'reservationFee', 'deposit', 'modificationFeeEnabled', 'modificationFeeStructure']
+          attributes: ['id', 'name', 'reservationFee', 'deposit', 'modificationFeeEnabled', 'modificationFeeStructure', 'capacity']
         }
       ]
     }) as ReservationWithAssociations;
@@ -632,21 +724,95 @@ router.put('/:id/modify', authenticateToken, async (req: any, res) => {
       });
     }
 
+    // Validate guest count if provided
+    if (guestCount !== undefined && guestCount > reservation.amenity!.capacity) {
+      return res.status(400).json({ 
+        message: `Guest count (${guestCount}) exceeds amenity capacity (${reservation.amenity!.capacity})` 
+      });
+    }
+
+    // Determine if this is first change or additional
+    const modificationCount = reservation.modificationCount || 0;
+    const isFirstChange = modificationCount === 0;
+    const newModificationCount = modificationCount + 1;
+
+    // Use new date if provided, otherwise use existing date
+    const reservationDate = date ? new Date(date) : new Date(reservation.date);
+
     // Calculate modification fee using amenity fee structure
-    // TODO: Track modification count to determine if this is first change or additional
-    // For now, assume it's the first change
     const modificationFee = calculateModificationFee(
-      new Date(reservation.date),
+      reservationDate,
       parseFloat(String(reservation.totalFee)),
       reservation.amenity,
-      true // isFirstChange - TODO: implement modification count tracking
+      isFirstChange
     );
 
-    // Update reservation
-    await reservation.update(updateData);
+    // Build update query using raw SQL to avoid Sequelize column mapping issues
+    const now = new Date().toISOString();
+    const updateFields: string[] = [];
+    const updateValues: any = { id, now, newModificationCount };
 
-    // Fetch updated reservation with details
+    if (date) {
+      updateFields.push('date = :date');
+      updateValues.date = date;
+    }
+    if (setupTimeStart) {
+      updateFields.push('"setupTimeStart" = :setupTimeStart');
+      updateValues.setupTimeStart = setupTimeStart;
+    }
+    if (setupTimeEnd) {
+      updateFields.push('"setupTimeEnd" = :setupTimeEnd');
+      updateValues.setupTimeEnd = setupTimeEnd;
+    }
+    if (partyTimeStart) {
+      updateFields.push('"partyTimeStart" = :partyTimeStart');
+      updateValues.partyTimeStart = partyTimeStart;
+    }
+    if (partyTimeEnd) {
+      updateFields.push('"partyTimeEnd" = :partyTimeEnd');
+      updateValues.partyTimeEnd = partyTimeEnd;
+    }
+    if (guestCount !== undefined) {
+      updateFields.push('"guestCount" = :guestCount');
+      updateValues.guestCount = guestCount;
+    }
+    if (eventName !== undefined) {
+      updateFields.push('"eventName" = :eventName');
+      updateValues.eventName = eventName || null;
+    }
+    if (isPrivate !== undefined) {
+      updateFields.push('"isPrivate" = :isPrivate');
+      updateValues.isPrivate = isPrivate === true || isPrivate === 'true';
+    }
+    if (specialRequirements !== undefined) {
+      updateFields.push('"specialRequirements" = :specialRequirements');
+      updateValues.specialRequirements = specialRequirements || null;
+    }
+
+    // Always update modificationCount and updatedAt
+    updateFields.push('modificationcount = :newModificationCount');
+    updateFields.push('"updatedAt" = :now');
+
+    // Execute raw SQL update
+    await sequelize.query(`
+      UPDATE reservations
+      SET ${updateFields.join(', ')}
+      WHERE id = :id AND "userId" = :userId
+    `, {
+      replacements: {
+        ...updateValues,
+        userId
+      },
+      type: QueryTypes.UPDATE
+    });
+
+    // Fetch updated reservation with details (explicitly exclude modification fields that may not exist)
     const updatedReservation = await Reservation.findByPk(id, {
+      attributes: [
+        'id', 'date', 'setupTimeStart', 'setupTimeEnd', 'partyTimeStart', 'partyTimeEnd',
+        'guestCount', 'specialRequirements', 'status', 'totalFee', 'totalDeposit',
+        'eventName', 'isPrivate', 'communityId', 'amenityId', 'userId', 'modificationCount'
+      ],
       include: [
         {
           model: Amenity,
@@ -662,12 +828,17 @@ router.put('/:id/modify', authenticateToken, async (req: any, res) => {
       message: 'Reservation modified successfully',
       reservation: updatedReservation,
       modificationFee: modificationFee.fee,
-      modificationFeeReason: modificationFee.reason
+      modificationFeeReason: modificationFee.reason,
+      modificationCount: newModificationCount
     });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('❌ Error modifying reservation:', error);
-    return res.status(500).json({ message: 'Internal server error' });
+    return res.status(500).json({ 
+      message: 'Internal server error',
+      details: error.message,
+      errorCode: error.code || 'UNKNOWN'
+    });
   }
 });
 

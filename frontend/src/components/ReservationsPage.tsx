@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 import ReservationModal from './ReservationModal';
+import ModifyReservationModal from './ModifyReservationModal';
 import { useMobile } from '../hooks/useMobile';
 import { formatDate, formatTimeRange } from '../utils/dateTimeUtils';
 
@@ -43,6 +44,8 @@ const ReservationsPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState<number | null>(null);
   const [showReservationModal, setShowReservationModal] = useState(false);
+  const [showModifyModal, setShowModifyModal] = useState(false);
+  const [selectedReservationForModify, setSelectedReservationForModify] = useState<Reservation | null>(null);
   const [filter, setFilter] = useState<'all' | 'NEW' | 'JANITORIAL_APPROVED' | 'FULLY_APPROVED' | 'CANCELLED' | 'COMPLETED'>('all');
 
   useEffect(() => {
@@ -71,8 +74,8 @@ const ReservationsPage: React.FC = () => {
   };
 
   const handleModifyReservation = (reservation: Reservation) => {
-    // TODO: Open modification modal with pre-filled data
-    alert(`Modification feature coming soon!\n\nYou will be able to modify:\n- Event name\n- Date\n- Times\n- Guest count\n- Special requirements\n\nModification fees apply based on timing:\n- Within 1 month: $10 fee\n- Within 1 week: $50 fee\n- Within 48 hours: Full booking amount`);
+    setSelectedReservationForModify(reservation);
+    setShowModifyModal(true);
   };
 
   const handleAcceptModification = async (reservation: Reservation) => {
@@ -664,6 +667,23 @@ const ReservationsPage: React.FC = () => {
           onClose={() => setShowReservationModal(false)}
           onReservationCreated={() => {
             setShowReservationModal(false);
+            fetchReservations(); // Refresh the list
+          }}
+        />
+      )}
+
+      {/* Modify Reservation Modal */}
+      {showModifyModal && selectedReservationForModify && (
+        <ModifyReservationModal
+          isOpen={showModifyModal}
+          onClose={() => {
+            setShowModifyModal(false);
+            setSelectedReservationForModify(null);
+          }}
+          reservation={selectedReservationForModify}
+          onReservationModified={() => {
+            setShowModifyModal(false);
+            setSelectedReservationForModify(null);
             fetchReservations(); // Refresh the list
           }}
         />
