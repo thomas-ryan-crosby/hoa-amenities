@@ -280,6 +280,7 @@ router.post('/', authenticateToken, async (req: any, res) => {
     }
 
     // Check for time conflicts (within same community)
+    // Use explicit attributes to avoid loading modification fields that don't exist
     const conflictingReservation = await Reservation.findOne({
       where: {
         amenityId: amenityId,
@@ -298,7 +299,12 @@ router.post('/', authenticateToken, async (req: any, res) => {
             }
           }
         ]
-      }
+      },
+      attributes: [
+        'id', 'date', 'setupTimeStart', 'setupTimeEnd', 'partyTimeStart', 'partyTimeEnd',
+        'guestCount', 'status', 'amenityId', 'communityId'
+        // Explicitly exclude modification fields
+      ]
     });
 
     if (conflictingReservation) {
