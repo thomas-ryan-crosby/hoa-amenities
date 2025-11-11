@@ -323,11 +323,78 @@ router.put('/:id', authenticateToken, requireAdmin, async (req: any, res) => {
         console.log(`✅ Auto-approved ${updateCount} JANITORIAL_APPROVED reservations for amenity ${amenity.id} to FULLY_APPROVED`);
       }
     }
+    
+    // If approvals were enabled, move fully approved reservations back to unconfirmed status
+    let unconfirmedCount = 0;
+    let unconfirmedMessage = '';
+    
+    if (janitorialEnabled || adminEnabled) {
+      // If janitorial was enabled, move FULLY_APPROVED reservations to NEW
+      if (janitorialEnabled) {
+        const [updateCount] = await Reservation.update(
+          { status: 'NEW' },
+          {
+            where: {
+              amenityId: amenity.id,
+              status: 'FULLY_APPROVED',
+              communityId: communityId
+            }
+          }
+        );
+        
+        unconfirmedCount += updateCount;
+        if (updateCount > 0) {
+          unconfirmedMessage += `${updateCount} reservation(s) with status FULLY_APPROVED were moved to NEW (requiring janitorial approval). `;
+          console.log(`⚠️ Moved ${updateCount} FULLY_APPROVED reservations for amenity ${amenity.id} to NEW`);
+        }
+      }
+      
+      // If admin approval was enabled, move FULLY_APPROVED reservations to JANITORIAL_APPROVED
+      if (adminEnabled && amenity.janitorialRequired === false) {
+        // Only if janitorial is not required, move directly to JANITORIAL_APPROVED
+        const [updateCount] = await Reservation.update(
+          { status: 'JANITORIAL_APPROVED' },
+          {
+            where: {
+              amenityId: amenity.id,
+              status: 'FULLY_APPROVED',
+              communityId: communityId
+            }
+          }
+        );
+        
+        unconfirmedCount += updateCount;
+        if (updateCount > 0) {
+          unconfirmedMessage += `${updateCount} reservation(s) with status FULLY_APPROVED were moved to JANITORIAL_APPROVED (requiring admin approval). `;
+          console.log(`⚠️ Moved ${updateCount} FULLY_APPROVED reservations for amenity ${amenity.id} to JANITORIAL_APPROVED`);
+        }
+      } else if (adminEnabled && amenity.janitorialRequired === true) {
+        // If both are required, move FULLY_APPROVED to NEW (needs janitorial first)
+        const [updateCount] = await Reservation.update(
+          { status: 'NEW' },
+          {
+            where: {
+              amenityId: amenity.id,
+              status: 'FULLY_APPROVED',
+              communityId: communityId
+            }
+          }
+        );
+        
+        unconfirmedCount += updateCount;
+        if (updateCount > 0) {
+          unconfirmedMessage += `${updateCount} reservation(s) with status FULLY_APPROVED were moved to NEW (requiring approvals). `;
+          console.log(`⚠️ Moved ${updateCount} FULLY_APPROVED reservations for amenity ${amenity.id} to NEW`);
+        }
+      }
+    }
 
     return res.json({
       message: 'Amenity updated successfully',
       autoApprovedCount,
       autoApprovedMessage: autoApprovedMessage.trim() || null,
+      unconfirmedCount,
+      unconfirmedMessage: unconfirmedMessage.trim() || null,
       amenity: {
         id: amenity.id,
         name: amenity.name,
