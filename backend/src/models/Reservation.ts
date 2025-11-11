@@ -250,7 +250,8 @@ Reservation.init(
     modificationStatus: {
       type: DataTypes.STRING(20),
       allowNull: true,
-      defaultValue: 'NONE',
+      // Removed defaultValue - handle in application logic when column exists
+      // This prevents Sequelize from trying to set default for non-existent columns
       validate: {
         isIn: [['NONE', 'PENDING', 'ACCEPTED', 'REJECTED']]
       }
