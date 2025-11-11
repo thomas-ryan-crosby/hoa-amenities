@@ -53,6 +53,8 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
     message: string;
     originalJanitorial: boolean;
     originalAdmin: boolean;
+    newJanitorial?: boolean;
+    newAdmin?: boolean;
   } | null>(null);
   const [formData, setFormData] = useState({
     name: '',
@@ -583,7 +585,18 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                   <button
                     type="button"
                     onClick={() => {
-                      // Proceed with changes
+                      // Proceed with changes - apply the pending change
+                      if (approvalChangeWarning) {
+                        setFormData({
+                          ...formData,
+                          janitorialRequired: approvalChangeWarning.newJanitorial !== undefined 
+                            ? approvalChangeWarning.newJanitorial 
+                            : formData.janitorialRequired,
+                          approvalRequired: approvalChangeWarning.newAdmin !== undefined 
+                            ? approvalChangeWarning.newAdmin 
+                            : formData.approvalRequired
+                        });
+                      }
                       setApprovalChangeWarning(null);
                     }}
                     style={{
@@ -1049,7 +1062,8 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                               show: true,
                               message: 'Removing janitorial approval requirement will auto-approve all NEW reservations for this amenity.',
                               originalJanitorial: oldValue,
-                              originalAdmin: formData.approvalRequired
+                              originalAdmin: formData.approvalRequired,
+                              newJanitorial: newValue
                             });
                           } else if (newValue && !oldValue) {
                             // Checking - will move to unconfirmed
@@ -1057,7 +1071,8 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                               show: true,
                               message: 'Enabling janitorial approval requirement will move all FULLY_APPROVED reservations to NEW (requiring approval).',
                               originalJanitorial: oldValue,
-                              originalAdmin: formData.approvalRequired
+                              originalAdmin: formData.approvalRequired,
+                              newJanitorial: newValue
                             });
                           }
                         } else {
@@ -1095,7 +1110,8 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                               show: true,
                               message: 'Removing admin approval requirement will auto-approve all JANITORIAL_APPROVED reservations for this amenity.',
                               originalJanitorial: formData.janitorialRequired,
-                              originalAdmin: oldValue
+                              originalAdmin: oldValue,
+                              newAdmin: newValue
                             });
                           } else if (newValue && !oldValue) {
                             // Checking - will move to unconfirmed
@@ -1103,7 +1119,8 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                               show: true,
                               message: 'Enabling admin approval requirement will move all FULLY_APPROVED reservations to unconfirmed status (requiring approval).',
                               originalJanitorial: formData.janitorialRequired,
-                              originalAdmin: oldValue
+                              originalAdmin: oldValue,
+                              newAdmin: newValue
                             });
                           }
                         } else {
