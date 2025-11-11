@@ -1234,27 +1234,46 @@ const ProfilePage: React.FC = () => {
                     onChange={(checked) => handleNotificationPreferenceChange('reservationApprovedStaff', checked)}
                   />
                 </div>
-              </div>
+                </div>
+              )}
             </div>
 
             {/* Damage Assessment */}
-            <div style={{ marginBottom: '2rem' }}>
-              <h3 style={{ fontSize: '1rem', fontWeight: '600', color: '#374151', marginBottom: '1rem', paddingBottom: '0.5rem', borderBottom: '1px solid #e5e7eb' }}>
-                Damage Assessment
-              </h3>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontWeight: '500', color: '#1f2937', marginBottom: '0.25rem' }}>
-                    Damage Assessment Required
-                  </div>
-                  <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>
-                    Receive notification when a damage assessment is required
-                  </div>
-                </div>
-                <ToggleSwitch
-                  checked={notificationPreferences.damageAssessmentRequired ?? true}
-                    onChange={(checked) => handleNotificationPreferenceChange('damageAssessmentRequired', checked)}
-                  />
+            <div style={{ marginBottom: '1.5rem', border: '1px solid #e5e7eb', borderRadius: '0.5rem', overflow: 'hidden' }}>
+              <div
+                onClick={() => setExpandedCategories({ ...expandedCategories, damageAssessment: !expandedCategories.damageAssessment })}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '1rem',
+                  backgroundColor: '#f9fafb',
+                  cursor: 'pointer',
+                  borderBottom: expandedCategories.damageAssessment ? '1px solid #e5e7eb' : 'none'
+                }}
+              >
+                <h3 style={{ fontSize: '1rem', fontWeight: '600', color: '#374151', margin: 0 }}>
+                  Damage Assessment
+                </h3>
+                <span style={{ fontSize: '1.25rem', color: '#6b7280' }}>
+                  {expandedCategories.damageAssessment ? '−' : '+'}
+                </span>
+              </div>
+              {expandedCategories.damageAssessment && (
+                <div style={{ padding: '1rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontWeight: '500', color: '#1f2937', marginBottom: '0.25rem' }}>
+                        Damage Assessment Required
+                      </div>
+                      <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>
+                        Receive notification when a damage assessment is required
+                      </div>
+                    </div>
+                    <ToggleSwitch
+                      checked={notificationPreferences.damageAssessmentRequired ?? true}
+                      onChange={(checked) => handleNotificationPreferenceChange('damageAssessmentRequired', checked)}
+                    />
                   </div>
                 </div>
               )}
