@@ -48,6 +48,12 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
   const [showModal, setShowModal] = useState(false);
   const [editingAmenity, setEditingAmenity] = useState<Amenity | null>(null);
   const [autoApprovalNotification, setAutoApprovalNotification] = useState<string | null>(null);
+  const [approvalChangeWarning, setApprovalChangeWarning] = useState<{
+    show: boolean;
+    message: string;
+    originalJanitorial: boolean;
+    originalAdmin: boolean;
+  } | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -950,7 +956,22 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                     <input
                       type="checkbox"
                       checked={formData.janitorialRequired}
-                      onChange={(e) => setFormData({ ...formData, janitorialRequired: e.target.checked })}
+                      onChange={(e) => {
+                        const newValue = e.target.checked;
+                        const oldValue = editingAmenity?.janitorialRequired ?? formData.janitorialRequired;
+                        
+                        // If unchecking janitorial requirement, show warning
+                        if (!newValue && oldValue && editingAmenity) {
+                          setApprovalChangeWarning({
+                            show: true,
+                            message: 'Removing janitorial approval requirement will auto-approve all NEW reservations for this amenity.',
+                            originalJanitorial: oldValue,
+                            originalAdmin: formData.approvalRequired
+                          });
+                        } else {
+                          setFormData({ ...formData, janitorialRequired: newValue });
+                        }
+                      }}
                       style={{
                         width: '20px',
                         height: '20px',

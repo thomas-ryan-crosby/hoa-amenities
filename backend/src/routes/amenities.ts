@@ -259,6 +259,10 @@ router.put('/:id', authenticateToken, requireAdmin, async (req: any, res) => {
     
     if (janitorialRequired !== undefined) amenity.janitorialRequired = janitorialRequired === true;
     if (approvalRequired !== undefined) amenity.approvalRequired = approvalRequired === true;
+    
+    // Track if approvals were enabled (opposite direction)
+    const janitorialEnabled = janitorialRequired !== undefined && oldJanitorialRequired === false && janitorialRequired === true;
+    const adminEnabled = approvalRequired !== undefined && oldApprovalRequired === false && approvalRequired === true;
     if (cancellationFeeEnabled !== undefined) amenity.cancellationFeeEnabled = cancellationFeeEnabled === true;
     if (modificationFeeEnabled !== undefined) amenity.modificationFeeEnabled = modificationFeeEnabled === true;
     if (isActive !== undefined) amenity.isActive = isActive;
