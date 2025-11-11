@@ -52,6 +52,7 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
     deposit: '',
     capacity: '50',
     calendarGroup: '',
+    newCalendarGroup: '',
     isPublic: false,
     publicReservationFee: '',
     publicDeposit: '',
@@ -110,7 +111,9 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
         reservationFee: formData.reservationFee === '' ? '0' : formData.reservationFee,
         deposit: formData.deposit === '' ? '0' : formData.deposit,
         capacity: parseInt(formData.capacity),
-        calendarGroup: formData.calendarGroup.trim() || null,
+        calendarGroup: formData.calendarGroup === '__NEW__' 
+          ? (formData.newCalendarGroup?.trim() || null)
+          : (formData.calendarGroup.trim() || null),
         isPublic: formData.isPublic
       };
 
