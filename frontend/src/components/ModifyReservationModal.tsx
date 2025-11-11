@@ -87,7 +87,54 @@ const ModifyReservationModal: React.FC<ModifyReservationModalProps> = ({
     } finally {
       setCalculatingFee(false);
     }
-  };
+  }, [reservation, reservationDate]);
+
+  // Initialize form from reservation when modal opens
+  useEffect(() => {
+    if (isOpen && reservation) {
+      // Parse date from ISO string
+      const dateObj = new Date(reservation.date);
+      const year = dateObj.getFullYear();
+      const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+      const day = String(dateObj.getDate()).padStart(2, '0');
+      setReservationDate(`${year}-${month}-${day}`);
+      
+      // Parse times from ISO strings
+      const startTime = new Date(reservation.partyTimeStart);
+      const endTime = new Date(reservation.partyTimeEnd);
+      
+      const startHours = String(startTime.getHours()).padStart(2, '0');
+      const startMinutes = String(startTime.getMinutes()).padStart(2, '0');
+      setReservationTimeStart(`${startHours}:${startMinutes}`);
+      
+      const endHours = String(endTime.getHours()).padStart(2, '0');
+      const endMinutes = String(endTime.getMinutes()).padStart(2, '0');
+      setReservationTimeEnd(`${endHours}:${endMinutes}`);
+      
+      setGuestCount(reservation.guestCount);
+      setEventName(reservation.eventName || '');
+      setIsPrivate(reservation.isPrivate || false);
+      setSpecialRequirements(reservation.specialRequirements || '');
+      
+      // Reset fee calculation
+      setModificationFee(null);
+      setModificationFeeReason('');
+      
+      // Calculate initial fee
+      calculateModificationFee();
+    }
+  }, [isOpen, reservation, calculateModificationFee]);
+
+  // Calculate modification fee when relevant fields change
+  useEffect(() => {
+    if (isOpen && reservation && reservationDate) {
+      const timeoutId = setTimeout(() => {
+        calculateModificationFee();
+      }, 500); // Debounce by 500ms
+      
+      return () => clearTimeout(timeoutId);
+    }
+  }, [reservationDate, isOpen, reservation, calculateModificationFee]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
