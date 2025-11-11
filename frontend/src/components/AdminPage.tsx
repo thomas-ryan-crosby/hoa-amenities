@@ -512,6 +512,52 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
             <h2 style={{ fontSize: '1.5rem', fontWeight: 600, marginBottom: '1.5rem', color: '#1f2937' }}>
               {editingAmenity ? 'Edit Amenity' : 'Create Amenity'}
             </h2>
+            
+            {/* Auto-approval notification */}
+            {autoApprovalNotification && (
+              <div style={{
+                backgroundColor: '#fef3c7',
+                border: '2px solid #f59e0b',
+                color: '#92400e',
+                padding: '1rem',
+                borderRadius: '0.5rem',
+                marginBottom: '1.5rem',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-start',
+                gap: '1rem'
+              }}>
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                    <span style={{ fontSize: '1.25rem' }}>⚠️</span>
+                    <strong style={{ fontSize: '1rem' }}>Auto-Approval Notice</strong>
+                  </div>
+                  <p style={{ margin: 0, fontSize: '0.875rem' }}>
+                    {autoApprovalNotification}
+                  </p>
+                  <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.75rem', fontStyle: 'italic' }}>
+                    Note: Any outstanding non-approved reservations are automatically approved when approval requirements are removed from an amenity.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setAutoApprovalNotification(null)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: '#92400e',
+                    fontSize: '1.25rem',
+                    cursor: 'pointer',
+                    padding: '0',
+                    lineHeight: '1',
+                    fontWeight: 'bold'
+                  }}
+                  aria-label="Close notification"
+                >
+                  ×
+                </button>
+              </div>
+            )}
+            
             <form onSubmit={handleSubmit}>
               <div style={{ marginBottom: '1rem' }}>
                 <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
