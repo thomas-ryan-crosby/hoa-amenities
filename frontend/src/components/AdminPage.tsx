@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 import SimpleTimeSelector from './SimpleTimeSelector';
+import ToggleSwitch from './ToggleSwitch';
 
 interface User {
   id: number;
@@ -1168,21 +1169,11 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                 </div>
 
                 <div style={{ marginBottom: '1rem' }}>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
-                    <input
-                      type="checkbox"
-                      checked={formData.modificationFeeEnabled}
-                      onChange={(e) => setFormData({ ...formData, modificationFeeEnabled: e.target.checked })}
-                      style={{
-                        width: '20px',
-                        height: '20px',
-                        cursor: 'pointer'
-                      }}
-                    />
-                    <span style={{ fontWeight: 500, color: '#374151' }}>
-                      Enable Modification Fees
-                    </span>
-                  </label>
+                  <ToggleSwitch
+                    checked={formData.modificationFeeEnabled}
+                    onChange={(checked) => setFormData({ ...formData, modificationFeeEnabled: checked })}
+                    label="Enable Modification Fees"
+                  />
                 </div>
 
                 {formData.cancellationFeeEnabled && (
