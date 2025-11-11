@@ -1655,6 +1655,7 @@ router.put('/:id/cancel-modification', authenticateToken, async (req: any, res) 
     }
 
     // Use raw SQL to clear modification fields
+    // Use quoted column name for communityId since it was created with camelCase
     await sequelize.query(`
       UPDATE reservations
       SET modificationstatus = 'NONE',
@@ -1665,8 +1666,8 @@ router.put('/:id/cancel-modification', authenticateToken, async (req: any, res) 
           modificationproposedby = NULL,
           modificationproposedat = NULL
       WHERE id = :reservationId
-        AND communityid = :communityId
-        AND modificationstatus = 'PENDING'
+        AND "communityId" = :communityId
+        AND LOWER(modificationstatus) = 'pending'
     `, {
       replacements: {
         reservationId: id,
