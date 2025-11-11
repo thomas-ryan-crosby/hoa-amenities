@@ -47,6 +47,7 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingAmenity, setEditingAmenity] = useState<Amenity | null>(null);
+  const [autoApprovalNotification, setAutoApprovalNotification] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -137,16 +138,24 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
       payload.janitorialRequired = formData.janitorialRequired;
       payload.approvalRequired = formData.approvalRequired;
 
+      let response;
       if (editingAmenity) {
         // Update existing
-        await axios.put(`${apiUrl}/api/amenities/${editingAmenity.id}`, payload, {
+        response = await axios.put(`${apiUrl}/api/amenities/${editingAmenity.id}`, payload, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
         });
+        
+        // Check if any reservations were auto-approved
+        if (response.data.autoApprovedCount > 0 && response.data.autoApprovedMessage) {
+          setAutoApprovalNotification(response.data.autoApprovedMessage);
+          // Clear notification after 10 seconds
+          setTimeout(() => setAutoApprovalNotification(null), 10000);
+        }
       } else {
         // Create new
-        await axios.post(`${apiUrl}/api/amenities`, payload, {
+        response = await axios.post(`${apiUrl}/api/amenities`, payload, {
           headers: {
             'Authorization': `Bearer ${token}`
           }

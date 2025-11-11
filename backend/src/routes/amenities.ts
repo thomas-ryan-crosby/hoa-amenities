@@ -271,6 +271,9 @@ router.put('/:id', authenticateToken, requireAdmin, async (req: any, res) => {
     const { Reservation } = require('../models');
     const { Op } = require('sequelize');
     
+    let autoApprovedCount = 0;
+    let autoApprovedMessage = '';
+    
     // Check if janitorial requirement was removed
     if (janitorialRequired !== undefined && oldJanitorialRequired === true && janitorialRequired === false) {
       // Auto-approve all NEW reservations for this amenity
@@ -278,7 +281,7 @@ router.put('/:id', authenticateToken, requireAdmin, async (req: any, res) => {
       // Otherwise, go to JANITORIAL_APPROVED (which means it's ready for admin approval)
       const newStatus = amenity.approvalRequired ? 'JANITORIAL_APPROVED' : 'FULLY_APPROVED';
       
-      await Reservation.update(
+      const [updateCount] = await Reservation.update(
         { status: newStatus },
         {
           where: {
@@ -289,13 +292,17 @@ router.put('/:id', authenticateToken, requireAdmin, async (req: any, res) => {
         }
       );
       
-      console.log(`✅ Auto-approved NEW reservations for amenity ${amenity.id} to status ${newStatus}`);
+      autoApprovedCount += updateCount;
+      if (updateCount > 0) {
+        autoApprovedMessage += `${updateCount} reservation(s) with status NEW were auto-approved to ${newStatus}. `;
+        console.log(`✅ Auto-approved ${updateCount} NEW reservations for amenity ${amenity.id} to status ${newStatus}`);
+      }
     }
     
     // Check if admin approval requirement was removed
     if (approvalRequired !== undefined && oldApprovalRequired === true && approvalRequired === false) {
       // Auto-approve all JANITORIAL_APPROVED reservations for this amenity
-      await Reservation.update(
+      const [updateCount] = await Reservation.update(
         { status: 'FULLY_APPROVED' },
         {
           where: {
@@ -306,11 +313,17 @@ router.put('/:id', authenticateToken, requireAdmin, async (req: any, res) => {
         }
       );
       
-      console.log(`✅ Auto-approved JANITORIAL_APPROVED reservations for amenity ${amenity.id} to FULLY_APPROVED`);
+      autoApprovedCount += updateCount;
+      if (updateCount > 0) {
+        autoApprovedMessage += `${updateCount} reservation(s) with status JANITORIAL_APPROVED were auto-approved to FULLY_APPROVED. `;
+        console.log(`✅ Auto-approved ${updateCount} JANITORIAL_APPROVED reservations for amenity ${amenity.id} to FULLY_APPROVED`);
+      }
     }
 
     return res.json({
       message: 'Amenity updated successfully',
+      autoApprovedCount,
+      autoApprovedMessage: autoApprovedMessage.trim() || null,
       amenity: {
         id: amenity.id,
         name: amenity.name,
