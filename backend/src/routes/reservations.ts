@@ -318,17 +318,18 @@ router.post('/', authenticateToken, async (req: any, res) => {
     const totalDeposit = amenity.deposit;
 
     // Create reservation using raw SQL to avoid Sequelize trying to access modificationStatus column
+    const now = new Date().toISOString();
     const [insertResult] = await sequelize.query(`
       INSERT INTO reservations (
         "userId", "amenityId", "communityId", date,
         "setupTimeStart", "setupTimeEnd", "partyTimeStart", "partyTimeEnd",
         "guestCount", "eventName", "isPrivate", "specialRequirements",
-        status, "totalFee", "totalDeposit"
+        status, "totalFee", "totalDeposit", "createdAt", "updatedAt"
       ) VALUES (
         :userId, :amenityId, :communityId, :date,
         :setupTimeStart, :setupTimeEnd, :partyTimeStart, :partyTimeEnd,
         :guestCount, :eventName, :isPrivate, :specialRequirements,
-        :status, :totalFee, :totalDeposit
+        :status, :totalFee, :totalDeposit, :now, :now
       ) RETURNING id
     `, {
       replacements: {
@@ -346,7 +347,8 @@ router.post('/', authenticateToken, async (req: any, res) => {
         specialRequirements: specialRequirements || null,
         status: 'NEW',
         totalFee,
-        totalDeposit
+        totalDeposit,
+        now
       },
       type: QueryTypes.INSERT
     }) as any[];
