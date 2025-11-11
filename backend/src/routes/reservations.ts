@@ -459,32 +459,142 @@ router.put('/:id', authenticateToken, async (req: any, res) => {
   }
 });
 
-// Helper function to calculate modification/cancellation fee
-function calculateModificationFee(reservationDate: Date, totalFee: number): { fee: number; reason: string } {
+// Helper function to calculate cancellation fee based on amenity fee structure
+function calculateCancellationFee(
+  reservationDate: Date, 
+  totalFee: number, 
+  deposit: number,
+  amenity: any
+): { fee: number; reason: string; refundAmount: number } {
+  // Check if cancellation fees are enabled
+  if (!amenity?.cancellationFeeEnabled) {
+    return { fee: 0, reason: 'Cancellation fees disabled for this amenity', refundAmount: totalFee + deposit };
+  }
+
   const now = new Date();
   const reservationDateTime = new Date(reservationDate);
-  
-  // Set reservation date to start of day for comparison
   reservationDateTime.setHours(0, 0, 0, 0);
   const nowDate = new Date(now);
   nowDate.setHours(0, 0, 0, 0);
   
   const hoursUntilReservation = (reservationDateTime.getTime() - now.getTime()) / (1000 * 60 * 60);
   const daysUntilReservation = Math.floor(hoursUntilReservation / 24);
-  
-  if (hoursUntilReservation < 48) {
-    // Within 48 hours - full booking amount
-    return { fee: totalFee, reason: 'Within 48 hours - full booking amount' };
-  } else if (daysUntilReservation < 7) {
-    // Within 1 week - $50 fee
-    return { fee: 50.00, reason: 'Within 1 week - $50 modification/cancellation fee' };
-  } else if (daysUntilReservation < 30) {
-    // Within 1 month - $10 fee
-    return { fee: 10.00, reason: 'Within 1 month - $10 modification/cancellation fee' };
-  } else {
-    // More than 1 month - no fee
-    return { fee: 0, reason: 'More than 1 month away - no fee' };
+
+  // Parse fee structure (default if not set)
+  let feeStructure: any;
+  if (amenity.cancellationFeeStructure) {
+    try {
+      feeStructure = JSON.parse(amenity.cancellationFeeStructure);
+    } catch (e) {
+      console.error('Error parsing cancellation fee structure:', e);
+      feeStructure = null;
+    }
   }
+
+  // Use default structure if not set
+  if (!feeStructure) {
+    feeStructure = {
+      cancelOver14Days: { fee: 0, type: 'refund' },
+      cancel7To14Days: { fee: 50, type: 'fixed' },
+      cancelUnder7Days: { fee: 0, type: 'full_fee' },
+      noShow: { fee: 0, type: 'full_fee' }
+    };
+  }
+
+  let fee = 0;
+  let reason = '';
+  let refundAmount = 0;
+
+  if (daysUntilReservation > 14) {
+    // Cancel >14 days: Full refund
+    const rule = feeStructure.cancelOver14Days || { fee: 0, type: 'refund' };
+    fee = 0;
+    refundAmount = totalFee + deposit;
+    reason = 'Cancel >14 days - Full refund';
+  } else if (daysUntilReservation >= 7 && daysUntilReservation <= 14) {
+    // Cancel 7–14 days: $50 admin fee
+    const rule = feeStructure.cancel7To14Days || { fee: 50, type: 'fixed' };
+    fee = rule.fee || 50;
+    refundAmount = (totalFee + deposit) - fee;
+    reason = `Cancel 7–14 days - $${fee.toFixed(2)} admin fee`;
+  } else {
+    // Cancel <7 days: Full rental fee / deposit forfeited
+    const rule = feeStructure.cancelUnder7Days || { fee: 0, type: 'full_fee' };
+    if (rule.type === 'full_fee') {
+      fee = totalFee + deposit;
+      refundAmount = 0;
+      reason = 'Cancel <7 days - Full rental fee / deposit forfeited';
+    } else {
+      fee = rule.fee || (totalFee + deposit);
+      refundAmount = (totalFee + deposit) - fee;
+      reason = `Cancel <7 days - $${fee.toFixed(2)} fee`;
+    }
+  }
+
+  return { fee, reason, refundAmount };
+}
+
+// Helper function to calculate modification fee based on amenity fee structure
+function calculateModificationFee(
+  reservationDate: Date, 
+  totalFee: number,
+  amenity: any,
+  isFirstChange: boolean = true
+): { fee: number; reason: string } {
+  // Check if modification fees are enabled
+  if (!amenity?.modificationFeeEnabled) {
+    return { fee: 0, reason: 'Modification fees disabled for this amenity' };
+  }
+
+  const now = new Date();
+  const reservationDateTime = new Date(reservationDate);
+  reservationDateTime.setHours(0, 0, 0, 0);
+  
+  const hoursUntilReservation = (reservationDateTime.getTime() - now.getTime()) / (1000 * 60 * 60);
+  const daysUntilReservation = Math.floor(hoursUntilReservation / 24);
+
+  // Parse fee structure (default if not set)
+  let feeStructure: any;
+  if (amenity.modificationFeeStructure) {
+    try {
+      feeStructure = JSON.parse(amenity.modificationFeeStructure);
+    } catch (e) {
+      console.error('Error parsing modification fee structure:', e);
+      feeStructure = null;
+    }
+  }
+
+  // Use default structure if not set
+  if (!feeStructure) {
+    feeStructure = {
+      firstChangeOver7Days: { fee: 0, type: 'free' },
+      additionalChange: { fee: 25, type: 'fixed' }
+    };
+  }
+
+  let fee = 0;
+  let reason = '';
+
+  if (daysUntilReservation > 7) {
+    // One date/time change >7 days: No charge (first change only)
+    if (isFirstChange) {
+      const rule = feeStructure.firstChangeOver7Days || { fee: 0, type: 'free' };
+      fee = 0;
+      reason = 'One date/time change >7 days - No charge';
+    } else {
+      // Additional change: $25 each
+      const rule = feeStructure.additionalChange || { fee: 25, type: 'fixed' };
+      fee = rule.fee || 25;
+      reason = `Additional change - $${fee.toFixed(2)} each`;
+    }
+  } else {
+    // Changes within 7 days - use additional change fee
+    const rule = feeStructure.additionalChange || { fee: 25, type: 'fixed' };
+    fee = rule.fee || 25;
+    reason = `Change within 7 days - $${fee.toFixed(2)} fee`;
+  }
+
+  return { fee, reason };
 }
 
 // PUT /api/reservations/:id/modify - Modify reservation with fee calculation
@@ -605,7 +715,8 @@ router.delete('/:id', authenticateToken, async (req: any, res) => {
     return res.json({
       message: 'Reservation cancelled successfully',
       cancellationFee: cancellationFee.fee,
-      cancellationFeeReason: cancellationFee.reason
+      cancellationFeeReason: cancellationFee.reason,
+      refundAmount: cancellationFee.refundAmount
     });
 
   } catch (error) {
