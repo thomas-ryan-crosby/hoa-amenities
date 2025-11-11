@@ -132,14 +132,17 @@ const ModifyReservationModal: React.FC<ModifyReservationModalProps> = ({
 
   // Calculate modification fee when relevant fields change
   useEffect(() => {
-    if (isOpen && reservation && reservationDate) {
-      const timeoutId = setTimeout(() => {
-        calculateModificationFee();
-      }, 500); // Debounce by 500ms
-      
-      return () => clearTimeout(timeoutId);
+    if (isOpen && reservation && reservationDate && originalDateStr) {
+      // Only recalculate if date actually changed
+      if (reservationDate !== originalDateStr) {
+        const timeoutId = setTimeout(() => {
+          calculateModificationFee();
+        }, 500); // Debounce by 500ms
+        
+        return () => clearTimeout(timeoutId);
+      }
     }
-  }, [reservationDate, isOpen, reservation, calculateModificationFee]);
+  }, [reservationDate, isOpen, reservation, calculateModificationFee, originalDateStr]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

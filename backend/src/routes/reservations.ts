@@ -873,12 +873,13 @@ router.delete('/:id', authenticateToken, async (req: any, res) => {
 
     console.log('🗑️ Cancelling reservation:', id, 'for user:', userId);
 
-    // Find reservation
+    // Find reservation with explicit attributes to avoid loading non-existent columns
     const reservation = await Reservation.findOne({
       where: { 
         id: id,
         userId: userId // Ensure user can only cancel their own reservations
       },
+      attributes: ['id', 'date', 'totalFee', 'totalDeposit', 'status', 'amenityId'],
       include: [
         {
           model: Amenity,
