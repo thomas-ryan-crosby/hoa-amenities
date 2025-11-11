@@ -806,12 +806,19 @@ router.put('/:id/complete', authenticateToken, async (req: any, res) => {
       return res.status(403).json({ message: 'Janitorial access required' });
     }
 
-    // Find reservation (must belong to current community)
+    // Find reservation (must belong to current community) - use explicit attributes to avoid modification fields
     const reservation = await Reservation.findOne({
       where: {
         id,
         communityId: req.user.currentCommunityId
       },
+      attributes: [
+        'id', 'date', 'setupTimeStart', 'setupTimeEnd', 'partyTimeStart', 'partyTimeEnd',
+        'guestCount', 'specialRequirements', 'status', 'totalFee', 'totalDeposit',
+        'eventName', 'isPrivate', 'communityId', 'amenityId', 'userId',
+        'damageAssessed', 'damageAssessmentPending', 'damageAssessmentStatus'
+        // Explicitly exclude modification fields
+      ],
       include: [
         {
           model: Amenity,
@@ -837,36 +844,81 @@ router.put('/:id/complete', authenticateToken, async (req: any, res) => {
       });
     }
 
-    // Update reservation
+    // Update reservation using raw SQL to avoid accessing modification fields
+    const now = new Date().toISOString();
     if (damagesFound === false || damagesFound === 'false') {
       // No damages found
-      await reservation.update({
-        status: 'COMPLETED',
-        damageAssessed: false,
-        damageAssessmentPending: false,
-        damageAssessmentStatus: null
+      await sequelize.query(`
+        UPDATE reservations
+        SET status = 'COMPLETED',
+            "damageAssessed" = false,
+            "damageAssessmentPending" = false,
+            "damageAssessmentStatus" = NULL,
+            "updatedAt" = :now
+        WHERE id = :reservationId
+      `, {
+        replacements: {
+          reservationId: id,
+          now
+        },
+        type: QueryTypes.UPDATE
       });
     } else {
       // Damages found - set pending flag for assessment
-      await reservation.update({
-        status: 'COMPLETED',
-        damageAssessed: false,
-        damageAssessmentPending: true
-        // Don't set damageAssessmentStatus yet - wait for assessment
+      await sequelize.query(`
+        UPDATE reservations
+        SET status = 'COMPLETED',
+            "damageAssessed" = false,
+            "damageAssessmentPending" = true,
+            "updatedAt" = :now
+        WHERE id = :reservationId
+      `, {
+        replacements: {
+          reservationId: id,
+          now
+        },
+        type: QueryTypes.UPDATE
       });
     }
+
+    // Fetch updated reservation to return
+    const updatedReservation = await Reservation.findByPk(id, {
+      attributes: [
+        'id', 'date', 'setupTimeStart', 'setupTimeEnd', 'partyTimeStart', 'partyTimeEnd',
+        'guestCount', 'specialRequirements', 'status', 'totalFee', 'totalDeposit',
+        'eventName', 'isPrivate', 'communityId', 'amenityId', 'userId',
+        'damageAssessed', 'damageAssessmentPending', 'damageAssessmentStatus'
+      ],
+      include: [
+        {
+          model: Amenity,
+          as: 'amenity',
+          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'approvalRequired']
+        },
+        {
+          model: User,
+          as: 'user',
+          attributes: ['id', 'firstName', 'lastName', 'email', 'phone', 'address']
+        }
+      ]
+    });
 
     console.log('✅ Party marked as complete:', id, 'damagesFound:', damagesFound);
 
     return res.json({
       message: 'Party marked as complete',
-      reservation: reservation.toJSON(),
+      reservation: updatedReservation?.toJSON() || { id: parseInt(id) },
       requiresDamageAssessment: damagesFound === true || damagesFound === 'true'
     });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('❌ Error marking party complete:', error);
-    return res.status(500).json({ message: 'Internal server error' });
+    console.error('❌ Error details:', error.message);
+    console.error('❌ Error stack:', error.stack);
+    return res.status(500).json({ 
+      message: 'Internal server error',
+      details: error.message || 'Unknown error'
+    });
   }
 });
 
