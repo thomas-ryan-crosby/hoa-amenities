@@ -18,6 +18,11 @@ export interface AmenityAttributes {
   displayColor: string; // Hex color code for calendar display (e.g., "#355B45")
   janitorialRequired: boolean; // Whether janitorial approval is required
   approvalRequired: boolean; // Whether admin approval is required
+  // Fee Structure Fields
+  cancellationFeeEnabled: boolean; // Whether cancellation fees are enabled
+  cancellationFeeStructure: string | null; // JSON string of cancellation fee rules
+  modificationFeeEnabled: boolean; // Whether modification fees are enabled
+  modificationFeeStructure: string | null; // JSON string of modification fee rules
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -42,6 +47,11 @@ export class Amenity extends Model<AmenityAttributes, AmenityCreationAttributes>
   public displayColor!: string;
   public janitorialRequired!: boolean;
   public approvalRequired!: boolean;
+  // Fee Structure Fields
+  public cancellationFeeEnabled!: boolean;
+  public cancellationFeeStructure!: string | null;
+  public modificationFeeEnabled!: boolean;
+  public modificationFeeStructure!: string | null;
   public isActive!: boolean;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -127,6 +137,27 @@ Amenity.init(
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: true,
+    },
+    // Fee Structure Fields
+    cancellationFeeEnabled: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true,
+    },
+    cancellationFeeStructure: {
+      type: DataTypes.TEXT,
+      allowNull: true, // JSON string of cancellation fee rules
+      defaultValue: null,
+    },
+    modificationFeeEnabled: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true,
+    },
+    modificationFeeStructure: {
+      type: DataTypes.TEXT,
+      allowNull: true, // JSON string of modification fee rules
+      defaultValue: null,
     },
     isActive: {
       type: DataTypes.BOOLEAN,
