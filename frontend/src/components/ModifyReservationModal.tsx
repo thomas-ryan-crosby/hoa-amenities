@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
 import SimpleTimeSelector from './SimpleTimeSelector';
 import PaymentConfirmationModal from './PaymentConfirmationModal';
@@ -55,6 +55,7 @@ const ModifyReservationModal: React.FC<ModifyReservationModalProps> = ({
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [modifiedReservation, setModifiedReservation] = useState<any>(null);
   const [originalDateStr, setOriginalDateStr] = useState<string>('');
+  const initializedRef = useRef<string | null>(null);
 
   // Memoize calculateModificationFee to avoid dependency issues
   const calculateModificationFee = useCallback(async () => {
@@ -93,6 +94,12 @@ const ModifyReservationModal: React.FC<ModifyReservationModalProps> = ({
   // Initialize form from reservation when modal opens
   useEffect(() => {
     if (isOpen && reservation) {
+      // Only initialize once per reservation
+      const reservationKey = `${reservation.id}-${isOpen}`;
+      if (initializedRef.current === reservationKey) {
+        return; // Already initialized for this reservation
+      }
+      
       // Parse date directly from string (YYYY-MM-DD format) to avoid timezone issues
       // reservation.date is a DATE type from database, not a datetime
       let dateStr = reservation.date;
@@ -125,8 +132,14 @@ const ModifyReservationModal: React.FC<ModifyReservationModalProps> = ({
       setModificationFee(null);
       setModificationFeeReason('');
       
+      // Mark as initialized
+      initializedRef.current = reservationKey;
+      
       // Calculate initial fee
       calculateModificationFee();
+    } else if (!isOpen) {
+      // Reset when modal closes
+      initializedRef.current = null;
     }
   }, [isOpen, reservation, calculateModificationFee]);
 
