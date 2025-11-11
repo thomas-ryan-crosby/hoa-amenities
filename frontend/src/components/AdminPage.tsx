@@ -1029,11 +1029,11 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                   </label>
                 </div>
 
-                {(formData.cancellationFeeEnabled || formData.modificationFeeEnabled) && (
+                {formData.cancellationFeeEnabled && (
                   <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: 'white', borderRadius: '0.375rem', border: '1px solid #e5e7eb' }}>
-                    <p style={{ fontSize: '0.875rem', fontWeight: 600, color: '#374151', marginBottom: '0.75rem' }}>
-                      Default Fee Structure (Applied when enabled):
-                    </p>
+                    <h4 style={{ fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.75rem', color: '#374151' }}>
+                      Cancellation Fee Structure:
+                    </h4>
                     <table style={{ width: '100%', fontSize: '0.875rem', borderCollapse: 'collapse' }}>
                       <thead>
                         <tr style={{ borderBottom: '1px solid #e5e7eb' }}>
@@ -1042,42 +1042,57 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                         </tr>
                       </thead>
                       <tbody>
-                        {formData.cancellationFeeEnabled && (
-                          <>
-                            <tr>
-                              <td style={{ padding: '0.5rem', color: '#374151' }}>Cancel &gt;14 days</td>
-                              <td style={{ padding: '0.5rem', color: '#374151' }}>Full refund</td>
-                            </tr>
-                            <tr style={{ backgroundColor: '#f9fafb' }}>
-                              <td style={{ padding: '0.5rem', color: '#374151' }}>Cancel 7–14 days</td>
-                              <td style={{ padding: '0.5rem', color: '#374151' }}>$50 admin fee</td>
-                            </tr>
-                            <tr>
-                              <td style={{ padding: '0.5rem', color: '#374151' }}>Cancel &lt;7 days</td>
-                              <td style={{ padding: '0.5rem', color: '#374151' }}>Full rental fee / deposit forfeited</td>
-                            </tr>
-                            <tr style={{ backgroundColor: '#f9fafb' }}>
-                              <td style={{ padding: '0.5rem', color: '#374151' }}>No-show</td>
-                              <td style={{ padding: '0.5rem', color: '#374151' }}>Full rental fee</td>
-                            </tr>
-                          </>
-                        )}
-                        {formData.modificationFeeEnabled && (
-                          <>
-                            <tr>
-                              <td style={{ padding: '0.5rem', color: '#374151' }}>One date/time change &gt;7 days</td>
-                              <td style={{ padding: '0.5rem', color: '#374151' }}>No charge</td>
-                            </tr>
-                            <tr style={{ backgroundColor: '#f9fafb' }}>
-                              <td style={{ padding: '0.5rem', color: '#374151' }}>Additional change</td>
-                              <td style={{ padding: '0.5rem', color: '#374151' }}>$25 each</td>
-                            </tr>
-                          </>
-                        )}
+                        <tr>
+                          <td style={{ padding: '0.5rem', color: '#374151' }}>Cancel &gt;14 days</td>
+                          <td style={{ padding: '0.5rem', color: '#374151' }}>Full refund</td>
+                        </tr>
+                        <tr style={{ backgroundColor: '#f9fafb' }}>
+                          <td style={{ padding: '0.5rem', color: '#374151' }}>Cancel 7–14 days</td>
+                          <td style={{ padding: '0.5rem', color: '#374151' }}>$50 admin fee</td>
+                        </tr>
+                        <tr>
+                          <td style={{ padding: '0.5rem', color: '#374151' }}>Cancel &lt;7 days</td>
+                          <td style={{ padding: '0.5rem', color: '#374151' }}>Full rental fee / deposit forfeited</td>
+                        </tr>
+                        <tr style={{ backgroundColor: '#f9fafb' }}>
+                          <td style={{ padding: '0.5rem', color: '#374151' }}>No-show</td>
+                          <td style={{ padding: '0.5rem', color: '#374151' }}>Full rental fee</td>
+                        </tr>
                       </tbody>
                     </table>
-                    <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.75rem', fontStyle: 'italic' }}>
-                      Note: You can customize these fees per amenity in the future.
+                  </div>
+                )}
+                
+                {formData.modificationFeeEnabled && (
+                  <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: 'white', borderRadius: '0.375rem', border: '1px solid #e5e7eb' }}>
+                    <h4 style={{ fontSize: '0.875rem', fontWeight: 600, marginBottom: '0.75rem', color: '#374151' }}>
+                      Modification Fee Structure:
+                    </h4>
+                    <table style={{ width: '100%', fontSize: '0.875rem', borderCollapse: 'collapse' }}>
+                      <thead>
+                        <tr style={{ borderBottom: '1px solid #e5e7eb' }}>
+                          <th style={{ textAlign: 'left', padding: '0.5rem', color: '#6b7280', fontWeight: 500 }}>Action</th>
+                          <th style={{ textAlign: 'left', padding: '0.5rem', color: '#6b7280', fontWeight: 500 }}>Fee</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td style={{ padding: '0.5rem', color: '#374151' }}>One date/time change &gt;7 days</td>
+                          <td style={{ padding: '0.5rem', color: '#374151' }}>No charge</td>
+                        </tr>
+                        <tr style={{ backgroundColor: '#f9fafb' }}>
+                          <td style={{ padding: '0.5rem', color: '#374151' }}>Additional change</td>
+                          <td style={{ padding: '0.5rem', color: '#374151' }}>$25 each</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+                
+                {!formData.cancellationFeeEnabled && !formData.modificationFeeEnabled && (
+                  <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: '#f9fafb', borderRadius: '0.375rem', border: '1px solid #e5e7eb', textAlign: 'center' }}>
+                    <p style={{ fontSize: '0.875rem', color: '#6b7280', margin: 0, fontStyle: 'italic' }}>
+                      Fee structures are disabled. Enable cancellation or modification fees above to configure fee structures.
                     </p>
                   </div>
                 )}
