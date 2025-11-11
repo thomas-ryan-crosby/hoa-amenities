@@ -1410,12 +1410,42 @@ router.put('/:id/accept-modification', authenticateToken, async (req: any, res) 
     console.log('✅ Accepting modification for reservation:', id, 'by user:', userId);
 
     // Find reservation (must belong to user and have pending modification)
+    // Use raw SQL to query by modificationStatus since Sequelize might not map it correctly
+    const reservationResult = await sequelize.query(`
+      SELECT * FROM reservations
+      WHERE id = :reservationId
+        AND "userId" = :userId
+        AND LOWER(modificationstatus) = 'pending'
+    `, {
+      replacements: {
+        reservationId: id,
+        userId: userId
+      },
+      type: QueryTypes.SELECT
+    }) as any[];
+
+    if (!reservationResult || reservationResult.length === 0) {
+      return res.status(404).json({ 
+        message: 'Reservation not found, does not belong to you, or has no pending modification' 
+      });
+    }
+
+    // Get the reservation using Sequelize with modification fields included
     const reservation = await Reservation.findOne({
       where: {
         id,
-        userId, // User can only accept modifications for their own reservations
-        modificationStatus: 'PENDING'
+        userId
       },
+      attributes: [
+        'id', 'date', 'setupTimeStart', 'setupTimeEnd', 'partyTimeStart', 'partyTimeEnd',
+        'guestCount', 'specialRequirements', 'status', 'totalFee', 'totalDeposit',
+        'eventName', 'isPrivate', 'communityId', 'amenityId', 'userId',
+        [col('modificationstatus'), 'modificationStatus'],
+        [col('proposeddate'), 'proposedDate'],
+        [col('proposedpartytimestart'), 'proposedPartyTimeStart'],
+        [col('proposedpartytimeend'), 'proposedPartyTimeEnd'],
+        [col('modificationreason'), 'modificationReason']
+      ],
       include: [
         {
           model: Amenity,
@@ -1474,27 +1504,64 @@ router.put('/:id/accept-modification', authenticateToken, async (req: any, res) 
       });
     }
 
-    // Apply the modification: update reservation with proposed values
+    // Apply the modification: update reservation with proposed values using raw SQL
     // At this point, we've already verified proposedPartyTimeStart and proposedPartyTimeEnd are not null
-    await reservation.update({
-      date: proposedDate,
-      partyTimeStart: proposedStart,
-      partyTimeEnd: proposedEnd,
-      setupTimeStart: proposedStart, // Setup time same as reservation start
-      setupTimeEnd: proposedStart, // Setup time same as reservation start
-      modificationStatus: 'ACCEPTED'
+    await sequelize.query(`
+      UPDATE reservations
+      SET date = :proposedDate,
+          "partyTimeStart" = :proposedStart,
+          "partyTimeEnd" = :proposedEnd,
+          "setupTimeStart" = :proposedStart,
+          "setupTimeEnd" = :proposedStart,
+          modificationstatus = 'ACCEPTED',
+          proposeddate = NULL,
+          proposedpartytimestart = NULL,
+          proposedpartytimeend = NULL,
+          modificationreason = NULL
+      WHERE id = :reservationId
+    `, {
+      replacements: {
+        proposedDate: proposedDate,
+        proposedStart: proposedStart.toISOString(),
+        proposedEnd: proposedEnd.toISOString(),
+        reservationId: id
+      },
+      type: QueryTypes.UPDATE
+    });
+
+    // Fetch updated reservation to return
+    const updatedReservation = await Reservation.findOne({
+      where: { id },
+      attributes: [
+        'id', 'date', 'setupTimeStart', 'setupTimeEnd', 'partyTimeStart', 'partyTimeEnd',
+        'guestCount', 'specialRequirements', 'status', 'totalFee', 'totalDeposit',
+        'eventName', 'isPrivate', 'communityId', 'amenityId', 'userId',
+        [col('modificationstatus'), 'modificationStatus']
+      ],
+      include: [
+        {
+          model: Amenity,
+          as: 'amenity',
+          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity']
+        }
+      ]
     });
 
     console.log('✅ Modification accepted successfully');
 
     return res.json({
       message: 'Modification accepted successfully',
-      reservation: reservation.toJSON()
+      reservation: updatedReservation?.toJSON() || { id: parseInt(id) }
     });
 
   } catch (error: any) {
     console.error('❌ Error accepting modification:', error);
-    return res.status(500).json({ message: 'Internal server error' });
+    console.error('❌ Error details:', error.message);
+    console.error('❌ Error stack:', error.stack);
+    return res.status(500).json({ 
+      message: 'Internal server error',
+      details: error.message || 'Unknown error'
+    });
   }
 });
 
@@ -1506,42 +1573,70 @@ router.put('/:id/reject-modification', authenticateToken, async (req: any, res) 
 
     console.log('❌ Rejecting modification for reservation:', id, 'by user:', userId);
 
-    // Find reservation (must belong to user and have pending modification)
-    const reservation = await Reservation.findOne({
-      where: {
-        id,
-        userId, // User can only reject modifications for their own reservations
-        modificationStatus: 'PENDING'
-      }
-    }) as ReservationWithAssociations;
+    // Verify reservation exists and belongs to user with pending modification using raw SQL
+    const reservationCheck = await sequelize.query(`
+      SELECT id FROM reservations
+      WHERE id = :reservationId
+        AND "userId" = :userId
+        AND LOWER(modificationstatus) = 'pending'
+    `, {
+      replacements: {
+        reservationId: id,
+        userId: userId
+      },
+      type: QueryTypes.SELECT
+    }) as any[];
 
-    if (!reservation) {
+    if (!reservationCheck || reservationCheck.length === 0) {
       return res.status(404).json({ 
         message: 'Reservation not found, does not belong to you, or has no pending modification' 
       });
     }
 
-    // When rejecting modification, cancel the entire reservation
+    // When rejecting modification, cancel the entire reservation using raw SQL
     // User will need to book a new reservation if they want to proceed
-    await reservation.update({
-      status: 'CANCELLED',
-      modificationStatus: 'REJECTED',
-      proposedDate: null,
-      proposedPartyTimeStart: null,
-      proposedPartyTimeEnd: null,
-      modificationReason: null
+    await sequelize.query(`
+      UPDATE reservations
+      SET status = 'CANCELLED',
+          modificationstatus = 'REJECTED',
+          proposeddate = NULL,
+          proposedpartytimestart = NULL,
+          proposedpartytimeend = NULL,
+          modificationreason = NULL
+      WHERE id = :reservationId
+    `, {
+      replacements: {
+        reservationId: id
+      },
+      type: QueryTypes.UPDATE
+    });
+
+    // Fetch updated reservation to return
+    const updatedReservation = await Reservation.findOne({
+      where: { id },
+      attributes: [
+        'id', 'date', 'setupTimeStart', 'setupTimeEnd', 'partyTimeStart', 'partyTimeEnd',
+        'guestCount', 'specialRequirements', 'status', 'totalFee', 'totalDeposit',
+        'eventName', 'isPrivate', 'communityId', 'amenityId', 'userId',
+        [col('modificationstatus'), 'modificationStatus']
+      ]
     });
 
     console.log('✅ Modification rejected - reservation cancelled');
 
     return res.json({
       message: 'Modification rejected. Reservation has been cancelled. You can book a new reservation if needed.',
-      reservation: reservation.toJSON()
+      reservation: updatedReservation?.toJSON() || { id: parseInt(id) }
     });
 
   } catch (error: any) {
     console.error('❌ Error rejecting modification:', error);
-    return res.status(500).json({ message: 'Internal server error' });
+    console.error('❌ Error details:', error.message);
+    console.error('❌ Error stack:', error.stack);
+    return res.status(500).json({ 
+      message: 'Internal server error',
+      details: error.message || 'Unknown error'
+    });
   }
 });
 
@@ -1589,7 +1684,12 @@ router.put('/:id/cancel-modification', authenticateToken, async (req: any, res) 
 
   } catch (error: any) {
     console.error('❌ Error canceling modification:', error);
-    return res.status(500).json({ message: 'Internal server error' });
+    console.error('❌ Error details:', error.message);
+    console.error('❌ Error stack:', error.stack);
+    return res.status(500).json({ 
+      message: 'Internal server error',
+      details: error.message || 'Unknown error'
+    });
   }
 });
 
