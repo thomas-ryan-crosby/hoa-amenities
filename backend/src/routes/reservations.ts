@@ -1491,6 +1491,7 @@ router.put('/:id/accept-modification', authenticateToken, async (req: any, res) 
       : (reservation.date instanceof Date ? reservation.date.toISOString().split('T')[0] : String(reservation.date));
 
     // Check for conflicts using raw SQL to avoid column name issues
+    // Use quoted camelCase column names (Sequelize creates columns with quotes, preserving camelCase)
     const conflictingReservationResult = await sequelize.query(`
       SELECT id FROM reservations
       WHERE "amenityId" = :amenityId
@@ -1498,10 +1499,8 @@ router.put('/:id/accept-modification', authenticateToken, async (req: any, res) 
         AND date = :proposedDate
         AND status IN ('NEW', 'JANITORIAL_APPROVED', 'FULLY_APPROVED')
         AND id != :reservationId
-        AND (
-          ("partyTimeStart" < :proposedEnd AND "partyTimeEnd" > :proposedStart)
-          OR (partytimestart < :proposedEnd AND partytimeend > :proposedStart)
-        )
+        AND "partyTimeStart" < :proposedEnd 
+        AND "partyTimeEnd" > :proposedStart
       LIMIT 1
     `, {
       replacements: {
