@@ -549,7 +549,9 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                       {approvalChangeWarning.message}
                     </p>
                     <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.75rem', fontStyle: 'italic' }}>
-                      Note: Any outstanding non-approved reservations will be automatically approved when approval requirements are removed.
+                      {approvalChangeWarning.message.includes('Removing') 
+                        ? 'Note: Any outstanding non-approved reservations will be automatically approved when approval requirements are removed.'
+                        : 'Note: Any fully approved reservations will be moved to unconfirmed status when approval requirements are enabled.'}
                     </p>
                   </div>
                 </div>
