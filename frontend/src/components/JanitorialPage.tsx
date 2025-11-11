@@ -229,7 +229,7 @@ const JanitorialPage: React.FC = () => {
   const handleCleaningTimeCancel = () => {
     setShowCleaningTimeModal(false);
     setSelectedReservation(null);
-    setCleaningTime({ start: '', end: '' });
+    setCleaningTime({ startTime: '', endTime: '' });
   };
 
   const handlePartyComplete = async (damagesFound: boolean) => {
