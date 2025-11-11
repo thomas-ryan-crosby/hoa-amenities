@@ -210,6 +210,7 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
       deposit: String(amenity.deposit),
       capacity: String(amenity.capacity),
       calendarGroup: amenity.calendarGroup || '',
+      newCalendarGroup: '',
       isPublic: amenity.isPublic || false,
       publicReservationFee: amenity.publicReservationFee !== null && amenity.publicReservationFee !== undefined ? String(amenity.publicReservationFee) : '',
       publicDeposit: amenity.publicDeposit !== null && amenity.publicDeposit !== undefined ? String(amenity.publicDeposit) : '',
