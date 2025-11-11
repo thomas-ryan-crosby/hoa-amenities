@@ -543,20 +543,24 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                   </p>
                 </div>
                 <button
-                  onClick={() => setAutoApprovalNotification(null)}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: '#92400e',
-                    fontSize: '1.25rem',
-                    cursor: 'pointer',
-                    padding: '0',
-                    lineHeight: '1',
-                    fontWeight: 'bold'
+                  onClick={() => {
+                    setAutoApprovalNotification(null);
+                    setShowModal(false);
+                    setEditingAmenity(null);
+                    fetchAmenities(); // Refresh the list
                   }}
-                  aria-label="Close notification"
+                  style={{
+                    padding: '0.5rem 1rem',
+                    backgroundColor: '#355B45',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '0.375rem',
+                    fontSize: '0.875rem',
+                    fontWeight: 600,
+                    cursor: 'pointer'
+                  }}
                 >
-                  ×
+                  Acknowledge & Close
                 </button>
               </div>
             )}
