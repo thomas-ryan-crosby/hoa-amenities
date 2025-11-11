@@ -991,7 +991,22 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                     <input
                       type="checkbox"
                       checked={formData.approvalRequired}
-                      onChange={(e) => setFormData({ ...formData, approvalRequired: e.target.checked })}
+                      onChange={(e) => {
+                        const newValue = e.target.checked;
+                        const oldValue = editingAmenity?.approvalRequired ?? formData.approvalRequired;
+                        
+                        // If unchecking admin approval requirement, show warning
+                        if (!newValue && oldValue && editingAmenity) {
+                          setApprovalChangeWarning({
+                            show: true,
+                            message: 'Removing admin approval requirement will auto-approve all JANITORIAL_APPROVED reservations for this amenity.',
+                            originalJanitorial: formData.janitorialRequired,
+                            originalAdmin: oldValue
+                          });
+                        } else {
+                          setFormData({ ...formData, approvalRequired: newValue });
+                        }
+                      }}
                       style={{
                         width: '20px',
                         height: '20px',
