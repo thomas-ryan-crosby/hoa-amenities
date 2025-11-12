@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import TestPlanFeedbackForm from './TestPlanFeedbackForm';
 
 const TestPlanPage: React.FC = () => {
   return (
@@ -274,12 +275,16 @@ const TestPlanPage: React.FC = () => {
           border: '1px solid #6366f1',
           borderRadius: '6px',
           padding: '1.5rem',
-          textAlign: 'center'
+          textAlign: 'center',
+          marginBottom: '2rem'
         }}>
           <p style={{ color: '#4338ca', fontSize: '1.1rem', fontWeight: 600, margin: 0 }}>
             Thank you for helping us make Neighbri better! 🙏
           </p>
         </div>
+
+        {/* Feedback Form */}
+        <TestPlanFeedbackForm />
       </div>
     </div>
   );
