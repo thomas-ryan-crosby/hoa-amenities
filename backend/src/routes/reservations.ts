@@ -412,7 +412,7 @@ router.post('/', authenticateToken, async (req: any, res) => {
       replacements: {
         userId,
         amenityId,
-        communityId: amenity.communityId,
+        communityId: reservationCommunityId,
         date,
         setupTimeStart,
         setupTimeEnd,
