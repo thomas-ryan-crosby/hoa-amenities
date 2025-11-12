@@ -186,12 +186,13 @@ router.post('/register', async (req, res) => {
         onboardingCompleted: false // Will be completed after member list is uploaded
       });
 
-      // Add user as admin of the new community
+      // Add user as admin of the new community (auto-approved since they created it)
       await CommunityUser.create({
         userId: user.id,
         communityId: newCommunity.id,
         role: 'admin',
         isActive: true,
+        status: 'approved', // Auto-approve community creator
         joinedAt: new Date()
       });
 
@@ -480,9 +481,17 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    // Get user's communities and roles
+    // Get user's communities and roles (only approved memberships)
     const communityUsers = await CommunityUser.findAll({
-      where: { userId: user.id, isActive: true },
+      where: { 
+        userId: user.id, 
+        isActive: true,
+        // Include approved memberships or null status (for backward compatibility)
+        [Op.or]: [
+          { status: 'approved' },
+          { status: null } // Backward compatibility for memberships before migration
+        ]
+      },
       include: [{
         model: Community,
         as: 'community',
