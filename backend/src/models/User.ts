@@ -121,6 +121,7 @@ User.init(
       type: DataTypes.JSONB,
       allowNull: true,
       defaultValue: {},
+      field: 'notification_preferences', // Map to snake_case database column
     },
     createdAt: {
       type: DataTypes.DATE,
