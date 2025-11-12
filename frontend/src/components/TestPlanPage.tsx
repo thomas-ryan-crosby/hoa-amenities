@@ -73,19 +73,30 @@ const TestPlanPage: React.FC = () => {
           <div style={{ backgroundColor: '#f3f4f6', padding: '1rem', borderRadius: '6px' }}>
             <p style={{ margin: '0 0 0.5rem 0', fontWeight: 600 }}>What You'll Need:</p>
             <ul style={{ margin: '0.5rem 0', paddingLeft: '1.5rem' }}>
-              <li><strong>Two valid email addresses</strong> (for testing new account creation - one for creating a community, one for joining)</li>
+              <li><strong>Two valid email addresses</strong>:
+                <ul style={{ marginTop: '0.25rem', paddingLeft: '1.5rem' }}>
+                  <li><strong>Email 1:</strong> For creating a NEW community (you'll become the admin)</li>
+                  <li><strong>Email 2:</strong> For registering and joining "The Sanctuary" community (you'll become a resident)</li>
+                </ul>
+              </li>
               <li>Access to your email inbox (for verification and notifications)</li>
               <li>A web browser (Chrome, Firefox, Safari, or Edge recommended)</li>
               <li>About 1-2 hours to complete the full test plan (or test at your own pace!)</li>
             </ul>
-            <p style={{ margin: '1rem 0 0.5rem 0', fontWeight: 600 }}>Test Account for Existing Community:</p>
+            <p style={{ margin: '1rem 0 0.5rem 0', fontWeight: 600 }}>Testing Flow:</p>
+            <ol style={{ margin: '0.5rem 0', paddingLeft: '1.5rem', lineHeight: '1.6' }}>
+              <li><strong>Create a New Community</strong> (using Email 1) - This makes you an admin of your own community</li>
+              <li><strong>Register for The Sanctuary</strong> (using Email 2) - Search for zip code <code style={{ backgroundColor: '#e5e7eb', padding: '2px 6px', borderRadius: '3px' }}>70471</code> to find "The Sanctuary"</li>
+              <li><strong>Test Different Roles</strong> - Use the test accounts below to experience different user perspectives</li>
+            </ol>
+            <p style={{ margin: '1rem 0 0.5rem 0', fontWeight: 600 }}>Test Accounts for The Sanctuary:</p>
             <div style={{ backgroundColor: '#dbeafe', border: '1px solid #3b82f6', borderRadius: '4px', padding: '0.75rem', marginTop: '0.5rem' }}>
-              <p style={{ margin: '0 0 0.5rem 0', fontSize: '14px' }}>If you want to test joining an existing community without creating a new one, you can use these test credentials:</p>
-              <ul style={{ margin: '0.5rem 0', paddingLeft: '1.5rem', fontSize: '14px' }}>
-                <li><strong>Email:</strong> <code style={{ backgroundColor: '#f3f4f6', padding: '2px 6px', borderRadius: '3px' }}>ryan@kellby.com</code></li>
-                <li><strong>Password:</strong> <code style={{ backgroundColor: '#f3f4f6', padding: '2px 6px', borderRadius: '3px' }}>admin123</code></li>
+              <p style={{ margin: '0 0 0.5rem 0', fontSize: '14px' }}>Once you've registered for The Sanctuary, you can test different roles:</p>
+              <ul style={{ margin: '0.5rem 0', paddingLeft: '1.5rem', fontSize: '14px', lineHeight: '1.6' }}>
+                <li><strong>Admin Role:</strong> <code style={{ backgroundColor: '#f3f4f6', padding: '2px 6px', borderRadius: '3px' }}>ryan@kellby.com</code> | <code style={{ backgroundColor: '#f3f4f6', padding: '2px 6px', borderRadius: '3px' }}>admin123</code></li>
+                <li><strong>Janitorial Role:</strong> <code style={{ backgroundColor: '#f3f4f6', padding: '2px 6px', borderRadius: '3px' }}>janitorial@hoa.com</code> | <code style={{ backgroundColor: '#f3f4f6', padding: '2px 6px', borderRadius: '3px' }}>admin123</code></li>
+                <li><strong>Resident Role:</strong> Use your Email 2 (the one you used to register for The Sanctuary) OR <code style={{ backgroundColor: '#f3f4f6', padding: '2px 6px', borderRadius: '3px' }}>resident@hoa.com</code> | <code style={{ backgroundColor: '#f3f4f6', padding: '2px 6px', borderRadius: '3px' }}>admin123</code></li>
               </ul>
-              <p style={{ margin: '0.5rem 0 0 0', fontSize: '14px' }}>This account is already set up in a test community, so you can jump right into testing features!</p>
             </div>
             <p style={{ margin: '1rem 0 0.5rem 0', fontWeight: 600 }}>Test Environment:</p>
             <ul style={{ margin: '0.5rem 0', paddingLeft: '1.5rem' }}>

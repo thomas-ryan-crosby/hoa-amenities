@@ -17,16 +17,29 @@ Thank you for helping us test Neighbri! This is beta software, so you may encoun
 ## Pre-Testing Setup
 
 ### What You'll Need:
-- **Two valid email addresses** (for testing new account creation - one for creating a community, one for joining)
+- **Two valid email addresses**:
+  - **Email 1**: For creating a NEW community (you'll become the admin of this community)
+  - **Email 2**: For registering and joining "The Sanctuary" community (you'll become a resident)
 - Access to your email inbox (for verification and notifications)
 - A web browser (Chrome, Firefox, Safari, or Edge recommended)
 - About 1-2 hours to complete the full test plan
 
-### Test Account for Existing Community:
-If you want to test joining an existing community without creating a new one, you can use these test credentials:
-- **Email**: `ryan@kellby.com`
-- **Password**: `admin123`
-- This account is already set up in a test community, so you can jump right into testing features
+### Testing Flow:
+1. **Create a New Community** (using Email 1) - This makes you an admin of your own community
+2. **Register for The Sanctuary** (using Email 2) - Search for zip code `70471` to find "The Sanctuary" community
+3. **Test Different Roles** - Use the test accounts below to experience different user perspectives
+
+### Test Accounts for The Sanctuary:
+Once you've registered for The Sanctuary, you can test different roles using these accounts:
+- **Admin Role**: 
+  - Email: `ryan@kellby.com`
+  - Password: `admin123`
+- **Janitorial Role**: 
+  - Email: `janitorial@hoa.com`
+  - Password: `admin123`
+- **Resident Role**: 
+  - Use the email and password you used to register for The Sanctuary
+  - OR use: `resident@hoa.com` | `admin123`
 
 ### Test Environment:
 - **URL**: https://www.neighbri.com

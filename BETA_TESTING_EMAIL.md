@@ -36,12 +36,14 @@ I'd love for you to spend **1-2 hours** (or test at your own pace!) exploring th
    - You can also view the full detailed plan on GitHub if you want more specifics
 
 2. **Start Testing**: 
-   - **Option A - Create a New Community**: You'll need **two valid email addresses** for this (one for creating the community, one for joining it)
-   - **Option B - Use Test Account**: Log in with these credentials to jump right into testing:
-     - **Email**: `ryan@kellby.com`
-     - **Password**: `admin123`
-     - This account is already set up in a test community
-   - Explore the features from different user perspectives (admin, janitorial, resident)
+   - **Step 1 - Create a New Community**: Use your first email address to create a new community (you'll become the admin)
+   - **Step 2 - Register for The Sanctuary**: Use your second email address to register for "The Sanctuary" community
+     - Search for zip code `70471` to find The Sanctuary
+     - Complete registration with your second email
+   - **Step 3 - Test Different Roles**: Use these test accounts to experience different perspectives:
+     - **Admin**: `ryan@kellby.com` | `admin123`
+     - **Janitorial**: `janitorial@hoa.com` | `admin123`
+     - **Resident**: Your second email (the one you used to register for The Sanctuary) OR `resident@hoa.com` | `admin123`
 
 3. **Provide Feedback**:
    - **Screen Recording**: Record your testing session (narrate what you're thinking!)
