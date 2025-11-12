@@ -500,9 +500,9 @@ router.post('/login', async (req, res) => {
         // Include approved memberships or null status (for backward compatibility)
         [Op.or]: [
           { status: 'approved' },
-          { status: null } // Backward compatibility for memberships before migration
+          { status: { [Op.is]: null } } // Backward compatibility for memberships before migration
         ]
-      },
+      } as any, // Type assertion needed for null status check
       include: [{
         model: Community,
         as: 'community',
