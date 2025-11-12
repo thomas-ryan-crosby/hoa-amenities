@@ -690,12 +690,24 @@ router.post('/reset-password', async (req, res) => {
     // Hash new password
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    // Update password and clear reset token
+    // Update password and clear reset token using raw SQL to ensure proper update
     await user.update({
       password: hashedPassword,
       passwordResetToken: null,
       passwordResetTokenExpires: null
+    }, {
+      fields: ['password', 'passwordResetToken', 'passwordResetTokenExpires']
     });
+
+    // Verify the password was saved correctly
+    await user.reload();
+    const passwordMatches = await bcrypt.compare(newPassword, user.password);
+    if (!passwordMatches) {
+      console.error('❌ Password reset failed: Password hash mismatch after update');
+      return res.status(500).json({ message: 'Failed to reset password. Please try again.' });
+    }
+
+    console.log('✅ Password reset successful for user:', user.email);
 
     return res.json({ message: 'Password reset successfully' });
 

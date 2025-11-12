@@ -19,9 +19,7 @@ const EmailVerificationPage: React.FC = () => {
 
       try {
         const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-        await axios.post(`${apiUrl}/api/auth/verify-email`, {
-          token
-        });
+        await axios.get(`${apiUrl}/api/auth/verify-email/${token}`);
 
         setSuccess(true);
         
