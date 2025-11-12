@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import SubscriptionPaymentModal from './SubscriptionPaymentModal';
 
 interface RegisterProps {
   onRegister?: () => void;
 }
 
 const Register: React.FC<RegisterProps> = ({ onRegister }) => {
+  const { login } = useAuth();
   const [step, setStep] = useState<'community-selection' | 'community-finder' | 'registration'>('community-finder');
   // Removed unused interestedRole and accessCodes state
   const [selectedCommunities, setSelectedCommunities] = useState<Array<{id: number, name: string, description?: string}>>([]);
@@ -46,6 +49,8 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [registeredEmail, setRegisteredEmail] = useState<string>('');
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [registrationResponse, setRegistrationResponse] = useState<any>(null);
   
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -203,28 +208,9 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
         
         // Auto-login the user
         if (response.data.token && response.data.user) {
-          // Store token and user info
-          localStorage.setItem('token', response.data.token);
-          localStorage.setItem('user', JSON.stringify(response.data.user));
-          
-          // Store community info
-          if (response.data.community) {
-            const community = {
-              id: response.data.community.id,
-              name: response.data.community.name,
-              role: 'admin',
-              accessCode: response.data.community.accessCode || '',
-              onboardingCompleted: response.data.community.onboardingCompleted || false,
-              authorizationCertified: true,
-              paymentSetup: true,
-              memberListUploaded: false
-            };
-            localStorage.setItem('currentCommunity', JSON.stringify(community));
-            localStorage.setItem('communities', JSON.stringify([community]));
-          }
-          
-          // Redirect to app (onboarding will be shown there)
-          window.location.href = '/app';
+          // Store registration response for payment modal
+          setRegistrationResponse(response.data);
+          setShowPaymentModal(true);
         } else {
           setRegisteredEmail(formData.email);
           setSuccess(true);
@@ -1846,6 +1832,61 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
           </p>
         </div>
       </form>
+
+      {/* Subscription Payment Modal */}
+      {registrationResponse && (
+        <SubscriptionPaymentModal
+          isOpen={showPaymentModal}
+          onClose={() => {
+            setShowPaymentModal(false);
+            setRegistrationResponse(null);
+          }}
+          onConfirm={() => {
+            // Store token and user info
+            if (registrationResponse.token && registrationResponse.user) {
+              localStorage.setItem('token', registrationResponse.token);
+              localStorage.setItem('user', JSON.stringify(registrationResponse.user));
+              
+              // Store community info with onboarding completed
+              if (registrationResponse.community) {
+                const community = {
+                  id: registrationResponse.community.id,
+                  name: registrationResponse.community.name,
+                  role: 'admin',
+                  accessCode: registrationResponse.community.accessCode || '',
+                  onboardingCompleted: true, // Auto-complete onboarding
+                  authorizationCertified: true,
+                  paymentSetup: true,
+                  memberListUploaded: false
+                };
+                localStorage.setItem('currentCommunity', JSON.stringify(community));
+                localStorage.setItem('communities', JSON.stringify([community]));
+              }
+              
+              // Use the login function from context to properly initialize auth
+              if (login && registrationResponse.user && registrationResponse.token) {
+                const communitiesList = registrationResponse.community ? [{
+                  id: registrationResponse.community.id,
+                  name: registrationResponse.community.name,
+                  role: 'admin' as const
+                }] : [];
+                const currentCommunityData = registrationResponse.community ? {
+                  id: registrationResponse.community.id,
+                  name: registrationResponse.community.name,
+                  role: 'admin' as const
+                } : null;
+                login(registrationResponse.user, registrationResponse.token, communitiesList, currentCommunityData);
+              }
+              
+              // Redirect to app (onboarding is already completed)
+              window.location.href = '/app';
+            }
+            setShowPaymentModal(false);
+            setRegistrationResponse(null);
+          }}
+          communityName={registrationResponse.community?.name}
+        />
+      )}
     </div>
   );
 };

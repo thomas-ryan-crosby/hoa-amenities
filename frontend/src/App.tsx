@@ -37,10 +37,10 @@ const OnboardingRoute: React.FC<{ children: React.ReactNode }> = ({ children }) 
     }
   }
   
-  // If user is admin and community needs onboarding, redirect to onboarding
-  if (isAdmin && currentCommunity && !currentCommunity.onboardingCompleted) {
-    return <Navigate to="/onboarding" />;
-  }
+  // Onboarding is now auto-completed on community creation, so skip this check
+  // if (isAdmin && currentCommunity && !currentCommunity.onboardingCompleted) {
+  //   return <Navigate to="/onboarding" />;
+  // }
   
   // If onboarding is completed, allow access
   return <>{children}</>;

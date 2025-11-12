@@ -146,6 +146,66 @@ export function buildPasswordResetEmail(firstName: string, resetUrl: string) {
   };
 }
 
+export function buildWelcomeEmail(firstName: string, communityName: string, accessCode: string) {
+  const baseUrl = process.env.FRONTEND_URL || 'https://www.neighbri.com';
+  const appUrl = `${baseUrl}/app`;
+  
+  return {
+    subject: `Welcome to Neighbri - ${communityName} Community Setup Complete!`,
+    html: `
+      <div style="font-family:Arial,sans-serif;max-width:600px;margin:auto;padding:20px;">
+        <h2 style="color:#355B45;margin-bottom:20px;">Welcome to Neighbri, ${firstName}!</h2>
+        
+        <p style="font-size:16px;line-height:1.6;color:#374151;">
+          Congratulations! Your community <strong>${communityName}</strong> has been successfully set up on Neighbri.
+        </p>
+        
+        <div style="background:#f0f9f4;border:2px solid #355B45;border-radius:8px;padding:20px;margin:24px 0;text-align:center;">
+          <div style="font-size:14px;color:#6b7280;margin-bottom:8px;font-weight:600;">Your Community Access Code</div>
+          <div style="font-size:32px;font-weight:700;color:#355B45;letter-spacing:4px;font-family:monospace;">${accessCode}</div>
+          <p style="font-size:12px;color:#6b7280;margin-top:12px;margin-bottom:0;">
+            Share this code with residents so they can join your community
+          </p>
+        </div>
+        
+        <p style="font-size:16px;line-height:1.6;color:#374151;">
+          As the community administrator, you can now:
+        </p>
+        <ul style="font-size:16px;line-height:1.8;color:#374151;padding-left:20px;">
+          <li>Create and manage amenities for your community</li>
+          <li>Approve or manage reservations</li>
+          <li>Invite residents to join using the access code above</li>
+          <li>Configure community settings and preferences</li>
+        </ul>
+        
+        <div style="margin:32px 0;text-align:center;">
+          <a href="${appUrl}" style="background:#355B45;color:#fff;padding:14px 28px;border-radius:6px;text-decoration:none;font-weight:600;display:inline-block;font-size:16px;">
+            Access Your Community Dashboard
+          </a>
+        </div>
+        
+        <div style="background:#fef3c7;border:1px solid #f59e0b;border-radius:6px;padding:16px;margin:24px 0;">
+          <p style="margin:0;font-size:14px;color:#78350f;font-weight:600;margin-bottom:8px;">
+            💳 Monthly Subscription
+          </p>
+          <p style="margin:0;font-size:14px;color:#78350f;">
+            Your community is set up with a monthly subscription fee of $175/month. Square payment integration will be available soon for automated billing.
+          </p>
+        </div>
+        
+        <p style="font-size:14px;line-height:1.6;color:#6b7280;margin-top:32px;">
+          If you have any questions or need assistance, please don't hesitate to reach out to our support team.
+        </p>
+        
+        <p style="font-size:14px;line-height:1.6;color:#6b7280;margin-top:16px;">
+          Best regards,<br>
+          <strong>The Neighbri Team</strong>
+        </p>
+      </div>
+    `
+  };
+}
+
 // ============================================================================
 // RESERVATION NOTIFICATION TEMPLATES
 // ============================================================================

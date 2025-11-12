@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import { User, CommunityUser, Community, Prospect } from '../models';
 import { authenticateToken } from '../middleware/auth';
-import { buildPasswordResetEmail, buildVerificationEmail, sendEmail } from '../services/emailService';
+import { buildPasswordResetEmail, buildVerificationEmail, buildWelcomeEmail, sendEmail } from '../services/emailService';
 
 const router = express.Router();
 
@@ -183,7 +183,7 @@ router.post('/register', async (req, res) => {
         isActive: !!(communityInfo.authorizationCertified && communityInfo.paymentSetup), // Activate if both are true
         authorizationCertified: communityInfo.authorizationCertified || false,
         paymentSetup: communityInfo.paymentSetup || false,
-        onboardingCompleted: false // Will be completed after member list is uploaded
+        onboardingCompleted: true // Auto-complete onboarding - no longer needed
       });
 
       // Add user as admin of the new community (auto-approved since they created it)
@@ -197,6 +197,16 @@ router.post('/register', async (req, res) => {
       });
 
       console.log(`✅ New community created: ${newCommunity.name} (ID: ${newCommunity.id}) - Active: ${newCommunity.isActive}`);
+      
+      // Send welcome email to the community creator (non-blocking)
+      try {
+        const { subject, html } = buildWelcomeEmail(user.firstName, newCommunity.name, accessCode);
+        await sendEmail({ to: user.email, subject, html });
+        console.log(`✅ Welcome email sent to ${user.email}`);
+      } catch (e) {
+        console.warn('⚠️ Failed to send welcome email:', e);
+        // Don't fail registration if welcome email fails
+      }
       
       // Store prospect information (extract personal info from request if available)
       const personalStreet = req.body.street || req.body.address || null;
