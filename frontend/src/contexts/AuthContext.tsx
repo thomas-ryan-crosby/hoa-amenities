@@ -230,7 +230,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.removeItem('communities');
   };
 
-  const isAuthenticated = !!user && !!token && !!currentCommunity;
+  const isAuthenticated = !!user && !!token;
   const isAdmin = currentCommunity?.role === 'admin';
   const isJanitorial = currentCommunity?.role === 'janitorial' || currentCommunity?.role === 'admin';
   const isResident = currentCommunity?.role === 'resident' || currentCommunity?.role === 'janitorial' || currentCommunity?.role === 'admin';

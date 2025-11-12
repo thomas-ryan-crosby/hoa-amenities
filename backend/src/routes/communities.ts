@@ -124,6 +124,117 @@ router.get('/search/by-access-code', async (req: any, res) => {
   }
 });
 
+// POST /api/communities/join - Join a community by access code or community ID
+router.post('/join', authenticateToken, async (req: any, res) => {
+  try {
+    const userId = req.user.id;
+    const { accessCode, communityId } = req.body;
+
+    if (!accessCode && !communityId) {
+      return res.status(400).json({ message: 'Access code or community ID is required' });
+    }
+
+    let community;
+    if (accessCode) {
+      // Find community by access code
+      community = await Community.findOne({
+        where: {
+          accessCode: accessCode.toString().trim().toUpperCase(),
+          isActive: true
+        }
+      });
+
+      if (!community) {
+        return res.status(404).json({ message: 'Community not found with this access code' });
+      }
+    } else {
+      // Find community by ID
+      community = await Community.findOne({
+        where: {
+          id: parseInt(communityId),
+          isActive: true
+        }
+      });
+
+      if (!community) {
+        return res.status(404).json({ message: 'Community not found' });
+      }
+    }
+
+    // Check if user is already a member
+    const existingMembership = await CommunityUser.findOne({
+      where: {
+        userId,
+        communityId: community.id,
+        isActive: true
+      }
+    });
+
+    if (existingMembership) {
+      return res.status(400).json({ message: 'You are already a member of this community' });
+    }
+
+    // Create membership (default role: resident)
+    await CommunityUser.create({
+      userId,
+      communityId: community.id,
+      role: 'resident',
+      isActive: true,
+      joinedAt: new Date()
+    });
+
+    // Get all user's communities
+    const allMemberships = await CommunityUser.findAll({
+      where: { userId, isActive: true },
+      include: [{
+        model: Community,
+        as: 'community',
+        attributes: ['id', 'name', 'isActive']
+      }],
+      attributes: ['role', 'communityId']
+    });
+
+    const communities = (allMemberships as any[])
+      .filter((cu: any) => cu.community && cu.community.isActive)
+      .map((cu: any) => ({
+        id: cu.communityId,
+        name: cu.community.name,
+        role: cu.role as 'resident' | 'janitorial' | 'admin'
+      }));
+
+    // Generate new JWT token with the newly joined community as current
+    const token = jwt.sign(
+      {
+        userId,
+        email: req.user.email,
+        currentCommunityId: community.id,
+        communityRole: 'resident',
+        communityRoles: communities.reduce((acc: any, comm: any) => {
+          acc[comm.id] = comm.role;
+          return acc;
+        }, {})
+      },
+      process.env.JWT_SECRET || 'fallback-secret',
+      { expiresIn: '7d' }
+    );
+
+    return res.json({
+      message: 'Successfully joined community',
+      token,
+      currentCommunity: {
+        id: community.id,
+        name: community.name,
+        role: 'resident'
+      },
+      communities
+    });
+
+  } catch (error) {
+    console.error('Error joining community:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 // GET /api/communities/:id - Get specific community details
 router.get('/:id', authenticateToken, async (req: any, res) => {
   try {

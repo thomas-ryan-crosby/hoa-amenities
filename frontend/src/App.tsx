@@ -15,6 +15,7 @@ import ResetPasswordPage from './components/ResetPasswordPage';
 import LandingPage from './components/LandingPage';
 import AboutPage from './components/AboutPage';
 import OnboardingPage from './components/OnboardingPage';
+import NoCommunityPage from './components/NoCommunityPage';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated } = useAuth();
@@ -22,10 +23,18 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 };
 
 const OnboardingRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated, currentCommunity, isAdmin } = useAuth();
+  const { isAuthenticated, currentCommunity, isAdmin, communities } = useAuth();
   
   if (!isAuthenticated) {
     return <Navigate to="/login" />;
+  }
+  
+  // If user has no communities, redirect to no-community page (except for profile and no-community page itself)
+  if (communities.length === 0 && !currentCommunity) {
+    const currentPath = window.location.pathname;
+    if (currentPath !== '/no-community' && currentPath !== '/profile') {
+      return <Navigate to="/no-community" />;
+    }
   }
   
   // If user is admin and community needs onboarding, redirect to onboarding
@@ -480,6 +489,14 @@ const AppContent: React.FC = () => {
                         <ProfilePage />
                       </ProtectedRoute>
                     </OnboardingRoute>
+                  } 
+                />
+                <Route 
+                  path="/no-community" 
+                  element={
+                    <ProtectedRoute>
+                      <NoCommunityPage />
+                    </ProtectedRoute>
                   } 
                 />
                 <Route 
