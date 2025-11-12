@@ -7,7 +7,7 @@ interface RegisterProps {
 }
 
 const Register: React.FC<RegisterProps> = ({ onRegister }) => {
-  const [step, setStep] = useState<'community-selection' | 'community-finder' | 'registration'>('community-selection');
+  const [step, setStep] = useState<'community-selection' | 'community-finder' | 'registration'>('community-finder');
   // Removed unused interestedRole and accessCodes state
   const [selectedCommunities, setSelectedCommunities] = useState<Array<{id: number, name: string, description?: string}>>([]);
   const [searchMethod, setSearchMethod] = useState<'zipcode' | 'accesscode'>('zipcode');
