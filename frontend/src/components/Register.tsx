@@ -7,8 +7,7 @@ interface RegisterProps {
 }
 
 const Register: React.FC<RegisterProps> = ({ onRegister }) => {
-  const [step, setStep] = useState<'community-selection' | 'community-finder' | 'registration' | 'authorization' | 'payment'>('community-selection');
-  const [communitySelection, setCommunitySelection] = useState<'existing' | 'interested' | null>(null);
+  const [step, setStep] = useState<'community-selection' | 'community-finder' | 'registration'>('community-selection');
   // Removed unused interestedRole and accessCodes state
   const [selectedCommunities, setSelectedCommunities] = useState<Array<{id: number, name: string, description?: string}>>([]);
   const [searchMethod, setSearchMethod] = useState<'zipcode' | 'accesscode'>('zipcode');
@@ -48,9 +47,6 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
   const [success, setSuccess] = useState(false);
   const [registeredEmail, setRegisteredEmail] = useState<string>('');
   
-  // Onboarding states for interested users
-  const [authorizationCertified, setAuthorizationCertified] = useState(false);
-  const [paymentCompleted, setPaymentCompleted] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
@@ -126,46 +122,13 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
     setError(null);
 
     // Validation
-    if (!communitySelection) {
-      setError('Please complete the community selection step');
-      return;
-    }
-
-    // For interested users, require community info
-    if (communitySelection === 'interested') {
-      if (!communityInfo.communityName.trim()) {
-        setError('Community / HOA Name is required');
-        return;
-      }
-      if (!communityInfo.communityStreet.trim()) {
-        setError('Community street address is required');
-        return;
-      }
-      if (!communityInfo.communityZipCode.trim()) {
-        setError('Community zip code is required');
-        return;
-      }
-      if (!communityInfo.primaryContactName.trim()) {
-        setError('Primary contact name is required');
-        return;
-      }
-      if (!communityInfo.primaryContactTitle.trim()) {
-        setError('Primary contact title is required');
-        return;
-      }
-      if (!formData.firstName.trim() || !formData.lastName.trim() || !formData.email.trim()) {
-        setError('Please provide your personal information');
-        return;
-      }
-    }
-
-    if (communitySelection === 'existing' && selectedCommunities.length === 0 && !registeringNewCommunity) {
+    if (selectedCommunities.length === 0 && !registeringNewCommunity) {
       setError('Please select at least one community or register a new community');
       return;
     }
 
-    // Validate community info if registering new community (existing users)
-    if (registeringNewCommunity && communitySelection === 'existing') {
+    // Validate community info if registering new community
+    if (registeringNewCommunity) {
       if (!communityInfo.communityName.trim()) {
         setError('Community / HOA Name is required');
         return;
@@ -207,31 +170,8 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
       setLoading(true);
       const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       
-      // For interested users, proceed to authorization step
-      if (communitySelection === 'interested' && step === 'registration') {
-        // Move to authorization step
-        setStep('authorization');
-        return;
-      }
-
-      // Handle authorization step - move to payment
-      if (communitySelection === 'interested' && step === 'authorization') {
-        if (!authorizationCertified) {
-          setError('Please certify that you have authorization to make decisions for this community.');
-          return;
-        }
-        setStep('payment');
-        return;
-      }
-
-      // Handle payment step - create account and community
-      if (communitySelection === 'interested' && step === 'payment') {
-        if (!paymentCompleted) {
-          setError('Please complete payment setup');
-          return;
-        }
-
-        // Create account and community with onboarding
+      // Create account and community with onboarding (if registering new community)
+      if (registeringNewCommunity && selectedCommunities.length === 0) {
         const registrationData = {
           firstName: formData.firstName,
           lastName: formData.lastName,
@@ -307,8 +247,8 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
       };
 
       // Add community selection info
-      registrationData.communitySelection = registeringNewCommunity ? 'new-community' : communitySelection;
-      if (communitySelection === 'existing' && selectedCommunities.length > 0) {
+      registrationData.communitySelection = registeringNewCommunity ? 'new-community' : 'existing';
+      if (selectedCommunities.length > 0) {
         registrationData.communityIds = selectedCommunities.map(c => c.id);
       }
       
@@ -360,52 +300,7 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
   };
 
   if (success) {
-    // Show different message for interested users vs account creation
-    if (communitySelection === 'interested') {
-      return (
-        <div style={{ 
-          maxWidth: '480px', 
-          margin: '0 auto', 
-          padding: '2rem',
-          textAlign: 'center'
-        }}>
-          <div style={{ 
-            fontSize: '3rem', 
-            color: '#10b981', 
-            marginBottom: '1rem' 
-          }}>
-            ✓
-          </div>
-          <h2 style={{ 
-            color: '#1f2937', 
-            marginBottom: '1rem', 
-            fontFamily: 'Inter, sans-serif', 
-            fontWeight: 700,
-            fontSize: '1.875rem'
-          }}>
-            Thank You for Your Interest!
-          </h2>
-          <p style={{ 
-            color: '#6b7280', 
-            marginBottom: '1rem',
-            fontSize: '1rem',
-            fontFamily: 'Inter, sans-serif'
-          }}>
-            Someone will reach out to you shortly.
-          </p>
-          <p style={{ 
-            fontSize: '0.9375rem', 
-            color: '#6b7280', 
-            marginBottom: '1.5rem',
-            fontFamily: 'Inter, sans-serif'
-          }}>
-            We've received your information and will contact you at <strong>{registeredEmail}</strong> to discuss how Neighbri can help your community.
-          </p>
-        </div>
-      );
-    }
-
-    // Regular registration success message
+    // Registration success message
     return (
       <div style={{ 
         maxWidth: '480px', 
@@ -520,7 +415,7 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
             fontFamily: 'Inter, sans-serif',
             marginBottom: '2rem'
           }}>
-            Let's get started by understanding your community situation
+            Let's get started by finding your community
           </p>
         </div>
 
@@ -528,76 +423,33 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
           <button
             type="button"
             onClick={() => {
-              setCommunitySelection('existing');
               setStep('community-finder');
             }}
             style={{
               width: '100%',
               padding: '1.25rem',
-              backgroundColor: communitySelection === 'existing' ? '#f0f9f4' : 'white',
-              border: communitySelection === 'existing' ? '2px solid #355B45' : '2px solid #e5e7eb',
+              backgroundColor: '#355B45',
+              border: '2px solid #355B45',
               borderRadius: '0.75rem',
               cursor: 'pointer',
-              textAlign: 'left',
+              textAlign: 'center',
               transition: 'all 0.2s',
               fontFamily: 'Inter, sans-serif'
             }}
             onMouseEnter={(e) => {
-              if (communitySelection !== 'existing') {
-                e.currentTarget.style.borderColor = '#355B45';
-                e.currentTarget.style.backgroundColor = '#f9fafb';
-              }
+              e.currentTarget.style.backgroundColor = '#244032';
+              e.currentTarget.style.borderColor = '#244032';
             }}
             onMouseLeave={(e) => {
-              if (communitySelection !== 'existing') {
-                e.currentTarget.style.borderColor = '#e5e7eb';
-                e.currentTarget.style.backgroundColor = 'white';
-              }
+              e.currentTarget.style.backgroundColor = '#355B45';
+              e.currentTarget.style.borderColor = '#355B45';
             }}
           >
-            <div style={{ fontSize: '1rem', fontWeight: 600, color: '#1f2937', marginBottom: '0.5rem' }}>
-              My community has Neighbri
+            <div style={{ fontSize: '1rem', fontWeight: 600, color: 'white', marginBottom: '0.5rem' }}>
+              I am new to Neighbri
             </div>
-            <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>
-              I am looking to get registered within my community
-            </div>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => {
-              setCommunitySelection('interested');
-              setStep('community-finder');
-            }}
-            style={{
-              width: '100%',
-              padding: '1.25rem',
-              backgroundColor: communitySelection === 'interested' ? '#f0f9f4' : 'white',
-              border: communitySelection === 'interested' ? '2px solid #355B45' : '2px solid #e5e7eb',
-              borderRadius: '0.75rem',
-              cursor: 'pointer',
-              textAlign: 'left',
-              transition: 'all 0.2s',
-              fontFamily: 'Inter, sans-serif'
-            }}
-            onMouseEnter={(e) => {
-              if (communitySelection !== 'interested') {
-                e.currentTarget.style.borderColor = '#355B45';
-                e.currentTarget.style.backgroundColor = '#f9fafb';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (communitySelection !== 'interested') {
-                e.currentTarget.style.borderColor = '#e5e7eb';
-                e.currentTarget.style.backgroundColor = 'white';
-              }
-            }}
-          >
-            <div style={{ fontSize: '1rem', fontWeight: 600, color: '#1f2937', marginBottom: '0.5rem' }}>
-              Unsure if my community has Neighbri
-            </div>
-            <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>
-              I am interested in learning more
+            <div style={{ fontSize: '0.875rem', color: 'rgba(255, 255, 255, 0.9)' }}>
+              Search for your community to get started
             </div>
           </button>
         </div>
@@ -954,12 +806,8 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
                 <button
                   type="button"
                   onClick={() => {
-                    if (communitySelection === 'interested') {
-                      setStep('registration');
-                    } else {
-                      setRegisteringNewCommunity(true);
-                      setStep('registration');
-                    }
+                    setRegisteringNewCommunity(true);
+                    setStep('registration');
                   }}
                   style={{
                     width: '100%',
@@ -1066,12 +914,8 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
                 <button
                   type="button"
                   onClick={() => {
-                    if (communitySelection === 'interested') {
-                      setStep('registration');
-                    } else {
-                      setRegisteringNewCommunity(true);
-                      setStep('registration');
-                    }
+                    setRegisteringNewCommunity(true);
+                    setStep('registration');
                   }}
                   style={{
                     width: '100%',
@@ -1243,9 +1087,9 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
           <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#10b981', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600, fontSize: '0.875rem' }}>
             ✓
           </div>
-          <div style={{ width: '60px', height: '2px', backgroundColor: communitySelection === 'existing' ? '#10b981' : '#e5e7eb' }}></div>
-          <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: communitySelection === 'existing' ? '#10b981' : '#355B45', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600, fontSize: '0.875rem' }}>
-            {communitySelection === 'existing' ? '✓' : '2'}
+          <div style={{ width: '60px', height: '2px', backgroundColor: '#10b981' }}></div>
+          <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#10b981', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600, fontSize: '0.875rem' }}>
+            ✓
           </div>
           <div style={{ width: '60px', height: '2px', backgroundColor: '#355B45' }}></div>
           <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#355B45', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 600, fontSize: '0.875rem' }}>
@@ -1253,8 +1097,7 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
           </div>
         </div>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', fontSize: '0.75rem', color: '#6b7280' }}>
-          <span style={{ color: '#10b981', fontWeight: 600 }}>Community</span>
-          {communitySelection === 'existing' && <span style={{ color: '#10b981', fontWeight: 600 }}>Find</span>}
+          <span style={{ color: '#10b981', fontWeight: 600 }}>Search</span>
           <span style={{ color: '#355B45', fontWeight: 600 }}>Account</span>
           <span>Complete</span>
         </div>
@@ -1279,7 +1122,7 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
         </p>
       </div>
 
-      {communitySelection === 'existing' ? (
+      {step === 'registration' && (
         <button
           type="button"
           onClick={() => setStep('community-finder')}
@@ -1334,7 +1177,7 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
       )}
 
       {/* Community Search Prompt for Registration */}
-      {!registeringNewCommunity && communitySelection === 'existing' && (
+      {!registeringNewCommunity && (
         <div style={{ 
           marginBottom: '1.5rem', 
           padding: '1rem', 
@@ -1385,130 +1228,9 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
         </div>
       )}
 
-      {/* Show different content based on step for interested users */}
-      {communitySelection === 'interested' && step === 'authorization' && (
-        <div style={{ marginBottom: '2rem' }}>
-          <h2 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#1f2937', marginBottom: '1rem' }}>
-            Authorization Certification
-          </h2>
-          <div style={{
-            backgroundColor: '#f0f9f4',
-            border: '1px solid #355B45',
-            borderRadius: '0.5rem',
-            padding: '1.5rem',
-            marginBottom: '1.5rem'
-          }}>
-            <label style={{ display: 'flex', alignItems: 'flex-start', cursor: 'pointer' }}>
-              <input
-                type="checkbox"
-                checked={authorizationCertified}
-                onChange={(e) => setAuthorizationCertified(e.target.checked)}
-                style={{
-                  marginTop: '0.25rem',
-                  marginRight: '0.75rem',
-                  width: '20px',
-                  height: '20px',
-                  cursor: 'pointer'
-                }}
-              />
-              <div>
-                <div style={{ fontWeight: 600, color: '#1f2937', marginBottom: '0.5rem' }}>
-                  I certify that I have authorization to make decisions for {communityInfo.communityName || 'this community'}
-                </div>
-                <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>
-                  By checking this box, you confirm that you have the authority to enter into agreements and make 
-                  decisions on behalf of your community/HOA, including setting up recurring payments.
-                </div>
-              </div>
-            </label>
-          </div>
-          <button
-            type="button"
-            onClick={handleSubmit}
-            disabled={!authorizationCertified}
-            style={{
-              width: '100%',
-              padding: '0.75rem 1.5rem',
-              backgroundColor: !authorizationCertified ? '#9ca3af' : '#355B45',
-              color: 'white',
-              border: 'none',
-              borderRadius: '0.5rem',
-              fontSize: '1rem',
-              fontWeight: 600,
-              cursor: !authorizationCertified ? 'not-allowed' : 'pointer',
-              transition: 'background-color 0.2s'
-            }}
-          >
-            Continue to Payment Setup
-          </button>
-        </div>
-      )}
-
-      {communitySelection === 'interested' && step === 'payment' && (
-        <div style={{ marginBottom: '2rem' }}>
-          <h2 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#1f2937', marginBottom: '1rem' }}>
-            Payment Setup
-          </h2>
-          <div style={{
-            backgroundColor: '#f0f9f4',
-            border: '1px solid #355B45',
-            borderRadius: '0.5rem',
-            padding: '1.5rem',
-            marginBottom: '1.5rem'
-          }}>
-            <div style={{ marginBottom: '1rem' }}>
-              <div style={{ fontWeight: 600, color: '#1f2937', marginBottom: '0.5rem' }}>
-                Recurring Payment: $200/month
-              </div>
-              <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>
-                Your community will be charged $200 per month for Neighbri services. This fee will be automatically 
-                charged to your payment method on file.
-              </div>
-            </div>
-            <div style={{
-              backgroundColor: 'white',
-              border: '2px dashed #d1d5db',
-              borderRadius: '0.5rem',
-              padding: '2rem',
-              textAlign: 'center',
-              marginBottom: '1rem'
-            }}>
-              <div style={{ fontSize: '1.125rem', fontWeight: 600, color: '#6b7280', marginBottom: '0.5rem' }}>
-                Payment Integration Coming Soon
-              </div>
-              <div style={{ fontSize: '0.875rem', color: '#9ca3af' }}>
-                This is where Stripe/Square payment setup would be integrated
-              </div>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={() => {
-              setPaymentCompleted(true);
-              handleSubmit(new Event('submit') as any);
-            }}
-            style={{
-              width: '100%',
-              padding: '0.75rem 1.5rem',
-              backgroundColor: '#355B45',
-              color: 'white',
-              border: 'none',
-              borderRadius: '0.5rem',
-              fontSize: '1rem',
-              fontWeight: 600,
-              cursor: 'pointer',
-              transition: 'background-color 0.2s'
-            }}
-          >
-            Continue to Create Account
-          </button>
-        </div>
-      )}
-
-      {((communitySelection === 'interested' && step === 'registration') || (communitySelection !== 'interested')) && (
       <form onSubmit={handleSubmit}>
-        {/* Community Information Fields (shown ONLY if no community selected AND (registering new community OR user is interested)) */}
-        {selectedCommunities.length === 0 && (communitySelection === 'interested' || registeringNewCommunity) && (
+        {/* Community Information Fields (shown ONLY if no community selected AND registering new community) */}
+        {selectedCommunities.length === 0 && registeringNewCommunity && (
           <div style={{ 
             marginBottom: '2rem', 
             paddingBottom: '2rem', 
@@ -1807,7 +1529,7 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
           marginBottom: '1rem',
           fontFamily: 'Inter, sans-serif'
         }}>
-          {communitySelection === 'interested' ? 'Your Information' : 'Personal Information'}
+          Your Information
         </h3>
 
         <div style={{ marginBottom: '1rem' }}>
