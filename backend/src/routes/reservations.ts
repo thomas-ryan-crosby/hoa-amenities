@@ -1433,8 +1433,8 @@ router.put('/:id/approve', authenticateToken, async (req: any, res) => {
             false // default to false for staff
           );
         }
-
-        // If this was janitorial approval and admin approval is still needed, notify admins
+      } else if (newStatus === 'JANITORIAL_APPROVED') {
+        // Janitorial approved, but admin approval still needed - notify admins
         if (communityRole === 'janitorial' && reservation.amenity?.approvalRequired) {
           const adminUsers = await User.findAll({
             where: {
@@ -1735,6 +1735,79 @@ router.put('/:id/complete', authenticateToken, async (req: any, res) => {
 
     console.log('✅ Party marked as complete:', id, 'damagesFound:', damagesFound);
 
+    // Send email notifications
+    const updatedReservationWithAssociations = updatedReservation as ReservationWithAssociations;
+    if (updatedReservationWithAssociations && updatedReservationWithAssociations.user && updatedReservationWithAssociations.amenity) {
+      const userWithPrefs = await User.findByPk(updatedReservationWithAssociations.user.id, {
+        attributes: ['id', 'firstName', 'lastName', 'email', 'notificationPreferences']
+      });
+
+      if (userWithPrefs) {
+        const dateStr = new Date(updatedReservationWithAssociations.date).toLocaleDateString('en-US', { 
+          weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+        });
+
+        // Send completion email to resident
+        const timeStart = new Date(updatedReservationWithAssociations.partyTimeStart).toLocaleTimeString('en-US', { 
+          hour: 'numeric', minute: '2-digit' 
+        });
+        const timeEnd = new Date(updatedReservationWithAssociations.partyTimeEnd).toLocaleTimeString('en-US', { 
+          hour: 'numeric', minute: '2-digit' 
+        });
+
+        await sendNotificationIfEnabled(
+          userWithPrefs,
+          'reservationCompleted',
+          () => buildReservationCompletedEmail({
+            firstName: userWithPrefs.firstName,
+            amenityName: updatedReservationWithAssociations.amenity!.name,
+            date: dateStr,
+            partyTimeStart: timeStart,
+            partyTimeEnd: timeEnd,
+            guestCount: updatedReservationWithAssociations.guestCount,
+            eventName: updatedReservationWithAssociations.eventName,
+            reservationId: updatedReservationWithAssociations.id
+          }),
+          false // default to false (optional notification)
+        );
+      }
+
+      // If damages found, notify staff that damage assessment is required
+      if (damagesFound === true || damagesFound === 'true') {
+        const janitorialStaff = await User.findAll({
+          where: {
+            role: 'janitorial',
+            isActive: true
+          },
+          attributes: ['id', 'firstName', 'lastName', 'email', 'notificationPreferences']
+        });
+
+        const residentName = updatedReservationWithAssociations.user ? 
+          `${updatedReservationWithAssociations.user.firstName} ${updatedReservationWithAssociations.user.lastName}` : 'Resident';
+        const dateStr = new Date(updatedReservationWithAssociations.date).toLocaleDateString('en-US', { 
+          weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+        });
+
+        for (const staff of janitorialStaff) {
+          await sendNotificationIfEnabled(
+            staff,
+            'damageAssessmentRequired',
+            () => buildDamageAssessmentRequiredEmail({
+              firstName: staff.firstName,
+              amenityName: updatedReservationWithAssociations.amenity!.name,
+              date: dateStr,
+              partyTimeStart: '',
+              partyTimeEnd: '',
+              guestCount: updatedReservationWithAssociations.guestCount || 0,
+              residentName,
+              reservationId: updatedReservationWithAssociations.id
+            }),
+            true
+          );
+        }
+      }
+    }
+
     return res.json({
       message: 'Party marked as complete',
       reservation: updatedReservation?.toJSON() || { id: parseInt(id) },
@@ -1876,6 +1949,42 @@ router.post('/:id/assess-damages', authenticateToken, async (req: any, res) => {
     });
 
     console.log('✅ Damage assessment submitted:', id, 'amount:', damageAmount);
+
+    // Send email notification to admins that damage assessment is pending review
+    const updatedReservationWithAssociations = updatedReservation as ReservationWithAssociations;
+    if (updatedReservationWithAssociations && updatedReservationWithAssociations.user && updatedReservationWithAssociations.amenity) {
+      const adminUsers = await User.findAll({
+        where: {
+          role: 'admin',
+          isActive: true
+        },
+        attributes: ['id', 'firstName', 'lastName', 'email', 'notificationPreferences']
+      });
+
+      const residentName = updatedReservationWithAssociations.user ? 
+        `${updatedReservationWithAssociations.user.firstName} ${updatedReservationWithAssociations.user.lastName}` : 'Resident';
+      const dateStr = new Date(updatedReservationWithAssociations.date).toLocaleDateString('en-US', { 
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+      });
+
+      for (const admin of adminUsers) {
+        await sendNotificationIfEnabled(
+          admin,
+          'damageAssessmentRequired',
+          () => buildDamageAssessmentRequiredEmail({
+            firstName: admin.firstName,
+            amenityName: updatedReservationWithAssociations.amenity!.name,
+            date: dateStr,
+            partyTimeStart: '',
+            partyTimeEnd: '',
+            guestCount: updatedReservationWithAssociations.guestCount || 0,
+            residentName,
+            reservationId: updatedReservationWithAssociations.id
+          }),
+          true
+        );
+      }
+    }
 
     return res.json({
       message: 'Damage assessment submitted for admin review',
@@ -2058,6 +2167,38 @@ router.put('/:id/review-damage-assessment', authenticateToken, async (req: any, 
     });
 
     console.log('✅ Damage assessment reviewed:', id, 'action:', action, 'charge:', finalCharge);
+
+    // Send email notification to resident
+    const updatedReservationWithAssociations = updatedReservation as ReservationWithAssociations;
+    if (updatedReservationWithAssociations && updatedReservationWithAssociations.user && updatedReservationWithAssociations.amenity) {
+      const userWithPrefs = await User.findByPk(updatedReservationWithAssociations.user.id, {
+        attributes: ['id', 'firstName', 'lastName', 'email', 'notificationPreferences']
+      });
+
+      if (userWithPrefs) {
+        const dateStr = new Date(updatedReservationWithAssociations.date).toLocaleDateString('en-US', { 
+          weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+        });
+
+        const status = action === 'approve' ? 'APPROVED' : action === 'adjust' ? 'ADJUSTED' : 'DENIED';
+        const damageCharge = action === 'deny' ? null : finalCharge;
+
+        await sendNotificationIfEnabled(
+          userWithPrefs,
+          'damageAssessmentReviewed',
+          () => buildDamageAssessmentReviewedEmail({
+            firstName: userWithPrefs.firstName,
+            amenityName: updatedReservationWithAssociations.amenity!.name,
+            date: dateStr,
+            damageCharge,
+            damageDescription: updatedReservationWithAssociations.damageDescription,
+            status: status as 'PENDING' | 'APPROVED' | 'ADJUSTED' | 'DENIED',
+            reservationId: updatedReservationWithAssociations.id
+          }),
+          true
+        );
+      }
+    }
 
     // TODO: Integrate with Square here to charge the damage fee if approved/adjusted
     // For now, we just update the database
@@ -2435,6 +2576,56 @@ router.post('/:id/propose-modification', authenticateToken, async (req: any, res
 
     console.log('✅ Modification proposed successfully');
 
+    // Send email notification to resident
+    if (reservation.user && reservation.amenity) {
+      const userWithPrefs = await User.findByPk(reservation.user.id, {
+        attributes: ['id', 'firstName', 'lastName', 'email', 'notificationPreferences']
+      });
+
+      if (userWithPrefs) {
+        const originalDateStr = new Date(reservation.date).toLocaleDateString('en-US', { 
+          weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+        });
+        const originalTimeStart = new Date(reservation.partyTimeStart).toLocaleTimeString('en-US', { 
+          hour: 'numeric', minute: '2-digit' 
+        });
+        const originalTimeEnd = new Date(reservation.partyTimeEnd).toLocaleTimeString('en-US', { 
+          hour: 'numeric', minute: '2-digit' 
+        });
+        const proposedDateStr = new Date(proposedDate || reservation.date).toLocaleDateString('en-US', { 
+          weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+        });
+        const proposedTimeStart = new Date(proposedPartyTimeStart).toLocaleTimeString('en-US', { 
+          hour: 'numeric', minute: '2-digit' 
+        });
+        const proposedTimeEnd = new Date(proposedPartyTimeEnd).toLocaleTimeString('en-US', { 
+          hour: 'numeric', minute: '2-digit' 
+        });
+
+        await sendNotificationIfEnabled(
+          userWithPrefs,
+          'modificationProposed',
+          () => buildModificationProposedEmail({
+            firstName: userWithPrefs.firstName,
+            amenityName: reservation.amenity!.name,
+            date: originalDateStr,
+            partyTimeStart: originalTimeStart,
+            partyTimeEnd: originalTimeEnd,
+            guestCount: reservation.guestCount,
+            originalDate: originalDateStr,
+            originalPartyTimeStart: originalTimeStart,
+            originalPartyTimeEnd: originalTimeEnd,
+            proposedDate: proposedDateStr,
+            proposedPartyTimeStart: proposedTimeStart,
+            proposedPartyTimeEnd: proposedTimeEnd,
+            modificationReason: modificationReason,
+            reservationId: reservation.id
+          }),
+          true
+        );
+      }
+    }
+
     return res.json({
       message: 'Modification proposal created successfully',
       reservation: reservation.toJSON()
@@ -2678,6 +2869,57 @@ router.put('/:id/accept-modification', authenticateToken, async (req: any, res) 
 
     console.log('✅ Modification accepted successfully');
 
+    // Send email notification to resident
+    const updatedReservationWithAssociations = updatedReservation as ReservationWithAssociations;
+    if (updatedReservationWithAssociations && updatedReservationWithAssociations.amenity) {
+      const userWithPrefs = await User.findByPk(userId, {
+        attributes: ['id', 'firstName', 'lastName', 'email', 'notificationPreferences']
+      });
+
+      if (userWithPrefs) {
+        const dateStr = new Date(updatedReservationWithAssociations.date).toLocaleDateString('en-US', { 
+          weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+        });
+        const timeStart = new Date(updatedReservationWithAssociations.partyTimeStart).toLocaleTimeString('en-US', { 
+          hour: 'numeric', minute: '2-digit' 
+        });
+        const timeEnd = new Date(updatedReservationWithAssociations.partyTimeEnd).toLocaleTimeString('en-US', { 
+          hour: 'numeric', minute: '2-digit' 
+        });
+
+        await sendNotificationIfEnabled(
+          userWithPrefs,
+          'modificationAccepted',
+          () => buildModificationAcceptedEmail({
+            firstName: userWithPrefs.firstName,
+            amenityName: updatedReservationWithAssociations.amenity!.name,
+            date: dateStr,
+            partyTimeStart: timeStart,
+            partyTimeEnd: timeEnd,
+            guestCount: updatedReservationWithAssociations.guestCount,
+            reservationId: updatedReservationWithAssociations.id
+          }),
+          true
+        );
+
+        // Also send reservation modified notification
+        await sendNotificationIfEnabled(
+          userWithPrefs,
+          'reservationModified',
+          () => buildReservationModifiedEmail({
+            firstName: userWithPrefs.firstName,
+            amenityName: updatedReservationWithAssociations.amenity!.name,
+            date: dateStr,
+            partyTimeStart: timeStart,
+            partyTimeEnd: timeEnd,
+            guestCount: updatedReservationWithAssociations.guestCount,
+            reservationId: updatedReservationWithAssociations.id
+          }),
+          true
+        );
+      }
+    }
+
     return res.json({
       message: 'Modification accepted successfully',
       reservation: updatedReservation?.toJSON() || { id: parseInt(id) }
@@ -2760,6 +3002,71 @@ router.put('/:id/reject-modification', authenticateToken, async (req: any, res) 
     });
 
     console.log('✅ Modification rejected - reservation cancelled');
+
+    // Send email notification to resident
+    const updatedReservationWithAssociations = updatedReservation as ReservationWithAssociations;
+    if (updatedReservationWithAssociations) {
+      // Fetch reservation with amenity for email
+      const reservationForEmail = await Reservation.findOne({
+        where: { id },
+        attributes: ['id', 'date', 'amenityId', 'userId'],
+        include: [
+          {
+            model: Amenity,
+            as: 'amenity',
+            attributes: ['id', 'name']
+          }
+        ]
+      }) as ReservationWithAssociations;
+
+      if (reservationForEmail && reservationForEmail.user && reservationForEmail.amenity) {
+        const userWithPrefs = await User.findByPk(reservationForEmail.user.id, {
+          attributes: ['id', 'firstName', 'lastName', 'email', 'notificationPreferences']
+        });
+
+        if (userWithPrefs) {
+          // Fetch full reservation details for email
+          const fullReservation = await Reservation.findOne({
+            where: { id },
+            attributes: ['id', 'date', 'partyTimeStart', 'partyTimeEnd', 'guestCount', 'amenityId', 'userId'],
+            include: [
+              {
+                model: Amenity,
+                as: 'amenity',
+                attributes: ['id', 'name']
+              }
+            ]
+          }) as ReservationWithAssociations;
+
+          if (fullReservation && fullReservation.amenity) {
+            const dateStr = new Date(fullReservation.date).toLocaleDateString('en-US', { 
+              weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+            });
+            const timeStart = new Date(fullReservation.partyTimeStart).toLocaleTimeString('en-US', { 
+              hour: 'numeric', minute: '2-digit' 
+            });
+            const timeEnd = new Date(fullReservation.partyTimeEnd).toLocaleTimeString('en-US', { 
+              hour: 'numeric', minute: '2-digit' 
+            });
+
+            await sendNotificationIfEnabled(
+              userWithPrefs,
+              'modificationRejected',
+              () => buildModificationRejectedEmail({
+                firstName: userWithPrefs.firstName,
+                amenityName: fullReservation.amenity!.name,
+                date: dateStr,
+                partyTimeStart: timeStart,
+                partyTimeEnd: timeEnd,
+                guestCount: fullReservation.guestCount,
+                reservationId: fullReservation.id
+              }),
+              true
+            );
+          }
+        }
+      }
+    }
 
     return res.json({
       message: 'Modification rejected. Reservation has been cancelled. You can book a new reservation if needed.',
