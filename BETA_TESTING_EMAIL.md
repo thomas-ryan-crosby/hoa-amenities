@@ -12,70 +12,32 @@ I hope this email finds you well! I'm reaching out because I'd love your help te
 
 Neighbri is a web application that helps HOAs and communities manage their amenities (pools, clubrooms, tennis courts, etc.). It allows residents to make reservations, staff to approve them, and admins to manage everything.
 
-## Why Your Help Matters
-
-This is **beta software**, which means it's functional but still being refined. Your fresh eyes and honest feedback will help me identify bugs, confusing interfaces, missing features, and design improvements.
-
 ## What I'm Asking
 
-I'd love for you to spend **1-2 hours** (or test at your own pace!) exploring the platform. You can:
-- Follow the test plan I've created (it's a guide, not a strict script)
-- Go off script and explore freely
-- Try to break things (seriously, we want to know what breaks!)
-- Test on different browsers or devices if possible
+I'd love for you to spend **1-2 hours** (or test at your own pace!) exploring the platform and providing feedback. This is **beta software**, so your fresh eyes and honest feedback are invaluable.
 
 ## How to Get Started
 
 1. **Visit the Test Plan**: https://www.neighbri.com/testplan
-   - This page has all the testing scenarios and instructions
+   - All detailed testing scenarios and step-by-step instructions are here
 
-2. **Start Testing**: 
-   - **Step 1** - Create a New Community: Use your first email address to create a new community (you'll become the admin)
-   - **Step 2** - Register for The Sanctuary: Use your second email address to register for "The Sanctuary" community
-     - Search for zip code `70471` to find The Sanctuary
-   - **Step 3** - Test Different Roles: Use these test accounts to experience different perspectives:
-     - **Admin**: `ryan@kellby.com` | `admin123`
-     - **Janitorial**: `janitorial@hoa.com` | `admin123`
-     - **Resident**: Your second email (the one you used to register for The Sanctuary) OR `resident@hoa.com` | `admin123`
+2. **Quick Overview**:
+   - You'll need **two email addresses** (one to create a new community, one to register for "The Sanctuary")
+   - Search for zip code `70471` to find The Sanctuary
+   - Test accounts are provided for admin, janitorial, and resident roles
 
 3. **Provide Feedback**:
-   - **Screen Recording**: Record your testing session (narrate what you're thinking!)
-   - **Written Document**: Create notes with screenshots and observations
-   - **Email**: Send detailed feedback directly
-   - Use whatever format works best for you!
-
-## What Kind of Feedback?
-
-**Everything!** We want to hear about:
-- Bugs and technical issues
-- Confusing or unclear features
-- Design and visual feedback (colors, fonts, spacing, layout)
-- Feature suggestions
-- Overall impressions and user experience
-- Anything else you notice!
-
-## Important Notes
-
-- This is **beta software** - some things may not work perfectly
-- The test plan is a **guide, not a script** - feel free to explore freely
-- Your feedback can be as detailed or as brief as you like
-- There are no wrong answers - your honest opinion is what we need
-
-## Timeline
-
-There's no strict deadline, but if you could provide feedback within the next **2-3 weeks**, that would be amazing. Test at your own pace!
+   - Screen recording, written document, or email - whatever works best for you!
+   - We want to hear about bugs, confusing features, design feedback, and anything else you notice
 
 ## Questions?
 
-If you have any questions or run into issues while testing, please don't hesitate to reach out:
 - **Email**: thomas.ryan.crosby@gmail.com or neighbriapp@gmail.com
 - **Phone**: 985-373-2383
 
 ## Thank You!
 
-I really appreciate you taking the time to help test Neighbri. Your feedback will directly shape how the platform evolves, and I'm genuinely excited to hear what you think!
-
-Looking forward to your thoughts!
+Your feedback will directly shape how the platform evolves. I'm genuinely excited to hear what you think!
 
 Best,
 Thomas
