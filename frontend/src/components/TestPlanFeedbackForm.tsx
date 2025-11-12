@@ -21,7 +21,14 @@ const TestPlanFeedbackForm: React.FC<TestPlanFeedbackFormProps> = ({
     testScenarios: '',
     overallExperience: '',
     bugs: '',
-    suggestions: ''
+    suggestions: '',
+    scenario1Feedback: '',
+    scenario2Feedback: '',
+    scenario3Feedback: '',
+    scenario4Feedback: '',
+    scenario5Feedback: '',
+    scenario6Feedback: '',
+    scenario7Feedback: ''
   });
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -34,6 +41,41 @@ const TestPlanFeedbackForm: React.FC<TestPlanFeedbackFormProps> = ({
       ...prev,
       [name]: value
     }));
+  };
+
+  // Helper function to get scenario feedback textarea for a specific scenario
+  const ScenarioFeedbackBox = ({ scenarioNumber, scenarioName }: { scenarioNumber: number; scenarioName: string }) => {
+    const fieldName = `scenario${scenarioNumber}Feedback` as keyof typeof formData;
+    return (
+      <div style={{ 
+        marginTop: '1rem', 
+        marginBottom: '1.5rem',
+        padding: '1rem',
+        backgroundColor: '#f9fafb',
+        border: '1px solid #e5e7eb',
+        borderRadius: '6px'
+      }}>
+        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#374151', fontSize: '14px' }}>
+          Feedback for Scenario {scenarioNumber}: {scenarioName} (optional)
+        </label>
+        <textarea
+          name={fieldName}
+          value={formData[fieldName] as string}
+          onChange={handleChange}
+          rows={3}
+          placeholder={`Share your thoughts, observations, or feedback for Scenario ${scenarioNumber}...`}
+          style={{
+            width: '100%',
+            padding: '10px',
+            border: '1px solid #d1d5db',
+            borderRadius: '4px',
+            fontSize: '14px',
+            fontFamily: 'inherit',
+            resize: 'vertical'
+          }}
+        />
+      </div>
+    );
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -71,7 +113,14 @@ const TestPlanFeedbackForm: React.FC<TestPlanFeedbackFormProps> = ({
           testScenarios: '',
           overallExperience: '',
           bugs: '',
-          suggestions: ''
+          suggestions: '',
+          scenario1Feedback: '',
+          scenario2Feedback: '',
+          scenario3Feedback: '',
+          scenario4Feedback: '',
+          scenario5Feedback: '',
+          scenario6Feedback: '',
+          scenario7Feedback: ''
         });
       }
     } catch (err: any) {

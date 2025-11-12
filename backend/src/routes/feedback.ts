@@ -6,7 +6,7 @@ const router = express.Router();
 // POST /api/feedback/test-plan - Submit test plan feedback
 router.post('/test-plan', async (req, res) => {
   try {
-    const { name, email, feedback, testScenarios, overallExperience, bugs, suggestions } = req.body;
+      const { name, email, feedback, testScenarios, overallExperience, bugs, suggestions, scenarioFeedbacks } = req.body;
 
     // Validate required fields
     if (!name || !email || !feedback) {
