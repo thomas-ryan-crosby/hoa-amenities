@@ -74,6 +74,7 @@ import calendarRoutes from './routes/calendar';
 import reservationsRoutes from './routes/reservations';
 import adminRoutes from './routes/admin';
 import communitiesRoutes from './routes/communities';
+import feedbackRoutes from './routes/feedback';
 
 // API Routes
 app.use('/api/auth', authRoutes);
@@ -85,6 +86,7 @@ app.use('/api/calendar', calendarRoutes);
 app.use('/api/reservations', reservationsRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/communities', communitiesRoutes);
+app.use('/api/feedback', feedbackRoutes);
 
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
