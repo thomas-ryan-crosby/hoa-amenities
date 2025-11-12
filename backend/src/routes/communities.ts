@@ -42,7 +42,7 @@ router.get('/', authenticateToken, async (req: any, res) => {
         memberListUploaded: cu.community.memberListUploaded,
         role: cu.role as 'resident' | 'janitorial' | 'admin',
         joinedAt: cu.joinedAt,
-        isCurrent: cu.communityId === req.user.currentCommunityId
+        isCurrent: req.user.currentCommunityId ? cu.communityId === req.user.currentCommunityId : false
       }));
 
     return res.json({
