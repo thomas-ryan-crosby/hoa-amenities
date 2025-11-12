@@ -9,7 +9,7 @@ declare global {
       user?: {
         id: number;
         email: string;
-        currentCommunityId: number;
+        currentCommunityId: number | null;
         communityRole: 'resident' | 'janitorial' | 'admin';
         allCommunities: Array<{id: number, name: string, role: string}>;
       };
@@ -42,8 +42,17 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
     const communityRole = decoded.communityRole;
     const allCommunities = decoded.allCommunities || [];
 
+    // Allow users without communities to access certain routes (profile, join community, etc.)
     if (!currentCommunityId || !communityRole) {
-      return res.status(401).json({ message: 'Invalid token: missing community information' });
+      // User has no communities - allow limited access
+      req.user = {
+        id: user.id,
+        email: user.email,
+        currentCommunityId: null as any, // Type assertion for compatibility
+        communityRole: 'resident' as 'resident' | 'janitorial' | 'admin', // Default role
+        allCommunities: []
+      };
+      return next();
     }
 
     // Verify user still has access to the current community

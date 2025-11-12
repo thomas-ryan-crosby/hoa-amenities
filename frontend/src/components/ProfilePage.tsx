@@ -100,6 +100,11 @@ const ProfilePage: React.FC = () => {
       const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       const token = localStorage.getItem('token');
       
+      if (!token) {
+        console.error('❌ No token found for notification preferences');
+        return;
+      }
+      
       const response = await axios.get(`${apiUrl}/api/auth/notification-preferences`, {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -147,6 +152,11 @@ const ProfilePage: React.FC = () => {
       const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       const token = localStorage.getItem('token');
       
+      if (!token) {
+        console.error('❌ No token found for communities');
+        return;
+      }
+      
       const response = await axios.get(`${apiUrl}/api/communities`, {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -164,6 +174,14 @@ const ProfilePage: React.FC = () => {
       setLoading(true);
       const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       const token = localStorage.getItem('token');
+      
+      if (!token) {
+        console.error('❌ No token found in localStorage');
+        setError('Authentication required. Please log in again.');
+        return;
+      }
+      
+      console.log('🔐 Fetching profile with token:', token ? `${token.substring(0, 20)}...` : 'MISSING');
       
       const response = await axios.get(`${apiUrl}/api/auth/profile`, {
         headers: {
