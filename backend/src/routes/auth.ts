@@ -2,6 +2,7 @@ import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
+import { Op } from 'sequelize';
 import { User, CommunityUser, Community, Prospect } from '../models';
 import { authenticateToken } from '../middleware/auth';
 import { buildPasswordResetEmail, buildVerificationEmail, buildWelcomeEmail, sendEmail } from '../services/emailService';
