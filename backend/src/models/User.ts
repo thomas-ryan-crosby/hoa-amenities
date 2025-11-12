@@ -40,6 +40,7 @@ export class User extends Model<UserAttributes, UserCreationAttributes> implemen
   public passwordResetToken?: string | null;
   public passwordResetTokenExpires?: Date | null;
   public passwordResetRequestedAt?: Date | null;
+  public notificationPreferences?: Record<string, boolean> | null;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
