@@ -1,6 +1,47 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+
+// ScenarioFeedbackBox component moved outside to prevent re-creation on every render
+interface ScenarioFeedbackBoxProps {
+  scenarioNumber: number;
+  scenarioName: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+}
+
+const ScenarioFeedbackBox: React.FC<ScenarioFeedbackBoxProps> = ({ scenarioNumber, scenarioName, value, onChange }) => {
+  return (
+    <div style={{ 
+      marginTop: '1rem', 
+      marginBottom: '1.5rem',
+      padding: '1rem',
+      backgroundColor: '#f9fafb',
+      border: '1px solid #e5e7eb',
+      borderRadius: '6px'
+    }}>
+      <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#374151', fontSize: '14px' }}>
+        Feedback for Scenario {scenarioNumber}: {scenarioName} (optional)
+      </label>
+      <textarea
+        name={`scenario${scenarioNumber}Feedback`}
+        value={value}
+        onChange={onChange}
+        rows={3}
+        placeholder={`Share your thoughts, observations, or feedback for Scenario ${scenarioNumber}...`}
+        style={{
+          width: '100%',
+          padding: '10px',
+          border: '1px solid #d1d5db',
+          borderRadius: '4px',
+          fontSize: '14px',
+          fontFamily: 'inherit',
+          resize: 'vertical'
+        }}
+      />
+    </div>
+  );
+};
 
 const TestPlanPage: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -23,13 +64,13 @@ const TestPlanPage: React.FC = () => {
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
-  };
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -89,39 +130,6 @@ const TestPlanPage: React.FC = () => {
     }
   };
 
-  const ScenarioFeedbackBox = ({ scenarioNumber, scenarioName }: { scenarioNumber: number; scenarioName: string }) => {
-    const fieldName = `scenario${scenarioNumber}Feedback` as keyof typeof formData;
-    return (
-      <div style={{ 
-        marginTop: '1rem', 
-        marginBottom: '1.5rem',
-        padding: '1rem',
-        backgroundColor: '#f9fafb',
-        border: '1px solid #e5e7eb',
-        borderRadius: '6px'
-      }}>
-        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#374151', fontSize: '14px' }}>
-          Feedback for Scenario {scenarioNumber}: {scenarioName} (optional)
-        </label>
-        <textarea
-          name={fieldName}
-          value={formData[fieldName] as string}
-          onChange={handleChange}
-          rows={3}
-          placeholder={`Share your thoughts, observations, or feedback for Scenario ${scenarioNumber}...`}
-          style={{
-            width: '100%',
-            padding: '10px',
-            border: '1px solid #d1d5db',
-            borderRadius: '4px',
-            fontSize: '14px',
-            fontFamily: 'inherit',
-            resize: 'vertical'
-          }}
-        />
-      </div>
-    );
-  };
 
   if (submitted) {
     return (
@@ -313,7 +321,12 @@ const TestPlanPage: React.FC = () => {
               <p style={{ color: '#6b7280', marginBottom: '0.5rem' }}>
                 Test the complete flow of creating a new HOA/community on Neighbri, including the subscription payment modal and welcome email.
               </p>
-              <ScenarioFeedbackBox scenarioNumber={1} scenarioName="New Community Creation" />
+              <ScenarioFeedbackBox 
+                scenarioNumber={1} 
+                scenarioName="New Community Creation"
+                value={formData.scenario1Feedback}
+                onChange={handleChange}
+              />
             </div>
 
             <div style={{ marginBottom: '1.5rem' }}>
@@ -323,7 +336,12 @@ const TestPlanPage: React.FC = () => {
               <p style={{ color: '#6b7280', marginBottom: '0.5rem' }}>
                 Test joining "The Sanctuary" community by searching for it (zip code 70471) and the approval workflow.
               </p>
-              <ScenarioFeedbackBox scenarioNumber={2} scenarioName="Registering with The Sanctuary" />
+              <ScenarioFeedbackBox 
+                scenarioNumber={2} 
+                scenarioName="Registering with The Sanctuary"
+                value={formData.scenario2Feedback}
+                onChange={handleChange}
+              />
             </div>
 
             <div style={{ marginBottom: '1.5rem' }}>
@@ -333,7 +351,12 @@ const TestPlanPage: React.FC = () => {
               <p style={{ color: '#6b7280', marginBottom: '0.5rem' }}>
                 Test all features available to community administrators: creating amenities, managing members, reviewing damage assessments, and more.
               </p>
-              <ScenarioFeedbackBox scenarioNumber={3} scenarioName="Admin Perspective Testing" />
+              <ScenarioFeedbackBox 
+                scenarioNumber={3} 
+                scenarioName="Admin Perspective Testing"
+                value={formData.scenario3Feedback}
+                onChange={handleChange}
+              />
             </div>
 
             <div style={{ marginBottom: '1.5rem' }}>
@@ -343,7 +366,12 @@ const TestPlanPage: React.FC = () => {
               <p style={{ color: '#6b7280', marginBottom: '0.5rem' }}>
                 Test features available to janitorial staff: approving reservations, setting cleaning times, proposing modifications, and assessing damages.
               </p>
-              <ScenarioFeedbackBox scenarioNumber={4} scenarioName="Janitorial Perspective Testing" />
+              <ScenarioFeedbackBox 
+                scenarioNumber={4} 
+                scenarioName="Janitorial Perspective Testing"
+                value={formData.scenario4Feedback}
+                onChange={handleChange}
+              />
             </div>
 
             <div style={{ marginBottom: '1.5rem' }}>
@@ -353,7 +381,12 @@ const TestPlanPage: React.FC = () => {
               <p style={{ color: '#6b7280', marginBottom: '0.5rem' }}>
                 Test features available to regular residents: creating reservations, modifying/canceling reservations, handling modification proposals, and managing profile settings.
               </p>
-              <ScenarioFeedbackBox scenarioNumber={5} scenarioName="Resident Perspective Testing" />
+              <ScenarioFeedbackBox 
+                scenarioNumber={5} 
+                scenarioName="Resident Perspective Testing"
+                value={formData.scenario5Feedback}
+                onChange={handleChange}
+              />
             </div>
 
             <div style={{ marginBottom: '1.5rem' }}>
@@ -363,7 +396,12 @@ const TestPlanPage: React.FC = () => {
               <p style={{ color: '#6b7280', marginBottom: '0.5rem' }}>
                 Verify that email notifications are sent correctly for all events (reservations, modifications, approvals, etc.).
               </p>
-              <ScenarioFeedbackBox scenarioNumber={6} scenarioName="Email Notifications Testing" />
+              <ScenarioFeedbackBox 
+                scenarioNumber={6} 
+                scenarioName="Email Notifications Testing"
+                value={formData.scenario6Feedback}
+                onChange={handleChange}
+              />
             </div>
 
             <div style={{ marginBottom: '2rem' }}>
@@ -373,7 +411,12 @@ const TestPlanPage: React.FC = () => {
               <p style={{ color: '#6b7280', marginBottom: '0.5rem' }}>
                 Test unusual scenarios, form validation, access control, and browser compatibility.
               </p>
-              <ScenarioFeedbackBox scenarioNumber={7} scenarioName="Edge Cases and Error Handling" />
+              <ScenarioFeedbackBox 
+                scenarioNumber={7} 
+                scenarioName="Edge Cases and Error Handling"
+                value={formData.scenario7Feedback}
+                onChange={handleChange}
+              />
             </div>
 
             {/* General Feedback Section */}
