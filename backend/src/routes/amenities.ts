@@ -1,5 +1,5 @@
 import express from 'express';
-import { Amenity, Community } from '../models';
+import { Amenity, Community, CommunityUser } from '../models';
 import { authenticateToken, requireAdmin } from '../middleware/auth';
 
 const router = express.Router();
@@ -30,10 +30,47 @@ router.get('/public', async (req: any, res) => {
 // GET /api/amenities - List all amenities for current community
 router.get('/', authenticateToken, async (req: any, res) => {
   try {
+    const userId = req.user.id;
     const communityId = req.user.currentCommunityId;
     
-    console.log('🔍 Fetching amenities for community:', communityId);
+    console.log('🔍 Fetching amenities for community:', communityId, 'user:', userId);
     
+    // Check membership status if user has a community
+    let membershipStatus: 'pending' | 'approved' | 'banned' | null = null;
+    if (communityId) {
+      const membership = await CommunityUser.findOne({
+        where: {
+          userId,
+          communityId,
+          isActive: true
+        }
+      });
+      membershipStatus = membership ? (membership as any).status : null;
+    }
+    
+    // If user is banned, return no amenities (not even public ones)
+    if (membershipStatus === 'banned') {
+      return res.json([]);
+    }
+    
+    // If user has no community or is pending, only return public amenities
+    if (!communityId || membershipStatus === 'pending' || !membershipStatus) {
+      const publicAmenities = await Amenity.findAll({
+        where: {
+          isPublic: true,
+          isActive: true
+        },
+        include: [{
+          model: Community,
+          as: 'community',
+          attributes: ['id', 'name', 'address']
+        }],
+        attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'calendarGroup', 'publicReservationFee', 'publicDeposit', 'daysOfOperation', 'hoursOfOperation', 'displayColor', 'janitorialRequired', 'approvalRequired', 'isActive', 'communityId']
+      });
+      return res.json(publicAmenities);
+    }
+    
+    // User is approved - show all amenities for their community
     // Check if user is admin - if so, return all amenities (including inactive)
     const isAdmin = req.user.communityRole === 'admin';
     
@@ -56,22 +93,52 @@ router.get('/', authenticateToken, async (req: any, res) => {
   }
 });
 
-// GET /api/amenities/:id - Get specific amenity (must belong to current community)
+// GET /api/amenities/:id - Get specific amenity (must belong to current community or be public)
 router.get('/:id', authenticateToken, async (req: any, res) => {
   try {
     const { id } = req.params;
+    const userId = req.user.id;
     const communityId = req.user.currentCommunityId;
     
+    // Check membership status if user has a community
+    let membershipStatus: 'pending' | 'approved' | 'banned' | null = null;
+    if (communityId) {
+      const membership = await CommunityUser.findOne({
+        where: {
+          userId,
+          communityId,
+          isActive: true
+        }
+      });
+      membershipStatus = membership ? (membership as any).status : null;
+    }
+    
+    // If user is banned, deny access
+    if (membershipStatus === 'banned') {
+      return res.status(403).json({ message: 'You have been banned from this community' });
+    }
+    
+    // Try to find amenity
     const amenity = await Amenity.findOne({
-      where: { 
-        id,
-        communityId 
-      },
-      attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'calendarGroup', 'isPublic', 'publicReservationFee', 'publicDeposit', 'daysOfOperation', 'hoursOfOperation', 'displayColor', 'janitorialRequired', 'approvalRequired']
+      where: { id },
+      attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'calendarGroup', 'isPublic', 'publicReservationFee', 'publicDeposit', 'daysOfOperation', 'hoursOfOperation', 'displayColor', 'janitorialRequired', 'approvalRequired', 'communityId', 'isActive']
     });
     
     if (!amenity) {
       return res.status(404).json({ message: 'Amenity not found' });
+    }
+    
+    // If user has no community or is pending, only allow public amenities
+    if (!communityId || membershipStatus === 'pending' || !membershipStatus) {
+      if (!(amenity as any).isPublic) {
+        return res.status(403).json({ message: 'This amenity is not available. Please wait for your community membership to be approved.' });
+      }
+      return res.json(amenity);
+    }
+    
+    // User is approved - check if amenity belongs to their community
+    if ((amenity as any).communityId !== communityId) {
+      return res.status(403).json({ message: 'You do not have access to this amenity' });
     }
     
     return res.json(amenity);

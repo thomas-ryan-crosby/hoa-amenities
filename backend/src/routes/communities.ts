@@ -24,11 +24,11 @@ router.get('/', authenticateToken, async (req: any, res) => {
           attributes: ['id', 'name', 'description', 'address', 'contactEmail', 'isActive', 'accessCode', 'onboardingCompleted', 'authorizationCertified', 'paymentSetup', 'memberListUploaded']
         }
       ],
-      attributes: ['role', 'communityId', 'joinedAt']
+      attributes: ['role', 'communityId', 'joinedAt', 'status']
     });
 
       const communities = (communityMemberships as any[])
-      .filter((cu: any) => cu.community && cu.community.isActive)
+      .filter((cu: any) => cu.community && cu.community.isActive && cu.status === 'approved')
       .map((cu: any) => ({
         id: cu.communityId,
         name: cu.community.name,
@@ -42,6 +42,7 @@ router.get('/', authenticateToken, async (req: any, res) => {
         memberListUploaded: cu.community.memberListUploaded,
         role: cu.role as 'resident' | 'janitorial' | 'admin',
         joinedAt: cu.joinedAt,
+        status: cu.status,
         isCurrent: req.user.currentCommunityId ? cu.communityId === req.user.currentCommunityId : false
       }));
 
@@ -161,72 +162,45 @@ router.post('/join', authenticateToken, async (req: any, res) => {
       }
     }
 
-    // Check if user is already a member
+    // Check if user already has a membership (pending, approved, or banned)
     const existingMembership = await CommunityUser.findOne({
       where: {
         userId,
-        communityId: community.id,
-        isActive: true
+        communityId: community.id
       }
     });
 
     if (existingMembership) {
-      return res.status(400).json({ message: 'You are already a member of this community' });
+      if (existingMembership.status === 'banned') {
+        return res.status(403).json({ message: 'You have been banned from this community' });
+      }
+      if (existingMembership.status === 'pending') {
+        return res.status(400).json({ message: 'Your request to join this community is pending approval' });
+      }
+      if (existingMembership.status === 'approved') {
+        return res.status(400).json({ message: 'You are already a member of this community' });
+      }
     }
 
-    // Create membership (default role: resident)
+    // Create pending membership (requires admin approval)
     await CommunityUser.create({
       userId,
       communityId: community.id,
       role: 'resident',
       isActive: true,
+      status: 'pending',
       joinedAt: new Date()
     });
 
-    // Get all user's communities
-    const allMemberships = await CommunityUser.findAll({
-      where: { userId, isActive: true },
-      include: [{
-        model: Community,
-        as: 'community',
-        attributes: ['id', 'name', 'isActive']
-      }],
-      attributes: ['role', 'communityId']
-    });
-
-    const communities = (allMemberships as any[])
-      .filter((cu: any) => cu.community && cu.community.isActive)
-      .map((cu: any) => ({
-        id: cu.communityId,
-        name: cu.community.name,
-        role: cu.role as 'resident' | 'janitorial' | 'admin'
-      }));
-
-    // Generate new JWT token with the newly joined community as current
-    const token = jwt.sign(
-      {
-        userId,
-        email: req.user.email,
-        currentCommunityId: community.id,
-        communityRole: 'resident',
-        communityRoles: communities.reduce((acc: any, comm: any) => {
-          acc[comm.id] = comm.role;
-          return acc;
-        }, {})
-      },
-      process.env.JWT_SECRET || 'fallback-secret',
-      { expiresIn: '7d' }
-    );
-
+    // Return success message - user will need to wait for approval
+    // Don't update token yet since they're not approved
     return res.json({
-      message: 'Successfully joined community',
-      token,
-      currentCommunity: {
+      message: 'Your request to join this community has been submitted and is pending admin approval. You will be notified once your request is reviewed.',
+      status: 'pending',
+      community: {
         id: community.id,
-        name: community.name,
-        role: 'resident'
-      },
-      communities
+        name: community.name
+      }
     });
 
   } catch (error) {
@@ -287,9 +261,9 @@ router.post('/:id/switch', authenticateToken, async (req: any, res) => {
     const userId = req.user.id;
     const communityId = parseInt(id);
 
-    // Verify user belongs to this community
+    // Verify user belongs to this community and is approved
     const membership = await CommunityUser.findOne({
-      where: { userId, communityId, isActive: true },
+      where: { userId, communityId, isActive: true, status: 'approved' },
       include: [
         {
           model: Community,
@@ -353,7 +327,297 @@ router.post('/:id/switch', authenticateToken, async (req: any, res) => {
   }
 });
 
-// GET /api/communities/:id/users - List users in community (admin only)
+// GET /api/communities/:id/members - List all members (pending, approved, banned) in community (admin only)
+router.get('/:id/members', authenticateToken, requireAdmin, async (req: any, res) => {
+  try {
+    const { id } = req.params;
+    const communityId = parseInt(id);
+    const { status } = req.query; // Optional filter: 'pending', 'approved', 'banned'
+
+    // Verify user is admin of this community
+    if (req.user.currentCommunityId !== communityId) {
+      return res.status(403).json({ message: 'You can only manage members in your current community' });
+    }
+
+    const whereClause: any = { communityId, isActive: true };
+    if (status && ['pending', 'approved', 'banned'].includes(status as string)) {
+      whereClause.status = status;
+    }
+
+    const memberships = await CommunityUser.findAll({
+      where: whereClause,
+      include: [
+        {
+          model: User,
+          as: 'user',
+          attributes: ['id', 'email', 'firstName', 'lastName', 'phone', 'address']
+        }
+      ],
+      attributes: ['id', 'role', 'status', 'joinedAt', 'isActive', 'createdAt'],
+      order: [['createdAt', 'DESC']]
+    });
+
+    const members = (memberships as any[])
+      .filter((m: any) => m.user)
+      .map((m: any) => ({
+        id: m.id,
+        userId: m.user.id,
+        email: m.user.email,
+        firstName: m.user.firstName,
+        lastName: m.user.lastName,
+        phone: m.user.phone,
+        address: m.user.address,
+        role: m.role,
+        status: m.status,
+        isActive: m.isActive,
+        joinedAt: m.joinedAt,
+        createdAt: m.createdAt
+      }));
+
+    return res.json({ members, total: members.length });
+  } catch (error) {
+    console.error('Error fetching community members:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// PUT /api/communities/:id/members/:membershipId/approve - Approve a pending member (admin only)
+router.put('/:id/members/:membershipId/approve', authenticateToken, requireAdmin, async (req: any, res) => {
+  try {
+    const { id, membershipId } = req.params;
+    const communityId = parseInt(id);
+    const membershipIdNum = parseInt(membershipId);
+
+    // Verify user is admin of this community
+    if (req.user.currentCommunityId !== communityId) {
+      return res.status(403).json({ message: 'You can only manage members in your current community' });
+    }
+
+    const membership = await CommunityUser.findOne({
+      where: {
+        id: membershipIdNum,
+        communityId,
+        isActive: true
+      },
+      include: [
+        {
+          model: User,
+          as: 'user',
+          attributes: ['id', 'email', 'firstName', 'lastName']
+        },
+        {
+          model: Community,
+          as: 'community',
+          attributes: ['id', 'name']
+        }
+      ]
+    });
+
+    if (!membership) {
+      return res.status(404).json({ message: 'Membership not found' });
+    }
+
+    const membershipData = membership as any;
+    if (membershipData.status !== 'pending') {
+      return res.status(400).json({ message: 'Only pending memberships can be approved' });
+    }
+
+    // Update status to approved
+    membershipData.status = 'approved';
+    await membershipData.save();
+
+    // TODO: Send email notification to user about approval
+
+    return res.json({
+      message: 'Member approved successfully',
+      membership: {
+        id: membershipData.id,
+        userId: membershipData.user.id,
+        email: membershipData.user.email,
+        firstName: membershipData.user.firstName,
+        lastName: membershipData.user.lastName,
+        role: membershipData.role,
+        status: 'approved'
+      }
+    });
+  } catch (error) {
+    console.error('Error approving member:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// PUT /api/communities/:id/members/:membershipId/deny - Deny/remove a pending member (admin only)
+router.put('/:id/members/:membershipId/deny', authenticateToken, requireAdmin, async (req: any, res) => {
+  try {
+    const { id, membershipId } = req.params;
+    const communityId = parseInt(id);
+    const membershipIdNum = parseInt(membershipId);
+
+    // Verify user is admin of this community
+    if (req.user.currentCommunityId !== communityId) {
+      return res.status(403).json({ message: 'You can only manage members in your current community' });
+    }
+
+    const membership = await CommunityUser.findOne({
+      where: {
+        id: membershipIdNum,
+        communityId,
+        isActive: true
+      },
+      include: [
+        {
+          model: User,
+          as: 'user',
+          attributes: ['id', 'email', 'firstName', 'lastName']
+        }
+      ]
+    });
+
+    if (!membership) {
+      return res.status(404).json({ message: 'Membership not found' });
+    }
+
+    const membershipData = membership as any;
+    if (membershipData.status !== 'pending') {
+      return res.status(400).json({ message: 'Only pending memberships can be denied' });
+    }
+
+    // Delete the membership (deny the request)
+    await membershipData.destroy();
+
+    // TODO: Send email notification to user about denial
+
+    return res.json({
+      message: 'Membership request denied',
+      membership: {
+        id: membershipData.id,
+        userId: membershipData.user.id,
+        email: membershipData.user.email
+      }
+    });
+  } catch (error) {
+    console.error('Error denying member:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// PUT /api/communities/:id/members/:membershipId/ban - Ban an approved member (admin only)
+router.put('/:id/members/:membershipId/ban', authenticateToken, requireAdmin, async (req: any, res) => {
+  try {
+    const { id, membershipId } = req.params;
+    const communityId = parseInt(id);
+    const membershipIdNum = parseInt(membershipId);
+
+    // Verify user is admin of this community
+    if (req.user.currentCommunityId !== communityId) {
+      return res.status(403).json({ message: 'You can only manage members in your current community' });
+    }
+
+    const membership = await CommunityUser.findOne({
+      where: {
+        id: membershipIdNum,
+        communityId,
+        isActive: true
+      },
+      include: [
+        {
+          model: User,
+          as: 'user',
+          attributes: ['id', 'email', 'firstName', 'lastName']
+        }
+      ]
+    });
+
+    if (!membership) {
+      return res.status(404).json({ message: 'Membership not found' });
+    }
+
+    const membershipData = membership as any;
+    if (membershipData.status === 'banned') {
+      return res.status(400).json({ message: 'Member is already banned' });
+    }
+
+    // Update status to banned
+    membershipData.status = 'banned';
+    await membershipData.save();
+
+    // TODO: Send email notification to user about ban
+
+    return res.json({
+      message: 'Member banned successfully',
+      membership: {
+        id: membershipData.id,
+        userId: membershipData.user.id,
+        email: membershipData.user.email,
+        firstName: membershipData.user.firstName,
+        lastName: membershipData.user.lastName,
+        status: 'banned'
+      }
+    });
+  } catch (error) {
+    console.error('Error banning member:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// PUT /api/communities/:id/members/:membershipId/unban - Unban a banned member (admin only)
+router.put('/:id/members/:membershipId/unban', authenticateToken, requireAdmin, async (req: any, res) => {
+  try {
+    const { id, membershipId } = req.params;
+    const communityId = parseInt(id);
+    const membershipIdNum = parseInt(membershipId);
+
+    // Verify user is admin of this community
+    if (req.user.currentCommunityId !== communityId) {
+      return res.status(403).json({ message: 'You can only manage members in your current community' });
+    }
+
+    const membership = await CommunityUser.findOne({
+      where: {
+        id: membershipIdNum,
+        communityId,
+        isActive: true
+      },
+      include: [
+        {
+          model: User,
+          as: 'user',
+          attributes: ['id', 'email', 'firstName', 'lastName']
+        }
+      ]
+    });
+
+    if (!membership) {
+      return res.status(404).json({ message: 'Membership not found' });
+    }
+
+    const membershipData = membership as any;
+    if (membershipData.status !== 'banned') {
+      return res.status(400).json({ message: 'Member is not banned' });
+    }
+
+    // Update status to approved (unban)
+    membershipData.status = 'approved';
+    await membershipData.save();
+
+    return res.json({
+      message: 'Member unbanned successfully',
+      membership: {
+        id: membershipData.id,
+        userId: membershipData.user.id,
+        email: membershipData.user.email,
+        firstName: membershipData.user.firstName,
+        lastName: membershipData.user.lastName,
+        status: 'approved'
+      }
+    });
+  } catch (error) {
+    console.error('Error unbanning member:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// GET /api/communities/:id/users - List users in community (admin only) - DEPRECATED, use /members instead
 router.get('/:id/users', authenticateToken, requireAdmin, async (req: any, res) => {
   try {
     const { id } = req.params;

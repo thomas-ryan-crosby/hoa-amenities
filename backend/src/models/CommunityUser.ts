@@ -7,12 +7,13 @@ export interface CommunityUserAttributes {
   userId: number;
   role: 'resident' | 'janitorial' | 'admin';
   isActive: boolean;
+  status: 'pending' | 'approved' | 'banned';
   joinedAt: Date;
   createdAt: Date;
   updatedAt: Date;
 }
 
-export interface CommunityUserCreationAttributes extends Optional<CommunityUserAttributes, 'id' | 'createdAt' | 'updatedAt' | 'joinedAt' | 'isActive'> {}
+export interface CommunityUserCreationAttributes extends Optional<CommunityUserAttributes, 'id' | 'createdAt' | 'updatedAt' | 'joinedAt' | 'isActive' | 'status'> {}
 
 export class CommunityUser extends Model<CommunityUserAttributes, CommunityUserCreationAttributes> implements CommunityUserAttributes {
   public id!: number;
@@ -20,6 +21,7 @@ export class CommunityUser extends Model<CommunityUserAttributes, CommunityUserC
   public userId!: number;
   public role!: 'resident' | 'janitorial' | 'admin';
   public isActive!: boolean;
+  public status!: 'pending' | 'approved' | 'banned';
   public joinedAt!: Date;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -58,6 +60,11 @@ CommunityUser.init(
       type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: true,
+    },
+    status: {
+      type: DataTypes.ENUM('pending', 'approved', 'banned'),
+      allowNull: false,
+      defaultValue: 'pending',
     },
     joinedAt: {
       type: DataTypes.DATE,

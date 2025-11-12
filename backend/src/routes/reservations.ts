@@ -1,5 +1,5 @@
 import express from 'express';
-import { Reservation, Amenity, User } from '../models';
+import { Reservation, Amenity, User, CommunityUser } from '../models';
 import { authenticateToken } from '../middleware/auth';
 import { Op, QueryTypes, col } from 'sequelize';
 import { sequelize } from '../models';
@@ -273,6 +273,25 @@ router.post('/', authenticateToken, async (req: any, res) => {
 
     console.log('📝 Creating reservation for user:', userId, 'data:', req.body);
 
+    // Check membership status
+    const communityId = req.user.currentCommunityId;
+    let membershipStatus: 'pending' | 'approved' | 'banned' | null = null;
+    if (communityId) {
+      const membership = await CommunityUser.findOne({
+        where: {
+          userId,
+          communityId,
+          isActive: true
+        }
+      });
+      membershipStatus = membership ? (membership as any).status : null;
+    }
+
+    // If user is banned, deny reservation creation (even for public amenities)
+    if (membershipStatus === 'banned') {
+      return res.status(403).json({ message: 'You have been banned from this community and cannot make reservations' });
+    }
+
     // Validate required fields
     if (!amenityId || !date || !setupTimeStart || !setupTimeEnd || !partyTimeStart || !partyTimeEnd || !guestCount) {
       return res.status(400).json({ 
@@ -280,15 +299,30 @@ router.post('/', authenticateToken, async (req: any, res) => {
       });
     }
 
-    // Validate amenity exists and belongs to current community
+    // Validate amenity exists
     const amenity = await Amenity.findOne({
-      where: {
-        id: amenityId,
-        communityId: req.user.currentCommunityId
-      }
+      where: { id: amenityId }
     });
     if (!amenity) {
-      return res.status(404).json({ message: 'Amenity not found or does not belong to your community' });
+      return res.status(404).json({ message: 'Amenity not found' });
+    }
+
+    // Determine the communityId to use for the reservation
+    let reservationCommunityId: number;
+    
+    // If user has no community or is pending, only allow public amenities
+    if (!communityId || membershipStatus === 'pending' || !membershipStatus) {
+      if (!(amenity as any).isPublic) {
+        return res.status(403).json({ message: 'This amenity is not available. Please wait for your community membership to be approved.' });
+      }
+      // For public amenities, use the amenity's communityId
+      reservationCommunityId = (amenity as any).communityId;
+    } else {
+      // User is approved - verify amenity belongs to their community
+      if ((amenity as any).communityId !== communityId) {
+        return res.status(403).json({ message: 'This amenity does not belong to your community' });
+      }
+      reservationCommunityId = communityId;
     }
 
     // Validate guest count
@@ -303,7 +337,7 @@ router.post('/', authenticateToken, async (req: any, res) => {
     const conflictingReservation = await Reservation.findOne({
       where: {
         amenityId: amenityId,
-        communityId: req.user.currentCommunityId,
+        communityId: reservationCommunityId,
         date: date,
         status: {
           [Op.in]: ['NEW', 'JANITORIAL_APPROVED', 'FULLY_APPROVED']
