@@ -283,8 +283,16 @@ const TestPlanPage: React.FC = () => {
           </p>
         </div>
 
-        {/* Feedback Form */}
-        <TestPlanFeedbackForm />
+        {/* General Feedback Form */}
+        <div style={{ marginTop: '2rem', marginBottom: '2rem' }}>
+          <h2 style={{ color: '#374151', fontSize: '1.5rem', marginBottom: '1rem' }}>
+            General Feedback
+          </h2>
+          <p style={{ color: '#6b7280', marginBottom: '1rem' }}>
+            Share your thoughts on overall UI, design, features, or any other general feedback about Neighbri.
+          </p>
+          <TestPlanFeedbackForm isGeneral={true} />
+        </div>
       </div>
     </div>
   );
