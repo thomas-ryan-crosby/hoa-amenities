@@ -1048,32 +1048,6 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
         >
           ← Back to Community Finder
         </button>
-      ) : (
-        <button
-          type="button"
-          onClick={() => setStep('community-finder')}
-          style={{
-            background: 'transparent',
-            border: 'none',
-            color: '#6b7280',
-            cursor: 'pointer',
-            fontSize: '0.875rem',
-            padding: '0.5rem',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            marginBottom: '1.5rem',
-            fontFamily: 'Inter, sans-serif'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.color = '#355B45';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.color = '#6b7280';
-          }}
-        >
-          ← Back
-        </button>
       )}
 
       {/* Community Search Prompt for Registration */}
