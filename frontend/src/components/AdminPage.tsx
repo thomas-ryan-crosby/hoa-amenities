@@ -38,6 +38,476 @@ interface Amenity {
   isActive: boolean;
 }
 
+interface Member {
+  id: number;
+  userId: number;
+  email: string;
+  firstName: string;
+  lastName: string;
+  phone?: string;
+  address?: string;
+  role: 'resident' | 'janitorial' | 'admin';
+  status: 'pending' | 'approved' | 'banned';
+  isActive: boolean;
+  joinedAt?: string;
+  createdAt?: string;
+}
+
+interface MembersManagementProps {
+  currentCommunity: any;
+  onError: (error: string | null) => void;
+}
+
+const MembersManagement: React.FC<MembersManagementProps> = ({ currentCommunity, onError }) => {
+  const [members, setMembers] = useState<Member[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'approved' | 'banned'>('all');
+  const [actionLoading, setActionLoading] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetchMembers();
+  }, [currentCommunity?.id, statusFilter]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const fetchMembers = async () => {
+    if (!currentCommunity?.id) return;
+
+    try {
+      setLoading(true);
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      const token = localStorage.getItem('token');
+      
+      const params = statusFilter !== 'all' ? { status: statusFilter } : {};
+      const response = await axios.get(`${apiUrl}/api/communities/${currentCommunity.id}/members`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        params
+      });
+
+      setMembers(response.data.members || []);
+    } catch (error: any) {
+      console.error('Error fetching members:', error);
+      onError(error.response?.data?.message || 'Failed to fetch members');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleApprove = async (membershipId: number) => {
+    if (!currentCommunity?.id) return;
+
+    try {
+      setActionLoading(membershipId);
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      const token = localStorage.getItem('token');
+      
+      await axios.put(
+        `${apiUrl}/api/communities/${currentCommunity.id}/members/${membershipId}/approve`,
+        {},
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+
+      await fetchMembers();
+    } catch (error: any) {
+      console.error('Error approving member:', error);
+      onError(error.response?.data?.message || 'Failed to approve member');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleDeny = async (membershipId: number) => {
+    if (!currentCommunity?.id) return;
+
+    if (!window.confirm('Are you sure you want to deny this membership request? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      setActionLoading(membershipId);
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      const token = localStorage.getItem('token');
+      
+      await axios.put(
+        `${apiUrl}/api/communities/${currentCommunity.id}/members/${membershipId}/deny`,
+        {},
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+
+      await fetchMembers();
+    } catch (error: any) {
+      console.error('Error denying member:', error);
+      onError(error.response?.data?.message || 'Failed to deny member');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleBan = async (membershipId: number) => {
+    if (!currentCommunity?.id) return;
+
+    if (!window.confirm('Are you sure you want to ban this member? They will lose access to all amenities, including public ones.')) {
+      return;
+    }
+
+    try {
+      setActionLoading(membershipId);
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      const token = localStorage.getItem('token');
+      
+      await axios.put(
+        `${apiUrl}/api/communities/${currentCommunity.id}/members/${membershipId}/ban`,
+        {},
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+
+      await fetchMembers();
+    } catch (error: any) {
+      console.error('Error banning member:', error);
+      onError(error.response?.data?.message || 'Failed to ban member');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleUnban = async (membershipId: number) => {
+    if (!currentCommunity?.id) return;
+
+    try {
+      setActionLoading(membershipId);
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      const token = localStorage.getItem('token');
+      
+      await axios.put(
+        `${apiUrl}/api/communities/${currentCommunity.id}/members/${membershipId}/unban`,
+        {},
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+
+      await fetchMembers();
+    } catch (error: any) {
+      console.error('Error unbanning member:', error);
+      onError(error.response?.data?.message || 'Failed to unban member');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const getStatusBadge = (status: string) => {
+    const styles: Record<string, { bg: string; color: string; text: string }> = {
+      pending: { bg: '#fef3c7', color: '#92400e', text: 'Pending' },
+      approved: { bg: '#d1fae5', color: '#065f46', text: 'Approved' },
+      banned: { bg: '#fee2e2', color: '#991b1b', text: 'Banned' }
+    };
+    const style = styles[status] || styles.pending;
+    return (
+      <span style={{
+        backgroundColor: style.bg,
+        color: style.color,
+        padding: '0.25rem 0.75rem',
+        borderRadius: '0.375rem',
+        fontSize: '0.75rem',
+        fontWeight: 600,
+        textTransform: 'uppercase'
+      }}>
+        {style.text}
+      </span>
+    );
+  };
+
+  const getRoleBadge = (role: string) => {
+    const styles: Record<string, { bg: string; color: string }> = {
+      resident: { bg: '#dbeafe', color: '#1e40af' },
+      janitorial: { bg: '#fef3c7', color: '#92400e' },
+      admin: { bg: '#ddd6fe', color: '#5b21b6' }
+    };
+    const style = styles[role] || styles.resident;
+    return (
+      <span style={{
+        backgroundColor: style.bg,
+        color: style.color,
+        padding: '0.25rem 0.75rem',
+        borderRadius: '0.375rem',
+        fontSize: '0.75rem',
+        fontWeight: 600,
+        textTransform: 'capitalize'
+      }}>
+        {role}
+      </span>
+    );
+  };
+
+  const pendingCount = members.filter(m => m.status === 'pending').length;
+  const bannedCount = members.filter(m => m.status === 'banned').length;
+
+  return (
+    <div style={{ padding: '2rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+        <h2 style={{ fontSize: '1.5rem', fontWeight: 600, color: '#1f2937' }}>Members Management</h2>
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <button
+            onClick={() => setStatusFilter('all')}
+            style={{
+              padding: '0.5rem 1rem',
+              backgroundColor: statusFilter === 'all' ? '#355B45' : '#f3f4f6',
+              color: statusFilter === 'all' ? 'white' : '#6b7280',
+              border: 'none',
+              borderRadius: '0.375rem',
+              cursor: 'pointer',
+              fontSize: '0.875rem',
+              fontWeight: 600,
+              fontFamily: 'Inter, sans-serif'
+            }}
+          >
+            All ({members.length})
+          </button>
+          <button
+            onClick={() => setStatusFilter('pending')}
+            style={{
+              padding: '0.5rem 1rem',
+              backgroundColor: statusFilter === 'pending' ? '#f59e0b' : '#fef3c7',
+              color: statusFilter === 'pending' ? 'white' : '#92400e',
+              border: 'none',
+              borderRadius: '0.375rem',
+              cursor: 'pointer',
+              fontSize: '0.875rem',
+              fontWeight: 600,
+              fontFamily: 'Inter, sans-serif',
+              position: 'relative'
+            }}
+          >
+            Pending
+            {pendingCount > 0 && (
+              <span style={{
+                position: 'absolute',
+                top: '-8px',
+                right: '-8px',
+                backgroundColor: '#ef4444',
+                color: 'white',
+                borderRadius: '50%',
+                width: '20px',
+                height: '20px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '0.75rem',
+                fontWeight: 'bold'
+              }}>
+                {pendingCount}
+              </span>
+            )}
+          </button>
+          <button
+            onClick={() => setStatusFilter('approved')}
+            style={{
+              padding: '0.5rem 1rem',
+              backgroundColor: statusFilter === 'approved' ? '#10b981' : '#d1fae5',
+              color: statusFilter === 'approved' ? 'white' : '#065f46',
+              border: 'none',
+              borderRadius: '0.375rem',
+              cursor: 'pointer',
+              fontSize: '0.875rem',
+              fontWeight: 600,
+              fontFamily: 'Inter, sans-serif'
+            }}
+          >
+            Approved
+          </button>
+          <button
+            onClick={() => setStatusFilter('banned')}
+            style={{
+              padding: '0.5rem 1rem',
+              backgroundColor: statusFilter === 'banned' ? '#ef4444' : '#fee2e2',
+              color: statusFilter === 'banned' ? 'white' : '#991b1b',
+              border: 'none',
+              borderRadius: '0.375rem',
+              cursor: 'pointer',
+              fontSize: '0.875rem',
+              fontWeight: 600,
+              fontFamily: 'Inter, sans-serif',
+              position: 'relative'
+            }}
+          >
+            Banned
+            {bannedCount > 0 && (
+              <span style={{
+                position: 'absolute',
+                top: '-8px',
+                right: '-8px',
+                backgroundColor: '#991b1b',
+                color: 'white',
+                borderRadius: '50%',
+                width: '20px',
+                height: '20px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '0.75rem',
+                fontWeight: 'bold'
+              }}>
+                {bannedCount}
+              </span>
+            )}
+          </button>
+        </div>
+      </div>
+
+      {loading ? (
+        <div style={{ textAlign: 'center', padding: '2rem' }}>
+          <p>Loading members...</p>
+        </div>
+      ) : members.length === 0 ? (
+        <div style={{ textAlign: 'center', padding: '2rem' }}>
+          <p style={{ color: '#6b7280' }}>
+            {statusFilter === 'pending' ? 'No pending membership requests' :
+             statusFilter === 'banned' ? 'No banned members' :
+             statusFilter === 'approved' ? 'No approved members' :
+             'No members found'}
+          </p>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          {members.map((member) => (
+            <div
+              key={member.id}
+              style={{
+                backgroundColor: 'white',
+                border: '1px solid #e5e7eb',
+                borderRadius: '0.5rem',
+                padding: '1.5rem',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}
+            >
+              <div style={{ flex: 1 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
+                  <h3 style={{ fontSize: '1.125rem', fontWeight: 600, color: '#1f2937', margin: 0 }}>
+                    {member.firstName} {member.lastName}
+                  </h3>
+                  {getStatusBadge(member.status)}
+                  {getRoleBadge(member.role)}
+                </div>
+                <div style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '0.25rem' }}>
+                  {member.email}
+                </div>
+                {member.phone && (
+                  <div style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '0.25rem' }}>
+                    {member.phone}
+                  </div>
+                )}
+                {member.joinedAt && (
+                  <div style={{ fontSize: '0.75rem', color: '#9ca3af' }}>
+                    Joined: {new Date(member.joinedAt).toLocaleDateString()}
+                  </div>
+                )}
+              </div>
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                {member.status === 'pending' && (
+                  <>
+                    <button
+                      onClick={() => handleApprove(member.id)}
+                      disabled={actionLoading === member.id}
+                      style={{
+                        padding: '0.5rem 1rem',
+                        backgroundColor: '#10b981',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '0.375rem',
+                        cursor: actionLoading === member.id ? 'not-allowed' : 'pointer',
+                        fontSize: '0.875rem',
+                        fontWeight: 600,
+                        fontFamily: 'Inter, sans-serif',
+                        opacity: actionLoading === member.id ? 0.6 : 1
+                      }}
+                    >
+                      {actionLoading === member.id ? 'Processing...' : 'Approve'}
+                    </button>
+                    <button
+                      onClick={() => handleDeny(member.id)}
+                      disabled={actionLoading === member.id}
+                      style={{
+                        padding: '0.5rem 1rem',
+                        backgroundColor: '#ef4444',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '0.375rem',
+                        cursor: actionLoading === member.id ? 'not-allowed' : 'pointer',
+                        fontSize: '0.875rem',
+                        fontWeight: 600,
+                        fontFamily: 'Inter, sans-serif',
+                        opacity: actionLoading === member.id ? 0.6 : 1
+                      }}
+                    >
+                      {actionLoading === member.id ? 'Processing...' : 'Deny'}
+                    </button>
+                  </>
+                )}
+                {member.status === 'approved' && (
+                  <button
+                    onClick={() => handleBan(member.id)}
+                    disabled={actionLoading === member.id}
+                    style={{
+                      padding: '0.5rem 1rem',
+                      backgroundColor: '#ef4444',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '0.375rem',
+                      cursor: actionLoading === member.id ? 'not-allowed' : 'pointer',
+                      fontSize: '0.875rem',
+                      fontWeight: 600,
+                      fontFamily: 'Inter, sans-serif',
+                      opacity: actionLoading === member.id ? 0.6 : 1
+                    }}
+                  >
+                    {actionLoading === member.id ? 'Processing...' : 'Ban'}
+                  </button>
+                )}
+                {member.status === 'banned' && (
+                  <button
+                    onClick={() => handleUnban(member.id)}
+                    disabled={actionLoading === member.id}
+                    style={{
+                      padding: '0.5rem 1rem',
+                      backgroundColor: '#10b981',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '0.375rem',
+                      cursor: actionLoading === member.id ? 'not-allowed' : 'pointer',
+                      fontSize: '0.875rem',
+                      fontWeight: 600,
+                      fontFamily: 'Inter, sans-serif',
+                      opacity: actionLoading === member.id ? 0.6 : 1
+                    }}
+                  >
+                    {actionLoading === member.id ? 'Processing...' : 'Unban'}
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 interface AmenitiesManagementProps {
   currentCommunity: any;
   onError: (error: string | null) => void;
@@ -1260,7 +1730,7 @@ const AdminPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'resident' | 'janitorial' | 'admin'>('all');
   const [actionLoading, setActionLoading] = useState<number | null>(null);
-  const [activeTab, setActiveTab] = useState<'users' | 'damage-reviews' | 'amenities'>('users');
+  const [activeTab, setActiveTab] = useState<'users' | 'members' | 'damage-reviews' | 'amenities'>('users');
   const [damageReviews, setDamageReviews] = useState<any[]>([]);
   const [damageReviewsLoading, setDamageReviewsLoading] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
@@ -1275,7 +1745,7 @@ const AdminPage: React.FC = () => {
     } else if (activeTab === 'damage-reviews') {
       fetchDamageReviews();
     }
-    // amenities tab will fetch its own data
+    // amenities and members tabs will fetch their own data
   }, [activeTab, currentCommunity?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchUsers = async () => {
@@ -1543,6 +2013,24 @@ const AdminPage: React.FC = () => {
           Users
         </button>
         <button
+          onClick={() => setActiveTab('members')}
+          style={{
+            padding: '0.75rem 1.5rem',
+            backgroundColor: activeTab === 'members' ? '#355B45' : 'transparent',
+            color: activeTab === 'members' ? 'white' : '#6b7280',
+            border: 'none',
+            borderBottom: activeTab === 'members' ? '2px solid #355B45' : '2px solid transparent',
+            cursor: 'pointer',
+            fontSize: '1rem',
+            fontWeight: activeTab === 'members' ? '600' : '400',
+            fontFamily: 'Inter, sans-serif',
+            marginBottom: '-2px',
+            position: 'relative'
+          }}
+        >
+          Members
+        </button>
+        <button
           onClick={() => setActiveTab('amenities')}
           style={{
             padding: '0.75rem 1.5rem',
@@ -1609,6 +2097,14 @@ const AdminPage: React.FC = () => {
         }}>
           {error}
         </div>
+      )}
+
+      {/* Members Tab Content */}
+      {activeTab === 'members' && (
+        <MembersManagement 
+          currentCommunity={currentCommunity}
+          onError={setError}
+        />
       )}
 
       {/* Amenities Tab Content */}

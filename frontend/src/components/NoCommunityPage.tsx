@@ -61,7 +61,15 @@ const NoCommunityPage: React.FC = () => {
         }
       );
 
-      // Update auth context with new token and community
+      // Check if request is pending approval
+      if (response.data.status === 'pending') {
+        setSuccess(response.data.message || 'Your request to join this community has been submitted and is pending admin approval. You will be notified once your request is reviewed.');
+        setSearchResults([]);
+        setZipCode('');
+        return;
+      }
+
+      // Update auth context with new token and community (if approved immediately)
       const { token: newToken, currentCommunity, communities } = response.data;
       
       // Get user data from localStorage
@@ -124,7 +132,14 @@ const NoCommunityPage: React.FC = () => {
         }
       );
 
-      // Update auth context with new token and community
+      // Check if request is pending approval
+      if (response.data.status === 'pending') {
+        setSuccess(response.data.message || 'Your request to join this community has been submitted and is pending admin approval. You will be notified once your request is reviewed.');
+        setAccessCode('');
+        return;
+      }
+
+      // Update auth context with new token and community (if approved immediately)
       const { token: newToken, currentCommunity, communities } = response.data;
       
       // Get user data from localStorage
