@@ -291,6 +291,91 @@ const TestPlanPage: React.FC = () => {
           </h2>
           
           <form onSubmit={handleSubmit}>
+            {error && (
+              <div style={{
+                backgroundColor: '#fee2e2',
+                border: '1px solid #ef4444',
+                borderRadius: '4px',
+                padding: '12px',
+                marginBottom: '1rem',
+                color: '#991b1b',
+                fontSize: '14px'
+              }}>
+                {error}
+              </div>
+            )}
+
+            {/* Test Scenarios with Feedback Boxes */}
+            <div style={{ marginBottom: '1.5rem' }}>
+              <h3 style={{ color: '#355B45', fontSize: '1.25rem', marginBottom: '0.5rem' }}>
+                Scenario 1: New Community Creation
+              </h3>
+              <p style={{ color: '#6b7280', marginBottom: '0.5rem' }}>
+                Test the complete flow of creating a new HOA/community on Neighbri, including the subscription payment modal and welcome email.
+              </p>
+              <ScenarioFeedbackBox scenarioNumber={1} scenarioName="New Community Creation" />
+            </div>
+
+            <div style={{ marginBottom: '1.5rem' }}>
+              <h3 style={{ color: '#355B45', fontSize: '1.25rem', marginBottom: '0.5rem' }}>
+                Scenario 2: Registering with The Sanctuary
+              </h3>
+              <p style={{ color: '#6b7280', marginBottom: '0.5rem' }}>
+                Test joining "The Sanctuary" community by searching for it (zip code 70471) and the approval workflow.
+              </p>
+              <ScenarioFeedbackBox scenarioNumber={2} scenarioName="Registering with The Sanctuary" />
+            </div>
+
+            <div style={{ marginBottom: '1.5rem' }}>
+              <h3 style={{ color: '#355B45', fontSize: '1.25rem', marginBottom: '0.5rem' }}>
+                Scenario 3: Admin Perspective Testing
+              </h3>
+              <p style={{ color: '#6b7280', marginBottom: '0.5rem' }}>
+                Test all features available to community administrators: creating amenities, managing members, reviewing damage assessments, and more.
+              </p>
+              <ScenarioFeedbackBox scenarioNumber={3} scenarioName="Admin Perspective Testing" />
+            </div>
+
+            <div style={{ marginBottom: '1.5rem' }}>
+              <h3 style={{ color: '#355B45', fontSize: '1.25rem', marginBottom: '0.5rem' }}>
+                Scenario 4: Janitorial Perspective Testing
+              </h3>
+              <p style={{ color: '#6b7280', marginBottom: '0.5rem' }}>
+                Test features available to janitorial staff: approving reservations, setting cleaning times, proposing modifications, and assessing damages.
+              </p>
+              <ScenarioFeedbackBox scenarioNumber={4} scenarioName="Janitorial Perspective Testing" />
+            </div>
+
+            <div style={{ marginBottom: '1.5rem' }}>
+              <h3 style={{ color: '#355B45', fontSize: '1.25rem', marginBottom: '0.5rem' }}>
+                Scenario 5: Resident Perspective Testing
+              </h3>
+              <p style={{ color: '#6b7280', marginBottom: '0.5rem' }}>
+                Test features available to regular residents: creating reservations, modifying/canceling reservations, handling modification proposals, and managing profile settings.
+              </p>
+              <ScenarioFeedbackBox scenarioNumber={5} scenarioName="Resident Perspective Testing" />
+            </div>
+
+            <div style={{ marginBottom: '1.5rem' }}>
+              <h3 style={{ color: '#355B45', fontSize: '1.25rem', marginBottom: '0.5rem' }}>
+                Scenario 6: Email Notifications Testing
+              </h3>
+              <p style={{ color: '#6b7280', marginBottom: '0.5rem' }}>
+                Verify that email notifications are sent correctly for all events (reservations, modifications, approvals, etc.).
+              </p>
+              <ScenarioFeedbackBox scenarioNumber={6} scenarioName="Email Notifications Testing" />
+            </div>
+
+            <div style={{ marginBottom: '2rem' }}>
+              <h3 style={{ color: '#355B45', fontSize: '1.25rem', marginBottom: '0.5rem' }}>
+                Scenario 7: Edge Cases and Error Handling
+              </h3>
+              <p style={{ color: '#6b7280', marginBottom: '0.5rem' }}>
+                Test unusual scenarios, form validation, access control, and browser compatibility.
+              </p>
+              <ScenarioFeedbackBox scenarioNumber={7} scenarioName="Edge Cases and Error Handling" />
+            </div>
+
             {/* General Feedback Section */}
             <div style={{
               backgroundColor: 'white',
@@ -301,22 +386,8 @@ const TestPlanPage: React.FC = () => {
               boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
             }}>
               <h2 style={{ color: '#374151', fontSize: '1.5rem', marginBottom: '1rem' }}>
-                Submit Your Feedback
+                General Feedback
               </h2>
-
-              {error && (
-                <div style={{
-                  backgroundColor: '#fee2e2',
-                  border: '1px solid #ef4444',
-                  borderRadius: '4px',
-                  padding: '12px',
-                  marginBottom: '1rem',
-                  color: '#991b1b',
-                  fontSize: '14px'
-                }}>
-                  {error}
-                </div>
-              )}
 
               <div style={{ marginBottom: '1.5rem' }}>
                 <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#374151', fontSize: '14px' }}>
@@ -428,77 +499,6 @@ const TestPlanPage: React.FC = () => {
                   }}
                 />
               </div>
-            </div>
-
-            {/* Test Scenarios with Feedback Boxes */}
-            <div style={{ marginBottom: '1.5rem' }}>
-              <h3 style={{ color: '#355B45', fontSize: '1.25rem', marginBottom: '0.5rem' }}>
-                Scenario 1: New Community Creation
-              </h3>
-              <p style={{ color: '#6b7280', marginBottom: '0.5rem' }}>
-                Test the complete flow of creating a new HOA/community on Neighbri, including the subscription payment modal and welcome email.
-              </p>
-              <ScenarioFeedbackBox scenarioNumber={1} scenarioName="New Community Creation" />
-            </div>
-
-            <div style={{ marginBottom: '1.5rem' }}>
-              <h3 style={{ color: '#355B45', fontSize: '1.25rem', marginBottom: '0.5rem' }}>
-                Scenario 2: Registering with The Sanctuary
-              </h3>
-              <p style={{ color: '#6b7280', marginBottom: '0.5rem' }}>
-                Test joining "The Sanctuary" community by searching for it (zip code 70471) and the approval workflow.
-              </p>
-              <ScenarioFeedbackBox scenarioNumber={2} scenarioName="Registering with The Sanctuary" />
-            </div>
-
-            <div style={{ marginBottom: '1.5rem' }}>
-              <h3 style={{ color: '#355B45', fontSize: '1.25rem', marginBottom: '0.5rem' }}>
-                Scenario 3: Admin Perspective Testing
-              </h3>
-              <p style={{ color: '#6b7280', marginBottom: '0.5rem' }}>
-                Test all features available to community administrators: creating amenities, managing members, reviewing damage assessments, and more.
-              </p>
-              <ScenarioFeedbackBox scenarioNumber={3} scenarioName="Admin Perspective Testing" />
-            </div>
-
-            <div style={{ marginBottom: '1.5rem' }}>
-              <h3 style={{ color: '#355B45', fontSize: '1.25rem', marginBottom: '0.5rem' }}>
-                Scenario 4: Janitorial Perspective Testing
-              </h3>
-              <p style={{ color: '#6b7280', marginBottom: '0.5rem' }}>
-                Test features available to janitorial staff: approving reservations, setting cleaning times, proposing modifications, and assessing damages.
-              </p>
-              <ScenarioFeedbackBox scenarioNumber={4} scenarioName="Janitorial Perspective Testing" />
-            </div>
-
-            <div style={{ marginBottom: '1.5rem' }}>
-              <h3 style={{ color: '#355B45', fontSize: '1.25rem', marginBottom: '0.5rem' }}>
-                Scenario 5: Resident Perspective Testing
-              </h3>
-              <p style={{ color: '#6b7280', marginBottom: '0.5rem' }}>
-                Test features available to regular residents: creating reservations, modifying/canceling reservations, handling modification proposals, and managing profile settings.
-              </p>
-              <ScenarioFeedbackBox scenarioNumber={5} scenarioName="Resident Perspective Testing" />
-            </div>
-
-            <div style={{ marginBottom: '1.5rem' }}>
-              <h3 style={{ color: '#355B45', fontSize: '1.25rem', marginBottom: '0.5rem' }}>
-                Scenario 6: Email Notifications Testing
-              </h3>
-              <p style={{ color: '#6b7280', marginBottom: '0.5rem' }}>
-                Verify that email notifications are sent correctly for all events (reservations, modifications, approvals, etc.).
-              </p>
-              <ScenarioFeedbackBox scenarioNumber={6} scenarioName="Email Notifications Testing" />
-            </div>
-
-            <div style={{ marginBottom: '2rem' }}>
-              <h3 style={{ color: '#355B45', fontSize: '1.25rem', marginBottom: '0.5rem' }}>
-                Scenario 7: Edge Cases and Error Handling
-              </h3>
-              <p style={{ color: '#6b7280', marginBottom: '0.5rem' }}>
-                Test unusual scenarios, form validation, access control, and browser compatibility.
-              </p>
-              <ScenarioFeedbackBox scenarioNumber={7} scenarioName="Edge Cases and Error Handling" />
             </div>
 
             {/* Name, Email, and Submit Button */}
