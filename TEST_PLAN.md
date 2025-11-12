@@ -121,9 +121,11 @@ Once you've registered for The Sanctuary, you can test different roles using the
 
 **Goal**: Test joining an existing community using an access code
 
-### Step 2.1: Get an Access Code
-- Ask another tester who created a community for their access code
-- OR use the access code from the welcome email you received in Scenario 1
+### Step 2.1: Search for The Sanctuary
+1. On the community search screen, search by **zip code**: `70471`
+2. **Expected**: You should see "The Sanctuary" in the search results
+3. Click on "The Sanctuary" to select it
+4. **Note**: You'll need a different email address than the one you used to create your own community (use Email 2)
 
 ### Step 2.2: Registration Flow
 1. Navigate to https://www.neighbri.com
