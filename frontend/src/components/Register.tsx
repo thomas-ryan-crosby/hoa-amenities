@@ -422,9 +422,7 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2rem' }}>
           <button
             type="button"
-            onClick={() => {
-              setStep('community-finder');
-            }}
+            onClick={() => setStep('community-finder')}
             style={{
               width: '100%',
               padding: '1.25rem',
