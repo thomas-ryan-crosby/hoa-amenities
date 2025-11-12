@@ -397,6 +397,34 @@ const AppContent: React.FC = () => {
             <Navigate to="/app" /> : 
             <AuthPage onLogin={login} />
         } />
+        <Route 
+          path="/register" 
+          element={
+            isAuthenticated ? 
+              <Navigate to="/app" /> : 
+              <Register />
+          } 
+        />
+        <Route 
+          path="/verify-email/:token" 
+          element={<EmailVerificationPage />} 
+        />
+        <Route 
+          path="/forgot-password" 
+          element={
+            isAuthenticated ? 
+              <Navigate to="/app" /> : 
+              <ForgotPasswordPage />
+          } 
+        />
+        <Route 
+          path="/reset-password/:token" 
+          element={
+            isAuthenticated ? 
+              <Navigate to="/app" /> : 
+              <ResetPasswordPage />
+          } 
+        />
         
         {/* App routes with header */}
         <Route path="*" element={
@@ -460,34 +488,6 @@ const AppContent: React.FC = () => {
                     <ProtectedRoute>
                       <OnboardingPage />
                     </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/register" 
-                  element={
-                    isAuthenticated ? 
-                      <Navigate to="/app" /> : 
-                      <Register />
-                  } 
-                />
-                <Route 
-                  path="/verify-email/:token" 
-                  element={<EmailVerificationPage />} 
-                />
-                <Route 
-                  path="/forgot-password" 
-                  element={
-                    isAuthenticated ? 
-                      <Navigate to="/app" /> : 
-                      <ForgotPasswordPage />
-                  } 
-                />
-                <Route 
-                  path="/reset-password/:token" 
-                  element={
-                    isAuthenticated ? 
-                      <Navigate to="/app" /> : 
-                      <ResetPasswordPage />
                   } 
                 />
               </Routes>
