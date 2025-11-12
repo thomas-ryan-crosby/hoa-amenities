@@ -50,6 +50,54 @@ router.post('/test-plan', async (req, res) => {
           <div style="background:#f9fafb;padding:12px;border-radius:4px;white-space:pre-wrap;font-size:14px;color:#6b7280;">${suggestions || 'None provided'}</div>
         </div>
 
+        ${scenarioFeedbacks ? `
+        <div style="margin-bottom:20px;">
+          <h3 style="color:#374151;font-size:16px;margin-bottom:12px;">Scenario-Specific Feedback:</h3>
+          ${scenarioFeedbacks.scenario1 ? `
+          <div style="margin-bottom:12px;">
+            <h4 style="color:#355B45;font-size:14px;margin-bottom:4px;">Scenario 1: New Community Creation</h4>
+            <div style="background:#f9fafb;padding:12px;border-radius:4px;white-space:pre-wrap;font-size:14px;color:#6b7280;">${scenarioFeedbacks.scenario1}</div>
+          </div>
+          ` : ''}
+          ${scenarioFeedbacks.scenario2 ? `
+          <div style="margin-bottom:12px;">
+            <h4 style="color:#355B45;font-size:14px;margin-bottom:4px;">Scenario 2: Registering with The Sanctuary</h4>
+            <div style="background:#f9fafb;padding:12px;border-radius:4px;white-space:pre-wrap;font-size:14px;color:#6b7280;">${scenarioFeedbacks.scenario2}</div>
+          </div>
+          ` : ''}
+          ${scenarioFeedbacks.scenario3 ? `
+          <div style="margin-bottom:12px;">
+            <h4 style="color:#355B45;font-size:14px;margin-bottom:4px;">Scenario 3: Admin Perspective Testing</h4>
+            <div style="background:#f9fafb;padding:12px;border-radius:4px;white-space:pre-wrap;font-size:14px;color:#6b7280;">${scenarioFeedbacks.scenario3}</div>
+          </div>
+          ` : ''}
+          ${scenarioFeedbacks.scenario4 ? `
+          <div style="margin-bottom:12px;">
+            <h4 style="color:#355B45;font-size:14px;margin-bottom:4px;">Scenario 4: Janitorial Perspective Testing</h4>
+            <div style="background:#f9fafb;padding:12px;border-radius:4px;white-space:pre-wrap;font-size:14px;color:#6b7280;">${scenarioFeedbacks.scenario4}</div>
+          </div>
+          ` : ''}
+          ${scenarioFeedbacks.scenario5 ? `
+          <div style="margin-bottom:12px;">
+            <h4 style="color:#355B45;font-size:14px;margin-bottom:4px;">Scenario 5: Resident Perspective Testing</h4>
+            <div style="background:#f9fafb;padding:12px;border-radius:4px;white-space:pre-wrap;font-size:14px;color:#6b7280;">${scenarioFeedbacks.scenario5}</div>
+          </div>
+          ` : ''}
+          ${scenarioFeedbacks.scenario6 ? `
+          <div style="margin-bottom:12px;">
+            <h4 style="color:#355B45;font-size:14px;margin-bottom:4px;">Scenario 6: Email Notifications Testing</h4>
+            <div style="background:#f9fafb;padding:12px;border-radius:4px;white-space:pre-wrap;font-size:14px;color:#6b7280;">${scenarioFeedbacks.scenario6}</div>
+          </div>
+          ` : ''}
+          ${scenarioFeedbacks.scenario7 ? `
+          <div style="margin-bottom:12px;">
+            <h4 style="color:#355B45;font-size:14px;margin-bottom:4px;">Scenario 7: Edge Cases and Error Handling</h4>
+            <div style="background:#f9fafb;padding:12px;border-radius:4px;white-space:pre-wrap;font-size:14px;color:#6b7280;">${scenarioFeedbacks.scenario7}</div>
+          </div>
+          ` : ''}
+        </div>
+        ` : ''}
+
         <div style="margin-bottom:20px;">
           <h3 style="color:#374151;font-size:16px;margin-bottom:8px;">General Feedback:</h3>
           <div style="background:#f9fafb;padding:12px;border-radius:4px;white-space:pre-wrap;font-size:14px;color:#6b7280;">${feedback}</div>
