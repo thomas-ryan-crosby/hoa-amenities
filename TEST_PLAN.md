@@ -117,9 +117,9 @@ Once you've registered for The Sanctuary, you can test different roles using the
 
 ---
 
-## Test Scenario 2: Registering with an Existing Community
+## Test Scenario 2: Registering with The Sanctuary
 
-**Goal**: Test joining an existing community using an access code
+**Goal**: Test joining "The Sanctuary" community by searching for it
 
 ### Step 2.1: Search for The Sanctuary
 1. On the community search screen, search by **zip code**: `70471`
