@@ -34,28 +34,49 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLogin }) => {
       const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       const response = await axios.post(`${apiUrl}/api/auth/login`, formData);
       
-      if (response.data.token) {
-        const { user, token, communities, currentCommunity } = response.data;
-        
-        // Transform communities data
-        const communitiesList = communities.map((c: any) => ({
-          id: c.id,
-          name: c.name,
-          description: c.description,
-          role: c.role,
-          joinedAt: c.joinedAt
-        }));
-        
-        const currentCommunityData = {
-          id: currentCommunity.id,
-          name: currentCommunity.name,
-          role: currentCommunity.role
-        };
-        
-        onLogin(user, token, communitiesList, currentCommunityData);
-        navigate('/app');
+      console.log('🔐 Login response:', {
+        hasToken: !!response.data.token,
+        hasUser: !!response.data.user,
+        hasCommunities: !!response.data.communities,
+        communitiesCount: response.data.communities?.length || 0,
+        hasCurrentCommunity: !!response.data.currentCommunity
+      });
+      
+      if (!response.data.token) {
+        console.error('❌ Login failed: No token in response');
+        setError('Login failed: Invalid response from server');
+        return;
       }
+      
+      const { user, token, communities, currentCommunity } = response.data;
+      
+      if (!user) {
+        console.error('❌ Login failed: No user data in response');
+        setError('Login failed: Invalid response from server');
+        return;
+      }
+      
+      // Transform communities data
+      const communitiesList = (communities || []).map((c: any) => ({
+        id: c.id,
+        name: c.name,
+        description: c.description,
+        role: c.role,
+        joinedAt: c.joinedAt
+      }));
+      
+      // Handle case where user has no communities
+      const currentCommunityData = currentCommunity ? {
+        id: currentCommunity.id,
+        name: currentCommunity.name,
+        role: currentCommunity.role
+      } : null;
+      
+      console.log('✅ Login successful, calling onLogin');
+      onLogin(user, token, communitiesList, currentCommunityData);
+      navigate('/app');
     } catch (err: any) {
+      console.error('❌ Login error:', err.response?.data || err.message);
       setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
     } finally {
       setLoading(false);
