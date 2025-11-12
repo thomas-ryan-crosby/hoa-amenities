@@ -1507,8 +1507,8 @@ const Register: React.FC<RegisterProps> = ({ onRegister }) => {
 
       {((communitySelection === 'interested' && step === 'registration') || (communitySelection !== 'interested')) && (
       <form onSubmit={handleSubmit}>
-        {/* Community Information Fields (shown FIRST for interested users or when registering new community) */}
-        {(communitySelection === 'interested' || registeringNewCommunity) && (
+        {/* Community Information Fields (shown ONLY if no community selected AND registering new community, OR if user is interested) */}
+        {(communitySelection === 'interested' || (registeringNewCommunity && selectedCommunities.length === 0)) && (
           <div style={{ 
             marginBottom: '2rem', 
             paddingBottom: '2rem', 
