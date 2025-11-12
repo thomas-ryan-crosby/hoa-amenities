@@ -12,10 +12,25 @@ SET status = 'approved'
 WHERE status IS NULL OR status = '';
 
 -- Set NOT NULL constraint after updating existing records
-ALTER TABLE community_users
-ALTER COLUMN status SET NOT NULL;
+-- Only if the column doesn't already have NOT NULL
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 
+        FROM information_schema.columns 
+        WHERE table_name = 'community_users' 
+        AND column_name = 'status' 
+        AND is_nullable = 'YES'
+    ) THEN
+        ALTER TABLE community_users
+        ALTER COLUMN status SET NOT NULL;
+    END IF;
+END $$;
 
--- Add check constraint to ensure valid status values
+-- Drop constraint if it exists, then add it
+ALTER TABLE community_users
+DROP CONSTRAINT IF EXISTS check_status_valid;
+
 ALTER TABLE community_users
 ADD CONSTRAINT check_status_valid 
 CHECK (status IN ('pending', 'approved', 'banned'));
