@@ -130,9 +130,9 @@ Once you've registered for The Sanctuary, you can test different roles using the
 ### Step 2.2: Registration Flow
 1. Navigate to https://www.neighbri.com
 2. Click "Register"
-3. On the community search screen, look for an "Access Code" option or field
-4. Enter the access code you received
-5. Click "Search" or "Join"
+3. On the community search screen, search by zip code: `70471`
+4. Select "The Sanctuary" from the search results
+5. Complete the registration form with your second email address (Email 2)
 
 ### Step 2.3: Complete Registration
 1. Fill out your personal information:
