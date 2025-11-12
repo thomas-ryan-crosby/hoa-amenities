@@ -23,7 +23,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 };
 
 const OnboardingRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated, currentCommunity, isAdmin, communities } = useAuth();
+  const { isAuthenticated, currentCommunity, communities } = useAuth();
   
   if (!isAuthenticated) {
     return <Navigate to="/login" />;
