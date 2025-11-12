@@ -9,6 +9,8 @@ Thank you for helping us test Neighbri! This is beta software, so you may encoun
 - Please report any issues, bugs, or confusing experiences
 - Feel free to test edge cases and unusual scenarios
 - All feedback is welcome, even if it's just "this feels weird"
+- **This test plan is a GUIDE, not a strict script** - feel free to explore, go off script, and test things in any order you like!
+- We welcome feedback on **style, formatting, features, design, colors, fonts, spacing, or anything else** you notice
 
 ---
 
@@ -499,7 +501,27 @@ Thank you for helping us test Neighbri! This is beta software, so you may encoun
 
 ---
 
-## Reporting Issues
+## How to Provide Feedback
+
+### Feedback Methods:
+We'd love to hear your thoughts! You can provide feedback in any of the following ways:
+
+1. **Screen Recording**: Record your testing session and share the video file
+   - Use screen recording software (built-in on Mac/Windows, or tools like Loom, OBS, etc.)
+   - Narrate what you're doing and thinking as you test
+   - Share the video file via email or file sharing service
+
+2. **Written Document**: Create a document with notes, screenshots, and observations
+   - Use Google Docs, Word, or any text editor
+   - Include screenshots of issues or interesting findings
+   - Organize by feature or test scenario
+   - Share the document via email or file sharing
+
+3. **Email**: Send detailed feedback directly via email
+   - Use the contact email provided
+   - Include as much detail as possible
+
+4. **Mix of Methods**: Use whatever format works best for you!
 
 ### What to Report:
 1. **Bugs**: Anything that doesn't work as expected
@@ -508,6 +530,10 @@ Thank you for helping us test Neighbri! This is beta software, so you may encoun
 4. **Performance Issues**: Slow loading, laggy interactions
 5. **Email Issues**: Missing emails, incorrect content
 6. **Access Issues**: Can't access features you should have access to
+7. **Design Feedback**: Colors, fonts, spacing, layout, visual design
+8. **Feature Suggestions**: Ideas for new features or improvements
+9. **User Experience**: Overall impressions, flow, ease of use
+10. **Anything Else**: If you notice it, we want to hear about it!
 
 ### How to Report:
 - **Email**: [Your support email]
@@ -517,7 +543,8 @@ Thank you for helping us test Neighbri! This is beta software, so you may encoun
   - What actually happened
   - Screenshots (if possible)
   - Browser and device information
-  - Steps to reproduce the issue
+  - Steps to reproduce the issue (if applicable)
+  - Your overall impressions and suggestions
 
 ### Priority Issues:
 Please report immediately if you encounter:
