@@ -14,16 +14,11 @@ Neighbri is a web application that helps HOAs and communities manage their ameni
 
 ## Why Your Help Matters
 
-This is **beta software**, which means it's functional but still being refined. Your fresh eyes and honest feedback will be incredibly valuable in helping me identify:
-- Bugs and issues
-- Confusing user interfaces
-- Missing features
-- Design improvements
-- Overall user experience
+This is **beta software**, which means it's functional but still being refined. Your fresh eyes and honest feedback will help me identify bugs, confusing interfaces, missing features, and design improvements.
 
 ## What I'm Asking
 
-I'd love for you to spend **1-2 hours** (or test at your own pace!) exploring the platform and providing feedback. You can:
+I'd love for you to spend **1-2 hours** (or test at your own pace!) exploring the platform. You can:
 - Follow the test plan I've created (it's a guide, not a strict script)
 - Go off script and explore freely
 - Try to break things (seriously, we want to know what breaks!)
@@ -33,14 +28,12 @@ I'd love for you to spend **1-2 hours** (or test at your own pace!) exploring th
 
 1. **Visit the Test Plan**: https://www.neighbri.com/testplan
    - This page has all the testing scenarios and instructions
-   - You can also view the full detailed plan on GitHub if you want more specifics
 
 2. **Start Testing**: 
-   - **Step 1 - Create a New Community**: Use your first email address to create a new community (you'll become the admin)
-   - **Step 2 - Register for The Sanctuary**: Use your second email address to register for "The Sanctuary" community
+   - **Step 1** - Create a New Community: Use your first email address to create a new community (you'll become the admin)
+   - **Step 2** - Register for The Sanctuary: Use your second email address to register for "The Sanctuary" community
      - Search for zip code `70471` to find The Sanctuary
-     - Complete registration with your second email
-   - **Step 3 - Test Different Roles**: Use these test accounts to experience different perspectives:
+   - **Step 3** - Test Different Roles: Use these test accounts to experience different perspectives:
      - **Admin**: `ryan@kellby.com` | `admin123`
      - **Janitorial**: `janitorial@hoa.com` | `admin123`
      - **Resident**: Your second email (the one you used to register for The Sanctuary) OR `resident@hoa.com` | `admin123`
@@ -49,7 +42,7 @@ I'd love for you to spend **1-2 hours** (or test at your own pace!) exploring th
    - **Screen Recording**: Record your testing session (narrate what you're thinking!)
    - **Written Document**: Create notes with screenshots and observations
    - **Email**: Send detailed feedback directly
-   - **Mix of Methods**: Use whatever works best for you!
+   - Use whatever format works best for you!
 
 ## What Kind of Feedback?
 
@@ -75,8 +68,8 @@ There's no strict deadline, but if you could provide feedback within the next **
 ## Questions?
 
 If you have any questions or run into issues while testing, please don't hesitate to reach out:
-- **Email**: [Your email]
-- **Phone**: [Your phone number]
+- **Email**: thomas.ryan.crosby@gmail.com or neighbriapp@gmail.com
+- **Phone**: 985-373-2383
 
 ## Thank You!
 
@@ -85,16 +78,10 @@ I really appreciate you taking the time to help test Neighbri. Your feedback wil
 Looking forward to your thoughts!
 
 Best,
-[Your Name]
-
----
-
-**P.S.** - If you know anyone else who might be interested in testing, feel free to forward this email. The more feedback, the better!
+Thomas
 
 ---
 
 **Quick Links:**
 - Test Plan: https://www.neighbri.com/testplan
 - Neighbri App: https://www.neighbri.com
-- Full Test Plan (GitHub): https://github.com/thomas-ryan-crosby/hoa-amenities/blob/main/TEST_PLAN.md
-
