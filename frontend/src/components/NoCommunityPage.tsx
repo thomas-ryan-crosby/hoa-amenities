@@ -41,34 +41,6 @@ const NoCommunityPage: React.FC = () => {
     }
   };
 
-  const searchByAccessCode = async () => {
-    if (!accessCode.trim()) {
-      setError('Please enter an access code');
-      return;
-    }
-
-    try {
-      setSearching(true);
-      setError(null);
-      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-      const response = await axios.get(`${apiUrl}/api/communities/search/by-access-code`, {
-        params: { accessCode: accessCode.trim().toUpperCase() }
-      });
-      const community = response.data.community;
-      if (community) {
-        setSearchResults([community]);
-      } else {
-        setError('Community not found with this access code');
-        setSearchResults([]);
-      }
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Community not found with this access code');
-      setSearchResults([]);
-    } finally {
-      setSearching(false);
-    }
-  };
-
   const handleJoinCommunity = async (communityId: number) => {
     if (!token) {
       setError('You must be logged in to join a community');
