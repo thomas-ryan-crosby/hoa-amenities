@@ -175,13 +175,14 @@ router.post('/join', authenticateToken, async (req: any, res) => {
     });
 
     if (existingMembership) {
-      if (existingMembership.status === 'banned') {
+      const status = (existingMembership as any).status || 'approved'; // Treat null as approved for backward compatibility
+      if (status === 'banned') {
         return res.status(403).json({ message: 'You have been banned from this community' });
       }
-      if (existingMembership.status === 'pending') {
+      if (status === 'pending') {
         return res.status(400).json({ message: 'Your request to join this community is pending approval' });
       }
-      if (existingMembership.status === 'approved') {
+      if (status === 'approved' || status === null) {
         return res.status(400).json({ message: 'You are already a member of this community' });
       }
     }
