@@ -17,10 +17,16 @@ Thank you for helping us test Neighbri! This is beta software, so you may encoun
 ## Pre-Testing Setup
 
 ### What You'll Need:
-- A valid email address (you'll receive verification emails)
+- **Two valid email addresses** (for testing new account creation - one for creating a community, one for joining)
 - Access to your email inbox (for verification and notifications)
 - A web browser (Chrome, Firefox, Safari, or Edge recommended)
 - About 1-2 hours to complete the full test plan
+
+### Test Account for Existing Community:
+If you want to test joining an existing community without creating a new one, you can use these test credentials:
+- **Email**: `ryan@kellby.com`
+- **Password**: `admin123`
+- This account is already set up in a test community, so you can jump right into testing features
 
 ### Test Environment:
 - **URL**: https://www.neighbri.com

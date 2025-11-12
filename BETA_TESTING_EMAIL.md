@@ -36,8 +36,11 @@ I'd love for you to spend **1-2 hours** (or test at your own pace!) exploring th
    - You can also view the full detailed plan on GitHub if you want more specifics
 
 2. **Start Testing**: 
-   - Create a new community account
-   - Or ask me for an access code to join an existing test community
+   - **Option A - Create a New Community**: You'll need **two valid email addresses** for this (one for creating the community, one for joining it)
+   - **Option B - Use Test Account**: Log in with these credentials to jump right into testing:
+     - **Email**: `ryan@kellby.com`
+     - **Password**: `admin123`
+     - This account is already set up in a test community
    - Explore the features from different user perspectives (admin, janitorial, resident)
 
 3. **Provide Feedback**:
