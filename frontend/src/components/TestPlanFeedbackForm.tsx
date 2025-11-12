@@ -141,34 +141,16 @@ const TestPlanFeedbackForm: React.FC<TestPlanFeedbackFormProps> = ({
 
   return (
     <div style={{
-      backgroundColor: '#f9fafb',
+      backgroundColor: 'white',
       border: '1px solid #e5e7eb',
       borderRadius: '6px',
-      padding: '1.5rem',
-      marginTop: '1rem'
+      padding: '2rem',
+      marginTop: '2rem',
+      boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
     }}>
-      {!isGeneral && (
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-          <h3 style={{ color: '#355B45', fontSize: '1.1rem', margin: 0 }}>
-            {scenarioNumber && scenarioName ? `Feedback: Scenario ${scenarioNumber} - ${scenarioName}` : 'Submit Feedback'}
-          </h3>
-          <button
-            onClick={() => setExpanded(false)}
-            style={{
-              background: 'none',
-              border: 'none',
-              fontSize: '20px',
-              cursor: 'pointer',
-              color: '#6b7280',
-              padding: '0',
-              width: '24px',
-              height: '24px'
-            }}
-          >
-            ×
-          </button>
-        </div>
-      )}
+      <h2 style={{ color: '#374151', fontSize: '1.5rem', marginBottom: '1rem' }}>
+        Submit Your Feedback
+      </h2>
 
       <form onSubmit={handleSubmit}>
         {error && (
@@ -185,154 +167,19 @@ const TestPlanFeedbackForm: React.FC<TestPlanFeedbackFormProps> = ({
           </div>
         )}
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-          <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#374151', fontSize: '14px' }}>
-              Your Name <span style={{ color: '#ef4444' }}>*</span>
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-              style={{
-                width: '100%',
-                padding: '8px',
-                border: '1px solid #d1d5db',
-                borderRadius: '4px',
-                fontSize: '14px'
-              }}
-            />
-          </div>
-
-          <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#374151', fontSize: '14px' }}>
-              Your Email <span style={{ color: '#ef4444' }}>*</span>
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              style={{
-                width: '100%',
-                padding: '8px',
-                border: '1px solid #d1d5db',
-                borderRadius: '4px',
-                fontSize: '14px'
-              }}
-            />
-          </div>
-        </div>
-
-        {isGeneral && (
-          <>
-            <div style={{ marginBottom: '1rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#374151', fontSize: '14px' }}>
-                Test Scenarios Completed (optional)
-              </label>
-              <textarea
-                name="testScenarios"
-                value={formData.testScenarios}
-                onChange={handleChange}
-                rows={3}
-                placeholder="Which test scenarios did you complete?"
-                style={{
-                  width: '100%',
-                  padding: '8px',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '4px',
-                  fontSize: '14px',
-                  fontFamily: 'inherit',
-                  resize: 'vertical'
-                }}
-              />
-            </div>
-
-            <div style={{ marginBottom: '1rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#374151', fontSize: '14px' }}>
-                Overall Experience (optional)
-              </label>
-              <textarea
-                name="overallExperience"
-                value={formData.overallExperience}
-                onChange={handleChange}
-                rows={3}
-                placeholder="How was your overall experience testing Neighbri?"
-                style={{
-                  width: '100%',
-                  padding: '8px',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '4px',
-                  fontSize: '14px',
-                  fontFamily: 'inherit',
-                  resize: 'vertical'
-                }}
-              />
-            </div>
-
-            <div style={{ marginBottom: '1rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#374151', fontSize: '14px' }}>
-                Bugs & Issues Found (optional)
-              </label>
-              <textarea
-                name="bugs"
-                value={formData.bugs}
-                onChange={handleChange}
-                rows={3}
-                placeholder="Describe any bugs, errors, or issues you encountered..."
-                style={{
-                  width: '100%',
-                  padding: '8px',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '4px',
-                  fontSize: '14px',
-                  fontFamily: 'inherit',
-                  resize: 'vertical'
-                }}
-              />
-            </div>
-
-            <div style={{ marginBottom: '1rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#374151', fontSize: '14px' }}>
-                Suggestions & Improvements (optional)
-              </label>
-              <textarea
-                name="suggestions"
-                value={formData.suggestions}
-                onChange={handleChange}
-                rows={3}
-                placeholder="Any suggestions for improvements, new features, or design changes?"
-                style={{
-                  width: '100%',
-                  padding: '8px',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '4px',
-                  fontSize: '14px',
-                  fontFamily: 'inherit',
-                  resize: 'vertical'
-                }}
-              />
-            </div>
-          </>
-        )}
-
-        <div style={{ marginBottom: '1rem' }}>
+        <div style={{ marginBottom: '1.5rem' }}>
           <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#374151', fontSize: '14px' }}>
-            {isGeneral ? 'General Feedback (UI, Design, Features, etc.)' : 'Feedback for This Scenario'} <span style={{ color: '#ef4444' }}>*</span>
+            Test Scenarios Completed (optional)
           </label>
           <textarea
-            name="feedback"
-            value={formData.feedback}
+            name="testScenarios"
+            value={formData.testScenarios}
             onChange={handleChange}
-            required
-            rows={isGeneral ? 6 : 4}
-            placeholder={isGeneral ? "Share your thoughts on UI, design, features, or any other general feedback..." : "Share your thoughts, observations, or feedback for this specific scenario..."}
+            rows={3}
+            placeholder="Which test scenarios did you complete? (e.g., Scenario 1, 3, 5)"
             style={{
               width: '100%',
-              padding: '8px',
+              padding: '10px',
               border: '1px solid #d1d5db',
               borderRadius: '4px',
               fontSize: '14px',
@@ -342,24 +189,162 @@ const TestPlanFeedbackForm: React.FC<TestPlanFeedbackFormProps> = ({
           />
         </div>
 
-        <button
-          type="submit"
-          disabled={submitting}
-          style={{
-            width: '100%',
-            padding: '10px 20px',
-            backgroundColor: submitting ? '#9ca3af' : '#355B45',
-            color: 'white',
-            border: 'none',
-            borderRadius: '6px',
-            fontSize: '14px',
-            fontWeight: 600,
-            cursor: submitting ? 'not-allowed' : 'pointer',
-            transition: 'background-color 0.2s'
-          }}
-        >
-          {submitting ? 'Submitting...' : 'Submit Feedback'}
-        </button>
+        <div style={{ marginBottom: '1.5rem' }}>
+          <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#374151', fontSize: '14px' }}>
+            Overall Experience (optional)
+          </label>
+          <textarea
+            name="overallExperience"
+            value={formData.overallExperience}
+            onChange={handleChange}
+            rows={3}
+            placeholder="How was your overall experience testing Neighbri?"
+            style={{
+              width: '100%',
+              padding: '10px',
+              border: '1px solid #d1d5db',
+              borderRadius: '4px',
+              fontSize: '14px',
+              fontFamily: 'inherit',
+              resize: 'vertical'
+            }}
+          />
+        </div>
+
+        <div style={{ marginBottom: '1.5rem' }}>
+          <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#374151', fontSize: '14px' }}>
+            Bugs & Issues Found (optional)
+          </label>
+          <textarea
+            name="bugs"
+            value={formData.bugs}
+            onChange={handleChange}
+            rows={3}
+            placeholder="Describe any bugs, errors, or issues you encountered..."
+            style={{
+              width: '100%',
+              padding: '10px',
+              border: '1px solid #d1d5db',
+              borderRadius: '4px',
+              fontSize: '14px',
+              fontFamily: 'inherit',
+              resize: 'vertical'
+            }}
+          />
+        </div>
+
+        <div style={{ marginBottom: '1.5rem' }}>
+          <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#374151', fontSize: '14px' }}>
+            Suggestions & Improvements (optional)
+          </label>
+          <textarea
+            name="suggestions"
+            value={formData.suggestions}
+            onChange={handleChange}
+            rows={3}
+            placeholder="Any suggestions for improvements, new features, or design changes?"
+            style={{
+              width: '100%',
+              padding: '10px',
+              border: '1px solid #d1d5db',
+              borderRadius: '4px',
+              fontSize: '14px',
+              fontFamily: 'inherit',
+              resize: 'vertical'
+            }}
+          />
+        </div>
+
+        <div style={{ marginBottom: '1.5rem' }}>
+          <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#374151', fontSize: '14px' }}>
+            General Feedback (UI, Design, Features, etc.) <span style={{ color: '#ef4444' }}>*</span>
+          </label>
+          <textarea
+            name="feedback"
+            value={formData.feedback}
+            onChange={handleChange}
+            required
+            rows={6}
+            placeholder="Share your thoughts on UI, design, features, or any other general feedback..."
+            style={{
+              width: '100%',
+              padding: '10px',
+              border: '1px solid #d1d5db',
+              borderRadius: '4px',
+              fontSize: '14px',
+              fontFamily: 'inherit',
+              resize: 'vertical'
+            }}
+          />
+        </div>
+
+        <div style={{ 
+          borderTop: '2px solid #e5e7eb', 
+          paddingTop: '1.5rem', 
+          marginTop: '2rem',
+          marginBottom: '1.5rem'
+        }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
+            <div>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#374151', fontSize: '14px' }}>
+                Your Name <span style={{ color: '#ef4444' }}>*</span>
+              </label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '4px',
+                  fontSize: '14px'
+                }}
+              />
+            </div>
+
+            <div>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#374151', fontSize: '14px' }}>
+                Your Email <span style={{ color: '#ef4444' }}>*</span>
+              </label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '4px',
+                  fontSize: '14px'
+                }}
+              />
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={submitting}
+            style={{
+              width: '100%',
+              padding: '12px 24px',
+              backgroundColor: submitting ? '#9ca3af' : '#355B45',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              fontSize: '16px',
+              fontWeight: 600,
+              cursor: submitting ? 'not-allowed' : 'pointer',
+              transition: 'background-color 0.2s'
+            }}
+          >
+            {submitting ? 'Submitting...' : 'Submit Feedback'}
+          </button>
+        </div>
 
         <p style={{ marginTop: '0.75rem', fontSize: '12px', color: '#6b7280', textAlign: 'center' }}>
           Your feedback will be sent to neighbriapp@gmail.com and you'll receive a confirmation copy.

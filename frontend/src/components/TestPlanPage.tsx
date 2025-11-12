@@ -112,64 +112,58 @@ const TestPlanPage: React.FC = () => {
             Test Scenarios
           </h2>
           
-          <div style={{ marginBottom: '2rem' }}>
+          <div style={{ marginBottom: '1.5rem' }}>
             <h3 style={{ color: '#355B45', fontSize: '1.25rem', marginBottom: '0.5rem' }}>
               Scenario 1: New Community Creation
             </h3>
             <p style={{ color: '#6b7280', marginBottom: '0.5rem' }}>
               Test the complete flow of creating a new HOA/community on Neighbri, including the subscription payment modal and welcome email.
             </p>
-            <TestPlanFeedbackForm scenarioNumber={1} scenarioName="New Community Creation" />
           </div>
 
-          <div style={{ marginBottom: '2rem' }}>
+          <div style={{ marginBottom: '1.5rem' }}>
             <h3 style={{ color: '#355B45', fontSize: '1.25rem', marginBottom: '0.5rem' }}>
               Scenario 2: Registering with The Sanctuary
             </h3>
             <p style={{ color: '#6b7280', marginBottom: '0.5rem' }}>
               Test joining "The Sanctuary" community by searching for it (zip code 70471) and the approval workflow.
             </p>
-            <TestPlanFeedbackForm scenarioNumber={2} scenarioName="Registering with The Sanctuary" />
           </div>
 
-          <div style={{ marginBottom: '2rem' }}>
+          <div style={{ marginBottom: '1.5rem' }}>
             <h3 style={{ color: '#355B45', fontSize: '1.25rem', marginBottom: '0.5rem' }}>
               Scenario 3: Admin Perspective Testing
             </h3>
             <p style={{ color: '#6b7280', marginBottom: '0.5rem' }}>
               Test all features available to community administrators: creating amenities, managing members, reviewing damage assessments, and more.
             </p>
-            <TestPlanFeedbackForm scenarioNumber={3} scenarioName="Admin Perspective Testing" />
           </div>
 
-          <div style={{ marginBottom: '2rem' }}>
+          <div style={{ marginBottom: '1.5rem' }}>
             <h3 style={{ color: '#355B45', fontSize: '1.25rem', marginBottom: '0.5rem' }}>
               Scenario 4: Janitorial Perspective Testing
             </h3>
             <p style={{ color: '#6b7280', marginBottom: '0.5rem' }}>
               Test features available to janitorial staff: approving reservations, setting cleaning times, proposing modifications, and assessing damages.
             </p>
-            <TestPlanFeedbackForm scenarioNumber={4} scenarioName="Janitorial Perspective Testing" />
           </div>
 
-          <div style={{ marginBottom: '2rem' }}>
+          <div style={{ marginBottom: '1.5rem' }}>
             <h3 style={{ color: '#355B45', fontSize: '1.25rem', marginBottom: '0.5rem' }}>
               Scenario 5: Resident Perspective Testing
             </h3>
             <p style={{ color: '#6b7280', marginBottom: '0.5rem' }}>
               Test features available to regular residents: creating reservations, modifying/canceling reservations, handling modification proposals, and managing profile settings.
             </p>
-            <TestPlanFeedbackForm scenarioNumber={5} scenarioName="Resident Perspective Testing" />
           </div>
 
-          <div style={{ marginBottom: '2rem' }}>
+          <div style={{ marginBottom: '1.5rem' }}>
             <h3 style={{ color: '#355B45', fontSize: '1.25rem', marginBottom: '0.5rem' }}>
               Scenario 6: Email Notifications Testing
             </h3>
             <p style={{ color: '#6b7280', marginBottom: '0.5rem' }}>
               Verify that email notifications are sent correctly for all events (reservations, modifications, approvals, etc.).
             </p>
-            <TestPlanFeedbackForm scenarioNumber={6} scenarioName="Email Notifications Testing" />
           </div>
 
           <div style={{ marginBottom: '2rem' }}>
@@ -179,127 +173,12 @@ const TestPlanPage: React.FC = () => {
             <p style={{ color: '#6b7280', marginBottom: '0.5rem' }}>
               Test unusual scenarios, form validation, access control, and browser compatibility.
             </p>
-            <TestPlanFeedbackForm scenarioNumber={7} scenarioName="Edge Cases and Error Handling" />
           </div>
-        </div>
 
-        <div style={{
-          backgroundColor: '#d1fae5',
-          border: '1px solid #10b981',
-          borderRadius: '6px',
-          padding: '1.5rem',
-          marginBottom: '2rem'
-        }}>
-          <h2 style={{ color: '#065f46', fontSize: '1.25rem', marginBottom: '1rem' }}>
-            📝 How to Provide Feedback
-          </h2>
-          <p style={{ color: '#065f46', marginBottom: '1rem', lineHeight: '1.6' }}>
-            We'd love to hear your thoughts! You can provide feedback in any of the following ways:
-          </p>
-          <ul style={{ color: '#065f46', lineHeight: '1.8', paddingLeft: '1.5rem', marginBottom: '1rem' }}>
-            <li><strong>Screen Recording:</strong> Record your testing session and share the video file</li>
-            <li><strong>Written Document:</strong> Create a document with notes, screenshots, and observations</li>
-            <li><strong>Email:</strong> Send detailed feedback via email (see contact info below)</li>
-            <li><strong>Mix of Methods:</strong> Use whatever format works best for you!</li>
-          </ul>
-          <p style={{ color: '#065f46', marginBottom: 0, lineHeight: '1.6' }}>
-            <strong>What to Include:</strong> Bugs, confusing UI, missing features, performance issues, style/formatting feedback, feature suggestions, or anything else you notice!
-          </p>
-        </div>
-
-        <div style={{
-          backgroundColor: '#fef3c7',
-          border: '1px solid #f59e0b',
-          borderRadius: '6px',
-          padding: '1.5rem',
-          marginBottom: '2rem'
-        }}>
-          <h2 style={{ color: '#92400e', fontSize: '1.25rem', marginBottom: '1rem' }}>
-            🎯 Testing Approach
-          </h2>
-          <p style={{ color: '#78350f', lineHeight: '1.6', marginBottom: '1rem' }}>
-            <strong>This test plan is a guide, not a strict script!</strong> Feel free to:
-          </p>
-          <ul style={{ color: '#78350f', lineHeight: '1.8', paddingLeft: '1.5rem' }}>
-            <li>Go off script and explore features in any order</li>
-            <li>Test things that aren't in the plan</li>
-            <li>Try to break things (we want to know what breaks!)</li>
-            <li>Provide feedback on design, colors, fonts, spacing, or anything visual</li>
-            <li>Suggest new features or improvements</li>
-            <li>Share your overall impressions and user experience</li>
-          </ul>
-        </div>
-
-        <div style={{ marginBottom: '2rem' }}>
-          <h2 style={{ color: '#374151', fontSize: '1.5rem', marginBottom: '1rem' }}>
-            Full Test Plan Document
-          </h2>
-          <p style={{ color: '#6b7280', marginBottom: '1rem' }}>
-            For detailed step-by-step instructions, please see the complete test plan document:
-          </p>
-          <a 
-            href="https://github.com/thomas-ryan-crosby/hoa-amenities/blob/main/TEST_PLAN.md"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display: 'inline-block',
-              backgroundColor: '#355B45',
-              color: 'white',
-              padding: '12px 24px',
-              borderRadius: '6px',
-              textDecoration: 'none',
-              fontWeight: 600,
-              marginBottom: '1rem'
-            }}
-          >
-            View Full Test Plan on GitHub →
-          </a>
-        </div>
-
-        <div style={{
-          backgroundColor: '#f3f4f6',
-          borderRadius: '6px',
-          padding: '1.5rem',
-          marginBottom: '2rem'
-        }}>
-          <h2 style={{ color: '#374151', fontSize: '1.25rem', marginBottom: '1rem' }}>
-            Contact & Support
-          </h2>
-          <p style={{ color: '#6b7280', marginBottom: '0.5rem' }}>
-            <strong>Questions or Issues?</strong>
-          </p>
-          <p style={{ color: '#6b7280', marginBottom: '1rem' }}>
-            If you encounter any problems or have questions during testing, please reach out:
-          </p>
-          <ul style={{ color: '#6b7280', lineHeight: '1.8', paddingLeft: '1.5rem' }}>
-            <li><strong>Email:</strong> [Your support email]</li>
-            <li><strong>Include:</strong> What you were doing, what you expected, what happened, screenshots if possible</li>
-          </ul>
-        </div>
-
-        <div style={{
-          backgroundColor: '#e0e7ff',
-          border: '1px solid #6366f1',
-          borderRadius: '6px',
-          padding: '1.5rem',
-          textAlign: 'center',
-          marginBottom: '2rem'
-        }}>
-          <p style={{ color: '#4338ca', fontSize: '1.1rem', fontWeight: 600, margin: 0 }}>
-            Thank you for helping us make Neighbri better! 🙏
-          </p>
-        </div>
-
-        {/* General Feedback Form */}
-        <div style={{ marginTop: '2rem', marginBottom: '2rem' }}>
-          <h2 style={{ color: '#374151', fontSize: '1.5rem', marginBottom: '1rem' }}>
-            General Feedback
-          </h2>
-          <p style={{ color: '#6b7280', marginBottom: '1rem' }}>
-            Share your thoughts on overall UI, design, features, or any other general feedback about Neighbri.
-          </p>
+          {/* Single Feedback Form Below All Scenarios */}
           <TestPlanFeedbackForm isGeneral={true} />
         </div>
+
       </div>
     </div>
   );
