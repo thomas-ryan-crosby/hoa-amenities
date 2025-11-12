@@ -28,7 +28,11 @@ router.get('/', authenticateToken, async (req: any, res) => {
     });
 
       const communities = (communityMemberships as any[])
-      .filter((cu: any) => cu.community && cu.community.isActive && cu.status === 'approved')
+      .filter((cu: any) => {
+        // Include if community is active and status is 'approved' or null (null means approved for existing memberships before migration)
+        const status = cu.status || 'approved'; // Treat null as approved for backward compatibility
+        return cu.community && cu.community.isActive && (status === 'approved' || status === null);
+      })
       .map((cu: any) => ({
         id: cu.communityId,
         name: cu.community.name,
