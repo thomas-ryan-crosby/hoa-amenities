@@ -43,11 +43,15 @@ const ResetPasswordPage: React.FC = () => {
     try {
       setLoading(true);
       const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-      await axios.post(`${apiUrl}/api/auth/reset-password`, {
+      
+      console.log('🔐 Resetting password with token:', token ? `${token.substring(0, 20)}...` : 'MISSING');
+      
+      const response = await axios.post(`${apiUrl}/api/auth/reset-password`, {
         token,
         newPassword: formData.newPassword
       });
 
+      console.log('✅ Password reset successful:', response.data);
       setSuccess(true);
       
       // Redirect to login after 3 seconds
@@ -55,7 +59,9 @@ const ResetPasswordPage: React.FC = () => {
         navigate('/login');
       }, 3000);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to reset password. The link may have expired.');
+      console.error('❌ Password reset error:', err.response?.data || err.message);
+      const errorMessage = err.response?.data?.message || 'Failed to reset password. The link may have expired.';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

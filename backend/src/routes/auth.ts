@@ -666,11 +666,20 @@ router.post('/reset-password', async (req, res) => {
   try {
     const { token, newPassword } = req.body;
 
+    console.log('🔐 Password reset request received:', {
+      hasToken: !!token,
+      tokenLength: token?.length,
+      hasNewPassword: !!newPassword,
+      passwordLength: newPassword?.length
+    });
+
     if (!token || !newPassword) {
+      console.error('❌ Missing token or password:', { hasToken: !!token, hasNewPassword: !!newPassword });
       return res.status(400).json({ message: 'Token and new password are required' });
     }
 
     if (newPassword.length < 6) {
+      console.error('❌ Password too short:', newPassword.length);
       return res.status(400).json({ message: 'Password must be at least 6 characters long' });
     }
 
