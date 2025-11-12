@@ -27,7 +27,7 @@ interface AuthContextType {
   token: string | null;
   currentCommunity: Community | null;
   communities: Community[];
-  login: (user: User, token: string, communities: Community[], currentCommunity: Community) => void;
+  login: (user: User, token: string, communities: Community[], currentCommunity: Community | null) => void;
   switchCommunity: (communityId: number) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
@@ -158,7 +158,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }, []);
 
-  const login = (userData: User, userToken: string, communitiesData: Community[], currentCommunityData: Community) => {
+  const login = (userData: User, userToken: string, communitiesData: Community[], currentCommunityData: Community | null) => {
     setUser(userData);
     setToken(userToken);
     setCommunities(communitiesData);
@@ -167,7 +167,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.setItem('token', userToken);
     localStorage.setItem('user', JSON.stringify(userData));
     localStorage.setItem('communities', JSON.stringify(communitiesData));
-    localStorage.setItem('currentCommunity', JSON.stringify(currentCommunityData));
+    if (currentCommunityData) {
+      localStorage.setItem('currentCommunity', JSON.stringify(currentCommunityData));
+    } else {
+      localStorage.removeItem('currentCommunity');
+    }
   };
 
   const switchCommunity = async (communityId: number) => {
