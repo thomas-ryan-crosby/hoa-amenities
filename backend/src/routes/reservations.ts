@@ -1751,9 +1751,7 @@ router.put('/:id/complete', authenticateToken, async (req: any, res) => {
       });
 
       if (userWithPrefs) {
-        const dateStr = new Date(updatedReservationWithAssociations.date).toLocaleDateString('en-US', { 
-          weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
-        });
+        const dateStr = formatDate(updatedReservationWithAssociations.date);
 
         // Send completion email to resident
         const timeStart = formatTime(updatedReservationWithAssociations.partyTimeStart);
@@ -1788,9 +1786,7 @@ router.put('/:id/complete', authenticateToken, async (req: any, res) => {
 
         const residentName = updatedReservationWithAssociations.user ? 
           `${updatedReservationWithAssociations.user.firstName} ${updatedReservationWithAssociations.user.lastName}` : 'Resident';
-        const dateStr = new Date(updatedReservationWithAssociations.date).toLocaleDateString('en-US', { 
-          weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
-        });
+        const dateStr = formatDate(updatedReservationWithAssociations.date);
 
         for (const staff of janitorialStaff) {
           await sendNotificationIfEnabled(
@@ -2178,9 +2174,7 @@ router.put('/:id/review-damage-assessment', authenticateToken, async (req: any, 
       });
 
       if (userWithPrefs) {
-        const dateStr = new Date(updatedReservationWithAssociations.date).toLocaleDateString('en-US', { 
-          weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
-        });
+        const dateStr = formatDate(updatedReservationWithAssociations.date);
 
         const status = action === 'approve' ? 'APPROVED' : action === 'adjust' ? 'ADJUSTED' : 'DENIED';
         const damageCharge = action === 'deny' ? null : finalCharge;
