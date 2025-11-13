@@ -3,6 +3,7 @@ import { Reservation, Amenity, User, CommunityUser } from '../models';
 import { authenticateToken } from '../middleware/auth';
 import { Op, QueryTypes, col } from 'sequelize';
 import { sequelize } from '../models';
+import { formatDate, formatTime } from '../utils/dateTimeUtils';
 import {
   sendNotificationIfEnabled,
   buildReservationCreatedEmail,
@@ -20,6 +21,21 @@ import {
   buildReservationApprovedStaffEmail,
   buildDamageAssessmentRequiredEmail
 } from '../services/emailService';
+
+/**
+ * TIME FORMATTING STANDARD:
+ * 
+ * All times throughout the application MUST use the formatTime() utility from dateTimeUtils.ts
+ * This ensures:
+ * 1. Consistent timezone handling (uses APP_TIMEZONE env var, default: America/New_York)
+ * 2. Consistent format: "06:00 PM" (12-hour format with AM/PM)
+ * 3. Same times displayed in emails, frontend, and API responses
+ * 
+ * NEVER use toLocaleTimeString() directly - it uses server timezone which causes inconsistencies.
+ * ALWAYS use formatTime() for all time formatting.
+ * 
+ * Similarly, use formatDate() instead of toLocaleDateString() for consistent date formatting.
+ */
 
 // Define interfaces for associated models
 interface ReservationWithAssociations extends Reservation {
@@ -473,15 +489,9 @@ router.post('/', authenticateToken, async (req: any, res) => {
       console.log('📧 User preferences:', userWithPrefs?.notificationPreferences);
       
       if (userWithPrefs) {
-        const dateStr = new Date(createdReservation.date).toLocaleDateString('en-US', { 
-          weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
-        });
-        const timeStart = new Date(createdReservation.partyTimeStart).toLocaleTimeString('en-US', { 
-          hour: 'numeric', minute: '2-digit' 
-        });
-        const timeEnd = new Date(createdReservation.partyTimeEnd).toLocaleTimeString('en-US', { 
-          hour: 'numeric', minute: '2-digit' 
-        });
+        const dateStr = formatDate(createdReservation.date);
+        const timeStart = formatTime(createdReservation.partyTimeStart);
+        const timeEnd = formatTime(createdReservation.partyTimeEnd);
 
         await sendNotificationIfEnabled(
           userWithPrefs,
@@ -522,15 +532,9 @@ router.post('/', authenticateToken, async (req: any, res) => {
         attributes: ['id', 'firstName', 'lastName', 'email', 'notificationPreferences']
       });
 
-      const dateStr = new Date(createdReservation.date).toLocaleDateString('en-US', { 
-        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
-      });
-      const timeStart = new Date(createdReservation.partyTimeStart).toLocaleTimeString('en-US', { 
-        hour: 'numeric', minute: '2-digit' 
-      });
-      const timeEnd = new Date(createdReservation.partyTimeEnd).toLocaleTimeString('en-US', { 
-        hour: 'numeric', minute: '2-digit' 
-      });
+      const dateStr = formatDate(createdReservation.date);
+      const timeStart = formatTime(createdReservation.partyTimeStart);
+      const timeEnd = formatTime(createdReservation.partyTimeEnd);
       const residentName = createdReservation.user ? 
         `${createdReservation.user.firstName} ${createdReservation.user.lastName}` : 'Resident';
 
@@ -583,15 +587,9 @@ router.post('/', authenticateToken, async (req: any, res) => {
         attributes: ['id', 'firstName', 'lastName', 'email', 'notificationPreferences']
       });
 
-      const dateStr = new Date(createdReservation.date).toLocaleDateString('en-US', { 
-        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
-      });
-      const timeStart = new Date(createdReservation.partyTimeStart).toLocaleTimeString('en-US', { 
-        hour: 'numeric', minute: '2-digit' 
-      });
-      const timeEnd = new Date(createdReservation.partyTimeEnd).toLocaleTimeString('en-US', { 
-        hour: 'numeric', minute: '2-digit' 
-      });
+      const dateStr = formatDate(createdReservation.date);
+      const timeStart = formatTime(createdReservation.partyTimeStart);
+      const timeEnd = formatTime(createdReservation.partyTimeEnd);
       const residentName = createdReservation.user ? 
         `${createdReservation.user.firstName} ${createdReservation.user.lastName}` : 'Resident';
 
@@ -623,12 +621,8 @@ router.post('/', authenticateToken, async (req: any, res) => {
           const dateStr = new Date(createdReservation.date).toLocaleDateString('en-US', { 
             weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
           });
-          const timeStart = new Date(createdReservation.partyTimeStart).toLocaleTimeString('en-US', { 
-            hour: 'numeric', minute: '2-digit' 
-          });
-          const timeEnd = new Date(createdReservation.partyTimeEnd).toLocaleTimeString('en-US', { 
-            hour: 'numeric', minute: '2-digit' 
-          });
+          const timeStart = formatTime(createdReservation.partyTimeStart);
+          const timeEnd = formatTime(createdReservation.partyTimeEnd);
 
           await sendNotificationIfEnabled(
             userWithPrefs,
@@ -1207,12 +1201,8 @@ router.delete('/:id', authenticateToken, async (req: any, res) => {
         const dateStr = new Date(reservation.date).toLocaleDateString('en-US', { 
           weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
         });
-        const timeStart = new Date(reservation.partyTimeStart).toLocaleTimeString('en-US', { 
-          hour: 'numeric', minute: '2-digit' 
-        });
-        const timeEnd = new Date(reservation.partyTimeEnd).toLocaleTimeString('en-US', { 
-          hour: 'numeric', minute: '2-digit' 
-        });
+        const timeStart = formatTime(reservation.partyTimeStart);
+        const timeEnd = formatTime(reservation.partyTimeEnd);
 
         await sendNotificationIfEnabled(
           userWithPrefs,
@@ -1413,15 +1403,9 @@ router.put('/:id/approve', authenticateToken, async (req: any, res) => {
         attributes: ['id', 'firstName', 'lastName', 'email', 'notificationPreferences']
       });
 
-      const dateStr = new Date(updatedReservationWithAssociations.date).toLocaleDateString('en-US', { 
-        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
-      });
-      const timeStart = new Date(updatedReservationWithAssociations.partyTimeStart).toLocaleTimeString('en-US', { 
-        hour: 'numeric', minute: '2-digit' 
-      });
-      const timeEnd = new Date(updatedReservationWithAssociations.partyTimeEnd).toLocaleTimeString('en-US', { 
-        hour: 'numeric', minute: '2-digit' 
-      });
+      const dateStr = formatDate(updatedReservationWithAssociations.date);
+      const timeStart = formatTime(updatedReservationWithAssociations.partyTimeStart);
+      const timeEnd = formatTime(updatedReservationWithAssociations.partyTimeEnd);
 
       if (newStatus === 'FULLY_APPROVED') {
         // Send approval email to resident
@@ -1782,12 +1766,8 @@ router.put('/:id/complete', authenticateToken, async (req: any, res) => {
         });
 
         // Send completion email to resident
-        const timeStart = new Date(updatedReservationWithAssociations.partyTimeStart).toLocaleTimeString('en-US', { 
-          hour: 'numeric', minute: '2-digit' 
-        });
-        const timeEnd = new Date(updatedReservationWithAssociations.partyTimeEnd).toLocaleTimeString('en-US', { 
-          hour: 'numeric', minute: '2-digit' 
-        });
+        const timeStart = formatTime(updatedReservationWithAssociations.partyTimeStart);
+        const timeEnd = formatTime(updatedReservationWithAssociations.partyTimeEnd);
 
         await sendNotificationIfEnabled(
           userWithPrefs,
@@ -1997,9 +1977,7 @@ router.post('/:id/assess-damages', authenticateToken, async (req: any, res) => {
 
       const residentName = updatedReservationWithAssociations.user ? 
         `${updatedReservationWithAssociations.user.firstName} ${updatedReservationWithAssociations.user.lastName}` : 'Resident';
-      const dateStr = new Date(updatedReservationWithAssociations.date).toLocaleDateString('en-US', { 
-        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
-      });
+      const dateStr = formatDate(updatedReservationWithAssociations.date);
 
       for (const admin of adminUsers) {
         await sendNotificationIfEnabled(
@@ -2620,21 +2598,11 @@ router.post('/:id/propose-modification', authenticateToken, async (req: any, res
         const originalDateStr = new Date(reservation.date).toLocaleDateString('en-US', { 
           weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
         });
-        const originalTimeStart = new Date(reservation.partyTimeStart).toLocaleTimeString('en-US', { 
-          hour: 'numeric', minute: '2-digit' 
-        });
-        const originalTimeEnd = new Date(reservation.partyTimeEnd).toLocaleTimeString('en-US', { 
-          hour: 'numeric', minute: '2-digit' 
-        });
-        const proposedDateStr = new Date(proposedDate || reservation.date).toLocaleDateString('en-US', { 
-          weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
-        });
-        const proposedTimeStart = new Date(proposedPartyTimeStart).toLocaleTimeString('en-US', { 
-          hour: 'numeric', minute: '2-digit' 
-        });
-        const proposedTimeEnd = new Date(proposedPartyTimeEnd).toLocaleTimeString('en-US', { 
-          hour: 'numeric', minute: '2-digit' 
-        });
+        const originalTimeStart = formatTime(reservation.partyTimeStart);
+        const originalTimeEnd = formatTime(reservation.partyTimeEnd);
+        const proposedDateStr = formatDate(proposedDate || reservation.date);
+        const proposedTimeStart = formatTime(proposedPartyTimeStart);
+        const proposedTimeEnd = formatTime(proposedPartyTimeEnd);
 
         await sendNotificationIfEnabled(
           userWithPrefs,
@@ -3076,12 +3044,8 @@ router.put('/:id/reject-modification', authenticateToken, async (req: any, res) 
             const dateStr = new Date(fullReservation.date).toLocaleDateString('en-US', { 
               weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
             });
-            const timeStart = new Date(fullReservation.partyTimeStart).toLocaleTimeString('en-US', { 
-              hour: 'numeric', minute: '2-digit' 
-            });
-            const timeEnd = new Date(fullReservation.partyTimeEnd).toLocaleTimeString('en-US', { 
-              hour: 'numeric', minute: '2-digit' 
-            });
+            const timeStart = formatTime(fullReservation.partyTimeStart);
+            const timeEnd = formatTime(fullReservation.partyTimeEnd);
 
             await sendNotificationIfEnabled(
               userWithPrefs,
