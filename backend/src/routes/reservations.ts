@@ -1597,15 +1597,9 @@ router.put('/:id/reject', authenticateToken, async (req: any, res) => {
       });
 
       if (userWithPrefs) {
-        const dateStr = new Date(updatedReservationWithAssociations.date).toLocaleDateString('en-US', { 
-          weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
-        });
-        const timeStart = new Date(updatedReservationWithAssociations.partyTimeStart).toLocaleTimeString('en-US', { 
-          hour: 'numeric', minute: '2-digit' 
-        });
-        const timeEnd = new Date(updatedReservationWithAssociations.partyTimeEnd).toLocaleTimeString('en-US', { 
-          hour: 'numeric', minute: '2-digit' 
-        });
+        const dateStr = formatDate(updatedReservationWithAssociations.date);
+        const timeStart = formatTime(updatedReservationWithAssociations.partyTimeStart);
+        const timeEnd = formatTime(updatedReservationWithAssociations.partyTimeEnd);
 
         await sendNotificationIfEnabled(
           userWithPrefs,
@@ -2873,15 +2867,9 @@ router.put('/:id/accept-modification', authenticateToken, async (req: any, res) 
       });
 
       if (userWithPrefs) {
-        const dateStr = new Date(updatedReservationWithAssociations.date).toLocaleDateString('en-US', { 
-          weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
-        });
-        const timeStart = new Date(updatedReservationWithAssociations.partyTimeStart).toLocaleTimeString('en-US', { 
-          hour: 'numeric', minute: '2-digit' 
-        });
-        const timeEnd = new Date(updatedReservationWithAssociations.partyTimeEnd).toLocaleTimeString('en-US', { 
-          hour: 'numeric', minute: '2-digit' 
-        });
+        const dateStr = formatDate(updatedReservationWithAssociations.date);
+        const timeStart = formatTime(updatedReservationWithAssociations.partyTimeStart);
+        const timeEnd = formatTime(updatedReservationWithAssociations.partyTimeEnd);
 
         await sendNotificationIfEnabled(
           userWithPrefs,
