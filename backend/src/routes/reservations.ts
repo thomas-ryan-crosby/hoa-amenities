@@ -618,9 +618,7 @@ router.post('/', authenticateToken, async (req: any, res) => {
         });
         
         if (userWithPrefs) {
-          const dateStr = new Date(createdReservation.date).toLocaleDateString('en-US', { 
-            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
-          });
+          const dateStr = formatDate(createdReservation.date);
           const timeStart = formatTime(createdReservation.partyTimeStart);
           const timeEnd = formatTime(createdReservation.partyTimeEnd);
 
@@ -1198,9 +1196,7 @@ router.delete('/:id', authenticateToken, async (req: any, res) => {
       });
 
       if (userWithPrefs) {
-        const dateStr = new Date(reservation.date).toLocaleDateString('en-US', { 
-          weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
-        });
+        const dateStr = formatDate(reservation.date);
         const timeStart = formatTime(reservation.partyTimeStart);
         const timeEnd = formatTime(reservation.partyTimeEnd);
 
@@ -2595,9 +2591,7 @@ router.post('/:id/propose-modification', authenticateToken, async (req: any, res
       });
 
       if (userWithPrefs) {
-        const originalDateStr = new Date(reservation.date).toLocaleDateString('en-US', { 
-          weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
-        });
+        const originalDateStr = formatDate(reservation.date);
         const originalTimeStart = formatTime(reservation.partyTimeStart);
         const originalTimeEnd = formatTime(reservation.partyTimeEnd);
         const proposedDateStr = formatDate(proposedDate || reservation.date);
@@ -3041,9 +3035,7 @@ router.put('/:id/reject-modification', authenticateToken, async (req: any, res) 
           }) as ReservationWithAssociations;
 
           if (fullReservation && fullReservation.amenity) {
-            const dateStr = new Date(fullReservation.date).toLocaleDateString('en-US', { 
-              weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
-            });
+            const dateStr = formatDate(fullReservation.date);
             const timeStart = formatTime(fullReservation.partyTimeStart);
             const timeEnd = formatTime(fullReservation.partyTimeEnd);
 
