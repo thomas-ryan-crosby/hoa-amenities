@@ -1300,7 +1300,7 @@ router.put('/:id/approve', authenticateToken, async (req: any, res) => {
       const oneMinute = 60 * 1000;
       if (cleaningStartTime.getTime() <= (partyEndTime.getTime() + oneMinute)) {
         return res.status(400).json({ 
-          message: `Cleaning time must start after the reservation ends. Reservation ends at ${partyEndTime.toLocaleString()}, cleaning starts at ${cleaningStartTime.toLocaleString()}` 
+          message: `Cleaning time must start after the reservation ends. Reservation ends at ${formatTime(partyEndTime)}, cleaning starts at ${formatTime(cleaningStartTime)}` 
         });
       }
 

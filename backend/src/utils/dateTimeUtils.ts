@@ -45,12 +45,26 @@ export function formatDate(date: string | Date): string {
  * 
  * The timezone is controlled by the APP_TIMEZONE environment variable.
  * If not set, defaults to America/New_York.
+ * 
+ * CRITICAL: Times stored in the database are UTC timestamps (ISO strings).
+ * This function correctly converts them to the configured timezone for display.
  */
 export function formatTime(time: string | Date): string {
+  if (!time) return '';
+  
+  // Parse the time - if it's a string, create a Date object
+  // JavaScript Date constructor interprets ISO strings as UTC
   const timeObj = typeof time === 'string' ? new Date(time) : time;
+  
+  // Validate the date object
+  if (isNaN(timeObj.getTime())) {
+    console.error('Invalid time value:', time);
+    return '';
+  }
   
   // Use Intl.DateTimeFormat to format in the specified timezone
   // This ensures consistent formatting regardless of server location
+  // The timezone conversion happens automatically - UTC timestamps are converted to DEFAULT_TIMEZONE
   const formatted = new Intl.DateTimeFormat('en-US', {
     timeZone: DEFAULT_TIMEZONE,
     hour: '2-digit',
