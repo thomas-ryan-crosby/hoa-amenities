@@ -564,11 +564,12 @@ interface ApprovalWorkflowEmailData {
   partyTimeEnd: string;
   guestCount: number;
   residentName: string;
+  eventName?: string | null;
   reservationId?: number;
 }
 
 export function buildNewReservationRequiresApprovalEmail(data: ApprovalWorkflowEmailData) {
-  const { firstName, amenityName, date, partyTimeStart, partyTimeEnd, guestCount, residentName, reservationId } = data;
+  const { firstName, amenityName, date, partyTimeStart, partyTimeEnd, guestCount, residentName, eventName, reservationId } = data;
   
   return {
     subject: `New Reservation Requires Approval: ${amenityName} on ${date}`,
@@ -582,6 +583,7 @@ export function buildNewReservationRequiresApprovalEmail(data: ApprovalWorkflowE
           <h3 style="margin-top:0;color:#1f2937;">Reservation Details</h3>
           <p><strong>Resident:</strong> ${residentName}</p>
           <p><strong>Amenity:</strong> ${amenityName}</p>
+          ${eventName ? `<p><strong>Event:</strong> ${eventName}</p>` : ''}
           <p><strong>Date:</strong> ${date}</p>
           <p><strong>Time:</strong> ${partyTimeStart} - ${partyTimeEnd}</p>
           <p><strong>Guests:</strong> ${guestCount}</p>
@@ -622,7 +624,7 @@ export function buildReservationPendingAdminApprovalEmail(data: ApprovalWorkflow
 }
 
 export function buildReservationApprovedStaffEmail(data: ApprovalWorkflowEmailData) {
-  const { firstName, amenityName, date, residentName, reservationId } = data;
+  const { firstName, amenityName, date, residentName, eventName, reservationId } = data;
   
   return {
     subject: `Reservation Approved: ${amenityName} on ${date}`,
@@ -631,6 +633,7 @@ export function buildReservationApprovedStaffEmail(data: ApprovalWorkflowEmailDa
         <h2 style="color:#059669;">Reservation Approved ✅</h2>
         <p>Hi ${firstName},</p>
         <p>The reservation you approved for <strong>${residentName}</strong> has been fully approved.</p>
+        ${eventName ? `<p><strong>Event:</strong> ${eventName}</p>` : ''}
         
         <div style="background:#f9fafb;padding:15px;border-radius:8px;margin:20px 0;">
           <h3 style="margin-top:0;color:#1f2937;">Reservation Details</h3>

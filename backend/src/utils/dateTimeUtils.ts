@@ -16,7 +16,11 @@
  * Examples: "America/New_York", "America/Chicago", "America/Los_Angeles"
  */
 
-const DEFAULT_TIMEZONE = process.env.APP_TIMEZONE || 'America/New_York';
+// Use America/Chicago as default (Central Time) - adjust if needed
+// For The Sanctuary community, this should be set to the appropriate timezone
+// Common timezones: 'America/New_York' (Eastern), 'America/Chicago' (Central), 
+// 'America/Denver' (Mountain), 'America/Los_Angeles' (Pacific)
+const DEFAULT_TIMEZONE = process.env.APP_TIMEZONE || 'America/Chicago';
 
 /**
  * Format a date string or Date object to a readable date string

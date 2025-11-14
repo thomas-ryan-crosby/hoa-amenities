@@ -551,6 +551,7 @@ router.post('/', authenticateToken, async (req: any, res) => {
             partyTimeEnd: timeEnd,
             guestCount: createdReservation.guestCount,
             residentName,
+            eventName: createdReservation.eventName,
             reservationId: createdReservation.id
           }),
           true
@@ -571,6 +572,7 @@ router.post('/', authenticateToken, async (req: any, res) => {
               partyTimeEnd: timeEnd,
               guestCount: createdReservation.guestCount,
               residentName,
+              eventName: createdReservation.eventName,
               reservationId: createdReservation.id
             }),
             true
@@ -605,6 +607,7 @@ router.post('/', authenticateToken, async (req: any, res) => {
             partyTimeEnd: timeEnd,
             guestCount: createdReservation.guestCount,
             residentName,
+            eventName: createdReservation.eventName,
             reservationId: createdReservation.id
           }),
           true
@@ -1442,6 +1445,7 @@ router.put('/:id/approve', authenticateToken, async (req: any, res) => {
               partyTimeEnd: timeEnd,
               guestCount: updatedReservationWithAssociations.guestCount,
               residentName,
+              eventName: updatedReservationWithAssociations.eventName,
               reservationId: updatedReservationWithAssociations.id
             }),
             false // default to false for staff
@@ -1473,6 +1477,7 @@ router.put('/:id/approve', authenticateToken, async (req: any, res) => {
                 partyTimeEnd: timeEnd,
                 guestCount: updatedReservationWithAssociations.guestCount,
                 residentName,
+                eventName: updatedReservationWithAssociations.eventName,
                 reservationId: updatedReservationWithAssociations.id
               }),
               true
