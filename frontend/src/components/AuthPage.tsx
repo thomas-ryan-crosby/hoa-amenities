@@ -13,12 +13,15 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLogin }) => {
   const location = useLocation();
   const [mode, setMode] = useState<'choice' | 'signin' | 'signup'>('choice');
 
-  // When on /login route, automatically show signin form
+  // Check location state for forceSignin flag (when clicking "Go To App" while already on /login)
   useEffect(() => {
-    if (location.pathname === '/login') {
+    const state = location.state as { forceSignin?: boolean } | null;
+    if (state?.forceSignin) {
       setMode('signin');
+      // Clear the state to prevent it from persisting
+      window.history.replaceState({}, document.title);
     }
-  }, [location.pathname]);
+  }, [location.state]);
   const [formData, setFormData] = useState({
     email: '',
     password: ''

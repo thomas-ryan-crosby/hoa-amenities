@@ -1,12 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 const LandingHeader: React.FC = () => {
   const { isAuthenticated } = useAuth();
-  // const navigate = useNavigate(); // Removed unused variable
+  const navigate = useNavigate();
+  const location = useLocation();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const handleGoToAppClick = (e: React.MouseEvent) => {
+    // If already on /login, navigate with state to force signin mode
+    if (location.pathname === '/login') {
+      e.preventDefault();
+      navigate('/login', { state: { forceSignin: true } });
+    }
+  };
 
   useEffect(() => {
     const handleResize = () => {
@@ -151,7 +160,10 @@ const LandingHeader: React.FC = () => {
                     ) : (
                       <Link
                         to="/login"
-                        onClick={() => setIsMobileMenuOpen(false)}
+                        onClick={(e) => {
+                          handleGoToAppClick(e);
+                          setIsMobileMenuOpen(false);
+                        }}
                         style={{
                           color: 'white',
                           textDecoration: 'none',
@@ -172,7 +184,7 @@ const LandingHeader: React.FC = () => {
                           e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
                         }}
                       >
-                        Login
+                        Go To App
                       </Link>
                     )}
                   </nav>
@@ -247,7 +259,8 @@ const LandingHeader: React.FC = () => {
                 </Link>
               ) : (
                 <Link 
-                  to="/login" 
+                  to="/login"
+                  onClick={handleGoToAppClick}
                   style={{ 
                     color: 'white', 
                     textDecoration: 'none',
@@ -265,7 +278,7 @@ const LandingHeader: React.FC = () => {
                     e.currentTarget.style.backgroundColor = 'transparent';
                   }}
                 >
-                  Login
+                  Go To App
                 </Link>
               )}
             </nav>
