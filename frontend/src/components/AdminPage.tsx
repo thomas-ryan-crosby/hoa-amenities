@@ -976,27 +976,116 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
 
       {/* Create/Edit Modal */}
       {showModal && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1000
-        }}>
-          <div style={{
-            backgroundColor: 'white',
-            borderRadius: '0.5rem',
-            padding: '2rem',
-            maxWidth: '600px',
-            width: '90%',
-            maxHeight: '90vh',
-            overflow: 'auto'
-          }}>
+        <div 
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowModal(false);
+              setEditingAmenity(null);
+              setFormData({
+                name: '',
+                description: '',
+                reservationFee: '',
+                deposit: '',
+                capacity: '50',
+                calendarGroup: '',
+                newCalendarGroup: '',
+                isPublic: false,
+                publicReservationFee: '',
+                publicDeposit: '',
+                daysOfOperation: [],
+                hoursOfOperation: { open: '09:00', close: '17:00', open24Hours: false },
+                displayColor: '#355B45',
+                janitorialRequired: true,
+                approvalRequired: true,
+                cancellationFeeEnabled: true,
+                modificationFeeEnabled: true
+              });
+            }
+          }}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000
+          }}
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              backgroundColor: 'white',
+              borderRadius: '0.5rem',
+              padding: '2rem',
+              maxWidth: '600px',
+              width: '90%',
+              maxHeight: '90vh',
+              overflow: 'auto',
+              position: 'relative'
+            }}
+          >
+            {/* Sticky Close Button */}
+            <button
+              onClick={() => {
+                setShowModal(false);
+                setEditingAmenity(null);
+                setFormData({
+                  name: '',
+                  description: '',
+                  reservationFee: '',
+                  deposit: '',
+                  capacity: '50',
+                  calendarGroup: '',
+                  newCalendarGroup: '',
+                  isPublic: false,
+                  publicReservationFee: '',
+                  publicDeposit: '',
+                  daysOfOperation: [],
+                  hoursOfOperation: { open: '09:00', close: '17:00', open24Hours: false },
+                  displayColor: '#355B45',
+                  janitorialRequired: true,
+                  approvalRequired: true,
+                  cancellationFeeEnabled: true,
+                  modificationFeeEnabled: true
+                });
+              }}
+              style={{
+                position: 'sticky',
+                top: '1rem',
+                right: '1rem',
+                float: 'right',
+                backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '50%',
+                width: '40px',
+                height: '40px',
+                fontSize: '24px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 10,
+                transition: 'background-color 0.2s',
+                fontFamily: 'Arial, sans-serif',
+                lineHeight: 1,
+                marginBottom: '-40px',
+                marginTop: '-2rem'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.6)';
+              }}
+            >
+              ×
+            </button>
+
             <h2 style={{ fontSize: '1.5rem', fontWeight: 600, marginBottom: '1.5rem', color: '#1f2937' }}>
               {editingAmenity ? 'Edit Amenity' : 'Create Amenity'}
             </h2>
