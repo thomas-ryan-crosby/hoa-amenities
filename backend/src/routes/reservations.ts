@@ -2709,7 +2709,7 @@ router.put('/:id/accept-modification', authenticateToken, async (req: any, res) 
         {
           model: Amenity,
           as: 'amenity',
-          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity']
+          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'janitorialRequired', 'approvalRequired']
         }
       ]
     }) as ReservationWithAssociations;
@@ -2781,7 +2781,28 @@ router.put('/:id/accept-modification', authenticateToken, async (req: any, res) 
       });
     }
 
+    // Determine the new initial status based on approval requirements
+    // When a modification is accepted, the approval workflow must restart
+    let newStatus: 'NEW' | 'JANITORIAL_APPROVED' | 'FULLY_APPROVED' = 'NEW';
+    if (!reservation.amenity?.janitorialRequired) {
+      // No janitorial approval needed
+      if (!reservation.amenity?.approvalRequired) {
+        // No admin approval needed either - auto-approve
+        newStatus = 'FULLY_APPROVED';
+      } else {
+        // Admin approval needed, but skip janitorial step
+        newStatus = 'JANITORIAL_APPROVED';
+      }
+    } else if (!reservation.amenity?.approvalRequired) {
+      // Janitorial approval needed, but no admin approval
+      newStatus = 'NEW';
+    } else {
+      // Both approvals needed
+      newStatus = 'NEW';
+    }
+
     // Apply the modification: update reservation with proposed values using raw SQL
+    // Reset status to restart approval workflow
     // At this point, we've already verified proposedPartyTimeStart and proposedPartyTimeEnd are not null
     // Try both quoted (camelCase) and unquoted (lowercase) column names to handle different table schemas
     try {
@@ -2792,6 +2813,7 @@ router.put('/:id/accept-modification', authenticateToken, async (req: any, res) 
             "partyTimeEnd" = :proposedEnd,
             "setupTimeStart" = :proposedStart,
             "setupTimeEnd" = :proposedStart,
+            status = :newStatus,
             modificationstatus = 'ACCEPTED',
             proposeddate = NULL,
             proposedpartytimestart = NULL,
@@ -2805,6 +2827,7 @@ router.put('/:id/accept-modification', authenticateToken, async (req: any, res) 
           proposedDate: proposedDate,
           proposedStart: proposedStart.toISOString(),
           proposedEnd: proposedEnd.toISOString(),
+          newStatus: newStatus,
           reservationId: id
         },
         type: QueryTypes.UPDATE
@@ -2831,6 +2854,7 @@ router.put('/:id/accept-modification', authenticateToken, async (req: any, res) 
                 partytimeend = :proposedEnd,
                 setuptimestart = :proposedStart,
                 setuptimeend = :proposedStart,
+                status = :newStatus,
                 modificationstatus = 'ACCEPTED',
                 proposeddate = NULL,
                 proposedpartytimestart = NULL,
@@ -2844,6 +2868,7 @@ router.put('/:id/accept-modification', authenticateToken, async (req: any, res) 
               proposedDate: proposedDate,
               proposedStart: proposedStart.toISOString(),
               proposedEnd: proposedEnd.toISOString(),
+              newStatus: newStatus,
               reservationId: id
             },
             type: QueryTypes.UPDATE
