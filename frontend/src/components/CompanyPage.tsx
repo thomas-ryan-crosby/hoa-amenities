@@ -1,7 +1,10 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import LandingHeader from './LandingHeader';
 
 const CompanyPage: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f9fafb' }}>
       <LandingHeader />
@@ -35,73 +38,6 @@ const CompanyPage: React.FC = () => {
             Future State - Year 3 (400+ Communities, $1M+ ARR)
           </p>
           
-          {/* Equity Structure */}
-          <div style={{
-            background: '#f0f4f1',
-            border: '2px solid #355B45',
-            borderRadius: '0.5rem',
-            padding: '1.5rem',
-            marginBottom: '3rem',
-            display: 'flex',
-            justifyContent: 'space-around',
-            flexWrap: 'wrap',
-            gap: '1rem'
-          }}>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{
-                fontSize: '0.875rem',
-                color: '#6b7280',
-                marginBottom: '0.25rem',
-                fontFamily: 'Inter, sans-serif'
-              }}>
-                Founder/CEO
-              </div>
-              <div style={{
-                fontSize: '2rem',
-                fontWeight: 700,
-                color: '#355B45',
-                fontFamily: 'Inter, sans-serif'
-              }}>
-                65%
-              </div>
-            </div>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{
-                fontSize: '0.875rem',
-                color: '#6b7280',
-                marginBottom: '0.25rem',
-                fontFamily: 'Inter, sans-serif'
-              }}>
-                Co-Founder
-              </div>
-              <div style={{
-                fontSize: '2rem',
-                fontWeight: 700,
-                color: '#355B45',
-                fontFamily: 'Inter, sans-serif'
-              }}>
-                10%
-              </div>
-            </div>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{
-                fontSize: '0.875rem',
-                color: '#6b7280',
-                marginBottom: '0.25rem',
-                fontFamily: 'Inter, sans-serif'
-              }}>
-                Option Pool
-              </div>
-              <div style={{
-                fontSize: '2rem',
-                fontWeight: 700,
-                color: '#355B45',
-                fontFamily: 'Inter, sans-serif'
-              }}>
-                25%
-              </div>
-            </div>
-          </div>
           
           {/* Org Chart */}
           <div style={{
@@ -142,18 +78,6 @@ const CompanyPage: React.FC = () => {
                   Thomas Crosby
                 </div>
                 <div style={{
-                  fontSize: '0.875rem',
-                  padding: '0.5rem 1rem',
-                  background: 'rgba(255,255,255,0.2)',
-                  borderRadius: '0.25rem',
-                  display: 'inline-block',
-                  marginBottom: '0.75rem',
-                  fontWeight: 600,
-                  fontFamily: 'Inter, sans-serif'
-                }}>
-                  65% Equity
-                </div>
-                <div style={{
                   fontSize: '0.75rem',
                   opacity: 0.8,
                   fontStyle: 'italic',
@@ -180,16 +104,28 @@ const CompanyPage: React.FC = () => {
               width: '100%'
             }}>
               {/* Co-Founder & Head of Sales */}
-              <div style={{
-                background: 'linear-gradient(135deg, #86efac 0%, #4ade80 100%)',
-                color: '#1f2937',
-                border: '2px solid #22c55e',
-                borderRadius: '0.5rem',
-                padding: '1.5rem',
-                minWidth: '250px',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
-                transition: 'all 0.3s ease'
-              }}>
+              <div 
+                onClick={() => navigate('/company/offer')}
+                style={{
+                  background: 'linear-gradient(135deg, #86efac 0%, #4ade80 100%)',
+                  color: '#1f2937',
+                  border: '2px solid #22c55e',
+                  borderRadius: '0.5rem',
+                  padding: '1.5rem',
+                  minWidth: '250px',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                  transition: 'all 0.3s ease',
+                  cursor: 'pointer'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-4px)';
+                  e.currentTarget.style.boxShadow = '0 8px 16px rgba(0,0,0,0.15)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.05)';
+                }}
+              >
                 <div style={{
                   fontSize: '1.125rem',
                   fontWeight: 700,
@@ -197,6 +133,14 @@ const CompanyPage: React.FC = () => {
                   fontFamily: 'Inter, sans-serif'
                 }}>
                   Co-Founder & Head of Sales
+                </div>
+                <div style={{
+                  fontSize: '1rem',
+                  marginBottom: '0.75rem',
+                  fontWeight: 600,
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  Christian Maloney
                 </div>
                 <div style={{
                   fontSize: '0.75rem',
@@ -208,7 +152,7 @@ const CompanyPage: React.FC = () => {
                   fontWeight: 600,
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  10% Equity
+                  Click to view offer letter
                 </div>
                 <div style={{
                   fontSize: '0.875rem',
@@ -248,19 +192,6 @@ const CompanyPage: React.FC = () => {
                   fontFamily: 'Inter, sans-serif'
                 }}>
                   CTO / VP Engineering
-                </div>
-                <div style={{
-                  fontSize: '0.75rem',
-                  padding: '0.25rem 0.5rem',
-                  background: '#f9fafb',
-                  borderRadius: '0.25rem',
-                  display: 'inline-block',
-                  marginBottom: '0.75rem',
-                  fontWeight: 600,
-                  color: '#355B45',
-                  fontFamily: 'Inter, sans-serif'
-                }}>
-                  2% Equity
                 </div>
                 <div style={{
                   fontSize: '0.875rem',
@@ -304,19 +235,6 @@ const CompanyPage: React.FC = () => {
                   CFO
                 </div>
                 <div style={{
-                  fontSize: '0.75rem',
-                  padding: '0.25rem 0.5rem',
-                  background: '#f9fafb',
-                  borderRadius: '0.25rem',
-                  display: 'inline-block',
-                  marginBottom: '0.75rem',
-                  fontWeight: 600,
-                  color: '#355B45',
-                  fontFamily: 'Inter, sans-serif'
-                }}>
-                  1% Equity
-                </div>
-                <div style={{
                   fontSize: '0.875rem',
                   fontWeight: 600,
                   color: '#355B45',
@@ -353,19 +271,6 @@ const CompanyPage: React.FC = () => {
                   fontFamily: 'Inter, sans-serif'
                 }}>
                   VP Customer Success
-                </div>
-                <div style={{
-                  fontSize: '0.75rem',
-                  padding: '0.25rem 0.5rem',
-                  background: '#f9fafb',
-                  borderRadius: '0.25rem',
-                  display: 'inline-block',
-                  marginBottom: '0.75rem',
-                  fontWeight: 600,
-                  color: '#355B45',
-                  fontFamily: 'Inter, sans-serif'
-                }}>
-                  1% Equity
                 </div>
                 <div style={{
                   fontSize: '0.875rem',
@@ -405,19 +310,6 @@ const CompanyPage: React.FC = () => {
                   fontFamily: 'Inter, sans-serif'
                 }}>
                   VP Marketing
-                </div>
-                <div style={{
-                  fontSize: '0.75rem',
-                  padding: '0.25rem 0.5rem',
-                  background: '#f9fafb',
-                  borderRadius: '0.25rem',
-                  display: 'inline-block',
-                  marginBottom: '0.75rem',
-                  fontWeight: 600,
-                  color: '#355B45',
-                  fontFamily: 'Inter, sans-serif'
-                }}>
-                  1% Equity
                 </div>
                 <div style={{
                   fontSize: '0.875rem',
