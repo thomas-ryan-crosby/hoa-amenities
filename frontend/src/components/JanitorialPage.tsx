@@ -83,21 +83,16 @@ const JanitorialPage: React.FC = () => {
   });
   const [showPastReservations, setShowPastReservations] = useState(false);
   
-  // Damage Reviews state (admin only)
-  const [damageReviews, setDamageReviews] = useState<any[]>([]);
-  const [damageReviewsLoading, setDamageReviewsLoading] = useState(false);
+  // Damage Review state (admin only)
   const [showReviewModal, setShowReviewModal] = useState(false);
-  const [selectedReview, setSelectedReview] = useState<any | null>(null);
+  const [selectedReview, setSelectedReview] = useState<Reservation | null>(null);
   const [reviewAction, setReviewAction] = useState<'approve' | 'adjust' | 'deny'>('approve');
   const [adjustedAmount, setAdjustedAmount] = useState('');
   const [adminNotes, setAdminNotes] = useState('');
 
   useEffect(() => {
     fetchReservations();
-    if (isAdmin) {
-      fetchDamageReviews();
-    }
-  }, [isAdmin]);
+  }, []);
 
   const fetchReservations = async () => {
     try {
@@ -117,27 +112,6 @@ const JanitorialPage: React.FC = () => {
       console.error('Error fetching reservations:', err);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const fetchDamageReviews = async () => {
-    try {
-      setDamageReviewsLoading(true);
-      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-      const token = localStorage.getItem('token');
-      
-      const response = await axios.get(`${apiUrl}/api/reservations/admin/damage-reviews`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      setDamageReviews(response.data.reservations || []);
-    } catch (error: any) {
-      console.error('❌ Error fetching damage reviews:', error);
-      setError(error.response?.data?.message || 'Failed to fetch damage reviews');
-    } finally {
-      setDamageReviewsLoading(false);
     }
   };
 
@@ -177,8 +151,7 @@ const JanitorialPage: React.FC = () => {
       setReviewAction('approve');
       setAdjustedAmount('');
       setAdminNotes('');
-      fetchDamageReviews();
-      fetchReservations(); // Also refresh reservations to update status
+      fetchReservations(); // Refresh reservations to update status
     } catch (error: any) {
       console.error('❌ Error reviewing damage assessment:', error);
       setError(error.response?.data?.message || 'Failed to review damage assessment');
@@ -1048,6 +1021,31 @@ const JanitorialPage: React.FC = () => {
                     Assess Damages
                   </button>
                 )}
+                {isAdmin && reservation.status === 'COMPLETED' && reservation.damageAssessmentPending && reservation.damageAssessed && reservation.damageAssessmentStatus === 'PENDING' && (
+                  <button
+                    onClick={() => {
+                      setSelectedReview(reservation);
+                      setReviewAction('approve');
+                      setAdjustedAmount(String(reservation.damageChargeAmount || ''));
+                      setAdminNotes('');
+                      setShowReviewModal(true);
+                    }}
+                    disabled={actionLoading === reservation.id}
+                    style={{
+                      backgroundColor: actionLoading === reservation.id ? '#9ca3af' : '#ef4444',
+                      color: 'white',
+                      padding: '8px 16px',
+                      borderRadius: '4px',
+                      border: 'none',
+                      cursor: actionLoading === reservation.id ? 'not-allowed' : 'pointer',
+                      fontSize: '14px',
+                      fontWeight: 'bold',
+                      marginLeft: '8px'
+                    }}
+                  >
+                    Review Damage Assessment
+                  </button>
+                )}
               </div>
             </div>
           ))}
@@ -1184,109 +1182,6 @@ const JanitorialPage: React.FC = () => {
                   : `No reservations with status "${filter}" found.`
                 }
               </p>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Damage Reviews Section (Admin Only) */}
-      {isAdmin && (
-        <div style={{ marginTop: '40px' }}>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: '0 0 16px 0', color: '#1f2937' }}>
-            Damage Reviews
-            {damageReviews.length > 0 && (
-              <span style={{
-                marginLeft: '12px',
-                backgroundColor: '#ef4444',
-                color: 'white',
-                borderRadius: '12px',
-                padding: '4px 12px',
-                fontSize: '0.875rem',
-                fontWeight: '600'
-              }}>
-                {damageReviews.length} Pending
-              </span>
-            )}
-          </h2>
-          
-          {damageReviewsLoading ? (
-            <div style={{ textAlign: 'center', padding: '2rem' }}>
-              <div style={{ fontSize: '1.5rem', color: '#6b7280' }}>Loading damage reviews...</div>
-            </div>
-          ) : damageReviews.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '2rem', backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-              <div style={{ fontSize: '1.25rem', color: '#6b7280', marginBottom: '0.5rem' }}>
-                No Pending Damage Reviews
-              </div>
-              <p style={{ color: '#9ca3af' }}>All damage assessments have been reviewed.</p>
-            </div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              {damageReviews.map((review: any) => (
-                <div
-                  key={review.id}
-                  style={{
-                    backgroundColor: 'white',
-                    border: '1px solid #e5e7eb',
-                    borderRadius: '8px',
-                    padding: '1.5rem',
-                    boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
-                  }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem' }}>
-                    <div>
-                      <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.25rem', color: '#1f2937' }}>
-                        {review.amenity?.name || 'Unknown Amenity'} - {review.user?.firstName} {review.user?.lastName}
-                      </h3>
-                      <p style={{ margin: 0, color: '#6b7280', fontSize: '0.875rem' }}>
-                        Date: {new Date(review.date).toLocaleDateString()}
-                        {review.damageAssessedAt && (
-                          <> | Assessed: {new Date(review.damageAssessedAt).toLocaleDateString()}</>
-                        )}
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => {
-                        setSelectedReview(review);
-                        setReviewAction('approve');
-                        setAdjustedAmount(String(review.damageChargeAmount || ''));
-                        setAdminNotes('');
-                        setShowReviewModal(true);
-                      }}
-                      style={{
-                        backgroundColor: '#355B45',
-                        color: 'white',
-                        padding: '0.5rem 1rem',
-                        borderRadius: '4px',
-                        border: 'none',
-                        cursor: 'pointer',
-                        fontSize: '0.875rem',
-                        fontWeight: '600',
-                        fontFamily: 'Inter, sans-serif'
-                      }}
-                    >
-                      Review Assessment
-                    </button>
-                  </div>
-
-                  <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: '#f9fafb', borderRadius: '4px' }}>
-                    <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.875rem', color: '#6b7280' }}>
-                      <strong>Assessed Amount:</strong> ${parseFloat(String(review.damageChargeAmount || 0)).toFixed(2)}
-                    </p>
-                    <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.875rem', color: '#6b7280' }}>
-                      <strong>Max Damage Fee:</strong> ${parseFloat(String(review.amenity?.deposit || review.totalDeposit)).toFixed(2)}
-                    </p>
-                    <p style={{ margin: 0, fontSize: '0.875rem', color: '#374151' }}>
-                      <strong>Description:</strong> {review.damageDescription || 'No description'}
-                    </p>
-                    {review.damageNotes && (
-                      <p style={{ margin: '0.5rem 0 0 0', fontSize: '0.875rem', color: '#6b7280' }}>
-                        <strong>Notes:</strong> {review.damageNotes}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              ))}
             </div>
           )}
         </div>
@@ -1751,8 +1646,8 @@ const JanitorialPage: React.FC = () => {
         </div>
       )}
 
-      {/* Review Damage Assessment Modal (Admin Only) */}
-      {isAdmin && showReviewModal && selectedReview && (
+      {/* Review Damage Assessment Modal */}
+      {showReviewModal && selectedReview && (
         <div 
           onClick={(e) => {
             if (e.target === e.currentTarget) {
