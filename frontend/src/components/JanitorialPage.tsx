@@ -985,9 +985,9 @@ const JanitorialPage: React.FC = () => {
                 {reservation.cleaningTimeStart && reservation.cleaningTimeEnd && (
                   <div>
                     <h4 style={{ fontSize: '14px', fontWeight: 'bold', color: '#374151', margin: '0 0 4px 0' }}>
-                      Proposed Janitorial Cleaning Time
+                      {reservation.status === 'FULLY_APPROVED' ? 'Confirmed Janitorial Cleaning Time' : 'Proposed Janitorial Cleaning Time'}
                     </h4>
-                    <p style={{ margin: 0, fontSize: '14px', color: '#3b82f6' }}>
+                    <p style={{ margin: 0, fontSize: '14px', color: reservation.status === 'FULLY_APPROVED' ? '#10b981' : '#3b82f6' }}>
                       {formatTimeRange(reservation.cleaningTimeStart, reservation.cleaningTimeEnd)}
                       <br />
                       <span style={{ fontSize: '12px', color: '#6b7280' }}>
