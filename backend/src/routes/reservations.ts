@@ -1250,6 +1250,7 @@ router.put('/:id/modify', authenticateToken, async (req: any, res) => {
               date: dateStr,
               partyTimeStart: timeStart,
               partyTimeEnd: timeEnd,
+              guestCount: updatedReservation.guestCount,
               reservationId: updatedReservation.id
             }),
             true
