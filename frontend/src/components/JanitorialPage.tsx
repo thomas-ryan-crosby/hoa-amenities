@@ -112,6 +112,22 @@ const JanitorialPage: React.FC = () => {
         }
       });
       
+      // Debug: Log the first reservation to verify amenity data is included
+      if (response.data.reservations && response.data.reservations.length > 0) {
+        const firstReservation = response.data.reservations[0];
+        console.log('Fetched reservation sample:', {
+          id: firstReservation.id,
+          status: firstReservation.status,
+          amenity: firstReservation.amenity ? {
+            id: firstReservation.amenity.id,
+            name: firstReservation.amenity.name,
+            janitorialRequired: firstReservation.amenity.janitorialRequired,
+            approvalRequired: firstReservation.amenity.approvalRequired,
+            allKeys: Object.keys(firstReservation.amenity)
+          } : 'NO AMENITY'
+        });
+      }
+      
       setReservations(response.data.reservations);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to load reservations');
@@ -580,27 +596,38 @@ const JanitorialPage: React.FC = () => {
       return 'Processing...';
     }
 
-    // For janitorial users, always show "Approve" for NEW reservations
-    if (isJanitorial && reservation.status === 'NEW') {
-      return 'Approve';
-    }
+    // Debug: Log user roles and reservation status
+    console.log('getApprovalButtonText called:', {
+      reservationId: reservation.id,
+      status: reservation.status,
+      isAdmin,
+      isJanitorial,
+      amenity: reservation.amenity ? {
+        id: reservation.amenity.id,
+        name: reservation.amenity.name,
+        janitorialRequired: reservation.amenity.janitorialRequired,
+        approvalRequired: reservation.amenity.approvalRequired,
+        hasJanitorialRequired: 'janitorialRequired' in (reservation.amenity || {}),
+        amenityKeys: Object.keys(reservation.amenity || {})
+      } : 'NO AMENITY DATA'
+    });
 
-    // For admins, show context-aware text
+    // For admins, show context-aware text (check admin first, as admins can also have janitorial role)
     if (isAdmin) {
       if (reservation.status === 'NEW') {
         // Admin approving a NEW reservation
         // Check if janitorial approval is required
-        // Note: janitorialRequired defaults to true if not set, so we check for explicit false
         const janitorialRequired = reservation.amenity?.janitorialRequired;
         const approvalRequired = reservation.amenity?.approvalRequired;
         
-        console.log('Approval button text check:', {
+        console.log('Admin approving NEW reservation:', {
           reservationId: reservation.id,
           amenityName: reservation.amenity?.name,
           janitorialRequired,
           approvalRequired,
           janitorialRequiredType: typeof janitorialRequired,
-          janitorialRequiredValue: janitorialRequired
+          janitorialRequiredValue: janitorialRequired,
+          willShowJanitorialText: janitorialRequired === true || (janitorialRequired === undefined && approvalRequired !== false)
         });
         
         // If janitorial approval is explicitly required (true or undefined, which defaults to true)
@@ -618,6 +645,11 @@ const JanitorialPage: React.FC = () => {
         // Admin approving a JANITORIAL_APPROVED reservation (final approval)
         return 'Final Approve as Admin';
       }
+    }
+
+    // For janitorial users (non-admin), always show "Approve" for NEW reservations
+    if (isJanitorial && reservation.status === 'NEW') {
+      return 'Approve';
     }
 
     // Fallback
