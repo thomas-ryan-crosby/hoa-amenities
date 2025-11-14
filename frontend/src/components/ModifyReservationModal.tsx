@@ -521,6 +521,7 @@ const ModifyReservationModal: React.FC<ModifyReservationModalProps> = ({
 
           {/* Reservation Start Time */}
           <SimpleTimeSelector
+            key={`start-${reservation?.id}-${reservationTimeStart}`}
             label="Reservation Start Time"
             value={reservationTimeStart}
             onChange={setReservationTimeStart}
@@ -532,6 +533,7 @@ const ModifyReservationModal: React.FC<ModifyReservationModalProps> = ({
 
           {/* Reservation End Time */}
           <SimpleTimeSelector
+            key={`end-${reservation?.id}-${reservationTimeEnd}`}
             label="Reservation End Time"
             value={reservationTimeEnd}
             onChange={setReservationTimeEnd}
