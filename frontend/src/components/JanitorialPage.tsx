@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 import { useMobile } from '../hooks/useMobile';
-import { formatDate, formatTime, formatTimeRange, parseDateString } from '../utils/dateTimeUtils';
+import { formatDate, formatTime, formatTimeRange, formatDateTime, parseDateString } from '../utils/dateTimeUtils';
 import SimpleTimeSelector from './SimpleTimeSelector';
 
 interface Reservation {
@@ -185,42 +185,58 @@ const JanitorialPage: React.FC = () => {
   };
 
   const handleApprove = async (reservationId: number) => {
+    const reservation = reservations.find(r => r.id === reservationId);
+    if (!reservation) return;
+
+    // Helper functions to format dates and times
+    const formatTimeForSelector = (date: Date): string => {
+      const hours = date.getHours();
+      const minutes = date.getMinutes();
+      return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+    };
+    
+    const formatDateForInput = (date: Date): string => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
     // For janitorial users, show cleaning time modal
     if (isJanitorial) {
-      const reservation = reservations.find(r => r.id === reservationId);
-      if (reservation) {
+      setSelectedReservation(reservation);
+      // Set default cleaning time (30 minutes after reservation ends, then 2 hours later)
+      const reservationEndTime = new Date(reservation.partyTimeEnd);
+      const defaultCleaningStart = new Date(reservationEndTime.getTime() + 30 * 60 * 1000); // 30 minutes after reservation
+      const defaultCleaningEnd = new Date(defaultCleaningStart.getTime() + 2 * 60 * 60 * 1000); // 2 hours later
+      
+      setCleaningTime({
+        startDate: formatDateForInput(defaultCleaningStart),
+        startTime: formatTimeForSelector(defaultCleaningStart),
+        endDate: formatDateForInput(defaultCleaningEnd),
+        endTime: formatTimeForSelector(defaultCleaningEnd)
+      });
+      setShowCleaningTimeModal(true);
+    } else if (isAdmin) {
+      // For admin users, if reservation is JANITORIAL_APPROVED and has cleaning time, show modal with existing time
+      // Otherwise, approve directly
+      if (reservation.status === 'JANITORIAL_APPROVED' && reservation.cleaningTimeStart && reservation.cleaningTimeEnd) {
         setSelectedReservation(reservation);
-        // Set default cleaning time (30 minutes after reservation ends, then 2 hours later)
-        const reservationEndTime = new Date(reservation.partyTimeEnd);
-        const defaultCleaningStart = new Date(reservationEndTime.getTime() + 30 * 60 * 1000); // 30 minutes after reservation
-        const defaultCleaningEnd = new Date(defaultCleaningStart.getTime() + 2 * 60 * 60 * 1000); // 2 hours later
-        
-        // Format as HH:MM for SimpleTimeSelector
-        const formatTime = (date: Date): string => {
-          const hours = date.getHours();
-          const minutes = date.getMinutes();
-          return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
-        };
-        
-        // Format as YYYY-MM-DD for date input
-        const formatDate = (date: Date): string => {
-          const year = date.getFullYear();
-          const month = String(date.getMonth() + 1).padStart(2, '0');
-          const day = String(date.getDate()).padStart(2, '0');
-          return `${year}-${month}-${day}`;
-        };
+        // Use existing janitorial cleaning time as default
+        const existingCleaningStart = new Date(reservation.cleaningTimeStart);
+        const existingCleaningEnd = new Date(reservation.cleaningTimeEnd);
         
         setCleaningTime({
-          startDate: formatDate(defaultCleaningStart),
-          startTime: formatTime(defaultCleaningStart),
-          endDate: formatDate(defaultCleaningEnd),
-          endTime: formatTime(defaultCleaningEnd)
+          startDate: formatDateForInput(existingCleaningStart),
+          startTime: formatTimeForSelector(existingCleaningStart),
+          endDate: formatDateForInput(existingCleaningEnd),
+          endTime: formatTimeForSelector(existingCleaningEnd)
         });
         setShowCleaningTimeModal(true);
+      } else {
+        // No cleaning time set, approve directly
+        await approveReservation(reservationId);
       }
-    } else {
-      // For admin users, approve directly
-      await approveReservation(reservationId);
     }
   };
 
@@ -934,6 +950,20 @@ const JanitorialPage: React.FC = () => {
                     {reservation.guestCount} people
                   </p>
                 </div>
+                {reservation.status === 'JANITORIAL_APPROVED' && reservation.cleaningTimeStart && reservation.cleaningTimeEnd && (
+                  <div>
+                    <h4 style={{ fontSize: '14px', fontWeight: 'bold', color: '#374151', margin: '0 0 4px 0' }}>
+                      Janitorial Cleaning Time
+                    </h4>
+                    <p style={{ margin: 0, fontSize: '14px', color: '#3b82f6' }}>
+                      {formatTimeRange(reservation.cleaningTimeStart, reservation.cleaningTimeEnd)}
+                      <br />
+                      <span style={{ fontSize: '12px', color: '#6b7280' }}>
+                        ({formatDate(new Date(reservation.cleaningTimeStart).toISOString().split('T')[0])})
+                      </span>
+                    </p>
+                  </div>
+                )}
                 <div>
                   <h4 style={{ fontSize: '14px', fontWeight: 'bold', color: '#374151', margin: '0 0 4px 0' }}>
                     Total Cost
