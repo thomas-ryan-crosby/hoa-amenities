@@ -55,11 +55,7 @@ const SimpleTimeSelector: React.FC<SimpleTimeSelectorProps> = ({
     setLocalIsPM(parsed.isPM);
   }, [value]);
 
-  const handleHourChange = (delta: number) => {
-    let newHour = localHour + delta;
-    if (newHour < 1) newHour = 12;
-    if (newHour > 12) newHour = 1;
-    
+  const handleHourChange = (newHour: number) => {
     setLocalHour(newHour);
     onChange(formatTime(newHour, localMinute, localIsPM));
   };
@@ -69,8 +65,7 @@ const SimpleTimeSelector: React.FC<SimpleTimeSelectorProps> = ({
     onChange(formatTime(localHour, newMinute, localIsPM));
   };
 
-  const handleAMPMToggle = () => {
-    const newIsPM = !localIsPM;
+  const handleAMPMChange = (newIsPM: boolean) => {
     setLocalIsPM(newIsPM);
     onChange(formatTime(localHour, localMinute, newIsPM));
   };
@@ -83,196 +78,73 @@ const SimpleTimeSelector: React.FC<SimpleTimeSelectorProps> = ({
         </label>
       )}
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-        {/* Hours */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-          <button
-            type="button"
-            onClick={() => handleHourChange(1)}
-            style={{
-              width: '28px',
-              height: '40px',
-              border: '1px solid #d1d5db',
-              borderRight: 'none',
-              borderRadius: '4px 0 0 4px',
-              backgroundColor: '#f9fafb',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '12px',
-              color: '#374151'
-            }}
-          >
-            ▲
-          </button>
-          <input
-            type="text"
-            value={String(localHour).padStart(2, '0')}
-            readOnly
-            style={{
-              width: '50px',
-              height: '40px',
-              textAlign: 'center',
-              border: '1px solid #d1d5db',
-              borderLeft: 'none',
-              borderRight: 'none',
-              borderRadius: '0',
-              fontSize: '16px',
-              fontWeight: '500',
-              backgroundColor: 'white'
-            }}
-          />
-          <button
-            type="button"
-            onClick={() => handleHourChange(-1)}
-            style={{
-              width: '28px',
-              height: '40px',
-              border: '1px solid #d1d5db',
-              borderLeft: 'none',
-              borderRadius: '0 4px 4px 0',
-              backgroundColor: '#f9fafb',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '12px',
-              color: '#374151'
-            }}
-          >
-            ▼
-          </button>
-        </div>
+        {/* Hours Dropdown */}
+        <select
+          value={String(localHour).padStart(2, '0')}
+          onChange={(e) => handleHourChange(Number(e.target.value))}
+          style={{
+            width: '70px',
+            height: '40px',
+            textAlign: 'center',
+            border: '1px solid #d1d5db',
+            borderRadius: '4px',
+            fontSize: '16px',
+            fontWeight: '500',
+            backgroundColor: 'white',
+            cursor: 'pointer',
+            padding: '0 8px'
+          }}
+        >
+          {Array.from({ length: 12 }, (_, i) => i + 1).map((hour) => (
+            <option key={hour} value={hour}>
+              {String(hour).padStart(2, '0')}
+            </option>
+          ))}
+        </select>
 
         <span style={{ fontSize: '20px', fontWeight: 'bold', color: '#374151', margin: '0 4px' }}>:</span>
 
-        {/* Minutes */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-          <button
-            type="button"
-            onClick={() => handleMinuteChange(localMinute === 0 ? 30 : 0)}
-            style={{
-              width: '28px',
-              height: '40px',
-              border: '1px solid #d1d5db',
-              borderRight: 'none',
-              borderRadius: '4px 0 0 4px',
-              backgroundColor: '#f9fafb',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '12px',
-              color: '#374151'
-            }}
-          >
-            ▲
-          </button>
-          <select
-            value={String(localMinute).padStart(2, '0')}
-            onChange={(e) => handleMinuteChange(Number(e.target.value))}
-            style={{
-              width: '50px',
-              height: '40px',
-              textAlign: 'center',
-              border: '1px solid #d1d5db',
-              borderLeft: 'none',
-              borderRight: 'none',
-              borderRadius: '0',
-              fontSize: '16px',
-              fontWeight: '500',
-              backgroundColor: 'white',
-              cursor: 'pointer',
-              padding: '0 4px'
-            }}
-          >
-            <option value="00">00</option>
-            <option value="30">30</option>
-          </select>
-          <button
-            type="button"
-            onClick={() => handleMinuteChange(localMinute === 0 ? 30 : 0)}
-            style={{
-              width: '28px',
-              height: '40px',
-              border: '1px solid #d1d5db',
-              borderLeft: 'none',
-              borderRadius: '0 4px 4px 0',
-              backgroundColor: '#f9fafb',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '12px',
-              color: '#374151'
-            }}
-          >
-            ▼
-          </button>
-        </div>
+        {/* Minutes Dropdown */}
+        <select
+          value={String(localMinute).padStart(2, '0')}
+          onChange={(e) => handleMinuteChange(Number(e.target.value))}
+          style={{
+            width: '70px',
+            height: '40px',
+            textAlign: 'center',
+            border: '1px solid #d1d5db',
+            borderRadius: '4px',
+            fontSize: '16px',
+            fontWeight: '500',
+            backgroundColor: 'white',
+            cursor: 'pointer',
+            padding: '0 8px'
+          }}
+        >
+          <option value="00">00</option>
+          <option value="30">30</option>
+        </select>
 
-        {/* AM/PM */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-          <button
-            type="button"
-            onClick={handleAMPMToggle}
-            style={{
-              width: '28px',
-              height: '40px',
-              border: '1px solid #d1d5db',
-              borderRight: 'none',
-              borderRadius: '4px 0 0 4px',
-              backgroundColor: '#f9fafb',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '12px',
-              color: '#374151'
-            }}
-          >
-            ▲
-          </button>
-          <input
-            type="text"
-            value={localIsPM ? 'PM' : 'AM'}
-            readOnly
-            onClick={handleAMPMToggle}
-            style={{
-              width: '50px',
-              height: '40px',
-              textAlign: 'center',
-              border: '1px solid #d1d5db',
-              borderLeft: 'none',
-              borderRight: 'none',
-              borderRadius: '0',
-              fontSize: '16px',
-              fontWeight: '500',
-              backgroundColor: 'white',
-              cursor: 'pointer'
-            }}
-          />
-          <button
-            type="button"
-            onClick={handleAMPMToggle}
-            style={{
-              width: '28px',
-              height: '40px',
-              border: '1px solid #d1d5db',
-              borderLeft: 'none',
-              borderRadius: '0 4px 4px 0',
-              backgroundColor: '#f9fafb',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '12px',
-              color: '#374151'
-            }}
-          >
-            ▼
-          </button>
-        </div>
+        {/* AM/PM Dropdown */}
+        <select
+          value={localIsPM ? 'PM' : 'AM'}
+          onChange={(e) => handleAMPMChange(e.target.value === 'PM')}
+          style={{
+            width: '70px',
+            height: '40px',
+            textAlign: 'center',
+            border: '1px solid #d1d5db',
+            borderRadius: '4px',
+            fontSize: '16px',
+            fontWeight: '500',
+            backgroundColor: 'white',
+            cursor: 'pointer',
+            padding: '0 8px'
+          }}
+        >
+          <option value="AM">AM</option>
+          <option value="PM">PM</option>
+        </select>
       </div>
     </div>
   );
