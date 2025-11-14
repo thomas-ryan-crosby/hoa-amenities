@@ -1184,21 +1184,17 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                     <label style={{ fontWeight: 500, color: '#374151' }}>
                       Reservation Fee ($) *
                     </label>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.875rem', color: '#6b7280' }}>
-                      <input
-                        type="checkbox"
-                        checked={formData.reservationFee === '0' || formData.reservationFee === ''}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setFormData({ ...formData, reservationFee: '0' });
-                          } else {
-                            setFormData({ ...formData, reservationFee: '' });
-                          }
-                        }}
-                        style={{ cursor: 'pointer' }}
-                      />
-                      <span>Free</span>
-                    </label>
+                    <ToggleSwitch
+                      checked={formData.reservationFee === '0' || formData.reservationFee === ''}
+                      onChange={(checked) => {
+                        if (checked) {
+                          setFormData({ ...formData, reservationFee: '0' });
+                        } else {
+                          setFormData({ ...formData, reservationFee: '' });
+                        }
+                      }}
+                      label="Free"
+                    />
                   </div>
                   <input
                     type="number"
@@ -1228,21 +1224,17 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                     <label style={{ fontWeight: 500, color: '#374151' }}>
                       Deposit ($) *
                     </label>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.875rem', color: '#6b7280' }}>
-                      <input
-                        type="checkbox"
-                        checked={formData.deposit === '0' || formData.deposit === ''}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setFormData({ ...formData, deposit: '0' });
-                          } else {
-                            setFormData({ ...formData, deposit: '' });
-                          }
-                        }}
-                        style={{ cursor: 'pointer' }}
-                      />
-                      <span>Free</span>
-                    </label>
+                    <ToggleSwitch
+                      checked={formData.deposit === '0' || formData.deposit === ''}
+                      onChange={(checked) => {
+                        if (checked) {
+                          setFormData({ ...formData, deposit: '0' });
+                        } else {
+                          setFormData({ ...formData, deposit: '' });
+                        }
+                      }}
+                      label="Free"
+                    />
                   </div>
                   <input
                     type="number"
@@ -1568,8 +1560,8 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                   />
                 </div>
                 {!formData.hoursOfOperation.open24Hours && (
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                    <div style={{ minWidth: 0 }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <div>
                       <SimpleTimeSelector
                         label="Open Time"
                         value={formData.hoursOfOperation.open}
@@ -1579,7 +1571,7 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                         })}
                       />
                     </div>
-                    <div style={{ minWidth: 0, overflow: 'hidden' }}>
+                    <div>
                       <SimpleTimeSelector
                         label="Close Time"
                         value={formData.hoursOfOperation.close}
