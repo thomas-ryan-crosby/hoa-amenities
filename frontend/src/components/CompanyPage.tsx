@@ -517,6 +517,130 @@ const CompanyPage: React.FC = () => {
               </div>
             </div>
           </div>
+
+          {/* Advisors Section */}
+          <div style={{
+            background: 'white',
+            borderRadius: '0.5rem',
+            padding: '3rem',
+            marginTop: '3rem',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+            border: '1px solid #e5e7eb'
+          }}>
+            <h2 style={{
+              color: '#355B45',
+              fontSize: '2rem',
+              fontWeight: 700,
+              marginBottom: '1rem',
+              textAlign: 'center',
+              fontFamily: 'Inter, sans-serif'
+            }}>
+              Advisors
+            </h2>
+            <p style={{
+              color: '#6b7280',
+              textAlign: 'center',
+              marginBottom: '2rem',
+              fontFamily: 'Inter, sans-serif'
+            }}>
+              Strategic advisors providing guidance and expertise
+            </p>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+              gap: '2rem',
+              marginTop: '2rem'
+            }}>
+              {/* Placeholder for advisors - to be populated */}
+              <div style={{
+                background: '#f9fafb',
+                border: '2px dashed #d1d5db',
+                borderRadius: '0.5rem',
+                padding: '2rem',
+                textAlign: 'center',
+                minHeight: '150px',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}>
+                <div style={{
+                  fontSize: '1.5rem',
+                  color: '#9ca3af',
+                  marginBottom: '0.5rem',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  👤
+                </div>
+                <div style={{
+                  fontSize: '0.875rem',
+                  color: '#9ca3af',
+                  fontStyle: 'italic',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  Advisor to be added
+                </div>
+              </div>
+              <div style={{
+                background: '#f9fafb',
+                border: '2px dashed #d1d5db',
+                borderRadius: '0.5rem',
+                padding: '2rem',
+                textAlign: 'center',
+                minHeight: '150px',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}>
+                <div style={{
+                  fontSize: '1.5rem',
+                  color: '#9ca3af',
+                  marginBottom: '0.5rem',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  👤
+                </div>
+                <div style={{
+                  fontSize: '0.875rem',
+                  color: '#9ca3af',
+                  fontStyle: 'italic',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  Advisor to be added
+                </div>
+              </div>
+              <div style={{
+                background: '#f9fafb',
+                border: '2px dashed #d1d5db',
+                borderRadius: '0.5rem',
+                padding: '2rem',
+                textAlign: 'center',
+                minHeight: '150px',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}>
+                <div style={{
+                  fontSize: '1.5rem',
+                  color: '#9ca3af',
+                  marginBottom: '0.5rem',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  👤
+                </div>
+                <div style={{
+                  fontSize: '0.875rem',
+                  color: '#9ca3af',
+                  fontStyle: 'italic',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  Advisor to be added
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </main>
 
