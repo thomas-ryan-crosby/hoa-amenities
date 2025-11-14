@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 // import { useAuth } from '../contexts/AuthContext'; // Removed unused import
 import SimpleTimeSelector from './SimpleTimeSelector';
@@ -47,6 +47,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
   const [, setTimeSlots] = useState<TimeSlot[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const errorRef = useRef<HTMLDivElement>(null);
   
   // Form state
   const [reservationTimeStart, setReservationTimeStart] = useState<string>('');
@@ -128,6 +129,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
     // Reset form when amenity changes
     setReservationTimeStart('');
     setReservationTimeEnd('');
+    setError(null); // Clear any errors when amenity changes
   };
 
   // Round time to nearest 30 minutes
@@ -158,6 +160,10 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
     
     if (!selectedAmenity || !reservationTimeStart || !reservationTimeEnd) {
       setError('Please fill in all required fields');
+      // Scroll to error after a brief delay to ensure it's rendered
+      setTimeout(() => {
+        errorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
       return;
     }
 
@@ -240,6 +246,11 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
       } else {
         setError(errorMessage);
       }
+      
+      // Scroll to error after a brief delay to ensure it's rendered
+      setTimeout(() => {
+        errorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
     } finally {
       setLoading(false);
     }
@@ -335,7 +346,10 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
           <input
             type="date"
             value={reservationDate}
-            onChange={(e) => setReservationDate(e.target.value)}
+            onChange={(e) => {
+              setReservationDate(e.target.value);
+              setError(null); // Clear errors when date changes
+            }}
             min={(() => {
               const today = new Date();
               const year = today.getFullYear();
@@ -355,15 +369,48 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
         </div>
 
         {error && (
-          <div style={{ 
-            marginBottom: '20px', 
-            padding: '12px', 
-            backgroundColor: '#fef2f2', 
-            border: '1px solid #fecaca', 
-            borderRadius: '4px',
-            color: '#dc2626'
-          }}>
-            {error}
+          <div 
+            ref={errorRef}
+            style={{ 
+              position: 'sticky',
+              top: '0',
+              zIndex: 20,
+              marginBottom: '20px', 
+              padding: '16px', 
+              backgroundColor: '#fef2f2', 
+              border: '2px solid #dc2626', 
+              borderRadius: '8px',
+              color: '#dc2626',
+              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '12px'
+            }}
+          >
+            <div style={{ fontSize: '20px', flexShrink: 0 }}>⚠️</div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontWeight: 'bold', marginBottom: '4px', fontSize: '16px' }}>
+                Error
+              </div>
+              <div style={{ fontSize: '14px', whiteSpace: 'pre-line' }}>
+                {error}
+              </div>
+            </div>
+            <button
+              onClick={() => setError(null)}
+              style={{
+                background: 'none',
+                border: 'none',
+                fontSize: '20px',
+                color: '#dc2626',
+                cursor: 'pointer',
+                padding: '0',
+                flexShrink: 0,
+                lineHeight: 1
+              }}
+            >
+              ×
+            </button>
           </div>
         )}
 
