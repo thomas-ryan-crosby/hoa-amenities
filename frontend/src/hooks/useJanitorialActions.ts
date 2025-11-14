@@ -56,13 +56,7 @@ export const useJanitorialActions = () => {
             count++;
           }
           
-          // 2. FULLY_APPROVED or JANITORIAL_APPROVED reservations that need to be marked complete (upcoming)
-          if ((reservation.status === 'FULLY_APPROVED' || reservation.status === 'JANITORIAL_APPROVED') &&
-              !isPast && !isCompleted && !isCancelled) {
-            count++;
-          }
-          
-          // 3. COMPLETED reservations that need damage assessment
+          // 2. COMPLETED reservations that need damage assessment
           if (reservation.status === 'COMPLETED' && 
               reservation.damageAssessmentPending === true) {
             count++;

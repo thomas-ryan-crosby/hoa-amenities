@@ -543,16 +543,15 @@ const JanitorialPage: React.FC = () => {
     return isPast || isCompleted || isCancelled;
   });
   
-  // Filter out reservations that don't need janitorial approval
-  // Only show reservations where:
-  // 1. The amenity requires janitorial approval (janitorialRequired !== false)
-  // 2. AND the reservation status is NEW (needs janitorial approval)
-  // OR
-  // 3. The reservation status is JANITORIAL_APPROVED (needs admin approval if admin approval is required)
+  // Show reservations that need janitorial attention:
+  // 1. NEW reservations that need janitorial approval
+  // 2. JANITORIAL_APPROVED reservations that need admin approval (if admin approval is required)
+  // 3. FULLY_APPROVED upcoming reservations (so janitorial can mark them complete)
   const reservationsNeedingApproval = upcomingReservations.filter(r => {
     const needsJanitorial = r.amenity.janitorialRequired !== false && r.status === 'NEW';
     const needsAdmin = r.amenity.approvalRequired !== false && r.status === 'JANITORIAL_APPROVED';
-    return needsJanitorial || needsAdmin;
+    const isFullyApproved = r.status === 'FULLY_APPROVED';
+    return needsJanitorial || needsAdmin || isFullyApproved;
   });
   
   // Apply filter if not 'all'
