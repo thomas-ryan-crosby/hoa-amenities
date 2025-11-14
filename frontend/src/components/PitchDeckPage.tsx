@@ -552,7 +552,7 @@ const PitchDeckPage: React.FC = () => {
                   lineHeight: '1.6',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  ~8,000 luxury communities in Gulf South region (LA, MS, AL, FL, TX) × $2,000/year avg
+                  ~8,000 luxury communities in target regional markets × $2,000/year avg
                 </p>
               </div>
 
@@ -595,7 +595,7 @@ const PitchDeckPage: React.FC = () => {
                   lineHeight: '1.6',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  ~200 luxury communities in first 3 years (Northshore + Gulf South expansion) × $2,000/year avg
+                  ~200 luxury communities in first 3 years (regional expansion) × $2,000/year avg
                 </p>
               </div>
             </div>
@@ -671,7 +671,7 @@ const PitchDeckPage: React.FC = () => {
               marginBottom: '1rem',
               fontFamily: 'Inter, sans-serif'
             }}>
-              Geographic Focus: Northshore Louisiana
+              Go-to-Market Strategy
             </h3>
             <p style={{
               color: '#6b7280',
@@ -679,17 +679,17 @@ const PitchDeckPage: React.FC = () => {
               marginBottom: '1rem',
               fontFamily: 'Inter, sans-serif'
             }}>
-              St. Tammany, Tangipahoa, and Washington Parishes are home to numerous luxury residential communities 
-              and Class A developments. These high-end neighborhoods have the amenities, budgets, and resident 
-              expectations that align perfectly with Neighbri's value proposition.
+              Neighbri will initially focus on establishing a strong presence in select regional markets with high 
+              concentrations of luxury residential communities. These markets offer ideal conditions: numerous Class A 
+              developments, significant amenity budgets, and residents with high service expectations.
             </p>
             <p style={{
               color: '#6b7280',
               lineHeight: '1.8',
               fontFamily: 'Inter, sans-serif'
             }}>
-              <strong>Initial Focus:</strong> Establish strong presence in luxury Northshore communities, then expand 
-              to Class A developments throughout Louisiana and the Gulf South.
+              <strong>Expansion Plan:</strong> Build a strong foundation in initial markets, then expand systematically 
+              to adjacent regions and eventually nationwide, targeting luxury communities and Class A developments.
             </p>
           </div>
         </section>
@@ -1136,7 +1136,7 @@ const PitchDeckPage: React.FC = () => {
               fontFamily: 'Inter, sans-serif'
             }}>
               <li>Complete beta testing and gather user feedback</li>
-              <li>Onboard first paying customers in Northshore region</li>
+              <li>Onboard first paying customers in target markets</li>
               <li>Build strategic partnerships with HOA management companies</li>
               <li>Expand feature set based on customer needs</li>
               <li>Scale marketing and sales efforts</li>
@@ -1892,7 +1892,7 @@ const PitchDeckPage: React.FC = () => {
           </div>
         </section>
 
-        {/* Northshore Impact */}
+        {/* Company Values & Impact */}
         <section style={{
           padding: '6rem 1rem',
           backgroundColor: '#355B45',
@@ -1906,7 +1906,7 @@ const PitchDeckPage: React.FC = () => {
               textAlign: 'center',
               fontFamily: 'Inter, sans-serif'
             }}>
-              Commitment to the Northshore
+              Company Values & Impact
             </h2>
             <div style={{
               display: 'grid',
@@ -1926,14 +1926,15 @@ const PitchDeckPage: React.FC = () => {
                   marginBottom: '1rem',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  Local Focus
+                  Customer-Focused
                 </h3>
                 <p style={{
                   opacity: 0.9,
                   lineHeight: '1.8',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  Based in the Northshore region, with deep understanding of local HOA needs and challenges.
+                  Built with deep understanding of luxury community needs, developed through direct engagement with 
+                  HOA administrators and residents.
                 </p>
               </div>
 
@@ -1949,14 +1950,15 @@ const PitchDeckPage: React.FC = () => {
                   marginBottom: '1rem',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  Job Creation
+                  Growth & Hiring
                 </h3>
                 <p style={{
                   opacity: 0.9,
                   lineHeight: '1.8',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  Plans to hire local talent for sales, customer success, and development roles as we scale.
+                  Plans to build a talented team across sales, customer success, and product development as we scale 
+                  and expand into new markets.
                 </p>
               </div>
 
@@ -1997,8 +1999,8 @@ const PitchDeckPage: React.FC = () => {
                 fontFamily: 'Inter, sans-serif',
                 fontWeight: 600
               }}>
-                Neighbri is committed to establishing its headquarters in the Northshore region and 
-                contributing to the local entrepreneurial ecosystem for at least the next 2 years and beyond.
+                Neighbri is committed to building a sustainable, scalable business that creates value for luxury 
+                communities while fostering innovation in property management technology.
               </p>
             </div>
           </div>
@@ -2029,8 +2031,8 @@ const PitchDeckPage: React.FC = () => {
             margin: '0 auto 3rem',
             fontFamily: 'Inter, sans-serif'
           }}>
-            To become the leading platform for luxury and Class A community amenity management in the Gulf South, 
-            starting with the Northshore region, and expanding to serve premium residential developments nationwide.
+            To become the leading platform for luxury and Class A community amenity management, starting with 
+            strategic regional markets and expanding to serve premium residential developments nationwide.
           </p>
           <div style={{
             padding: '3rem',
@@ -2047,7 +2049,7 @@ const PitchDeckPage: React.FC = () => {
               marginBottom: '1.5rem',
               fontFamily: 'Inter, sans-serif'
             }}>
-              Why NSpire?
+              Investment Opportunity
             </h3>
             <p style={{
               color: '#6b7280',
@@ -2055,7 +2057,7 @@ const PitchDeckPage: React.FC = () => {
               marginBottom: '1rem',
               fontFamily: 'Inter, sans-serif'
             }}>
-              The NSpire Startup Slam prize package would accelerate Neighbri's growth by providing:
+              Neighbri is seeking strategic partnerships and investment to accelerate growth. Investment would enable:
             </p>
             <ul style={{
               textAlign: 'left',
@@ -2064,10 +2066,11 @@ const PitchDeckPage: React.FC = () => {
               paddingLeft: '1.5rem',
               fontFamily: 'Inter, sans-serif'
             }}>
-              <li>Capital to invest in marketing and customer acquisition</li>
-              <li>Professional services (legal, accounting, marketing) to build a strong foundation</li>
-              <li>Visibility and credibility in the Northshore business community</li>
-              <li>Networking opportunities with investors and potential partners</li>
+              <li>Accelerated customer acquisition and market expansion</li>
+              <li>Enhanced product development and feature additions</li>
+              <li>Building a strong sales and customer success team</li>
+              <li>Strategic partnerships with property management companies</li>
+              <li>Marketing and brand development initiatives</li>
             </ul>
           </div>
         </section>
