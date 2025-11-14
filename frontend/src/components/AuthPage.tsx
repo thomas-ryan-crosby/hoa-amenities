@@ -368,6 +368,47 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLogin }) => {
             </form>
 
             <div style={{ 
+              textAlign: 'center',
+              marginBottom: '1.5rem',
+              padding: '1rem',
+              backgroundColor: '#f0f4f1',
+              borderRadius: '0.5rem',
+              border: '1px solid #d1fae5'
+            }}>
+              <p style={{ 
+                fontSize: '0.875rem', 
+                color: '#6b7280',
+                marginBottom: '0.5rem',
+                fontFamily: 'Inter, sans-serif'
+              }}>
+                Having trouble logging in?
+              </p>
+              <button
+                type="button"
+                onClick={() => setMode('signup')}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#355B45',
+                  cursor: 'pointer',
+                  fontSize: '0.875rem',
+                  fontWeight: 600,
+                  fontFamily: 'Inter, sans-serif',
+                  textDecoration: 'underline',
+                  padding: '0.25rem 0.5rem'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = '#244032';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = '#355B45';
+                }}
+              >
+                Maybe you need to create an account
+              </button>
+            </div>
+
+            <div style={{ 
               padding: '1rem',
               backgroundColor: '#f9fafb',
               borderRadius: '0.5rem',
