@@ -1444,20 +1444,20 @@ router.put('/:id/approve', authenticateToken, async (req: any, res) => {
       return res.status(404).json({ message: 'Reservation not found or does not belong to your community' });
     }
 
-    // Validate cleaning time is after reservation end time
+    // Validate cleaning time (allow cleaning on different days)
     if (cleaningTimeStart && cleaningTimeEnd) {
-      const partyEndTime = new Date(reservation.partyTimeEnd);
       const cleaningStartTime = new Date(cleaningTimeStart);
+      const cleaningEndTime = new Date(cleaningTimeEnd);
       
-      // Ensure we're comparing times correctly - add a small buffer (1 minute) to account for timezone/parsing differences
-      const oneMinute = 60 * 1000;
-      if (cleaningStartTime.getTime() <= (partyEndTime.getTime() + oneMinute)) {
+      // Validate end time is after start time
+      if (cleaningEndTime <= cleaningStartTime) {
         return res.status(400).json({ 
-          message: `Cleaning time must start after the reservation ends. Reservation ends at ${formatTime(partyEndTime)}, cleaning starts at ${formatTime(cleaningStartTime)}` 
+          message: 'Cleaning end time must be after start time' 
         });
       }
 
       // No minimum duration requirement - janitorial can set cleaning time as needed
+      // No validation that cleaning must start after reservation ends - can be on different day
       // Duration validation removed to allow flexibility
     }
 

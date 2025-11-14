@@ -66,8 +66,10 @@ const JanitorialPage: React.FC = () => {
   const [showCleaningTimeModal, setShowCleaningTimeModal] = useState(false);
   const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null);
   const [cleaningTime, setCleaningTime] = useState({
+    startDate: '', // Format: "YYYY-MM-DD"
     startTime: '', // Format: "HH:MM" (24-hour)
-    endTime: ''   // Format: "HH:MM" (24-hour)
+    endDate: '',   // Format: "YYYY-MM-DD"
+    endTime: ''    // Format: "HH:MM" (24-hour)
   });
   const [showPartyCompleteModal, setShowPartyCompleteModal] = useState(false);
   const [showDamageAssessmentModal, setShowDamageAssessmentModal] = useState(false);
@@ -200,8 +202,18 @@ const JanitorialPage: React.FC = () => {
           return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
         };
         
+        // Format as YYYY-MM-DD for date input
+        const formatDate = (date: Date): string => {
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const day = String(date.getDate()).padStart(2, '0');
+          return `${year}-${month}-${day}`;
+        };
+        
         setCleaningTime({
+          startDate: formatDate(defaultCleaningStart),
           startTime: formatTime(defaultCleaningStart),
+          endDate: formatDate(defaultCleaningEnd),
           endTime: formatTime(defaultCleaningEnd)
         });
         setShowCleaningTimeModal(true);
@@ -243,12 +255,12 @@ const JanitorialPage: React.FC = () => {
     if (!selectedReservation) return;
     
     // Validate cleaning time
-    if (!cleaningTime.startTime || !cleaningTime.endTime) {
-      setError('Please select both cleaning start and end times');
+    if (!cleaningTime.startDate || !cleaningTime.startTime || !cleaningTime.endDate || !cleaningTime.endTime) {
+      setError('Please select both cleaning dates and times');
       return;
     }
     
-    // Parse time strings (HH:MM format) and combine with reservation date
+    // Parse time strings (HH:MM format)
     const parseTime = (timeStr: string): { hours: number; minutes: number } => {
       const [hours, minutes] = timeStr.split(':').map(Number);
       return { hours, minutes };
@@ -257,21 +269,12 @@ const JanitorialPage: React.FC = () => {
     const startTimeParts = parseTime(cleaningTime.startTime);
     const endTimeParts = parseTime(cleaningTime.endTime);
     
-    // Get reservation end time first to use its date context
-    const reservationEndTime = new Date(selectedReservation.partyTimeEnd);
-    
-    // Create full datetime by combining reservation end date with selected cleaning time
-    // Use the same date as the reservation end time to ensure proper comparison
-    const startDateTime = new Date(reservationEndTime);
+    // Create full datetime by combining selected date with selected time
+    const startDateTime = parseDateString(cleaningTime.startDate);
     startDateTime.setHours(startTimeParts.hours, startTimeParts.minutes, 0, 0);
     
-    const endDateTime = new Date(reservationEndTime);
+    const endDateTime = parseDateString(cleaningTime.endDate);
     endDateTime.setHours(endTimeParts.hours, endTimeParts.minutes, 0, 0);
-    
-    // If end time is earlier than start time, assume it's the next day
-    if (endDateTime <= startDateTime) {
-      endDateTime.setDate(endDateTime.getDate() + 1);
-    }
     
     // Validate end time is after start time
     if (endDateTime <= startDateTime) {
@@ -279,32 +282,8 @@ const JanitorialPage: React.FC = () => {
       return;
     }
     
-    // Validate duration is at least 2 hours
-    const duration = endDateTime.getTime() - startDateTime.getTime();
-    const twoHours = 2 * 60 * 60 * 1000;
-    
-    if (duration < twoHours) {
-      setError('Cleaning time must be at least 2 hours');
-      return;
-    }
-    
-    // Validate cleaning starts after reservation ends
-    // Add a small buffer (1 minute) to account for rounding/parsing differences
-    const oneMinute = 60 * 1000;
-    if (startDateTime.getTime() <= (reservationEndTime.getTime() + oneMinute)) {
-      const reservationEndStr = reservationEndTime.toLocaleTimeString('en-US', { 
-        hour: 'numeric', 
-        minute: '2-digit',
-        hour12: true 
-      });
-      const cleaningStartStr = startDateTime.toLocaleTimeString('en-US', { 
-        hour: 'numeric', 
-        minute: '2-digit',
-        hour12: true 
-      });
-      setError(`Cleaning time must start after the reservation ends. Reservation ends at ${reservationEndStr}, cleaning starts at ${cleaningStartStr}`);
-      return;
-    }
+    // No minimum duration requirement - janitorial can set cleaning time as needed
+    // No validation that cleaning must start after reservation ends - can be on different day
     
     // Format as ISO strings for backend
     const cleaningTimeData = {
@@ -320,7 +299,7 @@ const JanitorialPage: React.FC = () => {
   const handleCleaningTimeCancel = () => {
     setShowCleaningTimeModal(false);
     setSelectedReservation(null);
-    setCleaningTime({ startTime: '', endTime: '' });
+    setCleaningTime({ startDate: '', startTime: '', endDate: '', endTime: '' });
   };
 
   const handlePartyComplete = async (damagesFound: boolean) => {
@@ -1374,6 +1353,23 @@ const JanitorialPage: React.FC = () => {
             </div>
 
             <div style={{ marginBottom: '1rem' }}>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', color: '#374151' }}>
+                Cleaning Start Date *
+              </label>
+              <input
+                type="date"
+                value={cleaningTime.startDate}
+                onChange={(e) => setCleaningTime(prev => ({ ...prev, startDate: e.target.value }))}
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '4px',
+                  fontSize: '14px',
+                  marginBottom: '0.5rem'
+                }}
+                required
+              />
               <SimpleTimeSelector
                 label="Cleaning Start Time"
                 value={cleaningTime.startTime}
@@ -1383,6 +1379,23 @@ const JanitorialPage: React.FC = () => {
             </div>
 
             <div style={{ marginBottom: '1.5rem' }}>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', color: '#374151' }}>
+                Cleaning End Date *
+              </label>
+              <input
+                type="date"
+                value={cleaningTime.endDate}
+                onChange={(e) => setCleaningTime(prev => ({ ...prev, endDate: e.target.value }))}
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '4px',
+                  fontSize: '14px',
+                  marginBottom: '0.5rem'
+                }}
+                required
+              />
               <SimpleTimeSelector
                 label="Cleaning End Time"
                 value={cleaningTime.endTime}
