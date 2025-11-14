@@ -1185,12 +1185,13 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                       Reservation Fee ($) *
                     </label>
                     <ToggleSwitch
-                      checked={formData.reservationFee === '0' || formData.reservationFee === ''}
+                      checked={formData.reservationFee === '0'}
                       onChange={(checked) => {
                         if (checked) {
+                          // Toggle ON: Set to free (0)
                           setFormData({ ...formData, reservationFee: '0' });
                         } else {
-                          // When unchecking, clear the field so user can enter a new value
+                          // Toggle OFF: Clear field so user can enter a value
                           setFormData({ ...formData, reservationFee: '' });
                         }
                       }}
@@ -1201,15 +1202,10 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                     type="number"
                     step="0.01"
                     min="0"
-                    value={formData.reservationFee === '0' ? '0' : formData.reservationFee}
+                    value={formData.reservationFee}
                     onChange={(e) => {
                       const value = e.target.value;
-                      // If user enters a value, automatically uncheck "Free" if it was checked
-                      if (value !== '' && value !== '0') {
-                        setFormData({ ...formData, reservationFee: value });
-                      } else {
-                        setFormData({ ...formData, reservationFee: value });
-                      }
+                      setFormData({ ...formData, reservationFee: value });
                     }}
                     required
                     disabled={formData.reservationFee === '0'}
@@ -1231,12 +1227,13 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                       Deposit ($) *
                     </label>
                     <ToggleSwitch
-                      checked={formData.deposit === '0' || formData.deposit === ''}
+                      checked={formData.deposit === '0'}
                       onChange={(checked) => {
                         if (checked) {
+                          // Toggle ON: Set to free (0)
                           setFormData({ ...formData, deposit: '0' });
                         } else {
-                          // When unchecking, clear the field so user can enter a new value
+                          // Toggle OFF: Clear field so user can enter a value
                           setFormData({ ...formData, deposit: '' });
                         }
                       }}
@@ -1247,15 +1244,10 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                     type="number"
                     step="0.01"
                     min="0"
-                    value={formData.deposit === '0' ? '0' : formData.deposit}
+                    value={formData.deposit}
                     onChange={(e) => {
                       const value = e.target.value;
-                      // If user enters a value, automatically uncheck "Free" if it was checked
-                      if (value !== '' && value !== '0') {
-                        setFormData({ ...formData, deposit: value });
-                      } else {
-                        setFormData({ ...formData, deposit: value });
-                      }
+                      setFormData({ ...formData, deposit: value });
                     }}
                     required
                     disabled={formData.deposit === '0'}
