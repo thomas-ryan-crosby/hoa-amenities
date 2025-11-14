@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import LandingHeader from './LandingHeader';
 import Register from './Register';
@@ -10,7 +10,15 @@ interface AuthPageProps {
 
 const AuthPage: React.FC<AuthPageProps> = ({ onLogin }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [mode, setMode] = useState<'choice' | 'signin' | 'signup'>('choice');
+
+  // When on /login route, automatically show signin form
+  useEffect(() => {
+    if (location.pathname === '/login') {
+      setMode('signin');
+    }
+  }, [location.pathname]);
   const [formData, setFormData] = useState({
     email: '',
     password: ''
