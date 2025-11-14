@@ -589,12 +589,30 @@ const JanitorialPage: React.FC = () => {
     if (isAdmin) {
       if (reservation.status === 'NEW') {
         // Admin approving a NEW reservation
-        // If janitorial approval is required, admin is approving on behalf of janitorial
-        if (reservation.amenity.janitorialRequired !== false) {
+        // Check if janitorial approval is required
+        // Note: janitorialRequired defaults to true if not set, so we check for explicit false
+        const janitorialRequired = reservation.amenity?.janitorialRequired;
+        const approvalRequired = reservation.amenity?.approvalRequired;
+        
+        console.log('Approval button text check:', {
+          reservationId: reservation.id,
+          amenityName: reservation.amenity?.name,
+          janitorialRequired,
+          approvalRequired,
+          janitorialRequiredType: typeof janitorialRequired,
+          janitorialRequiredValue: janitorialRequired
+        });
+        
+        // If janitorial approval is explicitly required (true or undefined, which defaults to true)
+        // Admin is approving on behalf of janitorial
+        if (janitorialRequired === true || (janitorialRequired === undefined && approvalRequired !== false)) {
           return 'Approve on Behalf of Janitorial';
-        } else {
+        } else if (janitorialRequired === false && approvalRequired === true) {
           // No janitorial required, but admin approval is needed
           return 'Approve as Admin';
+        } else {
+          // Default: if we can't determine, assume janitorial is required (safer default)
+          return 'Approve on Behalf of Janitorial';
         }
       } else if (reservation.status === 'JANITORIAL_APPROVED') {
         // Admin approving a JANITORIAL_APPROVED reservation (final approval)
