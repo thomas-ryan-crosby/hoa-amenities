@@ -978,7 +978,7 @@ router.put('/:id/modify', authenticateToken, async (req: any, res) => {
         {
           model: Amenity,
           as: 'amenity',
-          attributes: ['id', 'name', 'reservationFee', 'deposit', 'modificationFeeEnabled', 'modificationFeeStructure', 'capacity']
+          attributes: ['id', 'name', 'reservationFee', 'deposit', 'modificationFeeEnabled', 'modificationFeeStructure', 'capacity', 'janitorialRequired', 'approvalRequired']
         }
       ]
     }) as ReservationWithAssociations;
@@ -1017,10 +1017,30 @@ router.put('/:id/modify', authenticateToken, async (req: any, res) => {
       isFirstChange
     );
 
+    // Determine the new initial status based on approval requirements
+    // When a reservation is modified, the approval workflow must restart
+    let newStatus: 'NEW' | 'JANITORIAL_APPROVED' | 'FULLY_APPROVED' = 'NEW';
+    if (!reservation.amenity?.janitorialRequired) {
+      // No janitorial approval needed
+      if (!reservation.amenity?.approvalRequired) {
+        // No admin approval needed either - auto-approve
+        newStatus = 'FULLY_APPROVED';
+      } else {
+        // Admin approval needed, but skip janitorial step
+        newStatus = 'JANITORIAL_APPROVED';
+      }
+    } else if (!reservation.amenity?.approvalRequired) {
+      // Janitorial approval needed, but no admin approval
+      newStatus = 'NEW';
+    } else {
+      // Both approvals needed
+      newStatus = 'NEW';
+    }
+
     // Build update query using raw SQL to avoid Sequelize column mapping issues
     const now = new Date().toISOString();
     const updateFields: string[] = [];
-    const updateValues: any = { id, now, newModificationCount };
+    const updateValues: any = { id, now, newModificationCount, newStatus };
 
     if (date) {
       updateFields.push('date = :date');
@@ -1059,7 +1079,10 @@ router.put('/:id/modify', authenticateToken, async (req: any, res) => {
       updateValues.specialRequirements = specialRequirements || null;
     }
 
-    // Always update modificationCount and updatedAt
+    // Always update status, modificationCount and updatedAt
+    // Reset status to restart approval workflow when reservation is modified
+    updateFields.push('status = :newStatus');
+    
     // Check if modificationcount column exists before trying to update it
     const columnCheck = await sequelize.query(`
       SELECT column_name 
@@ -1103,11 +1126,137 @@ router.put('/:id/modify', authenticateToken, async (req: any, res) => {
           model: Amenity,
           as: 'amenity',
           attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'janitorialRequired', 'approvalRequired']
+        },
+        {
+          model: User,
+          as: 'user',
+          attributes: ['id', 'firstName', 'lastName', 'email', 'notificationPreferences']
         }
       ]
-    });
+    }) as ReservationWithAssociations;
 
     console.log('✅ Reservation modified:', id);
+
+    // Send notifications based on new status
+    if (updatedReservation && updatedReservation.amenity) {
+      const dateStr = formatDate(updatedReservation.date);
+      const timeStart = formatTime(updatedReservation.partyTimeStart);
+      const timeEnd = formatTime(updatedReservation.partyTimeEnd);
+      const residentName = updatedReservation.user ? 
+        `${updatedReservation.user.firstName} ${updatedReservation.user.lastName}` : 'Resident';
+
+      // If status is NEW, notify janitorial staff (and admins if approvalRequired)
+      if (newStatus === 'NEW') {
+        const janitorialStaff = await User.findAll({
+          where: {
+            role: 'janitorial',
+            isActive: true
+          },
+          attributes: ['id', 'firstName', 'lastName', 'email', 'notificationPreferences']
+        });
+
+        // Send to janitorial staff
+        for (const staff of janitorialStaff) {
+          await sendNotificationIfEnabled(
+            staff,
+            'newReservationRequiresApproval',
+            () => buildNewReservationRequiresApprovalEmail({
+              firstName: staff.firstName,
+              amenityName: updatedReservation.amenity!.name,
+              date: dateStr,
+              partyTimeStart: timeStart,
+              partyTimeEnd: timeEnd,
+              guestCount: updatedReservation.guestCount,
+              residentName,
+              eventName: updatedReservation.eventName,
+              reservationId: updatedReservation.id
+            }),
+            true
+          );
+        }
+
+        // If admin approval is also needed, send to admins
+        if (updatedReservation.amenity.approvalRequired) {
+          const adminUsers = await User.findAll({
+            where: {
+              role: 'admin',
+              isActive: true
+            },
+            attributes: ['id', 'firstName', 'lastName', 'email', 'notificationPreferences']
+          });
+
+          for (const admin of adminUsers) {
+            await sendNotificationIfEnabled(
+              admin,
+              'newReservationRequiresApproval',
+              () => buildNewReservationRequiresApprovalEmail({
+                firstName: admin.firstName,
+                amenityName: updatedReservation.amenity!.name,
+                date: dateStr,
+                partyTimeStart: timeStart,
+                partyTimeEnd: timeEnd,
+                guestCount: updatedReservation.guestCount,
+                residentName,
+                eventName: updatedReservation.eventName,
+                reservationId: updatedReservation.id
+              }),
+              true
+            );
+          }
+        }
+      } else if (newStatus === 'JANITORIAL_APPROVED' && updatedReservation.amenity.approvalRequired) {
+        // Only admin approval needed
+        const adminUsers = await User.findAll({
+          where: {
+            role: 'admin',
+            isActive: true
+          },
+          attributes: ['id', 'firstName', 'lastName', 'email', 'notificationPreferences']
+        });
+
+        for (const admin of adminUsers) {
+          await sendNotificationIfEnabled(
+            admin,
+            'reservationPendingAdminApproval',
+            () => buildReservationPendingAdminApprovalEmail({
+              firstName: admin.firstName,
+              amenityName: updatedReservation.amenity!.name,
+              date: dateStr,
+              partyTimeStart: timeStart,
+              partyTimeEnd: timeEnd,
+              guestCount: updatedReservation.guestCount,
+              residentName,
+              eventName: updatedReservation.eventName,
+              reservationId: updatedReservation.id
+            }),
+            true
+          );
+        }
+      }
+
+      // Always notify the resident that their reservation was modified
+      if (updatedReservation.user) {
+        const userWithPrefs = await User.findByPk(updatedReservation.user.id, {
+          attributes: ['id', 'firstName', 'lastName', 'email', 'notificationPreferences']
+        });
+
+        if (userWithPrefs) {
+          await sendNotificationIfEnabled(
+            userWithPrefs,
+            'reservationModified',
+            () => buildReservationModifiedEmail({
+              firstName: userWithPrefs.firstName,
+              amenityName: updatedReservation.amenity!.name,
+              date: dateStr,
+              partyTimeStart: timeStart,
+              partyTimeEnd: timeEnd,
+              reservationId: updatedReservation.id
+            }),
+            true
+          );
+        }
+      }
+    }
 
     return res.json({
       message: 'Reservation modified successfully',
@@ -2709,7 +2858,7 @@ router.put('/:id/accept-modification', authenticateToken, async (req: any, res) 
         {
           model: Amenity,
           as: 'amenity',
-          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity', 'janitorialRequired', 'approvalRequired']
+          attributes: ['id', 'name', 'description', 'reservationFee', 'deposit', 'capacity']
         }
       ]
     }) as ReservationWithAssociations;
@@ -2781,28 +2930,7 @@ router.put('/:id/accept-modification', authenticateToken, async (req: any, res) 
       });
     }
 
-    // Determine the new initial status based on approval requirements
-    // When a modification is accepted, the approval workflow must restart
-    let newStatus: 'NEW' | 'JANITORIAL_APPROVED' | 'FULLY_APPROVED' = 'NEW';
-    if (!reservation.amenity?.janitorialRequired) {
-      // No janitorial approval needed
-      if (!reservation.amenity?.approvalRequired) {
-        // No admin approval needed either - auto-approve
-        newStatus = 'FULLY_APPROVED';
-      } else {
-        // Admin approval needed, but skip janitorial step
-        newStatus = 'JANITORIAL_APPROVED';
-      }
-    } else if (!reservation.amenity?.approvalRequired) {
-      // Janitorial approval needed, but no admin approval
-      newStatus = 'NEW';
-    } else {
-      // Both approvals needed
-      newStatus = 'NEW';
-    }
-
     // Apply the modification: update reservation with proposed values using raw SQL
-    // Reset status to restart approval workflow
     // At this point, we've already verified proposedPartyTimeStart and proposedPartyTimeEnd are not null
     // Try both quoted (camelCase) and unquoted (lowercase) column names to handle different table schemas
     try {
@@ -2813,7 +2941,6 @@ router.put('/:id/accept-modification', authenticateToken, async (req: any, res) 
             "partyTimeEnd" = :proposedEnd,
             "setupTimeStart" = :proposedStart,
             "setupTimeEnd" = :proposedStart,
-            status = :newStatus,
             modificationstatus = 'ACCEPTED',
             proposeddate = NULL,
             proposedpartytimestart = NULL,
@@ -2827,7 +2954,6 @@ router.put('/:id/accept-modification', authenticateToken, async (req: any, res) 
           proposedDate: proposedDate,
           proposedStart: proposedStart.toISOString(),
           proposedEnd: proposedEnd.toISOString(),
-          newStatus: newStatus,
           reservationId: id
         },
         type: QueryTypes.UPDATE
@@ -2854,7 +2980,6 @@ router.put('/:id/accept-modification', authenticateToken, async (req: any, res) 
                 partytimeend = :proposedEnd,
                 setuptimestart = :proposedStart,
                 setuptimeend = :proposedStart,
-                status = :newStatus,
                 modificationstatus = 'ACCEPTED',
                 proposeddate = NULL,
                 proposedpartytimestart = NULL,
@@ -2868,7 +2993,6 @@ router.put('/:id/accept-modification', authenticateToken, async (req: any, res) 
               proposedDate: proposedDate,
               proposedStart: proposedStart.toISOString(),
               proposedEnd: proposedEnd.toISOString(),
-              newStatus: newStatus,
               reservationId: id
             },
             type: QueryTypes.UPDATE
