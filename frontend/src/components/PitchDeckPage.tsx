@@ -340,8 +340,250 @@ const PitchDeckPage: React.FC = () => {
             marginBottom: '3rem',
             fontFamily: 'Inter, sans-serif'
           }}>
-            Targeting Luxury & Class A Residential Communities
+            From Total Market to Target Segment
           </p>
+
+          {/* Market Funnel */}
+          <div style={{
+            padding: '2rem',
+            borderRadius: '0.5rem',
+            backgroundColor: '#f9fafb',
+            border: '2px solid #355B45',
+            marginBottom: '3rem'
+          }}>
+            <h3 style={{
+              fontSize: '1.75rem',
+              fontWeight: 600,
+              color: '#1f2937',
+              marginBottom: '2rem',
+              textAlign: 'center',
+              fontFamily: 'Inter, sans-serif'
+            }}>
+              Total Addressable Landscape
+            </h3>
+            
+            {/* Total Market */}
+            <div style={{
+              padding: '1.5rem',
+              borderRadius: '0.5rem',
+              backgroundColor: '#e0f2fe',
+              border: '1px solid #7dd3fc',
+              marginBottom: '1.5rem'
+            }}>
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                gap: '1rem'
+              }}>
+                <div>
+                  <div style={{
+                    fontSize: '2.5rem',
+                    fontWeight: 700,
+                    color: '#355B45',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>
+                    370,000+
+                  </div>
+                  <p style={{
+                    fontSize: '1.125rem',
+                    color: '#1f2937',
+                    fontWeight: 600,
+                    marginTop: '0.5rem',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>
+                    Total HOAs in the United States
+                  </p>
+                  <p style={{
+                    color: '#6b7280',
+                    fontSize: '0.9rem',
+                    marginTop: '0.25rem',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>
+                    Source: Community Associations Institute
+                  </p>
+                </div>
+                <div style={{
+                  fontSize: '1.5rem',
+                  color: '#355B45',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  +
+                </div>
+                <div>
+                  <div style={{
+                    fontSize: '2.5rem',
+                    fontWeight: 700,
+                    color: '#355B45',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>
+                    150,000+
+                  </div>
+                  <p style={{
+                    fontSize: '1.125rem',
+                    color: '#1f2937',
+                    fontWeight: 600,
+                    marginTop: '0.5rem',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>
+                    Condo Complexes & Multifamily Properties
+                  </p>
+                  <p style={{
+                    color: '#6b7280',
+                    fontSize: '0.9rem',
+                    marginTop: '0.25rem',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>
+                    With shared amenities requiring reservation management
+                  </p>
+                </div>
+              </div>
+              <div style={{
+                marginTop: '1rem',
+                paddingTop: '1rem',
+                borderTop: '1px solid #bae6fd',
+                textAlign: 'center'
+              }}>
+                <p style={{
+                  fontSize: '1.25rem',
+                  color: '#1f2937',
+                  fontWeight: 600,
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  <strong>Total Market: 520,000+ properties</strong>
+                </p>
+              </div>
+            </div>
+
+            {/* Down-Selection Steps */}
+            <div style={{
+              padding: '1.5rem',
+              borderRadius: '0.5rem',
+              backgroundColor: '#f0f9ff',
+              border: '1px solid #bae6fd',
+              marginBottom: '1.5rem'
+            }}>
+              <h4 style={{
+                fontSize: '1.25rem',
+                fontWeight: 600,
+                color: '#1f2937',
+                marginBottom: '1rem',
+                fontFamily: 'Inter, sans-serif'
+              }}>
+                Market Down-Selection
+              </h4>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                gap: '1rem'
+              }}>
+                <div style={{
+                  padding: '1rem',
+                  backgroundColor: 'white',
+                  borderRadius: '0.25rem',
+                  border: '1px solid #cbd5e1'
+                }}>
+                  <div style={{
+                    fontSize: '1.5rem',
+                    fontWeight: 700,
+                    color: '#355B45',
+                    marginBottom: '0.5rem',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>
+                    Step 1
+                  </div>
+                  <p style={{
+                    color: '#6b7280',
+                    fontSize: '0.9rem',
+                    lineHeight: '1.5',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>
+                    <strong>Properties with Reservable Amenities:</strong><br/>
+                    Pools, clubrooms, event spaces, tennis courts, etc.
+                  </p>
+                  <p style={{
+                    color: '#355B45',
+                    fontWeight: 600,
+                    marginTop: '0.5rem',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>
+                    ~200,000 properties
+                  </p>
+                </div>
+
+                <div style={{
+                  padding: '1rem',
+                  backgroundColor: 'white',
+                  borderRadius: '0.25rem',
+                  border: '1px solid #cbd5e1'
+                }}>
+                  <div style={{
+                    fontSize: '1.5rem',
+                    fontWeight: 700,
+                    color: '#355B45',
+                    marginBottom: '0.5rem',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>
+                    Step 2
+                  </div>
+                  <p style={{
+                    color: '#6b7280',
+                    fontSize: '0.9rem',
+                    lineHeight: '1.5',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>
+                    <strong>Luxury/Class A Properties:</strong><br/>
+                    Higher HOA fees, professional management, premium amenities
+                  </p>
+                  <p style={{
+                    color: '#355B45',
+                    fontWeight: 600,
+                    marginTop: '0.5rem',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>
+                    ~65,000-75,000 properties
+                  </p>
+                </div>
+
+                <div style={{
+                  padding: '1rem',
+                  backgroundColor: 'white',
+                  borderRadius: '0.25rem',
+                  border: '1px solid #cbd5e1'
+                }}>
+                  <div style={{
+                    fontSize: '1.5rem',
+                    fontWeight: 700,
+                    color: '#355B45',
+                    marginBottom: '0.5rem',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>
+                    Step 3
+                  </div>
+                  <p style={{
+                    color: '#6b7280',
+                    fontSize: '0.9rem',
+                    lineHeight: '1.5',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>
+                    <strong>Neighbri Target Market:</strong><br/>
+                    Properties requiring sophisticated reservation & payment management
+                  </p>
+                  <p style={{
+                    color: '#355B45',
+                    fontWeight: 600,
+                    marginTop: '0.5rem',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>
+                    ~65,000-75,000 properties
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Key Market Stats */}
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
@@ -361,7 +603,7 @@ const PitchDeckPage: React.FC = () => {
                 marginBottom: '0.5rem',
                 fontFamily: 'Inter, sans-serif'
               }}>
-                15-20%
+                65K-75K
               </div>
               <p style={{
                 fontSize: '1.125rem',
@@ -370,14 +612,14 @@ const PitchDeckPage: React.FC = () => {
                 marginBottom: '0.5rem',
                 fontFamily: 'Inter, sans-serif'
               }}>
-                of HOAs are Class A/Luxury
+                Target Properties
               </p>
               <p style={{
                 color: '#6b7280',
                 lineHeight: '1.6',
                 fontFamily: 'Inter, sans-serif'
               }}>
-                Approximately 55,000-75,000 luxury communities with premium amenities nationwide
+                Luxury HOAs, condos, and multifamily properties with premium reservable amenities
               </p>
             </div>
 
@@ -410,7 +652,7 @@ const PitchDeckPage: React.FC = () => {
                 lineHeight: '1.6',
                 fontFamily: 'Inter, sans-serif'
               }}>
-                Luxury communities have higher budgets and greater need for professional management tools
+                Luxury properties have higher budgets and greater need for professional management tools
               </p>
             </div>
 
@@ -641,8 +883,7 @@ const PitchDeckPage: React.FC = () => {
               marginBottom: '1rem',
               fontFamily: 'Inter, sans-serif'
             }}>
-              <strong>Luxury/Class A Communities:</strong> Residential developments with premium amenities including pools, 
-              clubrooms, tennis courts, fitness centers, and event spaces. These communities typically have:
+              <strong>Neighbri serves luxury/Class A properties with reservable amenities:</strong>
             </p>
             <ul style={{
               color: '#6b7280',
@@ -651,11 +892,31 @@ const PitchDeckPage: React.FC = () => {
               marginBottom: '1rem',
               fontFamily: 'Inter, sans-serif'
             }}>
-              <li>Higher HOA fees ($300+/month)</li>
+              <li><strong>HOAs:</strong> Single-family home communities with shared amenities</li>
+              <li><strong>Condo Complexes:</strong> Condominium buildings with common spaces and amenities</li>
+              <li><strong>Multifamily Properties:</strong> Apartment communities and residential developments with reservable amenities</li>
+            </ul>
+            <p style={{
+              color: '#6b7280',
+              lineHeight: '1.8',
+              marginBottom: '1rem',
+              fontFamily: 'Inter, sans-serif'
+            }}>
+              <strong>Key Characteristics:</strong>
+            </p>
+            <ul style={{
+              color: '#6b7280',
+              lineHeight: '1.8',
+              paddingLeft: '1.5rem',
+              marginBottom: '1rem',
+              fontFamily: 'Inter, sans-serif'
+            }}>
+              <li>Higher HOA/condo fees ($300+/month)</li>
               <li>Professional property management</li>
               <li>Significant amenity budgets</li>
               <li>Residents with high expectations for service quality</li>
               <li>Complex reservation and payment requirements</li>
+              <li>Premium amenities: pools, clubrooms, tennis courts, fitness centers, event spaces</li>
             </ul>
           </div>
           <div style={{
