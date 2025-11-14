@@ -17,6 +17,7 @@ import AboutPage from './components/AboutPage';
 import OnboardingPage from './components/OnboardingPage';
 import NoCommunityPage from './components/NoCommunityPage';
 import TestPlanPage from './components/TestPlanPage';
+import PitchDeckPage from './components/PitchDeckPage';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated } = useAuth();
@@ -403,6 +404,7 @@ const AppContent: React.FC = () => {
         <Route path="/" element={<LandingPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/testplan" element={<TestPlanPage />} />
+        <Route path="/pitch" element={<PitchDeckPage />} />
         <Route path="/login" element={
           isAuthenticated ? 
             <Navigate to="/app" /> : 
