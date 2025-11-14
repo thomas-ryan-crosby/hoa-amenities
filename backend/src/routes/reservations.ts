@@ -1457,15 +1457,8 @@ router.put('/:id/approve', authenticateToken, async (req: any, res) => {
         });
       }
 
-      // Validate cleaning time duration (default 2 hours)
-      const cleaningDuration = new Date(cleaningTimeEnd).getTime() - new Date(cleaningTimeStart).getTime();
-      const twoHours = 2 * 60 * 60 * 1000; // 2 hours in milliseconds
-      
-      if (cleaningDuration < twoHours) {
-        return res.status(400).json({ 
-          message: 'Cleaning time must be at least 2 hours' 
-        });
-      }
+      // No minimum duration requirement - janitorial can set cleaning time as needed
+      // Duration validation removed to allow flexibility
     }
 
     // Determine new status based on current status and amenity approval requirements
