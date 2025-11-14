@@ -1267,13 +1267,8 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
         </button>
       </div>
 
-      {/* Calendar Grid */}
-      <div style={{ backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', overflow: 'hidden' }}>
-        {view === 'month' ? renderMonthView() : renderWeekView()}
-      </div>
-
       {/* Legend */}
-      <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div style={{ marginBottom: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
         <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#1f2937', marginBottom: '8px' }}>Legend</div>
         
         {/* Amenity Colors Section */}
@@ -1312,6 +1307,11 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Calendar Grid */}
+      <div style={{ backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', overflow: 'hidden' }}>
+        {view === 'month' ? renderMonthView() : renderWeekView()}
       </div>
 
       {/* Instructions */}
