@@ -636,27 +636,96 @@ const MembersManagement: React.FC<MembersManagementProps> = ({ currentCommunity,
                   </div>
                 )}
                 
-                {/* Status Toggle - Show for approved members */}
+                {/* Status Toggle and Ban Actions - Show for approved members */}
                 {member.status === 'approved' && (
-                  <button
-                    onClick={() => handleToggleStatus(member.userId, member.isActive)}
-                    disabled={actionLoading === member.userId || member.userId === user?.id}
-                    style={{
-                      padding: '0.375rem 0.75rem',
-                      border: 'none',
-                      borderRadius: '0.25rem',
-                      fontSize: '0.75rem',
-                      fontWeight: '500',
-                      cursor: member.userId === user?.id ? 'not-allowed' : 'pointer',
-                      backgroundColor: member.isActive ? '#dc2626' : '#059669',
-                      color: 'white',
-                      opacity: member.userId === user?.id ? 0.5 : 1,
-                      width: '100%'
-                    }}
-                  >
-                    {actionLoading === member.userId ? 'Updating...' : 
-                     member.isActive ? 'Deactivate' : 'Activate'}
-                  </button>
+                  <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    {/* Deactivate/Activate Button */}
+                    <div style={{ width: '100%' }}>
+                      <button
+                        onClick={() => handleToggleStatus(member.userId, member.isActive)}
+                        disabled={actionLoading === member.userId || member.userId === user?.id}
+                        title={member.isActive ? 'Temporarily disable account. User can be reactivated easily.' : 'Re-enable account access'}
+                        style={{
+                          padding: '0.5rem 1rem',
+                          border: 'none',
+                          borderRadius: '0.375rem',
+                          fontSize: '0.875rem',
+                          fontWeight: 600,
+                          fontFamily: 'Inter, sans-serif',
+                          cursor: member.userId === user?.id ? 'not-allowed' : 'pointer',
+                          backgroundColor: member.isActive ? '#f59e0b' : '#059669',
+                          color: 'white',
+                          opacity: member.userId === user?.id ? 0.5 : 1,
+                          width: '100%',
+                          transition: 'background-color 0.2s'
+                        }}
+                        onMouseEnter={(e) => {
+                          if (member.userId !== user?.id && !actionLoading) {
+                            e.currentTarget.style.backgroundColor = member.isActive ? '#d97706' : '#047857';
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = member.isActive ? '#f59e0b' : '#059669';
+                        }}
+                      >
+                        {actionLoading === member.userId ? 'Updating...' : 
+                         member.isActive ? 'Deactivate' : 'Activate'}
+                      </button>
+                      <p style={{ 
+                        fontSize: '0.7rem', 
+                        color: '#6b7280', 
+                        margin: '0.25rem 0 0 0',
+                        fontStyle: 'italic',
+                        lineHeight: '1.2'
+                      }}>
+                        {member.isActive 
+                          ? 'Temporarily disable access' 
+                          : 'Re-enable account access'}
+                      </p>
+                    </div>
+
+                    {/* Ban Button */}
+                    <div style={{ width: '100%' }}>
+                      <button
+                        onClick={() => handleBan(member.id)}
+                        disabled={actionLoading === member.id}
+                        title="Permanently ban member. Removes access to all amenities including public ones. Requires unban to restore access."
+                        style={{
+                          padding: '0.5rem 1rem',
+                          backgroundColor: '#dc2626',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '0.375rem',
+                          cursor: actionLoading === member.id ? 'not-allowed' : 'pointer',
+                          fontSize: '0.875rem',
+                          fontWeight: 600,
+                          fontFamily: 'Inter, sans-serif',
+                          opacity: actionLoading === member.id ? 0.6 : 1,
+                          width: '100%',
+                          transition: 'background-color 0.2s'
+                        }}
+                        onMouseEnter={(e) => {
+                          if (!actionLoading) {
+                            e.currentTarget.style.backgroundColor = '#b91c1c';
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = '#dc2626';
+                        }}
+                      >
+                        {actionLoading === member.id ? 'Processing...' : 'Ban Member'}
+                      </button>
+                      <p style={{ 
+                        fontSize: '0.7rem', 
+                        color: '#6b7280', 
+                        margin: '0.25rem 0 0 0',
+                        fontStyle: 'italic',
+                        lineHeight: '1.2'
+                      }}>
+                        Permanently remove access
+                      </p>
+                    </div>
+                  </div>
                 )}
 
                 {/* Status-specific actions */}
@@ -702,27 +771,6 @@ const MembersManagement: React.FC<MembersManagementProps> = ({ currentCommunity,
                         {actionLoading === member.id ? 'Processing...' : 'Deny'}
                       </button>
                     </>
-                  )}
-                  {member.status === 'approved' && (
-                    <button
-                      onClick={() => handleBan(member.id)}
-                      disabled={actionLoading === member.id}
-                      style={{
-                        padding: '0.5rem 1rem',
-                        backgroundColor: '#ef4444',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '0.375rem',
-                        cursor: actionLoading === member.id ? 'not-allowed' : 'pointer',
-                        fontSize: '0.875rem',
-                        fontWeight: 600,
-                        fontFamily: 'Inter, sans-serif',
-                        opacity: actionLoading === member.id ? 0.6 : 1,
-                        width: '100%'
-                      }}
-                    >
-                      {actionLoading === member.id ? 'Processing...' : 'Ban'}
-                    </button>
                   )}
                   {member.status === 'banned' && (
                     <button
