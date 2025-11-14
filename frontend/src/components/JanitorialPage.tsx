@@ -598,7 +598,7 @@ const JanitorialPage: React.FC = () => {
       }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
           <h1 style={{ fontSize: isMobile ? '1.5rem' : '2rem', fontWeight: 'bold', margin: 0 }}>
-            Janitorial Dashboard
+            Approval Center
           </h1>
           {currentCommunity && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>

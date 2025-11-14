@@ -37,7 +37,7 @@ const Header: React.FC = () => {
               <Link to="/janitorial" style={{ color: 'white', textDecoration: 'none', fontSize: '0.875rem', padding: '0.5rem 0.75rem', borderRadius: '0.375rem', transition: 'background-color 0.2s' }}
                 onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)'}
                 onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
-                Janitorial
+                Approval Center
               </Link>
             )}
             {isAdmin && (

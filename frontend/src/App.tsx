@@ -163,7 +163,7 @@ const Header: React.FC = () => {
                     {isJanitorial && (
                       <div style={{ position: 'relative', display: 'inline-block' }}>
                         <MobileNavLink to="/janitorial" onClick={() => setIsMobileMenuOpen(false)}>
-                          Janitorial
+                          Approval Center
                         </MobileNavLink>
                         {pendingActionsCount > 0 && (
                           <span
@@ -295,7 +295,7 @@ const Header: React.FC = () => {
                   e.currentTarget.style.backgroundColor = 'transparent';
                 }}
               >
-                Janitorial
+                Approval Center
                 {pendingActionsCount > 0 && (
                   <span
                     style={{
