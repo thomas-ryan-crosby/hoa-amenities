@@ -854,7 +854,7 @@ const PitchDeckPage: React.FC = () => {
                   fontFamily: 'Inter, sans-serif',
                   color: '#86efac'
                 }}>
-                  $400K+
+                  $800K+
                 </div>
                 <p style={{
                   fontSize: '1rem',
@@ -871,7 +871,7 @@ const PitchDeckPage: React.FC = () => {
                   lineHeight: '1.6',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  ~200 luxury communities in first 3 years × $2,000/year avg
+                  ~400+ luxury communities in first 3 years × $2,000/year avg
                 </p>
               </div>
             </div>
@@ -2152,7 +2152,7 @@ const PitchDeckPage: React.FC = () => {
                 marginBottom: '0.5rem',
                 fontFamily: 'Inter, sans-serif'
               }}>
-                10-20
+                30-50
               </div>
               <p style={{
                 color: '#6b7280',
@@ -2185,7 +2185,7 @@ const PitchDeckPage: React.FC = () => {
                 marginBottom: '0.5rem',
                 fontFamily: 'Inter, sans-serif'
               }}>
-                50-100
+                150-200
               </div>
               <p style={{
                 color: '#6b7280',
@@ -2218,7 +2218,7 @@ const PitchDeckPage: React.FC = () => {
                 marginBottom: '0.5rem',
                 fontFamily: 'Inter, sans-serif'
               }}>
-                200+
+                400+
               </div>
               <p style={{
                 color: '#6b7280',
@@ -2232,17 +2232,147 @@ const PitchDeckPage: React.FC = () => {
             padding: '2rem',
             borderRadius: '0.5rem',
             backgroundColor: '#f9fafb',
-            border: '2px solid #355B45'
+            border: '2px solid #355B45',
+            marginBottom: '2rem'
           }}>
             <p style={{
               color: '#6b7280',
               lineHeight: '1.8',
               fontFamily: 'Inter, sans-serif',
-              textAlign: 'center'
+              textAlign: 'center',
+              marginBottom: '1rem'
             }}>
               <strong>Revenue Model:</strong> With pricing tiers ranging from $99-299/month per community 
               (average ~$180/month), 100 communities would generate approximately $216,000 in annual recurring 
               revenue, plus transaction fees from reservation payments.
+            </p>
+          </div>
+
+          {/* Growth Methodology */}
+          <div style={{
+            padding: '2rem',
+            borderRadius: '0.5rem',
+            backgroundColor: '#f0f4f1',
+            border: '1px solid #355B45'
+          }}>
+            <h4 style={{
+              fontSize: '1.25rem',
+              fontWeight: 600,
+              color: '#1f2937',
+              marginBottom: '1rem',
+              fontFamily: 'Inter, sans-serif'
+            }}>
+              Growth Projection Methodology
+            </h4>
+            <p style={{
+              color: '#6b7280',
+              lineHeight: '1.8',
+              marginBottom: '1rem',
+              fontFamily: 'Inter, sans-serif'
+            }}>
+              Projections are based on accelerated growth assumptions with dedicated sales leadership from launch:
+            </p>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+              gap: '1rem',
+              marginBottom: '1rem'
+            }}>
+              <div style={{
+                padding: '1rem',
+                backgroundColor: 'white',
+                borderRadius: '0.25rem',
+                border: '1px solid #cbd5e1'
+              }}>
+                <p style={{
+                  color: '#1f2937',
+                  fontWeight: 600,
+                  marginBottom: '0.5rem',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  Year 1 Assumptions
+                </p>
+                <ul style={{
+                  color: '#6b7280',
+                  fontSize: '0.9rem',
+                  lineHeight: '1.6',
+                  paddingLeft: '1.25rem',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  <li>Dedicated sales leader on board</li>
+                  <li>30-60 day sales cycle</li>
+                  <li>5-8% lead conversion rate</li>
+                  <li>Structured sales process</li>
+                  <li>Focus on target markets</li>
+                </ul>
+              </div>
+              <div style={{
+                padding: '1rem',
+                backgroundColor: 'white',
+                borderRadius: '0.25rem',
+                border: '1px solid #cbd5e1'
+              }}>
+                <p style={{
+                  color: '#1f2937',
+                  fontWeight: 600,
+                  marginBottom: '0.5rem',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  Year 2 Assumptions
+                </p>
+                <ul style={{
+                  color: '#6b7280',
+                  fontSize: '0.9rem',
+                  lineHeight: '1.6',
+                  paddingLeft: '1.25rem',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  <li>Expand sales team (2-3 reps)</li>
+                  <li>Improved conversion (8-12%)</li>
+                  <li>Strong word-of-mouth referrals</li>
+                  <li>Property management partnerships</li>
+                  <li>Multi-region expansion</li>
+                </ul>
+              </div>
+              <div style={{
+                padding: '1rem',
+                backgroundColor: 'white',
+                borderRadius: '0.25rem',
+                border: '1px solid #cbd5e1'
+              }}>
+                <p style={{
+                  color: '#1f2937',
+                  fontWeight: 600,
+                  marginBottom: '0.5rem',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  Year 3 Assumptions
+                </p>
+                <ul style={{
+                  color: '#6b7280',
+                  fontSize: '0.9rem',
+                  lineHeight: '1.6',
+                  paddingLeft: '1.25rem',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  <li>Full sales team (5-7 reps)</li>
+                  <li>12-18% conversion rates</li>
+                  <li>Established partnership channels</li>
+                  <li>Full marketing automation</li>
+                  <li>Nationwide presence</li>
+                </ul>
+              </div>
+            </div>
+            <p style={{
+              color: '#6b7280',
+              fontSize: '0.9rem',
+              lineHeight: '1.6',
+              fontStyle: 'italic',
+              fontFamily: 'Inter, sans-serif'
+            }}>
+              <strong>Note:</strong> These projections assume successful execution of go-to-market strategy, 
+              adequate funding for sales/marketing, and strong product-market fit. Actual results may vary 
+              based on market conditions, competition, and execution capabilities.
             </p>
           </div>
         </section>
