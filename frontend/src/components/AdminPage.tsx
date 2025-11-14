@@ -53,20 +53,41 @@ interface Member {
   createdAt?: string;
 }
 
+interface AddMemberFormData {
+  email: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  address: string;
+  role: 'resident' | 'janitorial' | 'admin';
+}
+
 interface MembersManagementProps {
   currentCommunity: any;
   onError: (error: string | null) => void;
 }
 
 const MembersManagement: React.FC<MembersManagementProps> = ({ currentCommunity, onError }) => {
+  const { user } = useAuth();
   const [members, setMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'approved' | 'banned'>('all');
+  const [roleFilter, setRoleFilter] = useState<'all' | 'resident' | 'janitorial' | 'admin'>('all');
   const [actionLoading, setActionLoading] = useState<number | null>(null);
+  const [showAddMemberModal, setShowAddMemberModal] = useState(false);
+  const [addMemberLoading, setAddMemberLoading] = useState(false);
+  const [addMemberFormData, setAddMemberFormData] = useState<AddMemberFormData>({
+    email: '',
+    firstName: '',
+    lastName: '',
+    phone: '',
+    address: '',
+    role: 'resident'
+  });
 
   useEffect(() => {
     fetchMembers();
-  }, [currentCommunity?.id, statusFilter]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [currentCommunity?.id, statusFilter, roleFilter]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchMembers = async () => {
     if (!currentCommunity?.id) return;
@@ -76,7 +97,13 @@ const MembersManagement: React.FC<MembersManagementProps> = ({ currentCommunity,
       const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
       const token = localStorage.getItem('token');
       
-      const params = statusFilter !== 'all' ? { status: statusFilter } : {};
+      const params: any = {};
+      if (statusFilter !== 'all') {
+        params.status = statusFilter;
+      }
+      if (roleFilter !== 'all') {
+        params.role = roleFilter;
+      }
       const response = await axios.get(`${apiUrl}/api/communities/${currentCommunity.id}/members`, {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -209,6 +236,112 @@ const MembersManagement: React.FC<MembersManagementProps> = ({ currentCommunity,
     }
   };
 
+  const handleUpdateRole = async (userId: number, newRole: string) => {
+    if (!currentCommunity?.id) return;
+
+    try {
+      setActionLoading(userId);
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      const token = localStorage.getItem('token');
+      
+      await axios.put(
+        `${apiUrl}/api/communities/${currentCommunity.id}/users/${userId}/role`,
+        { role: newRole },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+
+      await fetchMembers();
+    } catch (error: any) {
+      console.error('Error updating role:', error);
+      onError(error.response?.data?.message || 'Failed to update role');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleToggleStatus = async (userId: number, isActive: boolean) => {
+    if (!currentCommunity?.id) return;
+
+    try {
+      setActionLoading(userId);
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      const token = localStorage.getItem('token');
+      
+      await axios.put(
+        `${apiUrl}/api/communities/${currentCommunity.id}/users/${userId}/status`,
+        { isActive: !isActive },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+
+      await fetchMembers();
+    } catch (error: any) {
+      console.error('Error updating status:', error);
+      onError(error.response?.data?.message || 'Failed to update status');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleAddMember = async () => {
+    if (!currentCommunity?.id) return;
+
+    // Validate required fields
+    if (!addMemberFormData.email || !addMemberFormData.firstName || !addMemberFormData.lastName) {
+      onError('Email, first name, and last name are required');
+      return;
+    }
+
+    try {
+      setAddMemberLoading(true);
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+      const token = localStorage.getItem('token');
+      
+      // First, check if user exists, if not create them
+      // Then create the membership
+      const response = await axios.post(
+        `${apiUrl}/api/communities/${currentCommunity.id}/members/add`,
+        {
+          email: addMemberFormData.email.trim(),
+          firstName: addMemberFormData.firstName.trim(),
+          lastName: addMemberFormData.lastName.trim(),
+          phone: addMemberFormData.phone.trim() || null,
+          address: addMemberFormData.address.trim() || null,
+          role: addMemberFormData.role
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+
+      // Reset form and close modal
+      setAddMemberFormData({
+        email: '',
+        firstName: '',
+        lastName: '',
+        phone: '',
+        address: '',
+        role: 'resident'
+      });
+      setShowAddMemberModal(false);
+      await fetchMembers();
+    } catch (error: any) {
+      console.error('Error adding member:', error);
+      onError(error.response?.data?.message || 'Failed to add member');
+    } finally {
+      setAddMemberLoading(false);
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     const styles: Record<string, { bg: string; color: string; text: string }> = {
       pending: { bg: '#fef3c7', color: '#92400e', text: 'Pending' },
@@ -256,11 +389,63 @@ const MembersManagement: React.FC<MembersManagementProps> = ({ currentCommunity,
   const pendingCount = members.filter(m => m.status === 'pending').length;
   const bannedCount = members.filter(m => m.status === 'banned').length;
 
+  const filteredMembers = members.filter(member => {
+    const statusMatch = statusFilter === 'all' || member.status === statusFilter;
+    const roleMatch = roleFilter === 'all' || member.role === roleFilter;
+    return statusMatch && roleMatch;
+  });
+
   return (
     <div style={{ padding: '2rem' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <h2 style={{ fontSize: '1.5rem', fontWeight: 600, color: '#1f2937' }}>Members Management</h2>
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
+        <button
+          onClick={() => setShowAddMemberModal(true)}
+          style={{
+            padding: '0.5rem 1rem',
+            backgroundColor: '#355B45',
+            color: 'white',
+            border: 'none',
+            borderRadius: '0.375rem',
+            cursor: 'pointer',
+            fontSize: '0.875rem',
+            fontWeight: 600,
+            fontFamily: 'Inter, sans-serif',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem'
+          }}
+        >
+          <span>+</span> Add Member
+        </button>
+      </div>
+
+      {/* Role Filter */}
+      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
+        {(['all', 'resident', 'janitorial', 'admin'] as const).map((role) => (
+          <button
+            key={role}
+            onClick={() => setRoleFilter(role)}
+            style={{
+              padding: '0.5rem 1rem',
+              backgroundColor: roleFilter === role ? '#355B45' : '#f3f4f6',
+              color: roleFilter === role ? 'white' : '#6b7280',
+              border: 'none',
+              borderRadius: '0.375rem',
+              cursor: 'pointer',
+              fontSize: '0.875rem',
+              fontWeight: 600,
+              fontFamily: 'Inter, sans-serif',
+              textTransform: 'capitalize'
+            }}
+          >
+            {role} ({role === 'all' ? members.length : members.filter(m => m.role === role).length})
+          </button>
+        ))}
+      </div>
+
+      {/* Status Filter */}
+      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
           <button
             onClick={() => setStatusFilter('all')}
             style={{
@@ -372,7 +557,7 @@ const MembersManagement: React.FC<MembersManagementProps> = ({ currentCommunity,
         <div style={{ textAlign: 'center', padding: '2rem' }}>
           <p>Loading members...</p>
         </div>
-      ) : members.length === 0 ? (
+      ) : filteredMembers.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '2rem' }}>
           <p style={{ color: '#6b7280' }}>
             {statusFilter === 'pending' ? 'No pending membership requests' :
@@ -383,7 +568,7 @@ const MembersManagement: React.FC<MembersManagementProps> = ({ currentCommunity,
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          {members.map((member) => (
+          {filteredMembers.map((member) => (
             <div
               key={member.id}
               style={{
@@ -418,29 +603,110 @@ const MembersManagement: React.FC<MembersManagementProps> = ({ currentCommunity,
                   </div>
                 )}
               </div>
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
-                {member.status === 'pending' && (
-                  <>
-                    <button
-                      onClick={() => handleApprove(member.id)}
-                      disabled={actionLoading === member.id}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', minWidth: '200px', alignItems: 'flex-end' }}>
+                {/* Role Selection - Show for approved members */}
+                {member.status === 'approved' && (
+                  <div style={{ width: '100%' }}>
+                    <label style={{ 
+                      display: 'block', 
+                      fontSize: '0.75rem', 
+                      fontWeight: '500', 
+                      color: '#374151',
+                      marginBottom: '0.25rem'
+                    }}>
+                      Role
+                    </label>
+                    <select
+                      value={member.role}
+                      onChange={(e) => handleUpdateRole(member.userId, e.target.value)}
+                      disabled={actionLoading === member.userId || member.userId === user?.id}
                       style={{
-                        padding: '0.5rem 1rem',
-                        backgroundColor: '#10b981',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '0.375rem',
-                        cursor: actionLoading === member.id ? 'not-allowed' : 'pointer',
+                        width: '100%',
+                        padding: '0.375rem',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '0.25rem',
                         fontSize: '0.875rem',
-                        fontWeight: 600,
-                        fontFamily: 'Inter, sans-serif',
-                        opacity: actionLoading === member.id ? 0.6 : 1
+                        backgroundColor: member.userId === user?.id ? '#f9fafb' : 'white',
+                        cursor: member.userId === user?.id ? 'not-allowed' : 'pointer'
                       }}
                     >
-                      {actionLoading === member.id ? 'Processing...' : 'Approve'}
-                    </button>
+                      <option value="resident">Resident</option>
+                      <option value="janitorial">Janitorial</option>
+                      <option value="admin">Admin</option>
+                    </select>
+                  </div>
+                )}
+                
+                {/* Status Toggle - Show for approved members */}
+                {member.status === 'approved' && (
+                  <button
+                    onClick={() => handleToggleStatus(member.userId, member.isActive)}
+                    disabled={actionLoading === member.userId || member.userId === user?.id}
+                    style={{
+                      padding: '0.375rem 0.75rem',
+                      border: 'none',
+                      borderRadius: '0.25rem',
+                      fontSize: '0.75rem',
+                      fontWeight: '500',
+                      cursor: member.userId === user?.id ? 'not-allowed' : 'pointer',
+                      backgroundColor: member.isActive ? '#dc2626' : '#059669',
+                      color: 'white',
+                      opacity: member.userId === user?.id ? 0.5 : 1,
+                      width: '100%'
+                    }}
+                  >
+                    {actionLoading === member.userId ? 'Updating...' : 
+                     member.isActive ? 'Deactivate' : 'Activate'}
+                  </button>
+                )}
+
+                {/* Status-specific actions */}
+                <div style={{ display: 'flex', gap: '0.5rem', width: '100%' }}>
+                  {member.status === 'pending' && (
+                    <>
+                      <button
+                        onClick={() => handleApprove(member.id)}
+                        disabled={actionLoading === member.id}
+                        style={{
+                          padding: '0.5rem 1rem',
+                          backgroundColor: '#10b981',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '0.375rem',
+                          cursor: actionLoading === member.id ? 'not-allowed' : 'pointer',
+                          fontSize: '0.875rem',
+                          fontWeight: 600,
+                          fontFamily: 'Inter, sans-serif',
+                          opacity: actionLoading === member.id ? 0.6 : 1,
+                          flex: 1
+                        }}
+                      >
+                        {actionLoading === member.id ? 'Processing...' : 'Approve'}
+                      </button>
+                      <button
+                        onClick={() => handleDeny(member.id)}
+                        disabled={actionLoading === member.id}
+                        style={{
+                          padding: '0.5rem 1rem',
+                          backgroundColor: '#ef4444',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '0.375rem',
+                          cursor: actionLoading === member.id ? 'not-allowed' : 'pointer',
+                          fontSize: '0.875rem',
+                          fontWeight: 600,
+                          fontFamily: 'Inter, sans-serif',
+                          opacity: actionLoading === member.id ? 0.6 : 1,
+                          flex: 1
+                        }}
+                      >
+                        {actionLoading === member.id ? 'Processing...' : 'Deny'}
+                      </button>
+                    </>
+                  )}
+                  {member.status === 'approved' && (
                     <button
-                      onClick={() => handleDeny(member.id)}
+                      onClick={() => handleBan(member.id)}
                       disabled={actionLoading === member.id}
                       style={{
                         padding: '0.5rem 1rem',
@@ -452,56 +718,272 @@ const MembersManagement: React.FC<MembersManagementProps> = ({ currentCommunity,
                         fontSize: '0.875rem',
                         fontWeight: 600,
                         fontFamily: 'Inter, sans-serif',
-                        opacity: actionLoading === member.id ? 0.6 : 1
+                        opacity: actionLoading === member.id ? 0.6 : 1,
+                        width: '100%'
                       }}
                     >
-                      {actionLoading === member.id ? 'Processing...' : 'Deny'}
+                      {actionLoading === member.id ? 'Processing...' : 'Ban'}
                     </button>
-                  </>
-                )}
-                {member.status === 'approved' && (
-                  <button
-                    onClick={() => handleBan(member.id)}
-                    disabled={actionLoading === member.id}
-                    style={{
-                      padding: '0.5rem 1rem',
-                      backgroundColor: '#ef4444',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '0.375rem',
-                      cursor: actionLoading === member.id ? 'not-allowed' : 'pointer',
-                      fontSize: '0.875rem',
-                      fontWeight: 600,
-                      fontFamily: 'Inter, sans-serif',
-                      opacity: actionLoading === member.id ? 0.6 : 1
-                    }}
-                  >
-                    {actionLoading === member.id ? 'Processing...' : 'Ban'}
-                  </button>
-                )}
-                {member.status === 'banned' && (
-                  <button
-                    onClick={() => handleUnban(member.id)}
-                    disabled={actionLoading === member.id}
-                    style={{
-                      padding: '0.5rem 1rem',
-                      backgroundColor: '#10b981',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '0.375rem',
-                      cursor: actionLoading === member.id ? 'not-allowed' : 'pointer',
-                      fontSize: '0.875rem',
-                      fontWeight: 600,
-                      fontFamily: 'Inter, sans-serif',
-                      opacity: actionLoading === member.id ? 0.6 : 1
-                    }}
-                  >
-                    {actionLoading === member.id ? 'Processing...' : 'Unban'}
-                  </button>
-                )}
+                  )}
+                  {member.status === 'banned' && (
+                    <button
+                      onClick={() => handleUnban(member.id)}
+                      disabled={actionLoading === member.id}
+                      style={{
+                        padding: '0.5rem 1rem',
+                        backgroundColor: '#10b981',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '0.375rem',
+                        cursor: actionLoading === member.id ? 'not-allowed' : 'pointer',
+                        fontSize: '0.875rem',
+                        fontWeight: 600,
+                        fontFamily: 'Inter, sans-serif',
+                        opacity: actionLoading === member.id ? 0.6 : 1,
+                        width: '100%'
+                      }}
+                    >
+                      {actionLoading === member.id ? 'Processing...' : 'Unban'}
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Add Member Modal */}
+      {showAddMemberModal && (
+        <div 
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowAddMemberModal(false);
+            }
+          }}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000
+          }}
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              backgroundColor: 'white',
+              padding: '2rem',
+              borderRadius: '8px',
+              maxWidth: '500px',
+              width: '90%',
+              maxHeight: '90vh',
+              overflow: 'auto',
+              position: 'relative'
+            }}
+          >
+            {/* Sticky Close Button */}
+            <button
+              onClick={() => setShowAddMemberModal(false)}
+              style={{
+                position: 'sticky',
+                top: '1rem',
+                right: '1rem',
+                float: 'right',
+                backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '50%',
+                width: '40px',
+                height: '40px',
+                fontSize: '24px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 10,
+                transition: 'background-color 0.2s',
+                fontFamily: 'Arial, sans-serif',
+                lineHeight: 1,
+                marginBottom: '-40px',
+                marginTop: '-2rem'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.6)';
+              }}
+            >
+              ×
+            </button>
+
+            <h2 style={{ marginBottom: '1.5rem', color: '#1f2937' }}>
+              Add New Member
+            </h2>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: '#374151' }}>
+                  Email <span style={{ color: '#ef4444' }}>*</span>
+                </label>
+                <input
+                  type="email"
+                  value={addMemberFormData.email}
+                  onChange={(e) => setAddMemberFormData({ ...addMemberFormData, email: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '0.5rem',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '0.375rem',
+                    fontSize: '0.875rem'
+                  }}
+                  placeholder="email@example.com"
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: '#374151' }}>
+                  First Name <span style={{ color: '#ef4444' }}>*</span>
+                </label>
+                <input
+                  type="text"
+                  value={addMemberFormData.firstName}
+                  onChange={(e) => setAddMemberFormData({ ...addMemberFormData, firstName: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '0.5rem',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '0.375rem',
+                    fontSize: '0.875rem'
+                  }}
+                  placeholder="John"
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: '#374151' }}>
+                  Last Name <span style={{ color: '#ef4444' }}>*</span>
+                </label>
+                <input
+                  type="text"
+                  value={addMemberFormData.lastName}
+                  onChange={(e) => setAddMemberFormData({ ...addMemberFormData, lastName: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '0.5rem',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '0.375rem',
+                    fontSize: '0.875rem'
+                  }}
+                  placeholder="Doe"
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: '#374151' }}>
+                  Phone
+                </label>
+                <input
+                  type="tel"
+                  value={addMemberFormData.phone}
+                  onChange={(e) => setAddMemberFormData({ ...addMemberFormData, phone: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '0.5rem',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '0.375rem',
+                    fontSize: '0.875rem'
+                  }}
+                  placeholder="(555) 123-4567"
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: '#374151' }}>
+                  Address
+                </label>
+                <input
+                  type="text"
+                  value={addMemberFormData.address}
+                  onChange={(e) => setAddMemberFormData({ ...addMemberFormData, address: e.target.value })}
+                  style={{
+                    width: '100%',
+                    padding: '0.5rem',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '0.375rem',
+                    fontSize: '0.875rem'
+                  }}
+                  placeholder="123 Main St, City, State ZIP"
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500', color: '#374151' }}>
+                  Role
+                </label>
+                <select
+                  value={addMemberFormData.role}
+                  onChange={(e) => setAddMemberFormData({ ...addMemberFormData, role: e.target.value as 'resident' | 'janitorial' | 'admin' })}
+                  style={{
+                    width: '100%',
+                    padding: '0.5rem',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '0.375rem',
+                    fontSize: '0.875rem'
+                  }}
+                >
+                  <option value="resident">Resident</option>
+                  <option value="janitorial">Janitorial</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+
+              <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
+                <button
+                  onClick={() => setShowAddMemberModal(false)}
+                  style={{
+                    flex: 1,
+                    padding: '0.75rem',
+                    backgroundColor: '#f3f4f6',
+                    color: '#374151',
+                    border: 'none',
+                    borderRadius: '0.375rem',
+                    cursor: 'pointer',
+                    fontSize: '0.875rem',
+                    fontWeight: 600,
+                    fontFamily: 'Inter, sans-serif'
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleAddMember}
+                  disabled={addMemberLoading}
+                  style={{
+                    flex: 1,
+                    padding: '0.75rem',
+                    backgroundColor: '#355B45',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '0.375rem',
+                    cursor: addMemberLoading ? 'not-allowed' : 'pointer',
+                    fontSize: '0.875rem',
+                    fontWeight: 600,
+                    fontFamily: 'Inter, sans-serif',
+                    opacity: addMemberLoading ? 0.6 : 1
+                  }}
+                >
+                  {addMemberLoading ? 'Adding...' : 'Add Member'}
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>
@@ -1930,135 +2412,9 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
 };
 
 const AdminPage: React.FC = () => {
-  const { user, currentCommunity } = useAuth();
-  const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { currentCommunity } = useAuth();
   const [error, setError] = useState<string | null>(null);
-  const [filter, setFilter] = useState<'all' | 'resident' | 'janitorial' | 'admin'>('all');
-  const [actionLoading, setActionLoading] = useState<number | null>(null);
-  const [activeTab, setActiveTab] = useState<'users' | 'members' | 'amenities'>('users');
-
-  useEffect(() => {
-    if (activeTab === 'users') {
-      fetchUsers();
-    }
-    // amenities and members tabs will fetch their own data
-  }, [activeTab, currentCommunity?.id]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const fetchUsers = async () => {
-    if (!currentCommunity?.id) {
-      setError('No community selected');
-      return;
-    }
-
-    try {
-      setLoading(true);
-      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-      const token = localStorage.getItem('token');
-      
-      // Fetch users for the current community only
-      const response = await axios.get(`${apiUrl}/api/communities/${currentCommunity.id}/users`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      setUsers(response.data.users);
-    } catch (error: any) {
-      console.error('❌ Error fetching users:', error);
-      setError(error.response?.data?.message || 'Failed to fetch users');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const updateUserRole = async (userId: number, newRole: string) => {
-    if (!currentCommunity?.id) {
-      setError('No community selected');
-      return;
-    }
-
-    try {
-      setActionLoading(userId);
-      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-      const token = localStorage.getItem('token');
-      
-      // Update role in the current community
-      await axios.put(`${apiUrl}/api/communities/${currentCommunity.id}/users/${userId}/role`, {
-        role: newRole
-      }, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      // Refresh users list
-      await fetchUsers();
-    } catch (error: any) {
-      console.error('❌ Error updating user role:', error);
-      setError(error.response?.data?.message || 'Failed to update user role');
-    } finally {
-      setActionLoading(null);
-    }
-  };
-
-  const toggleUserStatus = async (userId: number, isActive: boolean) => {
-    if (!currentCommunity?.id) {
-      setError('No community selected');
-      return;
-    }
-
-    try {
-      setActionLoading(userId);
-      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-      const token = localStorage.getItem('token');
-      
-      // Update status in the current community
-      await axios.put(`${apiUrl}/api/communities/${currentCommunity.id}/users/${userId}/status`, {
-        isActive: !isActive
-      }, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      // Refresh users list
-      await fetchUsers();
-    } catch (error: any) {
-      console.error('❌ Error updating user status:', error);
-      setError(error.response?.data?.message || 'Failed to update user status');
-    } finally {
-      setActionLoading(null);
-    }
-  };
-
-  const filteredUsers = filter === 'all' 
-    ? users 
-    : users.filter(u => u.role === filter);
-
-  const getRoleColor = (role: string) => {
-    switch (role) {
-      case 'admin': return '#dc2626';
-      case 'janitorial': return '#355B45';
-      case 'resident': return '#059669';
-      default: return '#6b7280';
-    }
-  };
-
-  const getStatusColor = (isActive: boolean) => {
-    return isActive ? '#059669' : '#dc2626';
-  };
-
-
-  if (loading) {
-    return (
-      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem 1rem' }}>
-        <div style={{ textAlign: 'center', padding: '2rem' }}>
-          <div style={{ fontSize: '1.5rem', color: '#6b7280' }}>Loading users...</div>
-        </div>
-      </div>
-    );
-  }
+  const [activeTab, setActiveTab] = useState<'members' | 'amenities'>('members');
 
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem 1rem' }}>
@@ -2116,7 +2472,7 @@ const AdminPage: React.FC = () => {
           )}
         </div>
         <p style={{ color: '#6b7280' }}>
-          Manage users, members, and amenities
+          Manage members and amenities
         </p>
       </div>
 
@@ -2127,23 +2483,6 @@ const AdminPage: React.FC = () => {
         marginBottom: '2rem',
         borderBottom: '2px solid #e5e7eb'
       }}>
-        <button
-          onClick={() => setActiveTab('users')}
-          style={{
-            padding: '0.75rem 1.5rem',
-            backgroundColor: activeTab === 'users' ? '#355B45' : 'transparent',
-            color: activeTab === 'users' ? 'white' : '#6b7280',
-            border: 'none',
-            borderBottom: activeTab === 'users' ? '2px solid #355B45' : '2px solid transparent',
-            cursor: 'pointer',
-            fontSize: '1rem',
-            fontWeight: activeTab === 'users' ? '600' : '400',
-            fontFamily: 'Inter, sans-serif',
-            marginBottom: '-2px'
-          }}
-        >
-          Users
-        </button>
         <button
           onClick={() => setActiveTab('members')}
           style={{
@@ -2208,159 +2547,6 @@ const AdminPage: React.FC = () => {
           currentCommunity={currentCommunity}
           onError={setError}
         />
-      )}
-
-      {/* Users Tab Content */}
-      {activeTab === 'users' && (
-        <>
-          {/* Filter Tabs */}
-          <div style={{ 
-            display: 'flex', 
-            gap: '0.5rem', 
-            marginBottom: '1.5rem',
-            borderBottom: '1px solid #e5e7eb',
-            paddingBottom: '1rem'
-          }}>
-            {(['all', 'resident', 'janitorial', 'admin'] as const).map((filterType) => (
-          <button
-            key={filterType}
-            onClick={() => setFilter(filterType)}
-            style={{
-              padding: '0.5rem 1rem',
-              border: 'none',
-              borderRadius: '0.375rem',
-              backgroundColor: filter === filterType ? '#355B45' : '#f3f4f6',
-              color: filter === filterType ? 'white' : '#374151',
-              fontFamily: 'Inter, sans-serif',
-              fontWeight: filter === filterType ? 600 : 400,
-              cursor: 'pointer',
-              fontSize: '0.875rem',
-              textTransform: 'capitalize'
-            }}
-          >
-            {filterType} ({filterType === 'all' ? users.length : users.filter(u => u.role === filterType).length})
-          </button>
-        ))}
-      </div>
-
-      {/* Users List */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        {filteredUsers.map((userData) => (
-          <div
-            key={userData.id}
-            style={{
-              backgroundColor: 'white',
-              padding: '1.5rem',
-              borderRadius: '0.5rem',
-              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
-              border: '1px solid #e5e7eb'
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              <div style={{ flex: 1 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
-                  <h3 style={{ fontSize: '1.125rem', fontWeight: '600', color: '#1f2937', margin: 0 }}>
-                    {userData.firstName} {userData.lastName}
-                  </h3>
-                  <span style={{
-                    backgroundColor: getRoleColor(userData.role),
-                    color: 'white',
-                    padding: '0.25rem 0.5rem',
-                    borderRadius: '0.25rem',
-                    fontSize: '0.75rem',
-                    fontWeight: '500',
-                    textTransform: 'uppercase'
-                  }}>
-                    {userData.role}
-                  </span>
-                  <span style={{
-                    backgroundColor: getStatusColor(userData.isActive),
-                    color: 'white',
-                    padding: '0.25rem 0.5rem',
-                    borderRadius: '0.25rem',
-                    fontSize: '0.75rem',
-                    fontWeight: '500'
-                  }}>
-                    {userData.isActive ? 'Active' : 'Inactive'}
-                  </span>
-                </div>
-                
-                <div style={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '0.5rem' }}>
-                  <div>📧 {userData.email}</div>
-                  {userData.phone && <div>📞 {userData.phone}</div>}
-                  {userData.address && <div>🏠 {userData.address}</div>}
-                  {userData.createdAt && <div>📅 Joined: {new Date(userData.createdAt).toLocaleDateString()}</div>}
-                  {userData.joinedAt && <div>📅 Joined Community: {new Date(userData.joinedAt).toLocaleDateString()}</div>}
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', minWidth: '200px' }}>
-                {/* Role Selection */}
-                <div>
-                  <label style={{ 
-                    display: 'block', 
-                    fontSize: '0.75rem', 
-                    fontWeight: '500', 
-                    color: '#374151',
-                    marginBottom: '0.25rem'
-                  }}>
-                    Role
-                  </label>
-                  <select
-                    value={userData.role}
-                    onChange={(e) => updateUserRole(userData.id, e.target.value)}
-                    disabled={actionLoading === userData.id || userData.id === user?.id}
-                    style={{
-                      width: '100%',
-                      padding: '0.375rem',
-                      border: '1px solid #d1d5db',
-                      borderRadius: '0.25rem',
-                      fontSize: '0.875rem',
-                      backgroundColor: userData.id === user?.id ? '#f9fafb' : 'white'
-                    }}
-                  >
-                    <option value="resident">Resident</option>
-                    <option value="janitorial">Janitorial</option>
-                    <option value="admin">Admin</option>
-                  </select>
-                </div>
-
-                {/* Status Toggle */}
-                <button
-                  onClick={() => toggleUserStatus(userData.id, userData.isActive)}
-                  disabled={actionLoading === userData.id || userData.id === user?.id}
-                  style={{
-                    padding: '0.375rem 0.75rem',
-                    border: 'none',
-                    borderRadius: '0.25rem',
-                    fontSize: '0.75rem',
-                    fontWeight: '500',
-                    cursor: userData.id === user?.id ? 'not-allowed' : 'pointer',
-                    backgroundColor: userData.isActive ? '#dc2626' : '#059669',
-                    color: 'white',
-                    opacity: userData.id === user?.id ? 0.5 : 1
-                  }}
-                >
-                  {actionLoading === userData.id ? 'Updating...' : 
-                   userData.isActive ? 'Deactivate' : 'Activate'}
-                </button>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {filteredUsers.length === 0 && (
-        <div style={{ 
-          textAlign: 'center', 
-          padding: '3rem',
-          color: '#6b7280'
-        }}>
-          <div style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>👥</div>
-          <div>No users found for the selected filter.</div>
-        </div>
-      )}
-        </>
       )}
 
     </div>
