@@ -101,11 +101,27 @@ const timeStart = new Date(createdReservation.partyTimeStart).toLocaleTimeString
 // This uses server timezone, not APP_TIMEZONE
 ```
 
+## Troubleshooting Timezone Issues
+
+### If times are off by an hour:
+1. **Check APP_TIMEZONE environment variable** - Set it in Railway/Railway environment variables
+   - For The Sanctuary (Louisiana, zip 70471): `APP_TIMEZONE=America/Chicago`
+   - Verify it's set: Check Railway dashboard → Environment Variables
+2. **Verify times are stored as UTC** - Times should be stored as ISO strings with 'Z' suffix (UTC)
+3. **Check DST (Daylight Saving Time)** - The timezone should handle DST automatically, but verify the timezone string is correct
+4. **Compare frontend vs backend** - Frontend uses browser timezone, backend uses APP_TIMEZONE - they should match
+
+### Common Issues:
+- **Times off by 1 hour**: Usually DST or incorrect APP_TIMEZONE setting
+- **Times off by multiple hours**: Wrong timezone entirely (e.g., using Eastern instead of Central)
+- **Times completely wrong**: Times might be stored in local time instead of UTC
+
 ## Maintenance
 
 - If timezone issues occur, check:
-  1. `APP_TIMEZONE` environment variable is set correctly
+  1. `APP_TIMEZONE` environment variable is set correctly in Railway
   2. All time formatting uses `formatTime()` utility
   3. No direct use of `toLocaleTimeString()` or `toLocaleString()`
-  4. Database times are stored as UTC timestamps
+  4. Database times are stored as UTC timestamps (ISO strings with 'Z')
+  5. Times from frontend are properly converted to UTC before storage
 
