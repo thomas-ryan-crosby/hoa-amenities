@@ -270,6 +270,17 @@ const TestPlanPage: React.FC = () => {
               <li>A web browser (Chrome, Firefox, Safari, or Edge recommended)</li>
               <li>About 1-2 hours to complete the full test plan (or test at your own pace!)</li>
             </ul>
+            <div style={{ 
+              backgroundColor: '#fef3c7', 
+              border: '1px solid #f59e0b', 
+              borderRadius: '6px', 
+              padding: '0.75rem', 
+              marginTop: '1rem' 
+            }}>
+              <p style={{ margin: '0', fontSize: '14px', color: '#92400e' }}>
+                <strong>⚠️ Email Notice:</strong> Many emails may go to your spam folder. Please check your spam folder for verification emails, notifications, and other communications. This is a known issue that will resolve when the domain-specific email is warmed up and ready for outbound communications.
+              </p>
+            </div>
             <p style={{ margin: '1rem 0 0.5rem 0', fontWeight: 600 }}>Testing Flow:</p>
             <ol style={{ margin: '0.5rem 0', paddingLeft: '1.5rem', lineHeight: '1.6' }}>
               <li><strong>Create a New Community</strong> (using Email 1) - This makes you an admin of your own community</li>
