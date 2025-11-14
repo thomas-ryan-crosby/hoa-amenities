@@ -25,6 +25,7 @@ import CTOOfferPage from './components/CTOOfferPage';
 import CFOOfferPage from './components/CFOOfferPage';
 import VPCSOfferPage from './components/VPCSOfferPage';
 import VPMarketingOfferPage from './components/VPMarketingOfferPage';
+import TechDocsPage from './components/TechDocsPage';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated } = useAuth();
@@ -480,6 +481,7 @@ const AppContent: React.FC = () => {
         <Route path="/company/cfo-offer" element={<CFOOfferPage />} />
         <Route path="/company/vpcs-offer" element={<VPCSOfferPage />} />
         <Route path="/company/vpmarketing-offer" element={<VPMarketingOfferPage />} />
+        <Route path="/internal/tech" element={<TechDocsPage />} />
         <Route path="/login" element={
           isAuthenticated ? 
             <Navigate to="/app" /> : 
