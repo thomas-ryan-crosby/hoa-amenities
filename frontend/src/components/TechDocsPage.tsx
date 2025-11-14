@@ -1,92 +1,27 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
+import mermaid from 'mermaid';
 import LandingHeader from './LandingHeader';
 
 const TechDocsPage: React.FC = () => {
-  return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#f9fafb' }}>
-      <LandingHeader />
-      <main style={{ maxWidth: '1400px', margin: '0 auto', padding: '2rem 1rem' }}>
-        {/* Header */}
-        <div style={{ marginBottom: '3rem', textAlign: 'center' }}>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', color: '#1f2937', marginBottom: '0.5rem' }}>
-            Internal Technical Documentation
-          </h1>
-          <p style={{ fontSize: '1.125rem', color: '#6b7280' }}>
-            System architecture, workflows, and technical specifications
-          </p>
-        </div>
+  const diagramRef = useRef<HTMLDivElement>(null);
 
-        {/* Table of Contents */}
-        <div style={{ 
-          backgroundColor: 'white', 
-          padding: '2rem', 
-          borderRadius: '8px', 
-          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-          marginBottom: '2rem'
-        }}>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#1f2937', marginBottom: '1rem' }}>
-            Table of Contents
-          </h2>
-          <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-            <li style={{ marginBottom: '0.5rem' }}>
-              <a href="#workflow" style={{ color: '#355B45', textDecoration: 'none' }}>
-                1. Reservation Workflow Diagram
-              </a>
-            </li>
-            <li style={{ marginBottom: '0.5rem' }}>
-              <a href="#status-flow" style={{ color: '#355B45', textDecoration: 'none' }}>
-                2. Status Flow & State Management
-              </a>
-            </li>
-            <li style={{ marginBottom: '0.5rem' }}>
-              <a href="#modification-flow" style={{ color: '#355B45', textDecoration: 'none' }}>
-                3. Modification Workflow
-              </a>
-            </li>
-            <li style={{ marginBottom: '0.5rem' }}>
-              <a href="#damage-flow" style={{ color: '#355B45', textDecoration: 'none' }}>
-                4. Damage Assessment Workflow
-              </a>
-            </li>
-            <li style={{ marginBottom: '0.5rem' }}>
-              <a href="#architecture" style={{ color: '#355B45', textDecoration: 'none' }}>
-                5. System Architecture
-              </a>
-            </li>
-          </ul>
-        </div>
+  useEffect(() => {
+    // Initialize Mermaid
+    mermaid.initialize({ 
+      startOnLoad: false,
+      theme: 'default',
+      securityLevel: 'loose',
+      flowchart: {
+        useMaxWidth: true,
+        htmlLabels: true,
+        curve: 'basis'
+      }
+    });
 
-        {/* Workflow Diagram Section */}
-        <section id="workflow" style={{ marginBottom: '4rem' }}>
-          <div style={{ 
-            backgroundColor: 'white', 
-            padding: '2rem', 
-            borderRadius: '8px', 
-            boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
-          }}>
-            <h2 style={{ fontSize: '2rem', fontWeight: 'bold', color: '#1f2937', marginBottom: '1rem' }}>
-              Reservation Workflow Diagram
-            </h2>
-            <p style={{ color: '#6b7280', marginBottom: '2rem' }}>
-              Complete flow of a reservation from creation through completion, including approval, modification, and damage assessment processes.
-            </p>
-
-            {/* Mermaid Diagram Container */}
-            <div style={{ 
-              backgroundColor: '#f9fafb', 
-              padding: '2rem', 
-              borderRadius: '8px',
-              border: '1px solid #e5e7eb',
-              overflowX: 'auto',
-              marginBottom: '2rem'
-            }}>
-              <div style={{ 
-                fontFamily: 'monospace', 
-                fontSize: '14px',
-                lineHeight: '1.6',
-                color: '#374151'
-              }}>
-                <pre style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{`graph TD
+    // Render the diagram
+    const renderDiagram = async () => {
+      if (diagramRef.current) {
+        const diagramDefinition = `graph TD
     Start([Resident Creates Reservation]) --> CheckApproval{Check Amenity<br/>Approval Requirements}
     
     CheckApproval -->|No Janitorial<br/>No Admin| FullyApproved1[Status: FULLY_APPROVED]
@@ -203,21 +138,115 @@ const TechDocsPage: React.FC = () => {
     style Completed2 fill:#6b7280,stroke:#4b5563,stroke-width:2px,color:#fff
     style Cancelled1 fill:#ef4444,stroke:#dc2626,stroke-width:2px,color:#fff
     style Cancelled2 fill:#ef4444,stroke:#dc2626,stroke-width:2px,color:#fff
-    style Cancelled3 fill:#ef4444,stroke:#dc2626,stroke-width:2px,color:#fff`}</pre>
-              </div>
-            </div>
+    style Cancelled3 fill:#ef4444,stroke:#dc2626,stroke-width:2px,color:#fff`;
 
-            <div style={{ 
-              backgroundColor: '#fef3c7', 
-              padding: '1rem', 
-              borderRadius: '4px',
-              border: '1px solid #f59e0b',
-              marginTop: '1rem'
-            }}>
-              <p style={{ margin: 0, fontSize: '0.875rem', color: '#92400e' }}>
-                <strong>Note:</strong> This diagram can be rendered using Mermaid.js. To view it visually, copy the diagram code above and paste it into a Mermaid editor (e.g., <a href="https://mermaid.live" target="_blank" rel="noopener noreferrer" style={{ color: '#92400e', textDecoration: 'underline' }}>mermaid.live</a>).
-              </p>
-            </div>
+        const id = 'mermaid-diagram-' + Date.now();
+        diagramRef.current.innerHTML = `<div class="mermaid" id="${id}">${diagramDefinition}</div>`;
+        
+        try {
+          await mermaid.run({
+            nodes: [diagramRef.current.querySelector(`#${id}`) as HTMLElement]
+          });
+        } catch (err) {
+          console.error('Error rendering Mermaid diagram:', err);
+          // Fallback: try using mermaid.contentLoaded() for older API
+          if (diagramRef.current) {
+            const mermaidElement = diagramRef.current.querySelector(`#${id}`) as HTMLElement;
+            if (mermaidElement) {
+              mermaid.contentLoaded();
+            }
+          }
+        }
+      }
+    };
+
+    renderDiagram();
+  }, []);
+  return (
+    <div style={{ minHeight: '100vh', backgroundColor: '#f9fafb' }}>
+      <LandingHeader />
+      <main style={{ maxWidth: '1400px', margin: '0 auto', padding: '2rem 1rem' }}>
+        {/* Header */}
+        <div style={{ marginBottom: '3rem', textAlign: 'center' }}>
+          <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', color: '#1f2937', marginBottom: '0.5rem' }}>
+            Internal Technical Documentation
+          </h1>
+          <p style={{ fontSize: '1.125rem', color: '#6b7280' }}>
+            System architecture, workflows, and technical specifications
+          </p>
+        </div>
+
+        {/* Table of Contents */}
+        <div style={{ 
+          backgroundColor: 'white', 
+          padding: '2rem', 
+          borderRadius: '8px', 
+          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+          marginBottom: '2rem'
+        }}>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#1f2937', marginBottom: '1rem' }}>
+            Table of Contents
+          </h2>
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+            <li style={{ marginBottom: '0.5rem' }}>
+              <a href="#workflow" style={{ color: '#355B45', textDecoration: 'none' }}>
+                1. Reservation Workflow Diagram
+              </a>
+            </li>
+            <li style={{ marginBottom: '0.5rem' }}>
+              <a href="#status-flow" style={{ color: '#355B45', textDecoration: 'none' }}>
+                2. Status Flow & State Management
+              </a>
+            </li>
+            <li style={{ marginBottom: '0.5rem' }}>
+              <a href="#modification-flow" style={{ color: '#355B45', textDecoration: 'none' }}>
+                3. Modification Workflow
+              </a>
+            </li>
+            <li style={{ marginBottom: '0.5rem' }}>
+              <a href="#damage-flow" style={{ color: '#355B45', textDecoration: 'none' }}>
+                4. Damage Assessment Workflow
+              </a>
+            </li>
+            <li style={{ marginBottom: '0.5rem' }}>
+              <a href="#architecture" style={{ color: '#355B45', textDecoration: 'none' }}>
+                5. System Architecture
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        {/* Workflow Diagram Section */}
+        <section id="workflow" style={{ marginBottom: '4rem' }}>
+          <div style={{ 
+            backgroundColor: 'white', 
+            padding: '2rem', 
+            borderRadius: '8px', 
+            boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+          }}>
+            <h2 style={{ fontSize: '2rem', fontWeight: 'bold', color: '#1f2937', marginBottom: '1rem' }}>
+              Reservation Workflow Diagram
+            </h2>
+            <p style={{ color: '#6b7280', marginBottom: '2rem' }}>
+              Complete flow of a reservation from creation through completion, including approval, modification, and damage assessment processes.
+            </p>
+
+            {/* Mermaid Diagram Container */}
+            <div 
+              ref={diagramRef}
+              style={{ 
+                backgroundColor: '#f9fafb', 
+                padding: '2rem', 
+                borderRadius: '8px',
+                border: '1px solid #e5e7eb',
+                overflowX: 'auto',
+                marginBottom: '2rem',
+                minHeight: '400px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}
+            />
           </div>
         </section>
 
