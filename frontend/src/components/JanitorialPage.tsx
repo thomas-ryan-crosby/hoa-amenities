@@ -89,6 +89,10 @@ const JanitorialPage: React.FC = () => {
   const [reviewAction, setReviewAction] = useState<'approve' | 'adjust' | 'deny'>('approve');
   const [adjustedAmount, setAdjustedAmount] = useState('');
   const [adminNotes, setAdminNotes] = useState('');
+  
+  // Damage Review View state (for viewing completed damage assessments)
+  const [showDamageViewModal, setShowDamageViewModal] = useState(false);
+  const [selectedDamageView, setSelectedDamageView] = useState<Reservation | null>(null);
 
   useEffect(() => {
     fetchReservations();
@@ -1170,6 +1174,63 @@ const JanitorialPage: React.FC = () => {
                           </p>
                         </div>
                       )}
+
+                      {/* Damage Review Section - Show for completed reservations with damage info */}
+                      {reservation.status === 'COMPLETED' && (
+                        reservation.damageAssessmentStatus === 'APPROVED' || 
+                        reservation.damageAssessmentStatus === 'ADJUSTED' || 
+                        reservation.damageAssessmentStatus === 'DENIED' ||
+                        reservation.damageAssessed ||
+                        reservation.damageCharge !== null
+                      ) && (
+                        <div style={{ 
+                          marginTop: '16px', 
+                          padding: '12px', 
+                          backgroundColor: reservation.damageAssessmentStatus === 'DENIED' ? '#f0f9ff' : '#fef2f2', 
+                          borderRadius: '4px',
+                          border: `1px solid ${reservation.damageAssessmentStatus === 'DENIED' ? '#0ea5e9' : '#fecaca'}`
+                        }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                            <h4 style={{ fontSize: '14px', fontWeight: 'bold', color: '#374151', margin: 0 }}>
+                              Damage Assessment
+                            </h4>
+                            <button
+                              onClick={() => {
+                                setSelectedDamageView(reservation);
+                                setShowDamageViewModal(true);
+                              }}
+                              style={{
+                                padding: '4px 12px',
+                                backgroundColor: '#355B45',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '4px',
+                                cursor: 'pointer',
+                                fontSize: '12px',
+                                fontWeight: '500'
+                              }}
+                            >
+                              View Details
+                            </button>
+                          </div>
+                          {reservation.damageAssessmentStatus && (
+                            <p style={{ margin: '4px 0', fontSize: '13px', color: '#6b7280' }}>
+                              <strong>Status:</strong> {
+                                reservation.damageAssessmentStatus === 'APPROVED' ? '✓ Approved' :
+                                reservation.damageAssessmentStatus === 'ADJUSTED' ? '⚠ Adjusted' :
+                                reservation.damageAssessmentStatus === 'DENIED' ? '✗ Denied' :
+                                reservation.damageAssessmentStatus === 'PENDING' ? '⏳ Pending Review' :
+                                'Unknown'
+                              }
+                            </p>
+                          )}
+                          {reservation.damageCharge !== null && reservation.damageCharge !== undefined && (
+                            <p style={{ margin: '4px 0', fontSize: '13px', color: '#6b7280' }}>
+                              <strong>Charge:</strong> ${parseFloat(String(reservation.damageCharge)).toFixed(2)}
+                            </p>
+                          )}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -1899,6 +1960,195 @@ const JanitorialPage: React.FC = () => {
                 }}
               >
                 Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Damage Review View Modal (for viewing completed damage assessments) */}
+      {showDamageViewModal && selectedDamageView && (
+        <div 
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              setShowDamageViewModal(false);
+              setSelectedDamageView(null);
+            }
+          }}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000
+          }}
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              backgroundColor: 'white',
+              padding: '2rem',
+              borderRadius: '8px',
+              maxWidth: '600px',
+              width: '90%',
+              maxHeight: '90vh',
+              overflow: 'auto',
+              position: 'relative'
+            }}
+          >
+            {/* Sticky Close Button */}
+            <button
+              onClick={() => {
+                setShowDamageViewModal(false);
+                setSelectedDamageView(null);
+              }}
+              style={{
+                position: 'sticky',
+                top: '1rem',
+                right: '1rem',
+                float: 'right',
+                backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '50%',
+                width: '40px',
+                height: '40px',
+                fontSize: '24px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 10,
+                transition: 'background-color 0.2s',
+                fontFamily: 'Arial, sans-serif',
+                lineHeight: 1,
+                marginBottom: '-40px',
+                marginTop: '-2rem'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.6)';
+              }}
+            >
+              ×
+            </button>
+
+            <h2 style={{ marginBottom: '1rem', color: '#1f2937' }}>
+              Damage Assessment Details
+            </h2>
+            
+            <div style={{ marginBottom: '1.5rem', padding: '1rem', backgroundColor: '#f9fafb', borderRadius: '4px' }}>
+              <p style={{ margin: '0 0 0.5rem 0', color: '#6b7280' }}>
+                <strong>Reservation:</strong> {selectedDamageView.amenity?.name}
+                {selectedDamageView.eventName && ` - ${selectedDamageView.eventName}`}
+              </p>
+              <p style={{ margin: '0 0 0.5rem 0', color: '#6b7280' }}>
+                <strong>Date:</strong> {formatDate(selectedDamageView.date)}
+              </p>
+              <p style={{ margin: '0 0 0.5rem 0', color: '#6b7280' }}>
+                <strong>Resident:</strong> {selectedDamageView.user?.firstName} {selectedDamageView.user?.lastName}
+              </p>
+              <p style={{ margin: '0 0 0.5rem 0', color: '#6b7280' }}>
+                <strong>Status:</strong> {
+                  selectedDamageView.damageAssessmentStatus === 'APPROVED' ? '✓ Approved' :
+                  selectedDamageView.damageAssessmentStatus === 'ADJUSTED' ? '⚠ Adjusted' :
+                  selectedDamageView.damageAssessmentStatus === 'DENIED' ? '✗ Denied' :
+                  selectedDamageView.damageAssessmentStatus === 'PENDING' ? '⏳ Pending Review' :
+                  'Not Assessed'
+                }
+              </p>
+            </div>
+
+            {selectedDamageView.damageDescription && (
+              <div style={{ marginBottom: '1.5rem' }}>
+                <h3 style={{ fontSize: '1rem', fontWeight: 'bold', color: '#374151', marginBottom: '0.5rem' }}>
+                  Damage Description
+                </h3>
+                <p style={{ margin: 0, color: '#6b7280', padding: '0.75rem', backgroundColor: '#f9fafb', borderRadius: '4px' }}>
+                  {selectedDamageView.damageDescription}
+                </p>
+              </div>
+            )}
+
+            <div style={{ marginBottom: '1.5rem' }}>
+              <h3 style={{ fontSize: '1rem', fontWeight: 'bold', color: '#374151', marginBottom: '0.5rem' }}>
+                Charges
+              </h3>
+              <div style={{ padding: '0.75rem', backgroundColor: '#f9fafb', borderRadius: '4px' }}>
+                {selectedDamageView.damageChargeAmount !== null && selectedDamageView.damageChargeAmount !== undefined && (
+                  <p style={{ margin: '0 0 0.5rem 0', color: '#6b7280' }}>
+                    <strong>Assessed Amount:</strong> ${parseFloat(String(selectedDamageView.damageChargeAmount)).toFixed(2)}
+                  </p>
+                )}
+                {selectedDamageView.damageChargeAdjusted !== null && selectedDamageView.damageChargeAdjusted !== undefined && (
+                  <p style={{ margin: '0 0 0.5rem 0', color: '#6b7280' }}>
+                    <strong>Adjusted Amount:</strong> ${parseFloat(String(selectedDamageView.damageChargeAdjusted)).toFixed(2)}
+                  </p>
+                )}
+                {selectedDamageView.damageCharge !== null && selectedDamageView.damageCharge !== undefined ? (
+                  <p style={{ margin: 0, color: '#1f2937', fontSize: '1.125rem', fontWeight: 'bold' }}>
+                    <strong>Final Charge:</strong> ${parseFloat(String(selectedDamageView.damageCharge)).toFixed(2)}
+                  </p>
+                ) : selectedDamageView.damageAssessmentStatus === 'DENIED' ? (
+                  <p style={{ margin: 0, color: '#059669', fontSize: '1rem', fontWeight: '600' }}>
+                    No charge applied
+                  </p>
+                ) : (
+                  <p style={{ margin: 0, color: '#6b7280' }}>
+                    No charge
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {selectedDamageView.damageNotes && (
+              <div style={{ marginBottom: '1.5rem' }}>
+                <h3 style={{ fontSize: '1rem', fontWeight: 'bold', color: '#374151', marginBottom: '0.5rem' }}>
+                  Assessment Notes
+                </h3>
+                <p style={{ margin: 0, color: '#6b7280', padding: '0.75rem', backgroundColor: '#f9fafb', borderRadius: '4px' }}>
+                  {selectedDamageView.damageNotes}
+                </p>
+              </div>
+            )}
+
+            {selectedDamageView.adminDamageNotes && (
+              <div style={{ marginBottom: '1.5rem' }}>
+                <h3 style={{ fontSize: '1rem', fontWeight: 'bold', color: '#374151', marginBottom: '0.5rem' }}>
+                  Admin Notes
+                </h3>
+                <p style={{ margin: 0, color: '#6b7280', padding: '0.75rem', backgroundColor: '#f9fafb', borderRadius: '4px' }}>
+                  {selectedDamageView.adminDamageNotes}
+                </p>
+              </div>
+            )}
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '2rem' }}>
+              <button
+                onClick={() => {
+                  setShowDamageViewModal(false);
+                  setSelectedDamageView(null);
+                }}
+                style={{
+                  backgroundColor: '#355B45',
+                  color: 'white',
+                  padding: '12px 24px',
+                  borderRadius: '4px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: '14px',
+                  fontWeight: 'bold',
+                  fontFamily: 'Inter, sans-serif'
+                }}
+              >
+                Close
               </button>
             </div>
           </div>
