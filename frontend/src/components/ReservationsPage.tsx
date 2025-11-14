@@ -395,9 +395,25 @@ const ReservationsPage: React.FC = () => {
                 gap: isMobile ? '0.75rem' : '0'
               }}>
                 <div>
-                  <h3 style={{ fontSize: isMobile ? '1.1rem' : '1.25rem', fontWeight: 'bold', margin: '0 0 4px 0' }}>
+                  {reservation.eventName && (
+                    <h3 style={{ fontSize: isMobile ? '1.1rem' : '1.25rem', fontWeight: 'bold', margin: '0 0 4px 0', color: '#1f2937' }}>
+                      {reservation.eventName}
+                    </h3>
+                  )}
+                  <h3 style={{ 
+                    fontSize: isMobile ? '1.1rem' : '1.25rem', 
+                    fontWeight: reservation.eventName ? '600' : 'bold', 
+                    margin: reservation.eventName ? '0 0 4px 0' : '0 0 4px 0',
+                    color: reservation.eventName ? '#6b7280' : '#1f2937',
+                    fontStyle: reservation.eventName ? 'italic' : 'normal'
+                  }}>
                     {reservation.amenity.name}
                   </h3>
+                  {reservation.amenity.description && (
+                    <p style={{ color: '#6b7280', margin: '0 0 4px 0', fontSize: isMobile ? '0.85rem' : '13px', lineHeight: '1.4' }}>
+                      {reservation.amenity.description}
+                    </p>
+                  )}
                   <p style={{ color: '#6b7280', margin: 0, fontSize: isMobile ? '0.9rem' : '14px' }}>
                     {formatDate(reservation.date)}
                   </p>
@@ -690,12 +706,23 @@ const ReservationsPage: React.FC = () => {
                         gap: isMobile ? '0.75rem' : '0'
                       }}>
                         <div>
-                          <h3 style={{ fontSize: isMobile ? '1.1rem' : '1.25rem', fontWeight: 'bold', margin: '0 0 4px 0' }}>
-                            {reservation.eventName || reservation.amenity.name}
-                          </h3>
                           {reservation.eventName && (
-                            <p style={{ color: '#6b7280', margin: '0 0 4px 0', fontSize: isMobile ? '0.9rem' : '14px', fontStyle: 'italic' }}>
-                              {reservation.amenity.name}
+                            <h3 style={{ fontSize: isMobile ? '1.1rem' : '1.25rem', fontWeight: 'bold', margin: '0 0 4px 0', color: '#1f2937' }}>
+                              {reservation.eventName}
+                            </h3>
+                          )}
+                          <h3 style={{ 
+                            fontSize: isMobile ? '1.1rem' : '1.25rem', 
+                            fontWeight: reservation.eventName ? '600' : 'bold', 
+                            margin: reservation.eventName ? '0 0 4px 0' : '0 0 4px 0',
+                            color: reservation.eventName ? '#6b7280' : '#1f2937',
+                            fontStyle: reservation.eventName ? 'italic' : 'normal'
+                          }}>
+                            {reservation.amenity.name}
+                          </h3>
+                          {reservation.amenity.description && (
+                            <p style={{ color: '#6b7280', margin: '0 0 4px 0', fontSize: isMobile ? '0.85rem' : '13px', lineHeight: '1.4' }}>
+                              {reservation.amenity.description}
                             </p>
                           )}
                           <p style={{ color: '#6b7280', margin: 0, fontSize: isMobile ? '0.9rem' : '14px' }}>
