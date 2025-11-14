@@ -112,17 +112,24 @@ const ModifyReservationModal: React.FC<ModifyReservationModalProps> = ({
       setReservationDate(dateStr);
       setOriginalDateStr(dateStr); // Store original date for comparison
       
-      // Parse times from ISO strings
-      const startTime = new Date(reservation.partyTimeStart);
-      const endTime = new Date(reservation.partyTimeEnd);
+      // Parse times from ISO strings - extract HH:MM directly to avoid timezone issues
+      // Format: "2025-01-15T13:00:00.000Z" or "2025-01-15T13:00:00"
+      const parseTimeFromISO = (isoString: string): string => {
+        if (!isoString) return '13:00'; // Default to 1pm if missing
+        // Extract the time part (HH:MM) from ISO string
+        const timeMatch = isoString.match(/T(\d{2}):(\d{2})/);
+        if (timeMatch) {
+          return `${timeMatch[1]}:${timeMatch[2]}`;
+        }
+        // Fallback: try parsing as Date (but this may have timezone issues)
+        const date = new Date(isoString);
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        return `${hours}:${minutes}`;
+      };
       
-      const startHours = String(startTime.getHours()).padStart(2, '0');
-      const startMinutes = String(startTime.getMinutes()).padStart(2, '0');
-      setReservationTimeStart(`${startHours}:${startMinutes}`);
-      
-      const endHours = String(endTime.getHours()).padStart(2, '0');
-      const endMinutes = String(endTime.getMinutes()).padStart(2, '0');
-      setReservationTimeEnd(`${endHours}:${endMinutes}`);
+      setReservationTimeStart(parseTimeFromISO(reservation.partyTimeStart));
+      setReservationTimeEnd(parseTimeFromISO(reservation.partyTimeEnd));
       
       setGuestCount(reservation.guestCount);
       setEventName(reservation.eventName || '');
