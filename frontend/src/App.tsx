@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { useJanitorialActions } from './hooks/useJanitorialActions';
 import Calendar from './components/Calendar';
 import ReservationModal from './components/ReservationModal';
 import ReservationsPage from './components/ReservationsPage';
@@ -88,6 +89,9 @@ const Header: React.FC = () => {
   const { user, logout, isAuthenticated, isAdmin, isJanitorial } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  
+  // Get pending janitorial actions count
+  const { pendingActionsCount } = useJanitorialActions();
 
   useEffect(() => {
     const handleResize = () => {
@@ -157,7 +161,37 @@ const Header: React.FC = () => {
                       <MobileNavLink to="/reservations" onClick={() => setIsMobileMenuOpen(false)}>My Reservations</MobileNavLink>
                     )}
                     {isJanitorial && (
-                      <MobileNavLink to="/janitorial" onClick={() => setIsMobileMenuOpen(false)}>Janitorial</MobileNavLink>
+                      <div style={{ position: 'relative', display: 'inline-block' }}>
+                        <MobileNavLink to="/janitorial" onClick={() => setIsMobileMenuOpen(false)}>
+                          Janitorial
+                        </MobileNavLink>
+                        {pendingActionsCount > 0 && (
+                          <span
+                            style={{
+                              position: 'absolute',
+                              top: '-4px',
+                              right: '-4px',
+                              backgroundColor: '#ef4444',
+                              color: 'white',
+                              borderRadius: '50%',
+                              width: '20px',
+                              height: '20px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              fontSize: '0.75rem',
+                              fontWeight: 700,
+                              fontFamily: 'Inter, sans-serif',
+                              lineHeight: 1,
+                              minWidth: '20px',
+                              padding: '0 2px',
+                              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)'
+                            }}
+                          >
+                            {pendingActionsCount > 99 ? '99+' : pendingActionsCount}
+                          </span>
+                        )}
+                      </div>
                     )}
                     {isAdmin && (
                       <MobileNavLink to="/admin" onClick={() => setIsMobileMenuOpen(false)}>Admin</MobileNavLink>
@@ -249,7 +283,10 @@ const Header: React.FC = () => {
                   fontSize: '0.95rem',
                   fontFamily: 'Inter, sans-serif',
                   fontWeight: 400,
-                  transition: 'background-color 0.2s'
+                  transition: 'background-color 0.2s',
+                  position: 'relative',
+                  display: 'inline-flex',
+                  alignItems: 'center'
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
@@ -259,6 +296,32 @@ const Header: React.FC = () => {
                 }}
               >
                 Janitorial
+                {pendingActionsCount > 0 && (
+                  <span
+                    style={{
+                      position: 'absolute',
+                      top: '-4px',
+                      right: '-4px',
+                      backgroundColor: '#ef4444',
+                      color: 'white',
+                      borderRadius: '50%',
+                      width: '20px',
+                      height: '20px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '0.75rem',
+                      fontWeight: 700,
+                      fontFamily: 'Inter, sans-serif',
+                      lineHeight: 1,
+                      minWidth: '20px',
+                      padding: '0 2px',
+                      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)'
+                    }}
+                  >
+                    {pendingActionsCount > 99 ? '99+' : pendingActionsCount}
+                  </span>
+                )}
               </Link>
             )}
             {isAdmin && (
