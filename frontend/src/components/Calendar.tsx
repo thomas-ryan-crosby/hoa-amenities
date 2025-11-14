@@ -1268,42 +1268,171 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
       </div>
 
       {/* Legend */}
-      <div style={{ marginBottom: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        <div style={{ fontSize: '16px', fontWeight: 'bold', color: '#1f2937', marginBottom: '8px' }}>Legend</div>
+      <div style={{ 
+        marginBottom: '20px', 
+        backgroundColor: 'white', 
+        borderRadius: '8px', 
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+        padding: '20px',
+        border: '1px solid #e5e7eb'
+      }}>
+        <h3 style={{ 
+          fontSize: '18px', 
+          fontWeight: 'bold', 
+          color: '#1f2937', 
+          margin: '0 0 20px 0',
+          paddingBottom: '12px',
+          borderBottom: '2px solid #f3f4f6'
+        }}>
+          Legend
+        </h3>
         
-        {/* Amenity Colors Section */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <div style={{ fontSize: '14px', fontWeight: '600', color: '#374151', marginBottom: '4px' }}>Amenity Colors</div>
-          <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
-            {amenities.map(amenity => (
-              <div key={amenity.id} style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+        <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '24px' }}>
+          {/* Amenity Colors Section */}
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div style={{ 
+              fontSize: '12px', 
+              fontWeight: '600', 
+              color: '#374151', 
+              marginBottom: '8px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px'
+            }}>
+              Amenity Colors
+            </div>
+            <div style={{ 
+              display: 'flex', 
+              gap: '16px', 
+              flexWrap: 'wrap',
+              alignItems: 'center'
+            }}>
+              {amenities.map(amenity => (
+                <div 
+                  key={amenity.id} 
+                  style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '8px',
+                    padding: '6px 12px',
+                    backgroundColor: '#f9fafb',
+                    borderRadius: '6px',
+                    border: '1px solid #e5e7eb',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  <div style={{ 
+                    width: '16px', 
+                    height: '16px', 
+                    backgroundColor: amenity.displayColor || '#355B45', 
+                    borderRadius: '4px',
+                    boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
+                    flexShrink: 0
+                  }}></div>
+                  <span style={{ 
+                    fontSize: '13px', 
+                    color: '#374151',
+                    fontWeight: '500'
+                  }}>
+                    {amenity.name}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          {/* Status Colors Section */}
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div style={{ 
+              fontSize: '12px', 
+              fontWeight: '600', 
+              color: '#374151', 
+              marginBottom: '8px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px'
+            }}>
+              Status Indicators
+            </div>
+            <div style={{ 
+              display: 'flex', 
+              gap: '16px', 
+              flexWrap: 'wrap',
+              alignItems: 'center'
+            }}>
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '8px',
+                padding: '6px 12px',
+                backgroundColor: '#f9fafb',
+                borderRadius: '6px',
+                border: '1px solid #e5e7eb'
+              }}>
                 <div style={{ 
                   width: '12px', 
                   height: '12px', 
-                  backgroundColor: amenity.displayColor || '#355B45', 
-                  borderRadius: '2px' 
+                  backgroundColor: '#6b7280', 
+                  borderRadius: '50%', 
+                  border: '2px solid white',
+                  boxShadow: '0 0 0 1px #e5e7eb'
                 }}></div>
-                <span style={{ fontSize: '12px', color: '#6b7280' }}>{amenity.name}</span>
+                <span style={{ 
+                  fontSize: '13px', 
+                  color: '#374151',
+                  fontWeight: '500'
+                }}>
+                  New
+                </span>
               </div>
-            ))}
-          </div>
-        </div>
-        
-        {/* Status Colors Section */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <div style={{ fontSize: '14px', fontWeight: '600', color: '#374151', marginBottom: '4px' }}>Status Indicators</div>
-          <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-              <div style={{ width: '8px', height: '8px', backgroundColor: '#6b7280', borderRadius: '50%', border: '1px solid white' }}></div>
-              <span style={{ fontSize: '12px', color: '#6b7280' }}>New</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-              <div style={{ width: '8px', height: '8px', backgroundColor: '#f59e0b', borderRadius: '50%', border: '1px solid white' }}></div>
-              <span style={{ fontSize: '12px', color: '#6b7280' }}>Janitorial Approved</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-              <div style={{ width: '8px', height: '8px', backgroundColor: '#10b981', borderRadius: '50%', border: '1px solid white' }}></div>
-              <span style={{ fontSize: '12px', color: '#6b7280' }}>Fully Approved</span>
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '8px',
+                padding: '6px 12px',
+                backgroundColor: '#f9fafb',
+                borderRadius: '6px',
+                border: '1px solid #e5e7eb'
+              }}>
+                <div style={{ 
+                  width: '12px', 
+                  height: '12px', 
+                  backgroundColor: '#f59e0b', 
+                  borderRadius: '50%', 
+                  border: '2px solid white',
+                  boxShadow: '0 0 0 1px #e5e7eb'
+                }}></div>
+                <span style={{ 
+                  fontSize: '13px', 
+                  color: '#374151',
+                  fontWeight: '500'
+                }}>
+                  Janitorial Approved
+                </span>
+              </div>
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '8px',
+                padding: '6px 12px',
+                backgroundColor: '#f9fafb',
+                borderRadius: '6px',
+                border: '1px solid #e5e7eb'
+              }}>
+                <div style={{ 
+                  width: '12px', 
+                  height: '12px', 
+                  backgroundColor: '#10b981', 
+                  borderRadius: '50%', 
+                  border: '2px solid white',
+                  boxShadow: '0 0 0 1px #e5e7eb'
+                }}></div>
+                <span style={{ 
+                  fontSize: '13px', 
+                  color: '#374151',
+                  fontWeight: '500'
+                }}>
+                  Fully Approved
+                </span>
+              </div>
             </div>
           </div>
         </div>
