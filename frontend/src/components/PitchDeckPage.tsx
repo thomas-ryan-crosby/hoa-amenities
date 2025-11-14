@@ -401,7 +401,19 @@ const PitchDeckPage: React.FC = () => {
                     marginTop: '0.25rem',
                     fontFamily: 'Inter, sans-serif'
                   }}>
-                    Source: Community Associations Institute
+                    Source:{' '}
+                    <a 
+                      href="https://www.caionline.org/AboutCommunityAssociations/Pages/StatisticalInformation.aspx"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        color: '#355B45',
+                        textDecoration: 'underline',
+                        fontWeight: 500
+                      }}
+                    >
+                      Community Associations Institute
+                    </a>
                   </p>
                 </div>
                 <div style={{
@@ -436,6 +448,28 @@ const PitchDeckPage: React.FC = () => {
                     fontFamily: 'Inter, sans-serif'
                   }}>
                     With shared amenities requiring reservation management
+                  </p>
+                  <p style={{
+                    color: '#6b7280',
+                    fontSize: '0.85rem',
+                    marginTop: '0.25rem',
+                    fontStyle: 'italic',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>
+                    Estimate based on{' '}
+                    <a 
+                      href="https://www.census.gov/data/tables/time-series/demo/construction/housing-characteristics.html"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        color: '#355B45',
+                        textDecoration: 'underline',
+                        fontWeight: 500
+                      }}
+                    >
+                      U.S. Census data
+                    </a>
+                    {' '}and industry analysis
                   </p>
                 </div>
               </div>
@@ -919,6 +953,66 @@ const PitchDeckPage: React.FC = () => {
               <li>Premium amenities: pools, clubrooms, tennis courts, fitness centers, event spaces</li>
             </ul>
           </div>
+          {/* Sources Section */}
+          <div style={{
+            padding: '1.5rem',
+            borderRadius: '0.5rem',
+            backgroundColor: '#f9fafb',
+            border: '1px solid #e5e7eb',
+            marginBottom: '2rem'
+          }}>
+            <h4 style={{
+              fontSize: '1rem',
+              fontWeight: 600,
+              color: '#1f2937',
+              marginBottom: '0.75rem',
+              fontFamily: 'Inter, sans-serif'
+            }}>
+              Sources & Methodology
+            </h4>
+            <ul style={{
+              color: '#6b7280',
+              fontSize: '0.85rem',
+              lineHeight: '1.6',
+              paddingLeft: '1.5rem',
+              fontFamily: 'Inter, sans-serif',
+              listStyle: 'disc'
+            }}>
+              <li>
+                HOA statistics:{' '}
+                <a 
+                  href="https://www.caionline.org/AboutCommunityAssociations/Pages/StatisticalInformation.aspx"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    color: '#355B45',
+                    textDecoration: 'underline'
+                  }}
+                >
+                  Community Associations Institute
+                </a>
+              </li>
+              <li>
+                Condo and multifamily estimates based on{' '}
+                <a 
+                  href="https://www.census.gov/data/tables/time-series/demo/construction/housing-characteristics.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    color: '#355B45',
+                    textDecoration: 'underline'
+                  }}
+                >
+                  U.S. Census Bureau housing data
+                </a>
+                {' '}and industry analysis
+              </li>
+              <li>
+                Market segmentation estimates derived from property management industry reports and luxury housing market analysis
+              </li>
+            </ul>
+          </div>
+
           <div style={{
             padding: '2rem',
             borderRadius: '0.5rem',
