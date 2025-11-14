@@ -112,16 +112,11 @@ const ModifyReservationModal: React.FC<ModifyReservationModalProps> = ({
       setReservationDate(dateStr);
       setOriginalDateStr(dateStr); // Store original date for comparison
       
-      // Parse times from ISO strings - extract HH:MM directly to avoid timezone issues
-      // Format: "2025-01-15T13:00:00.000Z" or "2025-01-15T13:00:00"
+      // Parse times from ISO strings - use Date object to get local time
+      // This matches what formatTime() does for display, ensuring consistency
       const parseTimeFromISO = (isoString: string): string => {
         if (!isoString) return '13:00'; // Default to 1pm if missing
-        // Extract the time part (HH:MM) from ISO string
-        const timeMatch = isoString.match(/T(\d{2}):(\d{2})/);
-        if (timeMatch) {
-          return `${timeMatch[1]}:${timeMatch[2]}`;
-        }
-        // Fallback: try parsing as Date (but this may have timezone issues)
+        // Parse as Date to get local time (matches formatTime behavior)
         const date = new Date(isoString);
         const hours = String(date.getHours()).padStart(2, '0');
         const minutes = String(date.getMinutes()).padStart(2, '0');
