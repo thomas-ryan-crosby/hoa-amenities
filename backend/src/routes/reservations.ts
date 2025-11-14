@@ -1687,6 +1687,18 @@ router.put('/:id/complete', authenticateToken, async (req: any, res) => {
       });
     }
 
+    // Validate that the reservation date has passed (or is today)
+    const reservationDate = new Date(reservation.date);
+    reservationDate.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    if (reservationDate > today) {
+      return res.status(400).json({ 
+        message: `Cannot mark reservation as complete before the reservation date. Reservation date: ${reservationDate.toLocaleDateString()}, Today: ${today.toLocaleDateString()}` 
+      });
+    }
+
     // Update reservation using raw SQL to avoid accessing modification fields
     const now = new Date().toISOString();
     if (damagesFound === false || damagesFound === 'false') {
