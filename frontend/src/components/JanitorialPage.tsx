@@ -1414,6 +1414,31 @@ const JanitorialPage: React.FC = () => {
               </p>
             </div>
 
+            {/* Show existing proposed cleaning time if it exists */}
+            {selectedReservation.cleaningTimeStart && selectedReservation.cleaningTimeEnd && (
+              <div style={{
+                marginBottom: '1.5rem',
+                padding: '1rem',
+                backgroundColor: '#eff6ff',
+                border: '1px solid #3b82f6',
+                borderRadius: '6px'
+              }}>
+                <p style={{ margin: '0 0 0.5rem 0', fontSize: '14px', fontWeight: 'bold', color: '#1e40af' }}>
+                  Proposed Janitorial Cleaning Time
+                </p>
+                <p style={{ margin: 0, fontSize: '14px', color: '#1e3a8a' }}>
+                  {formatTimeRange(selectedReservation.cleaningTimeStart, selectedReservation.cleaningTimeEnd)}
+                  <br />
+                  <span style={{ fontSize: '12px', color: '#6b7280' }}>
+                    ({formatDate(new Date(selectedReservation.cleaningTimeStart).toISOString().split('T')[0])})
+                  </span>
+                </p>
+                <p style={{ margin: '0.5rem 0 0 0', fontSize: '12px', color: '#6b7280', fontStyle: 'italic' }}>
+                  The fields below are pre-filled with this time. Confirm or modify as needed.
+                </p>
+              </div>
+            )}
+
             <div style={{ marginBottom: '1rem' }}>
               <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', color: '#374151' }}>
                 Cleaning Start Date *
