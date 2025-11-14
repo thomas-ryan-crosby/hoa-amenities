@@ -552,7 +552,7 @@ const PitchDeckPage: React.FC = () => {
                   lineHeight: '1.6',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  ~8,000 luxury communities in target regional markets × $2,000/year avg
+                  ~8,000 luxury communities in target markets × $2,000/year avg
                 </p>
               </div>
 
@@ -595,7 +595,7 @@ const PitchDeckPage: React.FC = () => {
                   lineHeight: '1.6',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  ~200 luxury communities in first 3 years (regional expansion) × $2,000/year avg
+                  ~200 luxury communities in first 3 years × $2,000/year avg
                 </p>
               </div>
             </div>
@@ -679,9 +679,9 @@ const PitchDeckPage: React.FC = () => {
               marginBottom: '1rem',
               fontFamily: 'Inter, sans-serif'
             }}>
-              Neighbri will initially focus on establishing a strong presence in select regional markets with high 
-              concentrations of luxury residential communities. These markets offer ideal conditions: numerous Class A 
-              developments, significant amenity budgets, and residents with high service expectations.
+              Neighbri will focus on establishing a strong presence in markets with high concentrations of luxury 
+              residential communities. These markets offer ideal conditions: numerous Class A developments, significant 
+              amenity budgets, and residents with high service expectations.
             </p>
             <p style={{
               color: '#6b7280',
@@ -2031,8 +2031,8 @@ const PitchDeckPage: React.FC = () => {
             margin: '0 auto 3rem',
             fontFamily: 'Inter, sans-serif'
           }}>
-            To become the leading platform for luxury and Class A community amenity management, starting with 
-            strategic regional markets and expanding to serve premium residential developments nationwide.
+            To become the leading platform for luxury and Class A community amenity management, serving premium 
+            residential developments nationwide and transforming how communities manage their shared amenities.
           </p>
           <div style={{
             padding: '3rem',
