@@ -228,6 +228,21 @@ const TestPlanPage: React.FC = () => {
         </h1>
 
         <div style={{
+          backgroundColor: '#dbeafe',
+          border: '2px solid #3b82f6',
+          borderRadius: '6px',
+          padding: '1.5rem',
+          marginBottom: '2rem'
+        }}>
+          <p style={{ margin: 0, fontSize: '16px', color: '#1e40af', fontWeight: 700, marginBottom: '0.5rem' }}>
+            📋 Test Plan Purpose
+          </p>
+          <p style={{ margin: 0, fontSize: '15px', color: '#1e3a8a', lineHeight: '1.6' }}>
+            This test plan is designed to test the <strong>website and app found at <a href="https://www.neighbri.com" target="_blank" rel="noopener noreferrer" style={{ color: '#1e40af', textDecoration: 'underline' }}>www.neighbri.com</a></strong>. Please use this plan to guide your testing of the Neighbri platform.
+          </p>
+        </div>
+
+        <div style={{
           backgroundColor: '#fef3c7',
           border: '1px solid #f59e0b',
           borderRadius: '6px',
