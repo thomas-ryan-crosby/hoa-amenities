@@ -33,8 +33,10 @@ interface Reservation {
   damageAssessmentStatus?: 'PENDING' | 'APPROVED' | 'ADJUSTED' | 'DENIED' | null;
   damageCharge?: number | null;
   damageChargeAmount?: number | null;
+  damageChargeAdjusted?: number | null;
   damageDescription?: string | null;
   damageNotes?: string | null;
+  adminDamageNotes?: string | null;
   amenity: {
     id: number;
     name: string;
