@@ -1171,6 +1171,336 @@ const PitchDeckPage: React.FC = () => {
         {/* Competition */}
         <section style={{
           padding: '6rem 1rem',
+          backgroundColor: '#f9fafb',
+          maxWidth: '1200px',
+          margin: '0 auto'
+        }}>
+          <h2 style={{
+            fontSize: '2.5rem',
+            fontWeight: 700,
+            color: '#1f2937',
+            marginBottom: '1rem',
+            textAlign: 'center',
+            fontFamily: 'Inter, sans-serif'
+          }}>
+            Competition
+          </h2>
+          <p style={{
+            fontSize: '1.125rem',
+            color: '#6b7280',
+            textAlign: 'center',
+            marginBottom: '3rem',
+            fontFamily: 'Inter, sans-serif'
+          }}>
+            How Neighbri compares to existing solutions
+          </p>
+          
+          {/* Competitor Comparison Table */}
+          <div style={{
+            overflowX: 'auto',
+            marginBottom: '3rem'
+          }}>
+            <table style={{
+              width: '100%',
+              borderCollapse: 'collapse',
+              backgroundColor: 'white',
+              borderRadius: '0.5rem',
+              overflow: 'hidden',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+            }}>
+              <thead>
+                <tr style={{
+                  backgroundColor: '#355B45',
+                  color: 'white'
+                }}>
+                  <th style={{
+                    padding: '1rem',
+                    textAlign: 'left',
+                    fontWeight: 600,
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '1rem'
+                  }}>Solution</th>
+                  <th style={{
+                    padding: '1rem',
+                    textAlign: 'left',
+                    fontWeight: 600,
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '1rem'
+                  }}>Type</th>
+                  <th style={{
+                    padding: '1rem',
+                    textAlign: 'left',
+                    fontWeight: 600,
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '1rem'
+                  }}>Limitations</th>
+                  <th style={{
+                    padding: '1rem',
+                    textAlign: 'left',
+                    fontWeight: 600,
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '1rem'
+                  }}>Neighbri Advantage</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style={{
+                  borderBottom: '1px solid #e5e7eb'
+                }}>
+                  <td style={{
+                    padding: '1rem',
+                    fontWeight: 600,
+                    color: '#1f2937',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>Manual Processes</td>
+                  <td style={{
+                    padding: '1rem',
+                    color: '#6b7280',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>Email, Spreadsheets, Phone</td>
+                  <td style={{
+                    padding: '1rem',
+                    color: '#6b7280',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>
+                    • Double-bookings<br/>
+                    • No payment integration<br/>
+                    • Time-consuming<br/>
+                    • Error-prone
+                  </td>
+                  <td style={{
+                    padding: '1rem',
+                    color: '#355B45',
+                    fontFamily: 'Inter, sans-serif',
+                    fontWeight: 600
+                  }}>
+                    ✓ Automated system<br/>
+                    ✓ Integrated payments<br/>
+                    ✓ Real-time availability<br/>
+                    ✓ Error-free
+                  </td>
+                </tr>
+                <tr style={{
+                  borderBottom: '1px solid #e5e7eb',
+                  backgroundColor: '#f9fafb'
+                }}>
+                  <td style={{
+                    padding: '1rem',
+                    fontWeight: 600,
+                    color: '#1f2937',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>Generic Property Management</td>
+                  <td style={{
+                    padding: '1rem',
+                    color: '#6b7280',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>AppFolio, Buildium, TOPS</td>
+                  <td style={{
+                    padding: '1rem',
+                    color: '#6b7280',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>
+                    • Over-engineered for amenity management<br/>
+                    • Complex interfaces<br/>
+                    • Expensive ($200-500+/month)<br/>
+                    • Not amenity-focused
+                  </td>
+                  <td style={{
+                    padding: '1rem',
+                    color: '#355B45',
+                    fontFamily: 'Inter, sans-serif',
+                    fontWeight: 600
+                  }}>
+                    ✓ Purpose-built for amenities<br/>
+                    ✓ Simple, intuitive UI<br/>
+                    ✓ Affordable pricing<br/>
+                    ✓ Specialized features
+                  </td>
+                </tr>
+                <tr style={{
+                  borderBottom: '1px solid #e5e7eb'
+                }}>
+                  <td style={{
+                    padding: '1rem',
+                    fontWeight: 600,
+                    color: '#1f2937',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>Calendar Booking Tools</td>
+                  <td style={{
+                    padding: '1rem',
+                    color: '#6b7280',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>Calendly, Acuity, Cal.com</td>
+                  <td style={{
+                    padding: '1rem',
+                    color: '#6b7280',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>
+                    • Not HOA-specific<br/>
+                    • No janitorial workflows<br/>
+                    • Limited payment options<br/>
+                    • No deposit management
+                  </td>
+                  <td style={{
+                    padding: '1rem',
+                    color: '#355B45',
+                    fontFamily: 'Inter, sans-serif',
+                    fontWeight: 600
+                  }}>
+                    ✓ Built for HOAs<br/>
+                    ✓ Janitorial integration<br/>
+                    ✓ Deposit handling<br/>
+                    ✓ HOA-specific features
+                  </td>
+                </tr>
+                <tr style={{
+                  backgroundColor: '#f9fafb'
+                }}>
+                  <td style={{
+                    padding: '1rem',
+                    fontWeight: 600,
+                    color: '#1f2937',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>Legacy HOA Software</td>
+                  <td style={{
+                    padding: '1rem',
+                    color: '#6b7280',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>CINC, TOPS, various</td>
+                  <td style={{
+                    padding: '1rem',
+                    color: '#6b7280',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>
+                    • Outdated interfaces<br/>
+                    • Poor user experience<br/>
+                    • Limited mobile support<br/>
+                    • High learning curve
+                  </td>
+                  <td style={{
+                    padding: '1rem',
+                    color: '#355B45',
+                    fontFamily: 'Inter, sans-serif',
+                    fontWeight: 600
+                  }}>
+                    ✓ Modern design<br/>
+                    ✓ Excellent UX<br/>
+                    ✓ Mobile-responsive<br/>
+                    ✓ Easy to use
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          {/* Key Differentiators */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: '2rem',
+            marginBottom: '3rem'
+          }}>
+            <div style={{
+              padding: '2rem',
+              borderRadius: '0.5rem',
+              backgroundColor: 'white',
+              border: '2px solid #355B45',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+            }}>
+              <div style={{
+                fontSize: '2rem',
+                marginBottom: '1rem',
+                textAlign: 'center'
+              }}>🎯</div>
+              <h3 style={{
+                fontSize: '1.25rem',
+                fontWeight: 600,
+                color: '#355B45',
+                marginBottom: '0.5rem',
+                textAlign: 'center',
+                fontFamily: 'Inter, sans-serif'
+              }}>
+                Purpose-Built
+              </h3>
+              <p style={{
+                color: '#6b7280',
+                lineHeight: '1.6',
+                textAlign: 'center',
+                fontFamily: 'Inter, sans-serif'
+              }}>
+                Designed specifically for luxury community amenity management, not adapted from other use cases
+              </p>
+            </div>
+
+            <div style={{
+              padding: '2rem',
+              borderRadius: '0.5rem',
+              backgroundColor: 'white',
+              border: '2px solid #355B45',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+            }}>
+              <div style={{
+                fontSize: '2rem',
+                marginBottom: '1rem',
+                textAlign: 'center'
+              }}>💰</div>
+              <h3 style={{
+                fontSize: '1.25rem',
+                fontWeight: 600,
+                color: '#355B45',
+                marginBottom: '0.5rem',
+                textAlign: 'center',
+                fontFamily: 'Inter, sans-serif'
+              }}>
+                Better Value
+              </h3>
+              <p style={{
+                color: '#6b7280',
+                lineHeight: '1.6',
+                textAlign: 'center',
+                fontFamily: 'Inter, sans-serif'
+              }}>
+                Affordable pricing focused on amenity management without paying for unnecessary features
+              </p>
+            </div>
+
+            <div style={{
+              padding: '2rem',
+              borderRadius: '0.5rem',
+              backgroundColor: 'white',
+              border: '2px solid #355B45',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+            }}>
+              <div style={{
+                fontSize: '2rem',
+                marginBottom: '1rem',
+                textAlign: 'center'
+              }}>⚡</div>
+              <h3 style={{
+                fontSize: '1.25rem',
+                fontWeight: 600,
+                color: '#355B45',
+                marginBottom: '0.5rem',
+                textAlign: 'center',
+                fontFamily: 'Inter, sans-serif'
+              }}>
+                Modern Technology
+              </h3>
+              <p style={{
+                color: '#6b7280',
+                lineHeight: '1.6',
+                textAlign: 'center',
+                fontFamily: 'Inter, sans-serif'
+              }}>
+                Built with modern tech stack for speed, reliability, and excellent user experience
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Competitive Advantage */}
+        <section style={{
+          padding: '6rem 1rem',
           backgroundColor: 'white',
           maxWidth: '1200px',
           margin: '0 auto'
