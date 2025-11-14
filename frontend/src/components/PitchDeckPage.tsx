@@ -492,7 +492,7 @@ const PitchDeckPage: React.FC = () => {
                   fontFamily: 'Inter, sans-serif',
                   color: '#86efac'
                 }}>
-                  $117M+
+                  $130M+
                 </div>
                 <p style={{
                   fontSize: '1rem',
@@ -509,7 +509,7 @@ const PitchDeckPage: React.FC = () => {
                   lineHeight: '1.6',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  65,000 luxury communities nationwide × $1,800/year avg subscription
+                  65,000 luxury communities nationwide × $2,000/year avg subscription
                 </p>
               </div>
 
@@ -535,7 +535,7 @@ const PitchDeckPage: React.FC = () => {
                   fontFamily: 'Inter, sans-serif',
                   color: '#86efac'
                 }}>
-                  $14.4M+
+                  $16M+
                 </div>
                 <p style={{
                   fontSize: '1rem',
@@ -552,7 +552,7 @@ const PitchDeckPage: React.FC = () => {
                   lineHeight: '1.6',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  ~8,000 luxury communities in Gulf South region (LA, MS, AL, FL, TX)
+                  ~8,000 luxury communities in Gulf South region (LA, MS, AL, FL, TX) × $2,000/year avg
                 </p>
               </div>
 
@@ -578,7 +578,7 @@ const PitchDeckPage: React.FC = () => {
                   fontFamily: 'Inter, sans-serif',
                   color: '#86efac'
                 }}>
-                  $360K+
+                  $400K+
                 </div>
                 <p style={{
                   fontSize: '1rem',
@@ -595,7 +595,7 @@ const PitchDeckPage: React.FC = () => {
                   lineHeight: '1.6',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  ~200 luxury communities in first 3 years (Northshore + Gulf South expansion)
+                  ~200 luxury communities in first 3 years (Northshore + Gulf South expansion) × $2,000/year avg
                 </p>
               </div>
             </div>
@@ -739,7 +739,7 @@ const PitchDeckPage: React.FC = () => {
                 marginBottom: '1.5rem',
                 fontFamily: 'Inter, sans-serif'
               }}>
-                Monthly/annual subscription fees based on community size and number of amenities.
+                Monthly/annual subscription fees tiered by number of units/households, with amenity add-ons available.
               </p>
               <div style={{
                 padding: '1rem',
@@ -749,21 +749,113 @@ const PitchDeckPage: React.FC = () => {
                 <p style={{
                   fontSize: '1.125rem',
                   color: '#1f2937',
-                  fontFamily: 'Inter, sans-serif'
+                  fontFamily: 'Inter, sans-serif',
+                  marginBottom: '0.75rem'
                 }}>
-                  <strong>Pricing Tiers:</strong>
+                  <strong>Pricing Tiers (Monthly):</strong>
                 </p>
-                <ul style={{
-                  marginTop: '0.5rem',
-                  paddingLeft: '1.5rem',
-                  color: '#6b7280',
-                  lineHeight: '1.8',
-                  fontFamily: 'Inter, sans-serif'
+                <div style={{
+                  marginBottom: '0.75rem',
+                  paddingBottom: '0.75rem',
+                  borderBottom: '1px solid #cbd5e1'
                 }}>
-                  <li>Starter: $49-99/month</li>
-                  <li>Professional: $149-249/month</li>
-                  <li>Enterprise: Custom pricing</li>
-                </ul>
+                  <p style={{
+                    color: '#355B45',
+                    fontWeight: 600,
+                    fontFamily: 'Inter, sans-serif',
+                    marginBottom: '0.25rem'
+                  }}>
+                    Starter: $99/month
+                  </p>
+                  <p style={{
+                    color: '#6b7280',
+                    fontSize: '0.9rem',
+                    fontFamily: 'Inter, sans-serif',
+                    marginLeft: '1rem'
+                  }}>
+                    • Up to 50 units/households<br/>
+                    • Up to 3 amenities included
+                  </p>
+                </div>
+                <div style={{
+                  marginBottom: '0.75rem',
+                  paddingBottom: '0.75rem',
+                  borderBottom: '1px solid #cbd5e1'
+                }}>
+                  <p style={{
+                    color: '#355B45',
+                    fontWeight: 600,
+                    fontFamily: 'Inter, sans-serif',
+                    marginBottom: '0.25rem'
+                  }}>
+                    Professional: $199/month
+                  </p>
+                  <p style={{
+                    color: '#6b7280',
+                    fontSize: '0.9rem',
+                    fontFamily: 'Inter, sans-serif',
+                    marginLeft: '1rem'
+                  }}>
+                    • 51-150 units/households<br/>
+                    • Up to 5 amenities included<br/>
+                    • Priority support
+                  </p>
+                </div>
+                <div style={{
+                  marginBottom: '0.75rem',
+                  paddingBottom: '0.75rem',
+                  borderBottom: '1px solid #cbd5e1'
+                }}>
+                  <p style={{
+                    color: '#355B45',
+                    fontWeight: 600,
+                    fontFamily: 'Inter, sans-serif',
+                    marginBottom: '0.25rem'
+                  }}>
+                    Enterprise: $299/month
+                  </p>
+                  <p style={{
+                    color: '#6b7280',
+                    fontSize: '0.9rem',
+                    fontFamily: 'Inter, sans-serif',
+                    marginLeft: '1rem'
+                  }}>
+                    • 151-300 units/households<br/>
+                    • Unlimited amenities<br/>
+                    • Dedicated support
+                  </p>
+                </div>
+                <div>
+                  <p style={{
+                    color: '#355B45',
+                    fontWeight: 600,
+                    fontFamily: 'Inter, sans-serif',
+                    marginBottom: '0.25rem'
+                  }}>
+                    Custom: Contact for pricing
+                  </p>
+                  <p style={{
+                    color: '#6b7280',
+                    fontSize: '0.9rem',
+                    fontFamily: 'Inter, sans-serif',
+                    marginLeft: '1rem'
+                  }}>
+                    • 300+ units/households<br/>
+                    • Enterprise features + white-label options
+                  </p>
+                </div>
+                <p style={{
+                  marginTop: '0.75rem',
+                  paddingTop: '0.75rem',
+                  borderTop: '1px solid #cbd5e1',
+                  color: '#6b7280',
+                  fontSize: '0.85rem',
+                  fontFamily: 'Inter, sans-serif',
+                  fontStyle: 'italic'
+                }}>
+                  Additional amenities: $25/month each beyond tier limit<br/>
+                  Annual billing: 15% discount (2 months free)
+                </p>
               </div>
             </div>
 
@@ -1793,9 +1885,9 @@ const PitchDeckPage: React.FC = () => {
               fontFamily: 'Inter, sans-serif',
               textAlign: 'center'
             }}>
-              <strong>Revenue Model:</strong> With an average subscription of $150/month per community, 
-              100 communities would generate $180,000 in annual recurring revenue, plus transaction fees 
-              from reservation payments.
+              <strong>Revenue Model:</strong> With pricing tiers ranging from $99-299/month per community 
+              (average ~$180/month), 100 communities would generate approximately $216,000 in annual recurring 
+              revenue, plus transaction fees from reservation payments.
             </p>
           </div>
         </section>
