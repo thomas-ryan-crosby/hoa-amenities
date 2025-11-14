@@ -218,23 +218,55 @@ const JanitorialPage: React.FC = () => {
       });
       setShowCleaningTimeModal(true);
     } else if (isAdmin) {
-      // For admin users, if reservation is JANITORIAL_APPROVED and has cleaning time, show modal with existing time
-      // Otherwise, approve directly
-      if (reservation.status === 'JANITORIAL_APPROVED' && reservation.cleaningTimeStart && reservation.cleaningTimeEnd) {
+      // For admin users approving JANITORIAL_APPROVED reservations
+      if (reservation.status === 'JANITORIAL_APPROVED') {
         setSelectedReservation(reservation);
-        // Use existing janitorial cleaning time as default
-        const existingCleaningStart = new Date(reservation.cleaningTimeStart);
-        const existingCleaningEnd = new Date(reservation.cleaningTimeEnd);
         
-        setCleaningTime({
-          startDate: formatDateForInput(existingCleaningStart),
-          startTime: formatTimeForSelector(existingCleaningStart),
-          endDate: formatDateForInput(existingCleaningEnd),
-          endTime: formatTimeForSelector(existingCleaningEnd)
+        console.log('Admin approving JANITORIAL_APPROVED reservation:', {
+          reservationId: reservation.id,
+          cleaningTimeStart: reservation.cleaningTimeStart,
+          cleaningTimeEnd: reservation.cleaningTimeEnd,
+          hasCleaningTime: !!(reservation.cleaningTimeStart && reservation.cleaningTimeEnd)
         });
+        
+        // If cleaning time exists, use it; otherwise use defaults
+        if (reservation.cleaningTimeStart && reservation.cleaningTimeEnd) {
+          // Use existing janitorial cleaning time as default
+          const existingCleaningStart = new Date(reservation.cleaningTimeStart);
+          const existingCleaningEnd = new Date(reservation.cleaningTimeEnd);
+          
+          console.log('Using existing cleaning time:', {
+            start: existingCleaningStart.toISOString(),
+            end: existingCleaningEnd.toISOString()
+          });
+          
+          setCleaningTime({
+            startDate: formatDateForInput(existingCleaningStart),
+            startTime: formatTimeForSelector(existingCleaningStart),
+            endDate: formatDateForInput(existingCleaningEnd),
+            endTime: formatTimeForSelector(existingCleaningEnd)
+          });
+        } else {
+          // No cleaning time set yet, use defaults (30 minutes after reservation ends, then 2 hours later)
+          const reservationEndTime = new Date(reservation.partyTimeEnd);
+          const defaultCleaningStart = new Date(reservationEndTime.getTime() + 30 * 60 * 1000);
+          const defaultCleaningEnd = new Date(defaultCleaningStart.getTime() + 2 * 60 * 60 * 1000);
+          
+          console.log('Using default cleaning time:', {
+            start: defaultCleaningStart.toISOString(),
+            end: defaultCleaningEnd.toISOString()
+          });
+          
+          setCleaningTime({
+            startDate: formatDateForInput(defaultCleaningStart),
+            startTime: formatTimeForSelector(defaultCleaningStart),
+            endDate: formatDateForInput(defaultCleaningEnd),
+            endTime: formatTimeForSelector(defaultCleaningEnd)
+          });
+        }
         setShowCleaningTimeModal(true);
       } else {
-        // No cleaning time set, approve directly
+        // For NEW reservations, approve directly (or show modal if needed)
         await approveReservation(reservationId);
       }
     }
@@ -950,10 +982,10 @@ const JanitorialPage: React.FC = () => {
                     {reservation.guestCount} people
                   </p>
                 </div>
-                {reservation.status === 'JANITORIAL_APPROVED' && reservation.cleaningTimeStart && reservation.cleaningTimeEnd && (
+                {reservation.cleaningTimeStart && reservation.cleaningTimeEnd && (
                   <div>
                     <h4 style={{ fontSize: '14px', fontWeight: 'bold', color: '#374151', margin: '0 0 4px 0' }}>
-                      Janitorial Cleaning Time
+                      Proposed Janitorial Cleaning Time
                     </h4>
                     <p style={{ margin: 0, fontSize: '14px', color: '#3b82f6' }}>
                       {formatTimeRange(reservation.cleaningTimeStart, reservation.cleaningTimeEnd)}
