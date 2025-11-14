@@ -91,22 +91,44 @@ const ModifyReservationModal: React.FC<ModifyReservationModalProps> = ({
     }
   }, [reservation, reservationDate]);
 
-  // Parse times from ISO strings - use Date object to get local time
-  // This matches what formatTime() does for display, ensuring consistency
+  // Parse times from ISO strings - extract HH:MM in 24-hour format
+  // This must match what formatTime() displays to ensure consistency
+  // We use the same Date parsing as formatTime() to handle timezone correctly
   const parseTimeFromISO = (isoString: string): string => {
-    if (!isoString) return '13:00'; // Default to 1pm if missing
+    if (!isoString) {
+      console.warn('parseTimeFromISO: Empty ISO string, defaulting to 13:00');
+      return '13:00'; // Default to 1pm if missing
+    }
     try {
-      // Parse as Date to get local time (matches formatTime behavior)
+      // Parse as Date to get local time (same as formatTime does)
       const date = new Date(isoString);
       if (isNaN(date.getTime())) {
-        console.error('Invalid date string:', isoString);
+        console.error('parseTimeFromISO: Invalid date string:', isoString);
         return '13:00';
       }
-      const hours = String(date.getHours()).padStart(2, '0');
-      const minutes = String(date.getMinutes()).padStart(2, '0');
-      return `${hours}:${minutes}`;
+      
+      // Get local time components (same method formatTime uses internally)
+      const hours = date.getHours();
+      const minutes = date.getMinutes();
+      
+      // Format as HH:MM in 24-hour format
+      const hoursStr = String(hours).padStart(2, '0');
+      const minutesStr = String(minutes).padStart(2, '0');
+      const result = `${hoursStr}:${minutesStr}`;
+      
+      // Debug logging to help diagnose issues
+      console.log('parseTimeFromISO:', {
+        input: isoString,
+        parsedDate: date.toISOString(),
+        localHours: hours,
+        localMinutes: minutes,
+        result: result,
+        formattedTime: formatTime(isoString) // What formatTime would show
+      });
+      
+      return result;
     } catch (error) {
-      console.error('Error parsing time from ISO:', error, isoString);
+      console.error('parseTimeFromISO: Error parsing time from ISO:', error, isoString);
       return '13:00';
     }
   };
@@ -136,12 +158,43 @@ const ModifyReservationModal: React.FC<ModifyReservationModalProps> = ({
       const startTime = parseTimeFromISO(reservation.partyTimeStart);
       const endTime = parseTimeFromISO(reservation.partyTimeEnd);
       
-      console.log('Setting times:', {
-        partyTimeStart: reservation.partyTimeStart,
-        partyTimeEnd: reservation.partyTimeEnd,
-        parsedStart: startTime,
-        parsedEnd: endTime
+      // Additional validation: compare with what formatTime would show
+      const displayedStartTime = formatTime(reservation.partyTimeStart);
+      const displayedEndTime = formatTime(reservation.partyTimeEnd);
+      
+      console.log('Setting times - Full Debug:', {
+        reservationId: reservation.id,
+        partyTimeStart_ISO: reservation.partyTimeStart,
+        partyTimeEnd_ISO: reservation.partyTimeEnd,
+        parsedStart_24h: startTime,
+        parsedEnd_24h: endTime,
+        displayedStartTime: displayedStartTime,
+        displayedEndTime: displayedEndTime,
+        // Verify the parsed times match what's displayed
+        startMatches: startTime === parseTimeFromISO(reservation.partyTimeStart),
+        endMatches: endTime === parseTimeFromISO(reservation.partyTimeEnd)
       });
+      
+      // Double-check: if the parsed time doesn't match what formatTime shows, log a warning
+      const startDate = new Date(reservation.partyTimeStart);
+      const endDate = new Date(reservation.partyTimeEnd);
+      const startHours = startDate.getHours();
+      const startMinutes = startDate.getMinutes();
+      const endHours = endDate.getHours();
+      const endMinutes = endDate.getMinutes();
+      
+      if (startTime !== `${String(startHours).padStart(2, '0')}:${String(startMinutes).padStart(2, '0')}`) {
+        console.error('MISMATCH: Start time parsing error', {
+          expected: `${String(startHours).padStart(2, '0')}:${String(startMinutes).padStart(2, '0')}`,
+          got: startTime
+        });
+      }
+      if (endTime !== `${String(endHours).padStart(2, '0')}:${String(endMinutes).padStart(2, '0')}`) {
+        console.error('MISMATCH: End time parsing error', {
+          expected: `${String(endHours).padStart(2, '0')}:${String(endMinutes).padStart(2, '0')}`,
+          got: endTime
+        });
+      }
       
       setReservationTimeStart(startTime);
       setReservationTimeEnd(endTime);
