@@ -92,44 +92,63 @@ const ModifyReservationModal: React.FC<ModifyReservationModalProps> = ({
   }, [reservation, reservationDate]);
 
   // Parse times from ISO strings - extract HH:MM in 24-hour format
-  // This must match what formatTime() displays to ensure consistency
-  // We use the same Date parsing as formatTime() to handle timezone correctly
+  // CRITICAL: This must match what formatTime() displays to ensure consistency
+  // The issue is that formatTime() uses toLocaleTimeString() which respects browser timezone,
+  // but we need to extract the time in a way that matches the display exactly.
+  // Solution: Parse the formatted time string back to 24-hour format
   const parseTimeFromISO = (isoString: string): string => {
     if (!isoString) {
       console.warn('parseTimeFromISO: Empty ISO string, defaulting to 13:00');
       return '13:00'; // Default to 1pm if missing
     }
     try {
-      // Parse as Date to get local time (same as formatTime does)
-      const date = new Date(isoString);
-      if (isNaN(date.getTime())) {
-        console.error('parseTimeFromISO: Invalid date string:', isoString);
-        return '13:00';
+      // Use formatTime to get the displayed time (e.g., "01:00 PM")
+      const formattedTime = formatTime(isoString);
+      
+      // Parse the formatted time string (e.g., "01:00 PM" -> "13:00")
+      // Format is "HH:MM AM" or "HH:MM PM"
+      const timeMatch = formattedTime.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+      if (!timeMatch) {
+        console.error('parseTimeFromISO: Could not parse formatted time:', formattedTime);
+        // Fallback to Date parsing
+        const date = new Date(isoString);
+        const hours = date.getHours();
+        const minutes = date.getMinutes();
+        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
       }
       
-      // Get local time components (same method formatTime uses internally)
-      const hours = date.getHours();
-      const minutes = date.getMinutes();
+      let hours = parseInt(timeMatch[1], 10);
+      const minutes = parseInt(timeMatch[2], 10);
+      const isPM = timeMatch[3].toUpperCase() === 'PM';
       
-      // Format as HH:MM in 24-hour format
-      const hoursStr = String(hours).padStart(2, '0');
-      const minutesStr = String(minutes).padStart(2, '0');
-      const result = `${hoursStr}:${minutesStr}`;
+      // Convert 12-hour to 24-hour format
+      if (hours === 12) {
+        hours = isPM ? 12 : 0;
+      } else if (isPM) {
+        hours += 12;
+      }
       
-      // Debug logging to help diagnose issues
+      const result = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+      
+      // Debug logging
       console.log('parseTimeFromISO:', {
         input: isoString,
-        parsedDate: date.toISOString(),
-        localHours: hours,
-        localMinutes: minutes,
-        result: result,
-        formattedTime: formatTime(isoString) // What formatTime would show
+        formattedTime: formattedTime,
+        parsed24h: result
       });
       
       return result;
     } catch (error) {
       console.error('parseTimeFromISO: Error parsing time from ISO:', error, isoString);
-      return '13:00';
+      // Fallback to Date parsing
+      try {
+        const date = new Date(isoString);
+        const hours = date.getHours();
+        const minutes = date.getMinutes();
+        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+      } catch (fallbackError) {
+        return '13:00';
+      }
     }
   };
 
