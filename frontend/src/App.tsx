@@ -26,6 +26,7 @@ import CFOOfferPage from './components/CFOOfferPage';
 import VPCSOfferPage from './components/VPCSOfferPage';
 import VPMarketingOfferPage from './components/VPMarketingOfferPage';
 import TechDocsPage from './components/TechDocsPage';
+import NeedHelpButton from './components/NeedHelpButton';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated } = useAuth();
@@ -598,6 +599,9 @@ const AppContent: React.FC = () => {
               selectedDate={selectedDate}
               onReservationCreated={handleReservationCreated}
             />
+            
+            {/* Need Help Button - Show on authenticated pages */}
+            {isAuthenticated && <NeedHelpButton />}
           </>
         } />
       </Routes>
