@@ -446,111 +446,110 @@ const MembersManagement: React.FC<MembersManagementProps> = ({ currentCommunity,
 
       {/* Status Filter */}
       <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
-          <button
-            onClick={() => setStatusFilter('all')}
-            style={{
-              padding: '0.5rem 1rem',
-              backgroundColor: statusFilter === 'all' ? '#355B45' : '#f3f4f6',
-              color: statusFilter === 'all' ? 'white' : '#6b7280',
-              border: 'none',
-              borderRadius: '0.375rem',
-              cursor: 'pointer',
-              fontSize: '0.875rem',
-              fontWeight: 600,
-              fontFamily: 'Inter, sans-serif'
-            }}
-          >
-            All ({members.length})
-          </button>
-          <button
-            onClick={() => setStatusFilter('pending')}
-            style={{
-              padding: '0.5rem 1rem',
-              backgroundColor: statusFilter === 'pending' ? '#f59e0b' : '#fef3c7',
-              color: statusFilter === 'pending' ? 'white' : '#92400e',
-              border: 'none',
-              borderRadius: '0.375rem',
-              cursor: 'pointer',
-              fontSize: '0.875rem',
-              fontWeight: 600,
-              fontFamily: 'Inter, sans-serif',
-              position: 'relative'
-            }}
-          >
-            Pending
-            {pendingCount > 0 && (
-              <span style={{
-                position: 'absolute',
-                top: '-8px',
-                right: '-8px',
-                backgroundColor: '#ef4444',
-                color: 'white',
-                borderRadius: '50%',
-                width: '20px',
-                height: '20px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '0.75rem',
-                fontWeight: 'bold'
-              }}>
-                {pendingCount}
-              </span>
-            )}
-          </button>
-          <button
-            onClick={() => setStatusFilter('approved')}
-            style={{
-              padding: '0.5rem 1rem',
-              backgroundColor: statusFilter === 'approved' ? '#10b981' : '#d1fae5',
-              color: statusFilter === 'approved' ? 'white' : '#065f46',
-              border: 'none',
-              borderRadius: '0.375rem',
-              cursor: 'pointer',
-              fontSize: '0.875rem',
-              fontWeight: 600,
-              fontFamily: 'Inter, sans-serif'
-            }}
-          >
-            Approved
-          </button>
-          <button
-            onClick={() => setStatusFilter('banned')}
-            style={{
-              padding: '0.5rem 1rem',
-              backgroundColor: statusFilter === 'banned' ? '#ef4444' : '#fee2e2',
-              color: statusFilter === 'banned' ? 'white' : '#991b1b',
-              border: 'none',
-              borderRadius: '0.375rem',
-              cursor: 'pointer',
-              fontSize: '0.875rem',
-              fontWeight: 600,
-              fontFamily: 'Inter, sans-serif',
-              position: 'relative'
-            }}
-          >
-            Banned
-            {bannedCount > 0 && (
-              <span style={{
-                position: 'absolute',
-                top: '-8px',
-                right: '-8px',
-                backgroundColor: '#991b1b',
-                color: 'white',
-                borderRadius: '50%',
-                width: '20px',
-                height: '20px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '0.75rem',
-                fontWeight: 'bold'
-              }}>
-                {bannedCount}
-              </span>
-            )}
-          </button>
-        </div>
+        <button
+          onClick={() => setStatusFilter('all')}
+          style={{
+            padding: '0.5rem 1rem',
+            backgroundColor: statusFilter === 'all' ? '#355B45' : '#f3f4f6',
+            color: statusFilter === 'all' ? 'white' : '#6b7280',
+            border: 'none',
+            borderRadius: '0.375rem',
+            cursor: 'pointer',
+            fontSize: '0.875rem',
+            fontWeight: 600,
+            fontFamily: 'Inter, sans-serif'
+          }}
+        >
+          All ({members.length})
+        </button>
+        <button
+          onClick={() => setStatusFilter('pending')}
+          style={{
+            padding: '0.5rem 1rem',
+            backgroundColor: statusFilter === 'pending' ? '#f59e0b' : '#fef3c7',
+            color: statusFilter === 'pending' ? 'white' : '#92400e',
+            border: 'none',
+            borderRadius: '0.375rem',
+            cursor: 'pointer',
+            fontSize: '0.875rem',
+            fontWeight: 600,
+            fontFamily: 'Inter, sans-serif',
+            position: 'relative'
+          }}
+        >
+          Pending
+          {pendingCount > 0 && (
+            <span style={{
+              position: 'absolute',
+              top: '-8px',
+              right: '-8px',
+              backgroundColor: '#ef4444',
+              color: 'white',
+              borderRadius: '50%',
+              width: '20px',
+              height: '20px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '0.75rem',
+              fontWeight: 'bold'
+            }}>
+              {pendingCount}
+            </span>
+          )}
+        </button>
+        <button
+          onClick={() => setStatusFilter('approved')}
+          style={{
+            padding: '0.5rem 1rem',
+            backgroundColor: statusFilter === 'approved' ? '#10b981' : '#d1fae5',
+            color: statusFilter === 'approved' ? 'white' : '#065f46',
+            border: 'none',
+            borderRadius: '0.375rem',
+            cursor: 'pointer',
+            fontSize: '0.875rem',
+            fontWeight: 600,
+            fontFamily: 'Inter, sans-serif'
+          }}
+        >
+          Approved
+        </button>
+        <button
+          onClick={() => setStatusFilter('banned')}
+          style={{
+            padding: '0.5rem 1rem',
+            backgroundColor: statusFilter === 'banned' ? '#ef4444' : '#fee2e2',
+            color: statusFilter === 'banned' ? 'white' : '#991b1b',
+            border: 'none',
+            borderRadius: '0.375rem',
+            cursor: 'pointer',
+            fontSize: '0.875rem',
+            fontWeight: 600,
+            fontFamily: 'Inter, sans-serif',
+            position: 'relative'
+          }}
+        >
+          Banned
+          {bannedCount > 0 && (
+            <span style={{
+              position: 'absolute',
+              top: '-8px',
+              right: '-8px',
+              backgroundColor: '#991b1b',
+              color: 'white',
+              borderRadius: '50%',
+              width: '20px',
+              height: '20px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '0.75rem',
+              fontWeight: 'bold'
+            }}>
+              {bannedCount}
+            </span>
+          )}
+        </button>
       </div>
 
       {loading ? (
