@@ -1688,8 +1688,17 @@ router.put('/:id/complete', authenticateToken, async (req: any, res) => {
     }
 
     // Validate that the reservation date has passed (or is today)
-    const reservationDate = new Date(reservation.date);
+    // Handle DATEONLY format (YYYY-MM-DD) to avoid timezone issues
+    let reservationDate: Date;
+    if (typeof reservation.date === 'string') {
+      // Parse YYYY-MM-DD string without timezone conversion
+      const [year, month, day] = reservation.date.split('T')[0].split('-').map(Number);
+      reservationDate = new Date(year, month - 1, day); // month is 0-indexed
+    } else {
+      reservationDate = new Date(reservation.date);
+    }
     reservationDate.setHours(0, 0, 0, 0);
+    
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 import { useMobile } from '../hooks/useMobile';
-import { formatDate, formatTime, formatTimeRange } from '../utils/dateTimeUtils';
+import { formatDate, formatTime, formatTimeRange, parseDateString } from '../utils/dateTimeUtils';
 import SimpleTimeSelector from './SimpleTimeSelector';
 
 interface Reservation {
@@ -970,7 +970,11 @@ const JanitorialPage: React.FC = () => {
                 )}
                 {(reservation.status === 'FULLY_APPROVED' || reservation.status === 'JANITORIAL_APPROVED') && (() => {
                   // Only show button if reservation date is today or in the past
-                  const reservationDate = new Date(reservation.date);
+                  // Use parseDateString to avoid timezone issues with DATEONLY strings
+                  const dateStr = typeof reservation.date === 'string' 
+                    ? reservation.date.split('T')[0] 
+                    : reservation.date;
+                  const reservationDate = parseDateString(dateStr);
                   reservationDate.setHours(0, 0, 0, 0);
                   const today = new Date();
                   today.setHours(0, 0, 0, 0);
