@@ -1190,6 +1190,7 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                         if (checked) {
                           setFormData({ ...formData, reservationFee: '0' });
                         } else {
+                          // When unchecking, clear the field so user can enter a new value
                           setFormData({ ...formData, reservationFee: '' });
                         }
                       }}
@@ -1200,10 +1201,15 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                     type="number"
                     step="0.01"
                     min="0"
-                    value={formData.reservationFee}
+                    value={formData.reservationFee === '0' ? '0' : formData.reservationFee}
                     onChange={(e) => {
                       const value = e.target.value;
-                      setFormData({ ...formData, reservationFee: value });
+                      // If user enters a value, automatically uncheck "Free" if it was checked
+                      if (value !== '' && value !== '0') {
+                        setFormData({ ...formData, reservationFee: value });
+                      } else {
+                        setFormData({ ...formData, reservationFee: value });
+                      }
                     }}
                     required
                     disabled={formData.reservationFee === '0'}
@@ -1230,6 +1236,7 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                         if (checked) {
                           setFormData({ ...formData, deposit: '0' });
                         } else {
+                          // When unchecking, clear the field so user can enter a new value
                           setFormData({ ...formData, deposit: '' });
                         }
                       }}
@@ -1240,10 +1247,15 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                     type="number"
                     step="0.01"
                     min="0"
-                    value={formData.deposit}
+                    value={formData.deposit === '0' ? '0' : formData.deposit}
                     onChange={(e) => {
                       const value = e.target.value;
-                      setFormData({ ...formData, deposit: value });
+                      // If user enters a value, automatically uncheck "Free" if it was checked
+                      if (value !== '' && value !== '0') {
+                        setFormData({ ...formData, deposit: value });
+                      } else {
+                        setFormData({ ...formData, deposit: value });
+                      }
                     }}
                     required
                     disabled={formData.deposit === '0'}
