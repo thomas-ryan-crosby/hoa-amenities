@@ -91,6 +91,26 @@ const ModifyReservationModal: React.FC<ModifyReservationModalProps> = ({
     }
   }, [reservation, reservationDate]);
 
+  // Parse times from ISO strings - use Date object to get local time
+  // This matches what formatTime() does for display, ensuring consistency
+  const parseTimeFromISO = (isoString: string): string => {
+    if (!isoString) return '13:00'; // Default to 1pm if missing
+    try {
+      // Parse as Date to get local time (matches formatTime behavior)
+      const date = new Date(isoString);
+      if (isNaN(date.getTime())) {
+        console.error('Invalid date string:', isoString);
+        return '13:00';
+      }
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      return `${hours}:${minutes}`;
+    } catch (error) {
+      console.error('Error parsing time from ISO:', error, isoString);
+      return '13:00';
+    }
+  };
+
   // Initialize form from reservation when modal opens
   // Only depend on isOpen and reservation.id to prevent re-initialization
   useEffect(() => {
@@ -112,19 +132,19 @@ const ModifyReservationModal: React.FC<ModifyReservationModalProps> = ({
       setReservationDate(dateStr);
       setOriginalDateStr(dateStr); // Store original date for comparison
       
-      // Parse times from ISO strings - use Date object to get local time
-      // This matches what formatTime() does for display, ensuring consistency
-      const parseTimeFromISO = (isoString: string): string => {
-        if (!isoString) return '13:00'; // Default to 1pm if missing
-        // Parse as Date to get local time (matches formatTime behavior)
-        const date = new Date(isoString);
-        const hours = String(date.getHours()).padStart(2, '0');
-        const minutes = String(date.getMinutes()).padStart(2, '0');
-        return `${hours}:${minutes}`;
-      };
+      // Parse and set times immediately - this is critical for correct display
+      const startTime = parseTimeFromISO(reservation.partyTimeStart);
+      const endTime = parseTimeFromISO(reservation.partyTimeEnd);
       
-      setReservationTimeStart(parseTimeFromISO(reservation.partyTimeStart));
-      setReservationTimeEnd(parseTimeFromISO(reservation.partyTimeEnd));
+      console.log('Setting times:', {
+        partyTimeStart: reservation.partyTimeStart,
+        partyTimeEnd: reservation.partyTimeEnd,
+        parsedStart: startTime,
+        parsedEnd: endTime
+      });
+      
+      setReservationTimeStart(startTime);
+      setReservationTimeEnd(endTime);
       
       setGuestCount(reservation.guestCount);
       setEventName(reservation.eventName || '');
@@ -141,8 +161,11 @@ const ModifyReservationModal: React.FC<ModifyReservationModalProps> = ({
       // Calculate initial fee
       calculateModificationFee();
     } else if (!isOpen) {
-      // Reset when modal closes
+      // Reset when modal closes - this ensures fresh initialization next time
       initializedRef.current = null;
+      // Also reset time values to prevent stale data
+      setReservationTimeStart('');
+      setReservationTimeEnd('');
     }
   }, [isOpen, reservation, calculateModificationFee]); // Include all dependencies
 
