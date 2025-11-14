@@ -73,6 +73,7 @@ router.get('/', authenticateToken, async (req: any, res) => {
       'guestCount', 'specialRequirements', 'status', 'totalFee', 'totalDeposit',
       'damageAssessed', 'damageAssessmentPending', 'damageAssessmentStatus', 'damageCharge', 'damageChargeAmount',
       'eventName', 'isPrivate', 'communityId', 'amenityId', 'userId',
+      'cleaningTimeStart', 'cleaningTimeEnd',
       // Modification fields - explicitly map camelCase to lowercase database columns
       [col('modificationstatus'), 'modificationStatus'],
       [col('proposeddate'), 'proposedDate'],
