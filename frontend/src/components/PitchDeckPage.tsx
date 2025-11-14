@@ -447,6 +447,178 @@ const PitchDeckPage: React.FC = () => {
               </p>
             </div>
           </div>
+          
+          {/* TAM, SAM, SOM */}
+          <div style={{
+            padding: '3rem 2rem',
+            borderRadius: '0.5rem',
+            backgroundColor: '#355B45',
+            color: 'white',
+            marginBottom: '2rem'
+          }}>
+            <h3 style={{
+              fontSize: '2rem',
+              fontWeight: 700,
+              marginBottom: '2rem',
+              textAlign: 'center',
+              fontFamily: 'Inter, sans-serif'
+            }}>
+              Market Sizing
+            </h3>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gap: '2rem'
+            }}>
+              <div style={{
+                padding: '2rem',
+                borderRadius: '0.5rem',
+                backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                textAlign: 'center'
+              }}>
+                <div style={{
+                  fontSize: '2.5rem',
+                  fontWeight: 700,
+                  marginBottom: '0.5rem',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  TAM
+                </div>
+                <div style={{
+                  fontSize: '2rem',
+                  fontWeight: 700,
+                  marginBottom: '0.5rem',
+                  fontFamily: 'Inter, sans-serif',
+                  color: '#86efac'
+                }}>
+                  $117M+
+                </div>
+                <p style={{
+                  fontSize: '1rem',
+                  opacity: 0.9,
+                  marginBottom: '0.5rem',
+                  fontFamily: 'Inter, sans-serif',
+                  fontWeight: 600
+                }}>
+                  Total Addressable Market
+                </p>
+                <p style={{
+                  fontSize: '0.9rem',
+                  opacity: 0.8,
+                  lineHeight: '1.6',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  65,000 luxury communities nationwide × $1,800/year avg subscription
+                </p>
+              </div>
+
+              <div style={{
+                padding: '2rem',
+                borderRadius: '0.5rem',
+                backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                textAlign: 'center'
+              }}>
+                <div style={{
+                  fontSize: '2.5rem',
+                  fontWeight: 700,
+                  marginBottom: '0.5rem',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  SAM
+                </div>
+                <div style={{
+                  fontSize: '2rem',
+                  fontWeight: 700,
+                  marginBottom: '0.5rem',
+                  fontFamily: 'Inter, sans-serif',
+                  color: '#86efac'
+                }}>
+                  $14.4M+
+                </div>
+                <p style={{
+                  fontSize: '1rem',
+                  opacity: 0.9,
+                  marginBottom: '0.5rem',
+                  fontFamily: 'Inter, sans-serif',
+                  fontWeight: 600
+                }}>
+                  Serviceable Addressable Market
+                </p>
+                <p style={{
+                  fontSize: '0.9rem',
+                  opacity: 0.8,
+                  lineHeight: '1.6',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  ~8,000 luxury communities in Gulf South region (LA, MS, AL, FL, TX)
+                </p>
+              </div>
+
+              <div style={{
+                padding: '2rem',
+                borderRadius: '0.5rem',
+                backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                textAlign: 'center'
+              }}>
+                <div style={{
+                  fontSize: '2.5rem',
+                  fontWeight: 700,
+                  marginBottom: '0.5rem',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  SOM
+                </div>
+                <div style={{
+                  fontSize: '2rem',
+                  fontWeight: 700,
+                  marginBottom: '0.5rem',
+                  fontFamily: 'Inter, sans-serif',
+                  color: '#86efac'
+                }}>
+                  $360K+
+                </div>
+                <p style={{
+                  fontSize: '1rem',
+                  opacity: 0.9,
+                  marginBottom: '0.5rem',
+                  fontFamily: 'Inter, sans-serif',
+                  fontWeight: 600
+                }}>
+                  Serviceable Obtainable Market
+                </p>
+                <p style={{
+                  fontSize: '0.9rem',
+                  opacity: 0.8,
+                  lineHeight: '1.6',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  ~200 luxury communities in first 3 years (Northshore + Gulf South expansion)
+                </p>
+              </div>
+            </div>
+            <div style={{
+              marginTop: '2rem',
+              padding: '1.5rem',
+              borderRadius: '0.5rem',
+              backgroundColor: 'rgba(255, 255, 255, 0.1)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              textAlign: 'center'
+            }}>
+              <p style={{
+                fontSize: '0.9rem',
+                opacity: 0.9,
+                lineHeight: '1.6',
+                fontFamily: 'Inter, sans-serif'
+              }}>
+                <strong>Note:</strong> Revenue projections based on subscription fees only. Additional revenue from payment 
+                processing transaction fees (2.9% + $0.30 per reservation) not included in above calculations.
+              </p>
+            </div>
+          </div>
+
           <div style={{
             padding: '2rem',
             borderRadius: '0.5rem',
