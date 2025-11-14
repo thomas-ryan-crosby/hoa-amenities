@@ -44,7 +44,7 @@ const PitchDeckPage: React.FC = () => {
             fontWeight: 600,
             fontFamily: 'Inter, sans-serif'
           }}>
-            Simplifying HOA Amenity Management
+            Premium Amenity Management for Luxury Communities
           </p>
           <p style={{
             fontSize: '1.25rem',
@@ -54,7 +54,8 @@ const PitchDeckPage: React.FC = () => {
             lineHeight: '1.8',
             fontFamily: 'Inter, sans-serif'
           }}>
-            A modern platform that streamlines reservations, payments, and management for residential community amenities
+            A modern platform that streamlines reservations, payments, and management for luxury residential communities 
+            with premium amenities
           </p>
         </section>
 
@@ -102,7 +103,8 @@ const PitchDeckPage: React.FC = () => {
                 lineHeight: '1.8',
                 fontFamily: 'Inter, sans-serif'
               }}>
-                HOAs rely on email chains, spreadsheets, and phone calls to manage reservations, leading to double-bookings and confusion.
+                Luxury communities rely on email chains, spreadsheets, and phone calls to manage premium amenities, 
+                leading to double-bookings and resident dissatisfaction.
               </p>
             </div>
 
@@ -156,23 +158,24 @@ const PitchDeckPage: React.FC = () => {
               </p>
             </div>
           </div>
-          <div style={{
-            padding: '2rem',
-            borderRadius: '0.5rem',
-            backgroundColor: '#f9fafb',
-            border: '2px solid #355B45',
-            textAlign: 'center'
-          }}>
-            <p style={{
-              fontSize: '1.25rem',
-              color: '#1f2937',
-              lineHeight: '1.8',
-              fontFamily: 'Inter, sans-serif',
-              fontWeight: 600
+            <div style={{
+              padding: '2rem',
+              borderRadius: '0.5rem',
+              backgroundColor: '#f9fafb',
+              border: '2px solid #355B45',
+              textAlign: 'center'
             }}>
-              <strong>Result:</strong> Frustrated residents, overworked HOA staff, and inefficient use of valuable community amenities.
-            </p>
-          </div>
+              <p style={{
+                fontSize: '1.25rem',
+                color: '#1f2937',
+                lineHeight: '1.8',
+                fontFamily: 'Inter, sans-serif',
+                fontWeight: 600
+              }}>
+                <strong>Result:</strong> Frustrated residents in luxury communities, overworked HOA staff, and inefficient 
+                use of premium amenities that residents pay significant fees to access.
+              </p>
+            </div>
         </section>
 
         {/* Solution */}
@@ -323,12 +326,22 @@ const PitchDeckPage: React.FC = () => {
             fontSize: '2.5rem',
             fontWeight: 700,
             color: '#1f2937',
-            marginBottom: '3rem',
+            marginBottom: '1rem',
             textAlign: 'center',
             fontFamily: 'Inter, sans-serif'
           }}>
             Market Opportunity
           </h2>
+          <p style={{
+            fontSize: '1.25rem',
+            color: '#355B45',
+            fontWeight: 600,
+            textAlign: 'center',
+            marginBottom: '3rem',
+            fontFamily: 'Inter, sans-serif'
+          }}>
+            Targeting Luxury & Class A Residential Communities
+          </p>
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
@@ -348,7 +361,7 @@ const PitchDeckPage: React.FC = () => {
                 marginBottom: '0.5rem',
                 fontFamily: 'Inter, sans-serif'
               }}>
-                370,000+
+                15-20%
               </div>
               <p style={{
                 fontSize: '1.125rem',
@@ -357,14 +370,14 @@ const PitchDeckPage: React.FC = () => {
                 marginBottom: '0.5rem',
                 fontFamily: 'Inter, sans-serif'
               }}>
-                HOAs in the United States
+                of HOAs are Class A/Luxury
               </p>
               <p style={{
                 color: '#6b7280',
                 lineHeight: '1.6',
                 fontFamily: 'Inter, sans-serif'
               }}>
-                Source: Community Associations Institute
+                Approximately 55,000-75,000 luxury communities with premium amenities nationwide
               </p>
             </div>
 
@@ -381,7 +394,7 @@ const PitchDeckPage: React.FC = () => {
                 marginBottom: '0.5rem',
                 fontFamily: 'Inter, sans-serif'
               }}>
-                53M+
+                $500+
               </div>
               <p style={{
                 fontSize: '1.125rem',
@@ -390,14 +403,14 @@ const PitchDeckPage: React.FC = () => {
                 marginBottom: '0.5rem',
                 fontFamily: 'Inter, sans-serif'
               }}>
-                Americans Living in HOAs
+                Average Monthly HOA Fee
               </p>
               <p style={{
                 color: '#6b7280',
                 lineHeight: '1.6',
                 fontFamily: 'Inter, sans-serif'
               }}>
-                Growing at 1,000+ new associations per year
+                Luxury communities have higher budgets and greater need for professional management tools
               </p>
             </div>
 
@@ -414,7 +427,7 @@ const PitchDeckPage: React.FC = () => {
                 marginBottom: '0.5rem',
                 fontFamily: 'Inter, sans-serif'
               }}>
-                $100B+
+                Premium
               </div>
               <p style={{
                 fontSize: '1.125rem',
@@ -423,14 +436,14 @@ const PitchDeckPage: React.FC = () => {
                 marginBottom: '0.5rem',
                 fontFamily: 'Inter, sans-serif'
               }}>
-                Annual HOA Revenue
+                Amenity Expectations
               </p>
               <p style={{
                 color: '#6b7280',
                 lineHeight: '1.6',
                 fontFamily: 'Inter, sans-serif'
               }}>
-                Significant budget allocated to amenity management
+                Pools, clubrooms, tennis courts, fitness centers, and event spaces require sophisticated management
               </p>
             </div>
           </div>
@@ -438,6 +451,45 @@ const PitchDeckPage: React.FC = () => {
             padding: '2rem',
             borderRadius: '0.5rem',
             backgroundColor: '#f9fafb',
+            border: '2px solid #355B45',
+            marginBottom: '2rem'
+          }}>
+            <h3 style={{
+              fontSize: '1.5rem',
+              fontWeight: 600,
+              color: '#1f2937',
+              marginBottom: '1rem',
+              fontFamily: 'Inter, sans-serif'
+            }}>
+              Target Market Definition
+            </h3>
+            <p style={{
+              color: '#6b7280',
+              lineHeight: '1.8',
+              marginBottom: '1rem',
+              fontFamily: 'Inter, sans-serif'
+            }}>
+              <strong>Luxury/Class A Communities:</strong> Residential developments with premium amenities including pools, 
+              clubrooms, tennis courts, fitness centers, and event spaces. These communities typically have:
+            </p>
+            <ul style={{
+              color: '#6b7280',
+              lineHeight: '1.8',
+              paddingLeft: '1.5rem',
+              marginBottom: '1rem',
+              fontFamily: 'Inter, sans-serif'
+            }}>
+              <li>Higher HOA fees ($300+/month)</li>
+              <li>Professional property management</li>
+              <li>Significant amenity budgets</li>
+              <li>Residents with high expectations for service quality</li>
+              <li>Complex reservation and payment requirements</li>
+            </ul>
+          </div>
+          <div style={{
+            padding: '2rem',
+            borderRadius: '0.5rem',
+            backgroundColor: '#f0f4f1',
             border: '2px solid #355B45'
           }}>
             <h3 style={{
@@ -447,7 +499,7 @@ const PitchDeckPage: React.FC = () => {
               marginBottom: '1rem',
               fontFamily: 'Inter, sans-serif'
             }}>
-              Target Market: Northshore Louisiana
+              Geographic Focus: Northshore Louisiana
             </h3>
             <p style={{
               color: '#6b7280',
@@ -455,16 +507,17 @@ const PitchDeckPage: React.FC = () => {
               marginBottom: '1rem',
               fontFamily: 'Inter, sans-serif'
             }}>
-              St. Tammany, Tangipahoa, and Washington Parishes are home to hundreds of HOAs and residential communities. 
-              Many still rely on outdated manual processes for amenity management.
+              St. Tammany, Tangipahoa, and Washington Parishes are home to numerous luxury residential communities 
+              and Class A developments. These high-end neighborhoods have the amenities, budgets, and resident 
+              expectations that align perfectly with Neighbri's value proposition.
             </p>
             <p style={{
               color: '#6b7280',
               lineHeight: '1.8',
               fontFamily: 'Inter, sans-serif'
             }}>
-              <strong>Initial Focus:</strong> Establish strong presence in the Northshore region, then expand throughout 
-              Louisiana and the Gulf South.
+              <strong>Initial Focus:</strong> Establish strong presence in luxury Northshore communities, then expand 
+              to Class A developments throughout Louisiana and the Gulf South.
             </p>
           </div>
         </section>
@@ -1027,14 +1080,15 @@ const PitchDeckPage: React.FC = () => {
                 marginBottom: '1rem',
                 fontFamily: 'Inter, sans-serif'
               }}>
-                Affordable Pricing
+                Value-Aligned Pricing
               </h3>
               <p style={{
                 color: '#6b7280',
                 lineHeight: '1.8',
                 fontFamily: 'Inter, sans-serif'
               }}>
-                Competitive pricing that makes sense for HOAs of all sizes, without requiring expensive enterprise contracts.
+                Pricing that reflects the value delivered to luxury communities, with ROI that justifies the investment 
+                in professional amenity management.
               </p>
             </div>
           </div>
@@ -1318,21 +1372,22 @@ const PitchDeckPage: React.FC = () => {
                 backgroundColor: 'rgba(255, 255, 255, 0.1)',
                 border: '1px solid rgba(255, 255, 255, 0.2)'
               }}>
-                <h3 style={{
-                  fontSize: '1.5rem',
-                  fontWeight: 600,
-                  marginBottom: '1rem',
-                  fontFamily: 'Inter, sans-serif'
-                }}>
-                  Community Impact
-                </h3>
-                <p style={{
-                  opacity: 0.9,
-                  lineHeight: '1.8',
-                  fontFamily: 'Inter, sans-serif'
-                }}>
-                  Empowering local HOAs to better serve their residents and maximize the value of community amenities.
-                </p>
+              <h3 style={{
+                fontSize: '1.5rem',
+                fontWeight: 600,
+                marginBottom: '1rem',
+                fontFamily: 'Inter, sans-serif'
+              }}>
+                Community Impact
+              </h3>
+              <p style={{
+                opacity: 0.9,
+                lineHeight: '1.8',
+                fontFamily: 'Inter, sans-serif'
+              }}>
+                Empowering luxury communities to better serve their residents and maximize the value of premium amenities 
+                that justify high HOA fees.
+              </p>
               </div>
             </div>
             <div style={{
@@ -1380,8 +1435,8 @@ const PitchDeckPage: React.FC = () => {
             margin: '0 auto 3rem',
             fontFamily: 'Inter, sans-serif'
           }}>
-            To become the leading platform for HOA amenity management in the Gulf South, 
-            starting with the Northshore region, and expanding to serve communities nationwide.
+            To become the leading platform for luxury and Class A community amenity management in the Gulf South, 
+            starting with the Northshore region, and expanding to serve premium residential developments nationwide.
           </p>
           <div style={{
             padding: '3rem',
