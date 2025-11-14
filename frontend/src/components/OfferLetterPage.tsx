@@ -44,7 +44,7 @@ const OfferLetterPage: React.FC = () => {
               textAlign: 'center',
               fontFamily: 'Inter, sans-serif'
             }}>
-              Access Offer Letter
+              Access Offer Terms
             </h2>
             <p style={{
               color: '#6b7280',
@@ -52,7 +52,7 @@ const OfferLetterPage: React.FC = () => {
               textAlign: 'center',
               fontFamily: 'Inter, sans-serif'
             }}>
-              Please enter the password to view the offer letter.
+              Please enter the password to view the offer terms.
             </p>
             <form onSubmit={handlePasswordSubmit}>
               <input
@@ -140,7 +140,7 @@ const OfferLetterPage: React.FC = () => {
             marginBottom: '0.5rem',
             fontFamily: 'Inter, sans-serif'
           }}>
-            Offer Letter
+            Offer Terms
           </h1>
           <p style={{
             color: '#6b7280',
@@ -150,6 +150,32 @@ const OfferLetterPage: React.FC = () => {
             Christian Maloney<br/>
             Co-Founder & Head of Sales
           </p>
+          <div style={{
+            background: '#fef3c7',
+            border: '2px solid #fbbf24',
+            borderRadius: '0.5rem',
+            padding: '1rem',
+            marginTop: '1.5rem'
+          }}>
+            <p style={{
+              color: '#92400e',
+              fontWeight: 600,
+              fontFamily: 'Inter, sans-serif',
+              marginBottom: '0.5rem'
+            }}>
+              ⚠️ Non-Binding Offer Terms
+            </p>
+            <p style={{
+              color: '#92400e',
+              fontSize: '0.875rem',
+              lineHeight: '1.6',
+              fontFamily: 'Inter, sans-serif'
+            }}>
+              These offer terms are provided for discussion purposes only and are non-binding 
+              until formal documentation is produced and executed by both parties. All terms 
+              are subject to change and require legal review and formal agreement.
+            </p>
+          </div>
         </div>
 
         {/* Trial Period Agreement */}
@@ -801,7 +827,7 @@ const OfferLetterPage: React.FC = () => {
           opacity: 0.8,
           fontFamily: 'Inter, sans-serif'
         }}>
-          © 2024 Neighbri. All rights reserved. Confidential - For Christian Maloney Only.
+          © 2024 Neighbri. All rights reserved. Confidential - For Christian Maloney Only. Non-binding offer terms.
         </p>
       </footer>
     </div>

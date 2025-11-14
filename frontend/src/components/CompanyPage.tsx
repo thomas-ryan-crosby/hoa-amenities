@@ -178,14 +178,27 @@ const CompanyPage: React.FC = () => {
               </div>
               
               {/* CTO / VP Engineering */}
-              <div style={{
-                background: '#f0f9ff',
-                border: '2px solid #7dd3fc',
-                borderRadius: '0.5rem',
-                padding: '1.5rem',
-                minWidth: '250px',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
-              }}>
+              <div 
+                onClick={() => navigate('/company/cto-offer')}
+                style={{
+                  background: '#f0f9ff',
+                  border: '2px solid #7dd3fc',
+                  borderRadius: '0.5rem',
+                  padding: '1.5rem',
+                  minWidth: '250px',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-4px)';
+                  e.currentTarget.style.boxShadow = '0 8px 16px rgba(0,0,0,0.15)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.05)';
+                }}
+              >
                 <div style={{
                   fontSize: '1.125rem',
                   fontWeight: 700,
@@ -215,17 +228,42 @@ const CompanyPage: React.FC = () => {
                   • Engineering team leadership<br/>
                   • Infrastructure & DevOps
                 </div>
+                <div style={{
+                  fontSize: '0.75rem',
+                  padding: '0.25rem 0.5rem',
+                  background: 'rgba(31, 41, 55, 0.1)',
+                  borderRadius: '0.25rem',
+                  display: 'inline-block',
+                  marginTop: '0.75rem',
+                  fontWeight: 600,
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  Click to view offer terms
+                </div>
               </div>
               
               {/* CFO */}
-              <div style={{
-                background: '#f0f9ff',
-                border: '2px solid #7dd3fc',
-                borderRadius: '0.5rem',
-                padding: '1.5rem',
-                minWidth: '250px',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
-              }}>
+              <div 
+                onClick={() => navigate('/company/cfo-offer')}
+                style={{
+                  background: '#f0f9ff',
+                  border: '2px solid #7dd3fc',
+                  borderRadius: '0.5rem',
+                  padding: '1.5rem',
+                  minWidth: '250px',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-4px)';
+                  e.currentTarget.style.boxShadow = '0 8px 16px rgba(0,0,0,0.15)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.05)';
+                }}
+              >
                 <div style={{
                   fontSize: '1.125rem',
                   fontWeight: 700,
@@ -255,17 +293,42 @@ const CompanyPage: React.FC = () => {
                   • Budget management<br/>
                   • Investor relations
                 </div>
+                <div style={{
+                  fontSize: '0.75rem',
+                  padding: '0.25rem 0.5rem',
+                  background: 'rgba(31, 41, 55, 0.1)',
+                  borderRadius: '0.25rem',
+                  display: 'inline-block',
+                  marginTop: '0.75rem',
+                  fontWeight: 600,
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  Click to view offer terms
+                </div>
               </div>
               
               {/* VP Customer Success */}
-              <div style={{
-                background: '#f0f9ff',
-                border: '2px solid #7dd3fc',
-                borderRadius: '0.5rem',
-                padding: '1.5rem',
-                minWidth: '250px',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
-              }}>
+              <div 
+                onClick={() => navigate('/company/vpcs-offer')}
+                style={{
+                  background: '#f0f9ff',
+                  border: '2px solid #7dd3fc',
+                  borderRadius: '0.5rem',
+                  padding: '1.5rem',
+                  minWidth: '250px',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-4px)';
+                  e.currentTarget.style.boxShadow = '0 8px 16px rgba(0,0,0,0.15)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.05)';
+                }}
+              >
                 <div style={{
                   fontSize: '1.125rem',
                   fontWeight: 700,
@@ -295,17 +358,42 @@ const CompanyPage: React.FC = () => {
                   • Support & retention<br/>
                   • Customer satisfaction
                 </div>
+                <div style={{
+                  fontSize: '0.75rem',
+                  padding: '0.25rem 0.5rem',
+                  background: 'rgba(31, 41, 55, 0.1)',
+                  borderRadius: '0.25rem',
+                  display: 'inline-block',
+                  marginTop: '0.75rem',
+                  fontWeight: 600,
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  Click to view offer terms
+                </div>
               </div>
               
               {/* VP Marketing */}
-              <div style={{
-                background: '#f0f9ff',
-                border: '2px solid #7dd3fc',
-                borderRadius: '0.5rem',
-                padding: '1.5rem',
-                minWidth: '250px',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
-              }}>
+              <div 
+                onClick={() => navigate('/company/vpmarketing-offer')}
+                style={{
+                  background: '#f0f9ff',
+                  border: '2px solid #7dd3fc',
+                  borderRadius: '0.5rem',
+                  padding: '1.5rem',
+                  minWidth: '250px',
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-4px)';
+                  e.currentTarget.style.boxShadow = '0 8px 16px rgba(0,0,0,0.15)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.05)';
+                }}
+              >
                 <div style={{
                   fontSize: '1.125rem',
                   fontWeight: 700,
@@ -334,6 +422,18 @@ const CompanyPage: React.FC = () => {
                   • Demand generation<br/>
                   • Content & communications<br/>
                   • Marketing operations
+                </div>
+                <div style={{
+                  fontSize: '0.75rem',
+                  padding: '0.25rem 0.5rem',
+                  background: 'rgba(31, 41, 55, 0.1)',
+                  borderRadius: '0.25rem',
+                  display: 'inline-block',
+                  marginTop: '0.75rem',
+                  fontWeight: 600,
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  Click to view offer terms
                 </div>
               </div>
             </div>

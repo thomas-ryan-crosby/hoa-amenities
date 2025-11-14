@@ -20,6 +20,10 @@ import TestPlanPage from './components/TestPlanPage';
 import PitchDeckPage from './components/PitchDeckPage';
 import CompanyPage from './components/CompanyPage';
 import OfferLetterPage from './components/OfferLetterPage';
+import CTOOfferPage from './components/CTOOfferPage';
+import CFOOfferPage from './components/CFOOfferPage';
+import VPCSOfferPage from './components/VPCSOfferPage';
+import VPMarketingOfferPage from './components/VPMarketingOfferPage';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated } = useAuth();
@@ -409,6 +413,10 @@ const AppContent: React.FC = () => {
         <Route path="/pitch" element={<PitchDeckPage />} />
         <Route path="/company" element={<CompanyPage />} />
         <Route path="/company/offer" element={<OfferLetterPage />} />
+        <Route path="/company/cto-offer" element={<CTOOfferPage />} />
+        <Route path="/company/cfo-offer" element={<CFOOfferPage />} />
+        <Route path="/company/vpcs-offer" element={<VPCSOfferPage />} />
+        <Route path="/company/vpmarketing-offer" element={<VPMarketingOfferPage />} />
         <Route path="/login" element={
           isAuthenticated ? 
             <Navigate to="/app" /> : 
