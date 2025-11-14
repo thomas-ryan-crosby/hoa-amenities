@@ -42,30 +42,46 @@ const SimpleTimeSelector: React.FC<SimpleTimeSelectorProps> = ({
     return `${String(hour24).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
   };
 
-  // Parse initial value
-  const initialParsed = parseTime(value);
-  const [localHour, setLocalHour] = useState(initialParsed.hour);
-  const [localMinute, setLocalMinute] = useState(initialParsed.minute);
-  const [localIsPM, setLocalIsPM] = useState(initialParsed.isPM);
+  // Parse initial value - use empty string default to force useEffect to run
+  const initialParsed = parseTime(value || '');
+  const [localHour, setLocalHour] = useState(() => {
+    const parsed = parseTime(value || '');
+    console.log('SimpleTimeSelector initial state:', { label, value, parsed });
+    return parsed.hour;
+  });
+  const [localMinute, setLocalMinute] = useState(() => {
+    const parsed = parseTime(value || '');
+    return parsed.minute;
+  });
+  const [localIsPM, setLocalIsPM] = useState(() => {
+    const parsed = parseTime(value || '');
+    return parsed.isPM;
+  });
 
-  // Update local state when value prop changes
+  // Update local state when value prop changes - CRITICAL: This must run on every value change
   React.useEffect(() => {
+    if (!value || value === '') {
+      console.log('SimpleTimeSelector: Empty value, skipping update', { label });
+      return;
+    }
+    
     const parsed = parseTime(value);
-    console.log('SimpleTimeSelector useEffect:', {
+    console.log('SimpleTimeSelector useEffect UPDATE:', {
       label,
       value,
       parsed,
       hour: parsed.hour,
       minute: parsed.minute,
       isPM: parsed.isPM,
-      currentState: { localHour, localMinute, localIsPM }
+      currentState: { localHour, localMinute, localIsPM },
+      willUpdate: parsed.hour !== localHour || parsed.minute !== localMinute || parsed.isPM !== localIsPM
     });
     
-    // Always update to match the value prop - don't check if different to avoid stale state
+    // FORCE update - always set state to match value prop exactly
     setLocalHour(parsed.hour);
     setLocalMinute(parsed.minute);
     setLocalIsPM(parsed.isPM);
-  }, [value, label]); // Only depend on value and label, not local state
+  }, [value]); // Only depend on value - React will handle the update
 
   const handleHourChange = (newHour: number) => {
     setLocalHour(newHour);
