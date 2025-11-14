@@ -160,9 +160,9 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
     
     if (!selectedAmenity || !reservationTimeStart || !reservationTimeEnd) {
       setError('Please fill in all required fields');
-      // Scroll to error after a brief delay to ensure it's rendered
+      // Scroll to error (near submit button) after a brief delay to ensure it's rendered
       setTimeout(() => {
-        errorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        errorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }, 100);
       return;
     }
@@ -247,9 +247,9 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
         setError(errorMessage);
       }
       
-      // Scroll to error after a brief delay to ensure it's rendered
+      // Scroll to error (near submit button) after a brief delay to ensure it's rendered
       setTimeout(() => {
-        errorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        errorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }, 100);
     } finally {
       setLoading(false);
@@ -367,52 +367,6 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
             required
           />
         </div>
-
-        {error && (
-          <div 
-            ref={errorRef}
-            style={{ 
-              position: 'sticky',
-              top: '0',
-              zIndex: 20,
-              marginBottom: '20px', 
-              padding: '16px', 
-              backgroundColor: '#fef2f2', 
-              border: '2px solid #dc2626', 
-              borderRadius: '8px',
-              color: '#dc2626',
-              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-              display: 'flex',
-              alignItems: 'flex-start',
-              gap: '12px'
-            }}
-          >
-            <div style={{ fontSize: '20px', flexShrink: 0 }}>⚠️</div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontWeight: 'bold', marginBottom: '4px', fontSize: '16px' }}>
-                Error
-              </div>
-              <div style={{ fontSize: '14px', whiteSpace: 'pre-line' }}>
-                {error}
-              </div>
-            </div>
-            <button
-              onClick={() => setError(null)}
-              style={{
-                background: 'none',
-                border: 'none',
-                fontSize: '20px',
-                color: '#dc2626',
-                cursor: 'pointer',
-                padding: '0',
-                flexShrink: 0,
-                lineHeight: 1
-              }}
-            >
-              ×
-            </button>
-          </div>
-        )}
 
         <form onSubmit={handleSubmit}>
           {/* Amenity Selection */}
@@ -581,6 +535,50 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
               }}
             />
           </div>
+
+          {/* Error Message - Positioned near submit button */}
+          {error && (
+            <div 
+              ref={errorRef}
+              style={{ 
+                marginBottom: '20px', 
+                padding: '16px', 
+                backgroundColor: '#fef2f2', 
+                border: '2px solid #dc2626', 
+                borderRadius: '8px',
+                color: '#dc2626',
+                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '12px'
+              }}
+            >
+              <div style={{ fontSize: '20px', flexShrink: 0 }}>⚠️</div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontWeight: 'bold', marginBottom: '4px', fontSize: '16px' }}>
+                  Error
+                </div>
+                <div style={{ fontSize: '14px', whiteSpace: 'pre-line' }}>
+                  {error}
+                </div>
+              </div>
+              <button
+                onClick={() => setError(null)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '20px',
+                  color: '#dc2626',
+                  cursor: 'pointer',
+                  padding: '0',
+                  flexShrink: 0,
+                  lineHeight: 1
+                }}
+              >
+                ×
+              </button>
+            </div>
+          )}
 
           {/* Submit Buttons */}
           <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
