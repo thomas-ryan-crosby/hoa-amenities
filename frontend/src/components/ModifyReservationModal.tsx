@@ -527,25 +527,43 @@ const ModifyReservationModal: React.FC<ModifyReservationModalProps> = ({
           </div>
 
           {/* Reservation Start Time */}
-          <SimpleTimeSelector
-            key={`start-${reservation?.id}-${reservationTimeStart}`}
-            label="Reservation Start Time"
-            value={reservationTimeStart}
-            onChange={setReservationTimeStart}
-            required
-          />
+          {reservationTimeStart && (
+            <SimpleTimeSelector
+              key={`start-${reservation?.id}-${reservationTimeStart}`}
+              label="Reservation Start Time"
+              value={reservationTimeStart}
+              onChange={setReservationTimeStart}
+              required
+            />
+          )}
+          {!reservationTimeStart && (
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
+                Reservation Start Time * (Loading...)
+              </label>
+            </div>
+          )}
           <p style={{ margin: '-16px 0 16px 0', fontSize: '12px', color: '#6b7280' }}>
             Include any setup time needed in your start time
           </p>
 
           {/* Reservation End Time */}
-          <SimpleTimeSelector
-            key={`end-${reservation?.id}-${reservationTimeEnd}`}
-            label="Reservation End Time"
-            value={reservationTimeEnd}
-            onChange={setReservationTimeEnd}
-            required
-          />
+          {reservationTimeEnd && (
+            <SimpleTimeSelector
+              key={`end-${reservation?.id}-${reservationTimeEnd}`}
+              label="Reservation End Time"
+              value={reservationTimeEnd}
+              onChange={setReservationTimeEnd}
+              required
+            />
+          )}
+          {!reservationTimeEnd && (
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>
+                Reservation End Time * (Loading...)
+              </label>
+            </div>
+          )}
           <p style={{ margin: '-16px 0 16px 0', fontSize: '12px', color: '#6b7280' }}>
             Include any cleanup time needed in your end time
           </p>
