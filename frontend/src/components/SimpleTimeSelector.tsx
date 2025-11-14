@@ -108,7 +108,7 @@ const SimpleTimeSelector: React.FC<SimpleTimeSelectorProps> = ({
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         {/* Hours Dropdown */}
         <select
-          value={String(localHour).padStart(2, '0')}
+          value={localHour}
           onChange={(e) => handleHourChange(Number(e.target.value))}
           style={{
             width: '70px',
@@ -149,7 +149,7 @@ const SimpleTimeSelector: React.FC<SimpleTimeSelectorProps> = ({
             padding: '0 8px'
           }}
         >
-          <option value="00">00</option>
+          <option value="0">00</option>
           <option value="30">30</option>
         </select>
 
