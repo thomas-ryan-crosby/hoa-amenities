@@ -916,28 +916,37 @@ const JanitorialPage: React.FC = () => {
                     Propose Modification
                   </button>
                 )}
-                {(reservation.status === 'FULLY_APPROVED' || reservation.status === 'JANITORIAL_APPROVED') && (
-                  <button
-                    onClick={() => {
-                      setSelectedReservation(reservation);
-                      setShowPartyCompleteModal(true);
-                    }}
-                    disabled={actionLoading === reservation.id}
-                    style={{
-                      backgroundColor: actionLoading === reservation.id ? '#9ca3af' : '#355B45',
-                      color: 'white',
-                      padding: '8px 16px',
-                      borderRadius: '4px',
-                      border: 'none',
-                      cursor: actionLoading === reservation.id ? 'not-allowed' : 'pointer',
-                      fontSize: '14px',
-                      fontWeight: 'bold',
-                      marginLeft: '8px'
-                    }}
-                  >
-                    Mark Party Complete
-                  </button>
-                )}
+                {(reservation.status === 'FULLY_APPROVED' || reservation.status === 'JANITORIAL_APPROVED') && (() => {
+                  // Only show button if reservation date is today or in the past
+                  const reservationDate = new Date(reservation.date);
+                  reservationDate.setHours(0, 0, 0, 0);
+                  const today = new Date();
+                  today.setHours(0, 0, 0, 0);
+                  const isTodayOrPast = reservationDate <= today;
+                  
+                  return isTodayOrPast ? (
+                    <button
+                      onClick={() => {
+                        setSelectedReservation(reservation);
+                        setShowPartyCompleteModal(true);
+                      }}
+                      disabled={actionLoading === reservation.id}
+                      style={{
+                        backgroundColor: actionLoading === reservation.id ? '#9ca3af' : '#355B45',
+                        color: 'white',
+                        padding: '8px 16px',
+                        borderRadius: '4px',
+                        border: 'none',
+                        cursor: actionLoading === reservation.id ? 'not-allowed' : 'pointer',
+                        fontSize: '14px',
+                        fontWeight: 'bold',
+                        marginLeft: '8px'
+                      }}
+                    >
+                      Mark Party Complete
+                    </button>
+                  ) : null;
+                })()}
                 {reservation.status === 'COMPLETED' && reservation.damageAssessmentPending && !reservation.damageAssessed && (
                   <button
                     onClick={() => {
