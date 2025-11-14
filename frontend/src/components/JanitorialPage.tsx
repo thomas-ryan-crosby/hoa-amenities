@@ -575,6 +575,37 @@ const JanitorialPage: React.FC = () => {
     return false;
   };
 
+  const getApprovalButtonText = (reservation: Reservation): string => {
+    if (actionLoading === reservation.id) {
+      return 'Processing...';
+    }
+
+    // For janitorial users, always show "Approve" for NEW reservations
+    if (isJanitorial && reservation.status === 'NEW') {
+      return 'Approve';
+    }
+
+    // For admins, show context-aware text
+    if (isAdmin) {
+      if (reservation.status === 'NEW') {
+        // Admin approving a NEW reservation
+        // If janitorial approval is required, admin is approving on behalf of janitorial
+        if (reservation.amenity.janitorialRequired !== false) {
+          return 'Approve on Behalf of Janitorial';
+        } else {
+          // No janitorial required, but admin approval is needed
+          return 'Approve as Admin';
+        }
+      } else if (reservation.status === 'JANITORIAL_APPROVED') {
+        // Admin approving a JANITORIAL_APPROVED reservation (final approval)
+        return 'Final Approve as Admin';
+      }
+    }
+
+    // Fallback
+    return reservation.status === 'NEW' ? 'Approve' : 'Final Approve';
+  };
+
   const canReject = (reservation: Reservation): boolean => {
     return reservation.status === 'NEW' || reservation.status === 'JANITORIAL_APPROVED';
   };
@@ -916,8 +947,7 @@ const JanitorialPage: React.FC = () => {
                       fontWeight: 'bold'
                     }}
                   >
-                    {actionLoading === reservation.id ? 'Processing...' : 
-                     (reservation.status === 'NEW' ? 'Approve' : 'Final Approve')}
+                    {getApprovalButtonText(reservation)}
                   </button>
                 )}
                 {canReject(reservation) && (
