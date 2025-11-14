@@ -1180,43 +1180,89 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
                 <div>
-                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
-                    Reservation Fee ($) *
-                  </label>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                    <label style={{ fontWeight: 500, color: '#374151' }}>
+                      Reservation Fee ($) *
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.875rem', color: '#6b7280' }}>
+                      <input
+                        type="checkbox"
+                        checked={formData.reservationFee === '0' || formData.reservationFee === ''}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setFormData({ ...formData, reservationFee: '0' });
+                          } else {
+                            setFormData({ ...formData, reservationFee: '' });
+                          }
+                        }}
+                        style={{ cursor: 'pointer' }}
+                      />
+                      <span>Free</span>
+                    </label>
+                  </div>
                   <input
                     type="number"
                     step="0.01"
                     min="0"
                     value={formData.reservationFee}
-                    onChange={(e) => setFormData({ ...formData, reservationFee: e.target.value })}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setFormData({ ...formData, reservationFee: value });
+                    }}
                     required
+                    disabled={formData.reservationFee === '0'}
                     style={{
                       width: '100%',
                       padding: '0.5rem',
                       border: '1px solid #d1d5db',
                       borderRadius: '0.375rem',
-                      fontSize: '1rem'
+                      fontSize: '1rem',
+                      backgroundColor: formData.reservationFee === '0' ? '#f3f4f6' : 'white',
+                      cursor: formData.reservationFee === '0' ? 'not-allowed' : 'text'
                     }}
                   />
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
-                    Deposit ($) *
-                  </label>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                    <label style={{ fontWeight: 500, color: '#374151' }}>
+                      Deposit ($) *
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontSize: '0.875rem', color: '#6b7280' }}>
+                      <input
+                        type="checkbox"
+                        checked={formData.deposit === '0' || formData.deposit === ''}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setFormData({ ...formData, deposit: '0' });
+                          } else {
+                            setFormData({ ...formData, deposit: '' });
+                          }
+                        }}
+                        style={{ cursor: 'pointer' }}
+                      />
+                      <span>Free</span>
+                    </label>
+                  </div>
                   <input
                     type="number"
                     step="0.01"
                     min="0"
                     value={formData.deposit}
-                    onChange={(e) => setFormData({ ...formData, deposit: e.target.value })}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setFormData({ ...formData, deposit: value });
+                    }}
                     required
+                    disabled={formData.deposit === '0'}
                     style={{
                       width: '100%',
                       padding: '0.5rem',
                       border: '1px solid #d1d5db',
                       borderRadius: '0.375rem',
-                      fontSize: '1rem'
+                      fontSize: '1rem',
+                      backgroundColor: formData.deposit === '0' ? '#f3f4f6' : 'white',
+                      cursor: formData.deposit === '0' ? 'not-allowed' : 'text'
                     }}
                   />
                 </div>
@@ -1408,6 +1454,83 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                 <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, color: '#374151' }}>
                   Days of Operation
                 </label>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const allDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+                      setFormData({ ...formData, daysOfOperation: allDays });
+                    }}
+                    style={{
+                      padding: '0.375rem 0.75rem',
+                      backgroundColor: formData.daysOfOperation.length === 7 ? '#355B45' : '#f3f4f6',
+                      color: formData.daysOfOperation.length === 7 ? 'white' : '#374151',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '0.375rem',
+                      fontSize: '0.875rem',
+                      cursor: 'pointer',
+                      fontWeight: formData.daysOfOperation.length === 7 ? '600' : '500'
+                    }}
+                  >
+                    All Days
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const weekdays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+                      setFormData({ ...formData, daysOfOperation: weekdays });
+                    }}
+                    style={{
+                      padding: '0.375rem 0.75rem',
+                      backgroundColor: JSON.stringify(formData.daysOfOperation.sort()) === JSON.stringify(['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].sort()) ? '#355B45' : '#f3f4f6',
+                      color: JSON.stringify(formData.daysOfOperation.sort()) === JSON.stringify(['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].sort()) ? 'white' : '#374151',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '0.375rem',
+                      fontSize: '0.875rem',
+                      cursor: 'pointer',
+                      fontWeight: JSON.stringify(formData.daysOfOperation.sort()) === JSON.stringify(['monday', 'tuesday', 'wednesday', 'thursday', 'friday'].sort()) ? '600' : '500'
+                    }}
+                  >
+                    Weekdays Only
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const weekends = ['saturday', 'sunday'];
+                      setFormData({ ...formData, daysOfOperation: weekends });
+                    }}
+                    style={{
+                      padding: '0.375rem 0.75rem',
+                      backgroundColor: JSON.stringify(formData.daysOfOperation.sort()) === JSON.stringify(['saturday', 'sunday'].sort()) ? '#355B45' : '#f3f4f6',
+                      color: JSON.stringify(formData.daysOfOperation.sort()) === JSON.stringify(['saturday', 'sunday'].sort()) ? 'white' : '#374151',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '0.375rem',
+                      fontSize: '0.875rem',
+                      cursor: 'pointer',
+                      fontWeight: JSON.stringify(formData.daysOfOperation.sort()) === JSON.stringify(['saturday', 'sunday'].sort()) ? '600' : '500'
+                    }}
+                  >
+                    Weekends Only
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFormData({ ...formData, daysOfOperation: [] });
+                    }}
+                    style={{
+                      padding: '0.375rem 0.75rem',
+                      backgroundColor: formData.daysOfOperation.length === 0 ? '#355B45' : '#f3f4f6',
+                      color: formData.daysOfOperation.length === 0 ? 'white' : '#374151',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '0.375rem',
+                      fontSize: '0.875rem',
+                      cursor: 'pointer',
+                      fontWeight: formData.daysOfOperation.length === 0 ? '600' : '500'
+                    }}
+                  >
+                    Clear All
+                  </button>
+                </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                   {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map(day => (
                     <label key={day} style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', cursor: 'pointer' }}>
@@ -1446,7 +1569,7 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                 </div>
                 {!formData.hoursOfOperation.open24Hours && (
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                    <div>
+                    <div style={{ minWidth: 0 }}>
                       <SimpleTimeSelector
                         label="Open Time"
                         value={formData.hoursOfOperation.open}
@@ -1456,7 +1579,7 @@ const AmenitiesManagement: React.FC<AmenitiesManagementProps> = ({ currentCommun
                         })}
                       />
                     </div>
-                    <div>
+                    <div style={{ minWidth: 0, overflow: 'hidden' }}>
                       <SimpleTimeSelector
                         label="Close Time"
                         value={formData.hoursOfOperation.close}
