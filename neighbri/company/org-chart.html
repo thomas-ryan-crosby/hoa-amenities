@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neighbri Organizational Chart</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+            padding: 2rem;
+            color: #1f2937;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 3rem;
+        }
+        
+        h1 {
+            color: #355B45;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #6b7280;
+            font-size: 1.125rem;
+            margin-bottom: 2rem;
+        }
+        
+        .equity-structure {
+            background: #f0f4f1;
+            border: 2px solid #355B45;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 3rem;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .equity-item {
+            text-align: center;
+        }
+        
+        .equity-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 0.25rem;
+        }
+        
+        .equity-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #355B45;
+        }
+        
+        .org-chart {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+        
+        .level {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            width: 100%;
+        }
+        
+        .box {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            min-width: 250px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-color: #355B45;
+        }
+        
+        .ceo-box {
+            background: linear-gradient(135deg, #355B45 0%, #244032 100%);
+            color: white;
+            border: none;
+            min-width: 300px;
+            box-shadow: 0 4px 12px rgba(53, 91, 69, 0.3);
+        }
+        
+        .cofounder-box {
+            background: linear-gradient(135deg, #86efac 0%, #4ade80 100%);
+            color: #1f2937;
+            border: 2px solid #22c55e;
+            font-weight: 600;
+        }
+        
+        .exec-box {
+            background: #f0f9ff;
+            border: 2px solid #7dd3fc;
+        }
+        
+        .title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .name {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 0.75rem;
+        }
+        
+        .ceo-box .name {
+            color: rgba(255,255,255,0.9);
+        }
+        
+        .equity {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            background: #f9fafb;
+            border-radius: 0.25rem;
+            display: inline-block;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            color: #355B45;
+        }
+        
+        .ceo-box .equity {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+        
+        .cofounder-box .equity {
+            background: rgba(31, 41, 55, 0.1);
+            color: #1f2937;
+        }
+        
+        .reports {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+        
+        .ceo-box .reports {
+            color: rgba(255,255,255,0.8);
+        }
+        
+        .connector {
+            width: 2px;
+            background: #cbd5e1;
+            height: 2rem;
+        }
+        
+        .department {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .dept-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #355B45;
+            margin-bottom: 0.5rem;
+        }
+        
+        .dept-members {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+        
+        .stats {
+            background: #f9fafb;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            margin-top: 3rem;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #355B45;
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Neighbri Organizational Chart</h1>
+        <p class="subtitle">Future State - Year 3 (400+ Communities, $1M+ ARR)</p>
+        
+        <div class="equity-structure">
+            <div class="equity-item">
+                <div class="equity-label">Founder/CEO</div>
+                <div class="equity-value">65%</div>
+            </div>
+            <div class="equity-item">
+                <div class="equity-label">Co-Founder</div>
+                <div class="equity-value">10%</div>
+            </div>
+            <div class="equity-item">
+                <div class="equity-label">Option Pool</div>
+                <div class="equity-value">25%</div>
+            </div>
+        </div>
+        
+        <div class="org-chart">
+            <!-- CEO Level -->
+            <div class="level">
+                <div class="box ceo-box">
+                    <div class="title">CEO</div>
+                    <div class="name">Thomas Crosby</div>
+                    <div class="equity">65% Equity</div>
+                    <div class="reports">Reports to: Board of Directors</div>
+                </div>
+            </div>
+            
+            <div class="connector"></div>
+            
+            <!-- Executive Level -->
+            <div class="level">
+                <div class="box cofounder-box">
+                    <div class="title">Co-Founder & Head of Sales</div>
+                    <div class="equity">10% Equity</div>
+                    <div class="department">
+                        <div class="dept-title">Sales Team (10-12)</div>
+                        <div class="dept-members">
+                            <div>• Sales Ops Manager</div>
+                            <div>• Account Executives (5-7)</div>
+                            <div>• Business Dev Reps (2-3)</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="box exec-box">
+                    <div class="title">CTO / VP Engineering</div>
+                    <div class="equity">2% Equity</div>
+                    <div class="department">
+                        <div class="dept-title">Engineering (8-10)</div>
+                        <div class="dept-members">
+                            <div>• Senior Engineers (2-3)</div>
+                            <div>• Frontend Engineers (2)</div>
+                            <div>• Backend Engineers (2)</div>
+                            <div>• DevOps Engineer</div>
+                            <div>• QA Lead</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="box exec-box">
+                    <div class="title">CFO</div>
+                    <div class="equity">1% Equity</div>
+                    <div class="department">
+                        <div class="dept-title">Finance (3-4)</div>
+                        <div class="dept-members">
+                            <div>• Finance Manager</div>
+                            <div>• Accountants (2-3)</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="box exec-box">
+                    <div class="title">VP Customer Success</div>
+                    <div class="equity">1% Equity</div>
+                    <div class="department">
+                        <div class="dept-title">Customer Success (10-12)</div>
+                        <div class="dept-members">
+                            <div>• CS Managers (3-5)</div>
+                            <div>• Support Specialists (5-7)</div>
+                            <div>• Onboarding (2-3)</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="box exec-box">
+                    <div class="title">VP Marketing</div>
+                    <div class="equity">1% Equity</div>
+                    <div class="department">
+                        <div class="dept-title">Marketing (4-5)</div>
+                        <div class="dept-members">
+                            <div>• Marketing Manager</div>
+                            <div>• Content Marketing</div>
+                            <div>• Demand Generation</div>
+                            <div>• Marketing Ops</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stats">
+            <h2 style="color: #355B45; margin-bottom: 1rem; text-align: center;">Organization Summary</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">35-40</div>
+                    <div class="stat-label">Total Employees</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">6</div>
+                    <div class="stat-label">Executive Team</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">$1M+</div>
+                    <div class="stat-label">Annual Recurring Revenue</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">400+</div>
+                    <div class="stat-label">Customer Communities</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
