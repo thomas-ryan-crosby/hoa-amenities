@@ -162,7 +162,7 @@ const CompanyPage: React.FC = () => {
                   marginTop: '1rem',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  Sales Team (10-12)
+                  Responsibilities
                 </div>
                 <div style={{
                   fontSize: '0.75rem',
@@ -170,9 +170,10 @@ const CompanyPage: React.FC = () => {
                   lineHeight: '1.6',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  • Sales Ops Manager<br/>
-                  • Account Executives (5-7)<br/>
-                  • Business Dev Reps (2-3)
+                  • Sales strategy & execution<br/>
+                  • Pipeline management<br/>
+                  • Team leadership & development<br/>
+                  • Revenue growth
                 </div>
               </div>
               
@@ -201,7 +202,7 @@ const CompanyPage: React.FC = () => {
                   marginTop: '1rem',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  Engineering (8-10)
+                  Responsibilities
                 </div>
                 <div style={{
                   fontSize: '0.75rem',
@@ -209,11 +210,10 @@ const CompanyPage: React.FC = () => {
                   lineHeight: '1.6',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  • Senior Engineers (2-3)<br/>
-                  • Frontend Engineers (2)<br/>
-                  • Backend Engineers (2)<br/>
-                  • DevOps Engineer<br/>
-                  • QA Lead
+                  • Product development<br/>
+                  • Technical architecture<br/>
+                  • Engineering team leadership<br/>
+                  • Infrastructure & DevOps
                 </div>
               </div>
               
@@ -242,7 +242,7 @@ const CompanyPage: React.FC = () => {
                   marginTop: '1rem',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  Finance (3-4)
+                  Responsibilities
                 </div>
                 <div style={{
                   fontSize: '0.75rem',
@@ -250,8 +250,10 @@ const CompanyPage: React.FC = () => {
                   lineHeight: '1.6',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  • Finance Manager<br/>
-                  • Accountants (2-3)
+                  • Financial planning & analysis<br/>
+                  • Accounting & reporting<br/>
+                  • Budget management<br/>
+                  • Investor relations
                 </div>
               </div>
               
@@ -280,7 +282,7 @@ const CompanyPage: React.FC = () => {
                   marginTop: '1rem',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  Customer Success (10-12)
+                  Responsibilities
                 </div>
                 <div style={{
                   fontSize: '0.75rem',
@@ -288,9 +290,10 @@ const CompanyPage: React.FC = () => {
                   lineHeight: '1.6',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  • CS Managers (3-5)<br/>
-                  • Support Specialists (5-7)<br/>
-                  • Onboarding (2-3)
+                  • Customer onboarding<br/>
+                  • Account management<br/>
+                  • Support & retention<br/>
+                  • Customer satisfaction
                 </div>
               </div>
               
@@ -319,7 +322,7 @@ const CompanyPage: React.FC = () => {
                   marginTop: '1rem',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  Marketing (4-5)
+                  Responsibilities
                 </div>
                 <div style={{
                   fontSize: '0.75rem',
@@ -327,10 +330,10 @@ const CompanyPage: React.FC = () => {
                   lineHeight: '1.6',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  • Marketing Manager<br/>
-                  • Content Marketing<br/>
-                  • Demand Generation<br/>
-                  • Marketing Ops
+                  • Brand & messaging<br/>
+                  • Demand generation<br/>
+                  • Content & communications<br/>
+                  • Marketing operations
                 </div>
               </div>
             </div>
@@ -358,24 +361,6 @@ const CompanyPage: React.FC = () => {
               gap: '1.5rem',
               marginTop: '1rem'
             }}>
-              <div style={{ textAlign: 'center' }}>
-                <div style={{
-                  fontSize: '2rem',
-                  fontWeight: 700,
-                  color: '#355B45',
-                  fontFamily: 'Inter, sans-serif'
-                }}>
-                  35-40
-                </div>
-                <div style={{
-                  fontSize: '0.875rem',
-                  color: '#6b7280',
-                  marginTop: '0.25rem',
-                  fontFamily: 'Inter, sans-serif'
-                }}>
-                  Total Employees
-                </div>
-              </div>
               <div style={{ textAlign: 'center' }}>
                 <div style={{
                   fontSize: '2rem',
