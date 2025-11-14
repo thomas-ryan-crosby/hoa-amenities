@@ -215,8 +215,22 @@ const ModifyReservationModal: React.FC<ModifyReservationModalProps> = ({
         });
       }
       
-      setReservationTimeStart(startTime);
-      setReservationTimeEnd(endTime);
+      console.log('About to set state:', {
+        startTime,
+        endTime,
+        reservationId: reservation.id
+      });
+      
+      // Use setTimeout to ensure state updates happen after render
+      // This helps ensure the SimpleTimeSelector receives the correct values
+      setTimeout(() => {
+        setReservationTimeStart(startTime);
+        setReservationTimeEnd(endTime);
+        console.log('State set:', {
+          startTime,
+          endTime
+        });
+      }, 0);
       
       setGuestCount(reservation.guestCount);
       setEventName(reservation.eventName || '');

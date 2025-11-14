@@ -42,18 +42,33 @@ const SimpleTimeSelector: React.FC<SimpleTimeSelectorProps> = ({
     return `${String(hour24).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
   };
 
-  const { hour, minute, isPM } = parseTime(value);
-  const [localHour, setLocalHour] = useState(hour);
-  const [localMinute, setLocalMinute] = useState(minute);
-  const [localIsPM, setLocalIsPM] = useState(isPM);
+  // Parse initial value
+  const initialParsed = parseTime(value);
+  const [localHour, setLocalHour] = useState(initialParsed.hour);
+  const [localMinute, setLocalMinute] = useState(initialParsed.minute);
+  const [localIsPM, setLocalIsPM] = useState(initialParsed.isPM);
 
   // Update local state when value prop changes
   React.useEffect(() => {
     const parsed = parseTime(value);
-    setLocalHour(parsed.hour);
-    setLocalMinute(parsed.minute);
-    setLocalIsPM(parsed.isPM);
-  }, [value]);
+    console.log('SimpleTimeSelector useEffect:', {
+      label,
+      value,
+      parsed,
+      hour: parsed.hour,
+      minute: parsed.minute,
+      isPM: parsed.isPM,
+      currentState: { localHour, localMinute, localIsPM }
+    });
+    
+    // Only update if the parsed values are different from current state
+    if (parsed.hour !== localHour || parsed.minute !== localMinute || parsed.isPM !== localIsPM) {
+      console.log('SimpleTimeSelector: Updating state from', { localHour, localMinute, localIsPM }, 'to', parsed);
+      setLocalHour(parsed.hour);
+      setLocalMinute(parsed.minute);
+      setLocalIsPM(parsed.isPM);
+    }
+  }, [value, label, localHour, localMinute, localIsPM]);
 
   const handleHourChange = (newHour: number) => {
     setLocalHour(newHour);
