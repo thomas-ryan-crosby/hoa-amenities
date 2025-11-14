@@ -61,14 +61,11 @@ const SimpleTimeSelector: React.FC<SimpleTimeSelectorProps> = ({
       currentState: { localHour, localMinute, localIsPM }
     });
     
-    // Only update if the parsed values are different from current state
-    if (parsed.hour !== localHour || parsed.minute !== localMinute || parsed.isPM !== localIsPM) {
-      console.log('SimpleTimeSelector: Updating state from', { localHour, localMinute, localIsPM }, 'to', parsed);
-      setLocalHour(parsed.hour);
-      setLocalMinute(parsed.minute);
-      setLocalIsPM(parsed.isPM);
-    }
-  }, [value, label, localHour, localMinute, localIsPM]);
+    // Always update to match the value prop - don't check if different to avoid stale state
+    setLocalHour(parsed.hour);
+    setLocalMinute(parsed.minute);
+    setLocalIsPM(parsed.isPM);
+  }, [value, label]); // Only depend on value and label, not local state
 
   const handleHourChange = (newHour: number) => {
     setLocalHour(newHour);
