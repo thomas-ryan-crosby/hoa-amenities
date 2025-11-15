@@ -386,6 +386,9 @@ router.post('/', authenticateToken, async (req: any, res) => {
         
         // If open 24 hours, skip time validation
         if (!hours.open24Hours) {
+          // Create date object for the reservation date (needed for time formatting)
+          const reservationDateObj = new Date(date);
+          
           // Parse open and close times (format: "HH:MM" in 24-hour format)
           const parseTimeString = (timeStr: string): { hours: number; minutes: number } => {
             if (timeStr.includes(':')) {
