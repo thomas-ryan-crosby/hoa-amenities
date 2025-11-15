@@ -444,7 +444,10 @@ router.post('/', authenticateToken, async (req: any, res) => {
 
           // Check if reservation starts before open time
           if (reservationStartMinutes < openTimeMinutes) {
-            const openTimeFormatted = `${String(openTime.hours).padStart(2, '0')}:${String(openTime.minutes).padStart(2, '0')}`;
+            // Format time in 12-hour format with AM/PM
+            const openTimeDate = new Date(reservationDateObj);
+            openTimeDate.setHours(openTime.hours, openTime.minutes, 0, 0);
+            const openTimeFormatted = formatTime(openTimeDate);
             return res.status(400).json({ 
               message: `This amenity opens at ${openTimeFormatted}. Your reservation start time is before the amenity opens.` 
             });
@@ -452,7 +455,14 @@ router.post('/', authenticateToken, async (req: any, res) => {
 
           // Check if reservation ends after close time
           if (reservationEndMinutesAdjusted > closeTimeMinutesAdjusted) {
-            const closeTimeFormatted = `${String(closeTime.hours).padStart(2, '0')}:${String(closeTime.minutes).padStart(2, '0')}`;
+            // Format time in 12-hour format with AM/PM
+            const closeTimeDate = new Date(reservationDateObj);
+            closeTimeDate.setHours(closeTime.hours, closeTime.minutes, 0, 0);
+            // If close time is next day, add a day
+            if (closeTimeMinutes <= openTimeMinutes) {
+              closeTimeDate.setDate(closeTimeDate.getDate() + 1);
+            }
+            const closeTimeFormatted = formatTime(closeTimeDate);
             return res.status(400).json({ 
               message: `This amenity closes at ${closeTimeFormatted}. Your reservation end time is after the amenity closes.` 
             });
