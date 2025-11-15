@@ -1288,7 +1288,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
         </h3>
         
         <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '24px' }}>
-          {/* Amenity Colors Section */}
+        {/* Amenity Colors Section */}
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <div style={{ 
               fontSize: '12px', 
@@ -1306,7 +1306,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
               flexWrap: 'wrap',
               alignItems: 'center'
             }}>
-              {amenities.map(amenity => (
+            {amenities.map(amenity => (
                 <div 
                   key={amenity.id} 
                   style={{ 
@@ -1320,14 +1320,14 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                     transition: 'all 0.2s'
                   }}
                 >
-                  <div style={{ 
+                <div style={{ 
                     width: '16px', 
                     height: '16px', 
-                    backgroundColor: amenity.displayColor || '#355B45', 
+                  backgroundColor: amenity.displayColor || '#355B45', 
                     borderRadius: '4px',
                     boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
                     flexShrink: 0
-                  }}></div>
+                }}></div>
                   <span style={{ 
                     fontSize: '13px', 
                     color: '#374151',
@@ -1335,12 +1335,12 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                   }}>
                     {amenity.name}
                   </span>
-                </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
-          
-          {/* Status Colors Section */}
+        </div>
+        
+        {/* Status Colors Section */}
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <div style={{ 
               fontSize: '12px', 
@@ -1382,7 +1382,7 @@ const Calendar: React.FC<CalendarProps> = ({ onDateClick, refreshTrigger }) => {
                 }}>
                   New
                 </span>
-              </div>
+            </div>
               <div style={{ 
                 display: 'flex', 
                 alignItems: 'center', 

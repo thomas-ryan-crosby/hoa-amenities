@@ -128,10 +128,9 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
 
   const handleAmenityChange = (amenityId: number) => {
     setSelectedAmenity(amenityId);
-    // Reset form when amenity changes
-    setReservationTimeStart('');
-    setReservationTimeEnd('');
-    setError(null); // Clear any errors when amenity changes
+    // Only clear errors when amenity changes, don't reset form fields
+    // Users should be able to fill out fields in any order
+    setError(null);
   };
 
   // Round time to nearest 30 minutes
@@ -160,8 +159,15 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!selectedAmenity || !reservationTimeStart || !reservationTimeEnd) {
-      setError('Please fill in all required fields');
+    // Validate required fields and provide specific error messages
+    const missingFields: string[] = [];
+    if (!selectedAmenity) missingFields.push('Amenity');
+    if (!reservationTimeStart) missingFields.push('Reservation Start Time');
+    if (!reservationTimeEnd) missingFields.push('Reservation End Time');
+    if (!eventName) missingFields.push('Reservation Name');
+    
+    if (missingFields.length > 0) {
+      setError(`Please fill in the following required fields:\n${missingFields.map(f => `• ${f}`).join('\n')}`);
       // Scroll to error (near submit button) after a brief delay to ensure it's rendered
       setTimeout(() => {
         errorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });

@@ -1,5 +1,6 @@
 import express from 'express';
 import multer from 'multer';
+import bcrypt from 'bcrypt';
 import { Community, CommunityUser, User } from '../models';
 import { authenticateToken, requireAdmin } from '../middleware/auth';
 import { sendEmail } from '../services/emailService';
@@ -716,6 +717,102 @@ router.put('/:id/users/:userId/role', authenticateToken, requireAdmin, async (re
     });
   } catch (error) {
     console.error('Error updating user role:', error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// POST /api/communities/:id/members/add - Add a member directly (admin only)
+router.post('/:id/members/add', authenticateToken, requireAdmin, async (req: any, res) => {
+  try {
+    const { id } = req.params;
+    const communityId = parseInt(id);
+    const { email, firstName, lastName, phone, address, role = 'resident' } = req.body;
+
+    // Verify user is admin of this community
+    if (req.user.currentCommunityId !== communityId) {
+      return res.status(403).json({ message: 'You can only manage members in your current community' });
+    }
+
+    // Validate required fields
+    if (!email || !firstName || !lastName) {
+      return res.status(400).json({ message: 'Email, first name, and last name are required' });
+    }
+
+    // Validate role
+    if (!['resident', 'janitorial', 'admin'].includes(role)) {
+      return res.status(400).json({ message: 'Invalid role. Must be resident, janitorial, or admin.' });
+    }
+
+    // Check if user already exists
+    let user = await User.findOne({ where: { email: email.trim().toLowerCase() } });
+
+    if (!user) {
+      // Create new user with a temporary password (they'll need to reset it)
+      const tempPassword = crypto.randomBytes(16).toString('hex');
+      const hashedPassword = await bcrypt.hash(tempPassword, 10);
+
+      user = await User.create({
+        email: email.trim().toLowerCase(),
+        password: hashedPassword,
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        phone: phone && phone.trim() ? phone.trim() : null,
+        address: address && address.trim() ? address.trim() : null,
+        role: role as 'resident' | 'janitorial' | 'admin',
+        isActive: true,
+        emailVerified: false
+      });
+    } else {
+      // Update user info if needed
+      if (firstName) user.firstName = firstName.trim();
+      if (lastName) user.lastName = lastName.trim();
+      if (phone) user.phone = phone.trim() || null;
+      if (address) user.address = address.trim() || null;
+      await user.save();
+    }
+
+    // Check if membership already exists
+    const existingMembership = await CommunityUser.findOne({
+      where: {
+        userId: user.id,
+        communityId
+      }
+    });
+
+    if (existingMembership) {
+      // Update existing membership
+      existingMembership.role = role as 'resident' | 'janitorial' | 'admin';
+      existingMembership.status = 'approved';
+      existingMembership.isActive = true;
+      if (!existingMembership.joinedAt) {
+        existingMembership.joinedAt = new Date();
+      }
+      await existingMembership.save();
+    } else {
+      // Create new membership
+      await CommunityUser.create({
+        userId: user.id,
+        communityId,
+        role: role as 'resident' | 'janitorial' | 'admin',
+        isActive: true,
+        status: 'approved',
+        joinedAt: new Date()
+      });
+    }
+
+    return res.json({
+      message: 'Member added successfully',
+      member: {
+        userId: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role,
+        status: 'approved'
+      }
+    });
+  } catch (error: any) {
+    console.error('Error adding member:', error);
     return res.status(500).json({ message: 'Internal server error' });
   }
 });
