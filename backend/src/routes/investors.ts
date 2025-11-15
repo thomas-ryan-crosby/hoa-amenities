@@ -3,6 +3,46 @@ import { Investor } from '../models';
 
 const router = express.Router();
 
+// GET /api/investors/check/:email - Check if investor email exists
+router.get('/check/:email', async (req, res) => {
+  try {
+    const { email } = req.params;
+
+    if (!email) {
+      return res.status(400).json({ 
+        message: 'Email is required' 
+      });
+    }
+
+    const investor = await Investor.findOne({
+      where: { email: email.toLowerCase().trim() }
+    });
+
+    if (investor) {
+      return res.json({ 
+        exists: true,
+        investor: {
+          id: investor.id,
+          name: investor.name,
+          email: investor.email,
+          phone: investor.phone
+        }
+      });
+    }
+
+    return res.json({ 
+      exists: false
+    });
+
+  } catch (error: any) {
+    console.error('❌ Error checking investor email:', error);
+    return res.status(500).json({ 
+      message: 'Internal server error',
+      details: error.message || 'Unknown error'
+    });
+  }
+});
+
 // POST /api/investors - Submit investor information
 router.post('/', async (req, res) => {
   try {

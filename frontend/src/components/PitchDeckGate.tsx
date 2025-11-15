@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import LandingHeader from './LandingHeader';
 import { useNavigate } from 'react-router-dom';
@@ -10,8 +10,52 @@ const PitchDeckGate: React.FC = () => {
     phone: ''
   });
   const [submitting, setSubmitting] = useState(false);
+  const [checking, setChecking] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  // Check if email already exists when email is entered
+  useEffect(() => {
+    const checkEmail = async () => {
+      const email = formData.email.trim();
+      if (!email || email.length < 5) return; // Don't check until email looks valid
+
+      // Validate email format before checking
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) return;
+
+      try {
+        setChecking(true);
+        const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+        const response = await axios.get(`${apiUrl}/api/investors/check/${encodeURIComponent(email)}`);
+        
+        if (response.data.exists) {
+          // Email exists - auto-grant access
+          sessionStorage.setItem('pitchDeckAccess', 'true');
+          sessionStorage.setItem('investorEmail', email);
+          
+          // Pre-fill name if available
+          if (response.data.investor?.name && !formData.name) {
+            setFormData(prev => ({ ...prev, name: response.data.investor.name }));
+          }
+          
+          // Navigate to pitch deck after a brief moment
+          setTimeout(() => {
+            navigate('/pitch');
+          }, 500);
+        }
+      } catch (err: any) {
+        // Silently fail - user can still submit manually
+        console.log('Email check failed or email not found:', err);
+      } finally {
+        setChecking(false);
+      }
+    };
+
+    // Debounce the check
+    const timeoutId = setTimeout(checkEmail, 500);
+    return () => clearTimeout(timeoutId);
+  }, [formData.email, navigate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -142,23 +186,38 @@ const PitchDeckGate: React.FC = () => {
               }}>
                 Email *
               </label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                style={{
-                  width: '100%',
-                  padding: '0.75rem',
-                  border: error && !formData.email.trim() ? '2px solid #ef4444' : '1px solid #d1d5db',
-                  borderRadius: '6px',
-                  fontSize: '1rem',
-                  fontFamily: 'Inter, sans-serif',
-                  boxSizing: 'border-box'
-                }}
-                placeholder="Enter your email address"
-              />
+              <div style={{ position: 'relative' }}>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  style={{
+                    width: '100%',
+                    padding: '0.75rem',
+                    paddingRight: checking ? '2.5rem' : '0.75rem',
+                    border: error && !formData.email.trim() ? '2px solid #ef4444' : '1px solid #d1d5db',
+                    borderRadius: '6px',
+                    fontSize: '1rem',
+                    fontFamily: 'Inter, sans-serif',
+                    boxSizing: 'border-box'
+                  }}
+                  placeholder="Enter your email address"
+                />
+                {checking && (
+                  <span style={{
+                    position: 'absolute',
+                    right: '0.75rem',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    fontSize: '0.875rem',
+                    color: '#6b7280'
+                  }}>
+                    Checking...
+                  </span>
+                )}
+              </div>
             </div>
 
             <div style={{ marginBottom: '1.5rem' }}>
