@@ -350,6 +350,109 @@ router.post('/', authenticateToken, async (req: any, res) => {
       });
     }
 
+    // Validate days of operation
+    if (amenity.daysOfOperation) {
+      try {
+        const allowedDays = JSON.parse(amenity.daysOfOperation);
+        if (Array.isArray(allowedDays) && allowedDays.length > 0) {
+          const reservationDateObj = new Date(date);
+          const dayOfWeek = reservationDateObj.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+          
+          if (!allowedDays.includes(dayOfWeek)) {
+            const dayNames: { [key: string]: string } = {
+              monday: 'Monday',
+              tuesday: 'Tuesday',
+              wednesday: 'Wednesday',
+              thursday: 'Thursday',
+              friday: 'Friday',
+              saturday: 'Saturday',
+              sunday: 'Sunday'
+            };
+            const allowedDaysFormatted = allowedDays.map((d: string) => dayNames[d] || d).join(', ');
+            return res.status(400).json({ 
+              message: `This amenity is only available on: ${allowedDaysFormatted}. Your selected date (${dayOfWeek}) is not available.` 
+            });
+          }
+        }
+      } catch (e) {
+        console.error('Error parsing daysOfOperation:', e);
+      }
+    }
+
+    // Validate hours of operation
+    if (amenity.hoursOfOperation) {
+      try {
+        const hours = JSON.parse(amenity.hoursOfOperation);
+        
+        // If open 24 hours, skip time validation
+        if (!hours.open24Hours) {
+          const reservationStart = new Date(partyTimeStart);
+          const reservationEnd = new Date(partyTimeEnd);
+          
+          // Parse open and close times (format: "HH:MM" or "HH:MM AM/PM")
+          const parseTimeString = (timeStr: string): { hours: number; minutes: number } => {
+            // Handle 24-hour format (HH:MM)
+            if (timeStr.includes(':')) {
+              const [hours, minutes] = timeStr.split(':').map(Number);
+              return { hours, minutes };
+            }
+            // Handle 12-hour format (would need more parsing)
+            return { hours: 0, minutes: 0 };
+          };
+
+          const openTime = parseTimeString(hours.open);
+          const closeTime = parseTimeString(hours.close);
+
+          // Create date objects for comparison (using reservation date)
+          const reservationDateObj = new Date(date);
+          const openDateTime = new Date(reservationDateObj);
+          openDateTime.setHours(openTime.hours, openTime.minutes, 0, 0);
+          
+          const closeDateTime = new Date(reservationDateObj);
+          closeDateTime.setHours(closeTime.hours, closeTime.minutes, 0, 0);
+          
+          // If close time is earlier than open time, assume it's the next day
+          if (closeDateTime <= openDateTime) {
+            closeDateTime.setDate(closeDateTime.getDate() + 1);
+          }
+
+          // Check if reservation times fall within operating hours
+          const reservationStartTime = reservationStart.getHours() * 60 + reservationStart.getMinutes();
+          const reservationEndTime = reservationEnd.getHours() * 60 + reservationEnd.getMinutes();
+          const openTimeMinutes = openTime.hours * 60 + openTime.minutes;
+          const closeTimeMinutes = closeTime.hours * 60 + closeTime.minutes;
+          
+          // Handle case where close time is next day
+          let closeTimeMinutesAdjusted = closeTimeMinutes;
+          if (closeTimeMinutes <= openTimeMinutes) {
+            closeTimeMinutesAdjusted = closeTimeMinutes + (24 * 60); // Add 24 hours
+          }
+
+          // Check if reservation starts before open time
+          if (reservationStartTime < openTimeMinutes) {
+            const openTimeFormatted = `${String(openTime.hours).padStart(2, '0')}:${String(openTime.minutes).padStart(2, '0')}`;
+            return res.status(400).json({ 
+              message: `This amenity opens at ${openTimeFormatted}. Your reservation start time is before the amenity opens.` 
+            });
+          }
+
+          // Check if reservation ends after close time (handle next day case)
+          const reservationEndTimeAdjusted = closeTimeMinutes <= openTimeMinutes && reservationEndTime < openTimeMinutes 
+            ? reservationEndTime + (24 * 60) 
+            : reservationEndTime;
+          
+          if (reservationEndTimeAdjusted > closeTimeMinutesAdjusted) {
+            const closeTimeFormatted = `${String(closeTime.hours).padStart(2, '0')}:${String(closeTime.minutes).padStart(2, '0')}`;
+            return res.status(400).json({ 
+              message: `This amenity closes at ${closeTimeFormatted}. Your reservation end time is after the amenity closes.` 
+            });
+          }
+        }
+      } catch (e) {
+        console.error('Error parsing hoursOfOperation:', e);
+      }
+    }
+
     // Check for time conflicts (within same community)
     // Use explicit attributes to avoid loading modification fields that don't exist
     const conflictingReservation = await Reservation.findOne({
