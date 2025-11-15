@@ -7,6 +7,7 @@ import { Reservation } from './Reservation';
 import { Payment } from './Payment';
 import { CleaningSchedule } from './CleaningSchedule';
 import { Prospect } from './Prospect';
+import { Investor } from './Investor';
 
 // Define associations
 // Community associations
@@ -49,5 +50,6 @@ export {
   Reservation,
   Payment,
   CleaningSchedule,
-  Prospect
+  Prospect,
+  Investor
 };

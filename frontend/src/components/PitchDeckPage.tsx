@@ -1,7 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import LandingHeader from './LandingHeader';
 
 const PitchDeckPage: React.FC = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Check if user has access (from sessionStorage)
+    const hasAccess = sessionStorage.getItem('pitchDeckAccess');
+    if (!hasAccess) {
+      // Redirect to gate if no access
+      navigate('/pitch/gate', { replace: true });
+    }
+  }, [navigate]);
+
+  // Check access before rendering
+  const hasAccess = sessionStorage.getItem('pitchDeckAccess');
+  if (!hasAccess) {
+    return null; // Will redirect via useEffect
+  }
+
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f9fafb' }}>
       <LandingHeader />

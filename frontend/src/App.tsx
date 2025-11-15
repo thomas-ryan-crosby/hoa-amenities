@@ -19,6 +19,7 @@ import OnboardingPage from './components/OnboardingPage';
 import NoCommunityPage from './components/NoCommunityPage';
 import TestPlanPage from './components/TestPlanPage';
 import PitchDeckPage from './components/PitchDeckPage';
+import PitchDeckGate from './components/PitchDeckGate';
 import CompanyPage from './components/CompanyPage';
 import OfferLetterPage from './components/OfferLetterPage';
 import CTOOfferPage from './components/CTOOfferPage';
@@ -475,6 +476,7 @@ const AppContent: React.FC = () => {
         <Route path="/" element={<LandingPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/testplan" element={<TestPlanPage />} />
+        <Route path="/pitch/gate" element={<PitchDeckGate />} />
         <Route path="/pitch" element={<PitchDeckPage />} />
         <Route path="/company" element={<CompanyPage />} />
         <Route path="/company/offer" element={<OfferLetterPage />} />

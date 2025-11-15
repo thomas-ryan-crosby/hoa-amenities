@@ -275,6 +275,44 @@ const LandingPage: React.FC = () => {
           © 2024 Neighbri. All rights reserved.
         </p>
       </footer>
+
+      {/* Investor Bubble */}
+      <Link
+        to="/pitch/gate"
+        style={{
+          position: 'fixed',
+          bottom: '2rem',
+          right: '2rem',
+          backgroundColor: '#355B45',
+          color: 'white',
+          padding: '1rem 1.5rem',
+          borderRadius: '50px',
+          textDecoration: 'none',
+          fontSize: '1rem',
+          fontWeight: 600,
+          fontFamily: 'Inter, sans-serif',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem',
+          zIndex: 1000,
+          transition: 'all 0.3s ease',
+          border: '2px solid white'
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.backgroundColor = '#244032';
+          e.currentTarget.style.transform = 'scale(1.05)';
+          e.currentTarget.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.2)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.backgroundColor = '#355B45';
+          e.currentTarget.style.transform = 'scale(1)';
+          e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
+        }}
+      >
+        <span style={{ fontSize: '1.25rem' }}>💼</span>
+        <span>For Investors</span>
+      </Link>
     </div>
   );
 };
