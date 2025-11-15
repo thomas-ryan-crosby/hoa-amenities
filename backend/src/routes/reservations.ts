@@ -386,62 +386,72 @@ router.post('/', authenticateToken, async (req: any, res) => {
         
         // If open 24 hours, skip time validation
         if (!hours.open24Hours) {
-          const reservationStart = new Date(partyTimeStart);
-          const reservationEnd = new Date(partyTimeEnd);
-          
-          // Parse open and close times (format: "HH:MM" or "HH:MM AM/PM")
+          // Parse open and close times (format: "HH:MM" in 24-hour format)
           const parseTimeString = (timeStr: string): { hours: number; minutes: number } => {
-            // Handle 24-hour format (HH:MM)
             if (timeStr.includes(':')) {
               const [hours, minutes] = timeStr.split(':').map(Number);
               return { hours, minutes };
             }
-            // Handle 12-hour format (would need more parsing)
             return { hours: 0, minutes: 0 };
           };
 
           const openTime = parseTimeString(hours.open);
           const closeTime = parseTimeString(hours.close);
 
-          // Create date objects for comparison (using reservation date)
-          const reservationDateObj = new Date(date);
-          const openDateTime = new Date(reservationDateObj);
-          openDateTime.setHours(openTime.hours, openTime.minutes, 0, 0);
+          // Convert UTC reservation times to local timezone for comparison
+          // Reservation times come in as UTC ISO strings, but hours are stored as local time
+          const reservationStartUTC = new Date(partyTimeStart);
+          const reservationEndUTC = new Date(partyTimeEnd);
           
-          const closeDateTime = new Date(reservationDateObj);
-          closeDateTime.setHours(closeTime.hours, closeTime.minutes, 0, 0);
+          // Get local time components using the configured timezone
+          const DEFAULT_TIMEZONE = process.env.APP_TIMEZONE || 'America/Chicago';
           
-          // If close time is earlier than open time, assume it's the next day
-          if (closeDateTime <= openDateTime) {
-            closeDateTime.setDate(closeDateTime.getDate() + 1);
-          }
+          // Format times in local timezone to get hours/minutes
+          const getLocalTimeComponents = (utcDate: Date): { hours: number; minutes: number } => {
+            const formatter = new Intl.DateTimeFormat('en-US', {
+              timeZone: DEFAULT_TIMEZONE,
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false
+            });
+            const parts = formatter.formatToParts(utcDate);
+            const hours = parseInt(parts.find(p => p.type === 'hour')?.value || '0', 10);
+            const minutes = parseInt(parts.find(p => p.type === 'minute')?.value || '0', 10);
+            return { hours, minutes };
+          };
 
-          // Check if reservation times fall within operating hours
-          const reservationStartTime = reservationStart.getHours() * 60 + reservationStart.getMinutes();
-          const reservationEndTime = reservationEnd.getHours() * 60 + reservationEnd.getMinutes();
+          const reservationStartLocal = getLocalTimeComponents(reservationStartUTC);
+          const reservationEndLocal = getLocalTimeComponents(reservationEndUTC);
+
+          // Convert to minutes for easier comparison
+          const reservationStartMinutes = reservationStartLocal.hours * 60 + reservationStartLocal.minutes;
+          const reservationEndMinutes = reservationEndLocal.hours * 60 + reservationEndLocal.minutes;
           const openTimeMinutes = openTime.hours * 60 + openTime.minutes;
           const closeTimeMinutes = closeTime.hours * 60 + closeTime.minutes;
-          
-          // Handle case where close time is next day
+
+          // Handle case where close time is next day (e.g., 9 AM - 2 AM)
           let closeTimeMinutesAdjusted = closeTimeMinutes;
+          let reservationEndMinutesAdjusted = reservationEndMinutes;
+          
           if (closeTimeMinutes <= openTimeMinutes) {
-            closeTimeMinutesAdjusted = closeTimeMinutes + (24 * 60); // Add 24 hours
+            // Close time is next day
+            closeTimeMinutesAdjusted = closeTimeMinutes + (24 * 60);
+            // If reservation end is before open time, it's also next day
+            if (reservationEndMinutes < openTimeMinutes) {
+              reservationEndMinutesAdjusted = reservationEndMinutes + (24 * 60);
+            }
           }
 
           // Check if reservation starts before open time
-          if (reservationStartTime < openTimeMinutes) {
+          if (reservationStartMinutes < openTimeMinutes) {
             const openTimeFormatted = `${String(openTime.hours).padStart(2, '0')}:${String(openTime.minutes).padStart(2, '0')}`;
             return res.status(400).json({ 
               message: `This amenity opens at ${openTimeFormatted}. Your reservation start time is before the amenity opens.` 
             });
           }
 
-          // Check if reservation ends after close time (handle next day case)
-          const reservationEndTimeAdjusted = closeTimeMinutes <= openTimeMinutes && reservationEndTime < openTimeMinutes 
-            ? reservationEndTime + (24 * 60) 
-            : reservationEndTime;
-          
-          if (reservationEndTimeAdjusted > closeTimeMinutesAdjusted) {
+          // Check if reservation ends after close time
+          if (reservationEndMinutesAdjusted > closeTimeMinutesAdjusted) {
             const closeTimeFormatted = `${String(closeTime.hours).padStart(2, '0')}:${String(closeTime.minutes).padStart(2, '0')}`;
             return res.status(400).json({ 
               message: `This amenity closes at ${closeTimeFormatted}. Your reservation end time is after the amenity closes.` 
