@@ -1,8 +1,20 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import LandingHeader from './LandingHeader';
 
 const LandingPage: React.FC = () => {
+  const [showCoins, setShowCoins] = useState(true);
+
+  useEffect(() => {
+    // Animate coins every 3 seconds
+    const interval = setInterval(() => {
+      setShowCoins(false);
+      setTimeout(() => setShowCoins(true), 100);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f9fafb' }}>
       <LandingHeader />
@@ -276,43 +288,157 @@ const LandingPage: React.FC = () => {
         </p>
       </footer>
 
-      {/* Investor Bubble */}
-      <Link
-        to="/pitch/gate"
-        style={{
-          position: 'fixed',
-          bottom: '2rem',
-          right: '2rem',
-          backgroundColor: '#355B45',
-          color: 'white',
-          padding: '1rem 1.5rem',
-          borderRadius: '50px',
-          textDecoration: 'none',
-          fontSize: '1rem',
-          fontWeight: 600,
-          fontFamily: 'Inter, sans-serif',
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.5rem',
-          zIndex: 1000,
-          transition: 'all 0.3s ease',
-          border: '2px solid white'
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.backgroundColor = '#244032';
-          e.currentTarget.style.transform = 'scale(1.05)';
-          e.currentTarget.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.2)';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.backgroundColor = '#355B45';
-          e.currentTarget.style.transform = 'scale(1)';
-          e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
-        }}
-      >
-        <span style={{ fontSize: '1.25rem' }}>💼</span>
-        <span>For Investors</span>
-      </Link>
+      {/* Investor Bubble with Coin Animation */}
+      <div style={{ position: 'fixed', bottom: '2rem', right: '2rem', zIndex: 1000 }}>
+        {/* Flying Coins */}
+        {showCoins && (
+          <>
+            <div
+              style={{
+                position: 'absolute',
+                fontSize: '1.5rem',
+                animation: 'coinFly1 2s ease-out forwards',
+                pointerEvents: 'none',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)'
+              }}
+            >
+              🪙
+            </div>
+            <div
+              style={{
+                position: 'absolute',
+                fontSize: '1.5rem',
+                animation: 'coinFly2 2s ease-out forwards',
+                pointerEvents: 'none',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)'
+              }}
+            >
+              🪙
+            </div>
+            <div
+              style={{
+                position: 'absolute',
+                fontSize: '1.5rem',
+                animation: 'coinFly3 2s ease-out forwards',
+                pointerEvents: 'none',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)'
+              }}
+            >
+              🪙
+            </div>
+            <div
+              style={{
+                position: 'absolute',
+                fontSize: '1.5rem',
+                animation: 'coinFly4 2s ease-out forwards',
+                pointerEvents: 'none',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)'
+              }}
+            >
+              🪙
+            </div>
+          </>
+        )}
+
+        {/* Investor Button */}
+        <Link
+          to="/pitch/gate"
+          style={{
+            position: 'relative',
+            backgroundColor: '#355B45',
+            color: 'white',
+            padding: '1rem 1.5rem',
+            borderRadius: '50px',
+            textDecoration: 'none',
+            fontSize: '1rem',
+            fontWeight: 600,
+            fontFamily: 'Inter, sans-serif',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            transition: 'all 0.3s ease',
+            border: '2px solid white'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = '#244032';
+            e.currentTarget.style.transform = 'scale(1.05)';
+            e.currentTarget.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.2)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = '#355B45';
+            e.currentTarget.style.transform = 'scale(1)';
+            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
+          }}
+        >
+          <span style={{ fontSize: '1.25rem' }}>💼</span>
+          <span>For Investors</span>
+        </Link>
+
+        {/* CSS Animations */}
+        <style>{`
+          @keyframes coinFly1 {
+            0% {
+              transform: translate(-50%, -50%) scale(0) rotate(0deg);
+              opacity: 1;
+            }
+            50% {
+              opacity: 1;
+            }
+            100% {
+              transform: translate(-80px, -100px) scale(1.2) rotate(360deg);
+              opacity: 0;
+            }
+          }
+          @keyframes coinFly2 {
+            0% {
+              transform: translate(-50%, -50%) scale(0) rotate(0deg);
+              opacity: 1;
+            }
+            50% {
+              opacity: 1;
+            }
+            100% {
+              transform: translate(80px, -100px) scale(1.2) rotate(-360deg);
+              opacity: 0;
+            }
+          }
+          @keyframes coinFly3 {
+            0% {
+              transform: translate(-50%, -50%) scale(0) rotate(0deg);
+              opacity: 1;
+            }
+            50% {
+              opacity: 1;
+            }
+            100% {
+              transform: translate(-60px, 80px) scale(1.2) rotate(360deg);
+              opacity: 0;
+            }
+          }
+          @keyframes coinFly4 {
+            0% {
+              transform: translate(-50%, -50%) scale(0) rotate(0deg);
+              opacity: 1;
+            }
+            50% {
+              opacity: 1;
+            }
+            100% {
+              transform: translate(60px, 80px) scale(1.2) rotate(-360deg);
+              opacity: 0;
+            }
+          }
+        `}</style>
+      </div>
     </div>
   );
 };
