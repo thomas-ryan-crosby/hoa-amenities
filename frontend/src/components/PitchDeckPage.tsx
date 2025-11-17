@@ -199,21 +199,200 @@ const PitchDeckPage: React.FC = () => {
           }}>
             Amenity Management for Class A & Amenity-Rich Properties
           </p>
-          <p style={{
-            fontSize: '1.5rem',
-            color: '#4b5563',
-            maxWidth: '800px',
-            margin: '0 auto',
-            lineHeight: '1.9',
-            fontFamily: 'Inter, sans-serif',
-            fontWeight: 400,
+          {/* Feature Bubbles */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: '2rem',
+            maxWidth: '900px',
+            margin: '3rem auto 0',
             position: 'relative',
             zIndex: 1
           }}>
-            {businessModel === 'amenityManagement'
-              ? 'A modern platform that streamlines reservations, payments, and management for Class A and amenity-rich properties'
-              : 'A modern platform that streamlines amenity management AND enables communities to monetize idle amenities through day passes for non-residents, creating new revenue streams'}
-          </p>
+            {/* Reservations Feature */}
+            <div style={{
+              padding: '2rem 1.5rem',
+              borderRadius: '1rem',
+              backgroundColor: 'white',
+              boxShadow: '0 8px 24px rgba(53, 91, 69, 0.15)',
+              border: '2px solid #86efac',
+              textAlign: 'center',
+              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+              cursor: 'default'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-8px)';
+              e.currentTarget.style.boxShadow = '0 12px 32px rgba(53, 91, 69, 0.25)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 8px 24px rgba(53, 91, 69, 0.15)';
+            }}
+            >
+              <div style={{
+                fontSize: '3.5rem',
+                marginBottom: '1rem',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '80px'
+              }}>
+                📅
+              </div>
+              <h3 style={{
+                fontSize: '1.25rem',
+                fontWeight: 700,
+                color: '#1f2937',
+                marginBottom: '0.75rem',
+                fontFamily: 'Inter, sans-serif'
+              }}>
+                Reservations
+              </h3>
+              <p style={{
+                color: '#6b7280',
+                fontSize: '0.95rem',
+                lineHeight: '1.6',
+                fontFamily: 'Inter, sans-serif',
+                margin: 0
+              }}>
+                Streamlined booking system with calendar management
+              </p>
+            </div>
+
+            {/* Payments Feature */}
+            <div style={{
+              padding: '2rem 1.5rem',
+              borderRadius: '1rem',
+              backgroundColor: 'white',
+              boxShadow: '0 8px 24px rgba(53, 91, 69, 0.15)',
+              border: '2px solid #86efac',
+              textAlign: 'center',
+              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+              cursor: 'default'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-8px)';
+              e.currentTarget.style.boxShadow = '0 12px 32px rgba(53, 91, 69, 0.25)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 8px 24px rgba(53, 91, 69, 0.15)';
+            }}
+            >
+              <div style={{
+                fontSize: '3.5rem',
+                marginBottom: '1rem',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '80px'
+              }}>
+                💳
+              </div>
+              <h3 style={{
+                fontSize: '1.25rem',
+                fontWeight: 700,
+                color: '#1f2937',
+                marginBottom: '0.75rem',
+                fontFamily: 'Inter, sans-serif'
+              }}>
+                Payments
+              </h3>
+              <p style={{
+                color: '#6b7280',
+                fontSize: '0.95rem',
+                lineHeight: '1.6',
+                fontFamily: 'Inter, sans-serif',
+                margin: 0
+              }}>
+                Automated fee collection and deposit processing
+              </p>
+            </div>
+
+            {/* Management Feature */}
+            <div style={{
+              padding: '2rem 1.5rem',
+              borderRadius: '1rem',
+              backgroundColor: 'white',
+              boxShadow: '0 8px 24px rgba(53, 91, 69, 0.15)',
+              border: '2px solid #86efac',
+              textAlign: 'center',
+              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+              cursor: 'default'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-8px)';
+              e.currentTarget.style.boxShadow = '0 12px 32px rgba(53, 91, 69, 0.25)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 8px 24px rgba(53, 91, 69, 0.15)';
+            }}
+            >
+              <div style={{
+                fontSize: '3.5rem',
+                marginBottom: '1rem',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '80px'
+              }}>
+                ⚙️
+              </div>
+              <h3 style={{
+                fontSize: '1.25rem',
+                fontWeight: 700,
+                color: '#1f2937',
+                marginBottom: '0.75rem',
+                fontFamily: 'Inter, sans-serif'
+              }}>
+                Management
+              </h3>
+              <p style={{
+                color: '#6b7280',
+                fontSize: '0.95rem',
+                lineHeight: '1.6',
+                fontFamily: 'Inter, sans-serif',
+                margin: 0
+              }}>
+                Complete administrative oversight and control
+              </p>
+            </div>
+          </div>
+
+          {/* Additional feature for day pass platform */}
+          {businessModel === 'dayPassPlatform' && (
+            <div style={{
+              marginTop: '2rem',
+              padding: '1.5rem 2rem',
+              borderRadius: '1rem',
+              backgroundColor: 'rgba(53, 91, 69, 0.1)',
+              border: '2px solid #355B45',
+              maxWidth: '600px',
+              marginLeft: 'auto',
+              marginRight: 'auto',
+              textAlign: 'center',
+              position: 'relative',
+              zIndex: 1
+            }}>
+              <div style={{
+                fontSize: '2.5rem',
+                marginBottom: '0.75rem'
+              }}>
+                🎫
+              </div>
+              <p style={{
+                color: '#1f2937',
+                fontSize: '1.1rem',
+                lineHeight: '1.7',
+                fontFamily: 'Inter, sans-serif',
+                fontWeight: 500,
+                margin: 0
+              }}>
+                <strong>Plus:</strong> Monetize idle amenities through day passes for non-residents, creating new revenue streams
+              </p>
+            </div>
+          )}
         </section>
 
         {/* Problem */}
