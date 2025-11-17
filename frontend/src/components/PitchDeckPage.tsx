@@ -666,7 +666,7 @@ const PitchDeckPage: React.FC = () => {
                     color: '#355B45',
                     fontFamily: 'Inter, sans-serif'
                   }}>
-                    150,000+
+                    210,000
                   </div>
                   <p style={{
                     fontSize: '1.125rem',
@@ -675,7 +675,7 @@ const PitchDeckPage: React.FC = () => {
                     marginTop: '0.5rem',
                     fontFamily: 'Inter, sans-serif'
                   }}>
-                    Condo Complexes & Multifamily Properties
+                    Total Multifamily Properties
                   </p>
                   <p style={{
                     color: '#6b7280',
@@ -683,7 +683,7 @@ const PitchDeckPage: React.FC = () => {
                     marginTop: '0.25rem',
                     fontFamily: 'Inter, sans-serif'
                   }}>
-                    With shared amenities requiring reservation management
+                    Apartment communities and rental properties
                   </p>
                   <p style={{
                     color: '#6b7280',
@@ -719,9 +719,35 @@ const PitchDeckPage: React.FC = () => {
                   fontSize: '1.25rem',
                   color: '#1f2937',
                   fontWeight: 600,
+                  fontFamily: 'Inter, sans-serif',
+                  marginBottom: '0.5rem'
+                }}>
+                  <strong>Total Market: 580,000 properties</strong>
+                </p>
+                <p style={{
+                  fontSize: '1rem',
+                  color: '#6b7280',
+                  fontFamily: 'Inter, sans-serif',
+                  fontStyle: 'italic'
+                }}>
+                  (370,000 HOAs + 210,000 multifamily)
+                </p>
+                <p style={{
+                  fontSize: '1.125rem',
+                  color: '#355B45',
+                  fontWeight: 600,
+                  marginTop: '0.75rem',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  <strong>Total Market: 520,000+ properties</strong>
+                  <strong>Amenity-Rich Subset: 345,000 communities</strong>
+                </p>
+                <p style={{
+                  fontSize: '0.9rem',
+                  color: '#6b7280',
+                  fontFamily: 'Inter, sans-serif',
+                  fontStyle: 'italic'
+                }}>
+                  (220,000 HOAs + 125,000 multifamily with shared amenities)
                 </p>
               </div>
             </div>
