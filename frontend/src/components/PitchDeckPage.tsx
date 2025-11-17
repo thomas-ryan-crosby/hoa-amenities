@@ -1351,7 +1351,9 @@ const PitchDeckPage: React.FC = () => {
                       padding: '1rem',
                       color: '#6b7280',
                       fontFamily: 'Inter, sans-serif'
-                    }}>SaaS Subscription + Platform Fees</td>
+                    }}>
+                      {showHOAPass ? 'Transaction-Based (Commission)' : 'SaaS Subscription + Platform Fees'}
+                    </td>
                     <td style={{
                       padding: '1rem',
                       color: '#6b7280',
@@ -1395,31 +1397,6 @@ const PitchDeckPage: React.FC = () => {
                       fontWeight: 600,
                       color: '#1f2937',
                       fontFamily: 'Inter, sans-serif'
-                    }}>TAM - Platform Revenue</td>
-                    <td style={{
-                      padding: '1rem',
-                      color: '#355B45',
-                      fontWeight: 600,
-                      fontFamily: 'Inter, sans-serif'
-                    }}>$227M+</td>
-                    <td style={{
-                      padding: '1rem',
-                      color: '#6b7280',
-                      fontFamily: 'Inter, sans-serif'
-                    }}>$9-11B+ (estimated)<br/>
-                      <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
-                        Global luxury hotel amenities market
-                      </span>
-                    </td>
-                  </tr>
-                  <tr style={{
-                    borderBottom: '1px solid #e5e7eb'
-                  }}>
-                    <td style={{
-                      padding: '1rem',
-                      fontWeight: 600,
-                      color: '#1f2937',
-                      fontFamily: 'Inter, sans-serif'
                     }}>TAM - Total Market Size</td>
                     <td style={{
                       padding: '1rem',
@@ -1438,6 +1415,31 @@ const PitchDeckPage: React.FC = () => {
                     }}>$50-100B+ (estimated)<br/>
                       <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
                         Total luxury hotel amenity revenue
+                      </span>
+                    </td>
+                  </tr>
+                  <tr style={{
+                    borderBottom: '1px solid #e5e7eb'
+                  }}>
+                    <td style={{
+                      padding: '1rem',
+                      fontWeight: 600,
+                      color: '#1f2937',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>TAM - Platform Revenue</td>
+                    <td style={{
+                      padding: '1rem',
+                      color: '#355B45',
+                      fontWeight: 600,
+                      fontFamily: 'Inter, sans-serif'
+                    }}>$227M+</td>
+                    <td style={{
+                      padding: '1rem',
+                      color: '#6b7280',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>$9-11B+ (estimated)<br/>
+                      <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
+                        Global luxury hotel amenities market
                       </span>
                     </td>
                   </tr>
@@ -1530,7 +1532,18 @@ const PitchDeckPage: React.FC = () => {
                       padding: '1rem',
                       color: '#6b7280',
                       fontFamily: 'Inter, sans-serif'
-                    }}>N/A (SaaS model)</td>
+                    }}>
+                      {showHOAPass ? (
+                        <>
+                          Variable (estimated)<br/>
+                          <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
+                            Depends on day pass booking volume
+                          </span>
+                        </>
+                      ) : (
+                        'N/A (SaaS model)'
+                      )}
+                    </td>
                     <td style={{
                       padding: '1rem',
                       color: '#6b7280',
@@ -1554,10 +1567,22 @@ const PitchDeckPage: React.FC = () => {
                       padding: '1rem',
                       color: '#6b7280',
                       fontFamily: 'Inter, sans-serif'
-                    }}>$3,500/year avg<br/>
-                      <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
-                        ($2,000 subscription + $1,500 HOAPass fees)
-                      </span>
+                    }}>
+                      {showHOAPass ? (
+                        <>
+                          Variable (commission-based)<br/>
+                          <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
+                            Depends on booking volume (15-20% of day pass sales)
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          $3,500/year avg<br/>
+                          <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
+                            ($2,000 subscription + $1,500 HOAPass fees)
+                          </span>
+                        </>
+                      )}
                     </td>
                     <td style={{
                       padding: '1rem',
@@ -1609,10 +1634,12 @@ const PitchDeckPage: React.FC = () => {
                     }}>Revenue Predictability</td>
                     <td style={{
                       padding: '1rem',
-                      color: '#355B45',
+                      color: showHOAPass ? '#6b7280' : '#355B45',
                       fontWeight: 600,
                       fontFamily: 'Inter, sans-serif'
-                    }}>✓ High (Recurring SaaS)</td>
+                    }}>
+                      {showHOAPass ? 'Variable (Usage-based)' : '✓ High (Recurring SaaS)'}
+                    </td>
                     <td style={{
                       padding: '1rem',
                       color: '#6b7280',
@@ -1633,8 +1660,15 @@ const PitchDeckPage: React.FC = () => {
                       padding: '1rem',
                       color: '#6b7280',
                       fontFamily: 'Inter, sans-serif'
-                    }}>Subscription fees (guaranteed)<br/>
-                      + Platform fees on day passes
+                    }}>
+                      {showHOAPass ? (
+                        'Commission on bookings only'
+                      ) : (
+                        <>
+                          Subscription fees (guaranteed)<br/>
+                          + Platform fees on day passes
+                        </>
+                      )}
                     </td>
                     <td style={{
                       padding: '1rem',
