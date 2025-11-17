@@ -1,9 +1,77 @@
-import React from 'react';
+import React, { useRef } from 'react';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 import LandingHeader from './LandingHeader';
 
 const PitchDeckExecutiveSummary: React.FC = () => {
-  const handlePrint = () => {
-    window.print();
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [isGenerating, setIsGenerating] = React.useState(false);
+
+  const handleDownloadPDF = async () => {
+    if (!contentRef.current) return;
+    
+    setIsGenerating(true);
+    try {
+      // Capture the content as canvas with high quality
+      const canvas = await html2canvas(contentRef.current, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff',
+        width: contentRef.current.scrollWidth,
+        height: contentRef.current.scrollHeight,
+        windowWidth: contentRef.current.scrollWidth,
+        windowHeight: contentRef.current.scrollHeight,
+      });
+
+      // Calculate PDF dimensions (8.5 x 11 inches in points)
+      const pdfWidth = 8.5;
+      const pdfHeight = 11;
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'in',
+        format: [pdfWidth, pdfHeight]
+      });
+
+      // Calculate available space (with 0.5in margins)
+      const margin = 0.5;
+      const availableWidth = pdfWidth - (margin * 2);
+      const availableHeight = pdfHeight - (margin * 2);
+
+      // Calculate aspect ratios
+      const canvasAspect = canvas.width / canvas.height;
+      const availableAspect = availableWidth / availableHeight;
+
+      // Calculate final dimensions to fit on one page
+      let finalWidth: number;
+      let finalHeight: number;
+
+      if (canvasAspect > availableAspect) {
+        // Content is wider - fit to width
+        finalWidth = availableWidth;
+        finalHeight = availableWidth / canvasAspect;
+      } else {
+        // Content is taller - fit to height
+        finalHeight = availableHeight;
+        finalWidth = availableHeight * canvasAspect;
+      }
+
+      // Center the content
+      const xOffset = margin + (availableWidth - finalWidth) / 2;
+      const yOffset = margin + (availableHeight - finalHeight) / 2;
+
+      // Add image to PDF
+      const imgData = canvas.toDataURL('image/png', 1.0);
+      pdf.addImage(imgData, 'PNG', xOffset, yOffset, finalWidth, finalHeight);
+
+      // Download the PDF
+      pdf.save('Neighbri-Executive-Summary.pdf');
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      alert('Error generating PDF. Please try again.');
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   return (
@@ -21,32 +89,38 @@ const PitchDeckExecutiveSummary: React.FC = () => {
           zIndex: 1000
         }}>
           <button
-            onClick={handlePrint}
+            onClick={handleDownloadPDF}
+            disabled={isGenerating}
             style={{
-              backgroundColor: '#355B45',
+              backgroundColor: isGenerating ? '#6b7280' : '#355B45',
               color: 'white',
               border: 'none',
               padding: '0.75rem 1.5rem',
               borderRadius: '0.5rem',
-              cursor: 'pointer',
+              cursor: isGenerating ? 'not-allowed' : 'pointer',
               fontSize: '1rem',
               fontWeight: 600,
               fontFamily: 'Inter, sans-serif',
               boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-              transition: 'background-color 0.2s'
+              transition: 'background-color 0.2s',
+              opacity: isGenerating ? 0.7 : 1
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#244032';
+              if (!isGenerating) {
+                e.currentTarget.style.backgroundColor = '#244032';
+              }
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#355B45';
+              if (!isGenerating) {
+                e.currentTarget.style.backgroundColor = '#355B45';
+              }
             }}
           >
-            Print to PDF
+            {isGenerating ? 'Generating PDF...' : 'Download as PDF'}
           </button>
         </div>
       </div>
-      <div className="print-content" style={{
+      <div ref={contentRef} className="print-content" style={{
         maxWidth: '8.5in',
         margin: '0 auto',
         padding: '0.75in',
