@@ -431,7 +431,7 @@ const PitchDeckPage: React.FC = () => {
                   opacity: '0.9',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  Seamless Square payment processing for fees and deposits, eliminating manual payment collection.
+                  Seamless payment processing for fees and deposits, eliminating manual payment collection.
                 </p>
               </div>
 
@@ -784,151 +784,6 @@ const PitchDeckPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Down-Selection Steps */}
-            <div style={{
-              padding: '1.5rem',
-              borderRadius: '0.5rem',
-              backgroundColor: '#f0f9ff',
-              border: '1px solid #bae6fd',
-              marginBottom: '1.5rem'
-            }}>
-              <h4 style={{
-                fontSize: '1.25rem',
-                fontWeight: 600,
-                color: '#1f2937',
-                marginBottom: '1rem',
-                fontFamily: 'Inter, sans-serif'
-              }}>
-                Market Down-Selection
-              </h4>
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-                gap: '1rem'
-              }}>
-                <div style={{
-                  padding: '1rem',
-                  backgroundColor: 'white',
-                  borderRadius: '0.25rem',
-                  border: '1px solid #cbd5e1'
-                }}>
-                  <div style={{
-                    fontSize: '1.5rem',
-                    fontWeight: 700,
-                    color: '#355B45',
-                    marginBottom: '0.5rem',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>
-                    Step 1
-                  </div>
-                  <p style={{
-                    color: '#6b7280',
-                    fontSize: '0.9rem',
-                    lineHeight: '1.5',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>
-                    <strong>Properties with Reservable Amenities:</strong><br/>
-                    Pools, clubrooms, event spaces, tennis courts, etc.
-                  </p>
-                  <p style={{
-                    color: '#355B45',
-                    fontWeight: 600,
-                    marginTop: '0.5rem',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>
-                    ~345,000 amenity-rich communities
-                  </p>
-                  <p style={{
-                    color: '#6b7280',
-                    fontSize: '0.85rem',
-                    marginTop: '0.25rem',
-                    fontStyle: 'italic',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>
-                    (60% of 370K HOAs + 60% of 210K multifamily)
-                  </p>
-                </div>
-
-                <div style={{
-                  padding: '1rem',
-                  backgroundColor: 'white',
-                  borderRadius: '0.25rem',
-                  border: '1px solid #cbd5e1'
-                }}>
-                  <div style={{
-                    fontSize: '1.5rem',
-                    fontWeight: 700,
-                    color: '#355B45',
-                    marginBottom: '0.5rem',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>
-                    Step 2
-                  </div>
-                  <p style={{
-                    color: '#6b7280',
-                    fontSize: '0.9rem',
-                    lineHeight: '1.5',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>
-                    <strong>Luxury/Class A Properties:</strong><br/>
-                    Higher HOA fees, professional management, premium amenities
-                  </p>
-                  <p style={{
-                    color: '#355B45',
-                    fontWeight: 600,
-                    marginTop: '0.5rem',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>
-                    ~345,000 amenity-rich communities
-                  </p>
-                  <p style={{
-                    color: '#6b7280',
-                    fontSize: '0.85rem',
-                    marginTop: '0.25rem',
-                    fontStyle: 'italic',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>
-                    (220,000 HOAs + 125,000 multifamily properties with shared amenities)
-                  </p>
-                </div>
-
-                <div style={{
-                  padding: '1rem',
-                  backgroundColor: 'white',
-                  borderRadius: '0.25rem',
-                  border: '1px solid #cbd5e1'
-                }}>
-                  <div style={{
-                    fontSize: '1.5rem',
-                    fontWeight: 700,
-                    color: '#355B45',
-                    marginBottom: '0.5rem',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>
-                    Step 3
-                  </div>
-                  <p style={{
-                    color: '#6b7280',
-                    fontSize: '0.9rem',
-                    lineHeight: '1.5',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>
-                    <strong>Neighbri Target Market:</strong><br/>
-                    {businessModel === 'dayPassPlatform' 
-                      ? 'All 345,000 amenity-rich communities with day pass monetization potential'
-                      : 'All 345,000 amenity-rich communities requiring sophisticated reservation & payment management'}
-                  </p>
-                  <p style={{
-                    color: '#355B45',
-                    fontWeight: 600,
-                    marginTop: '0.5rem',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>
-                    ~345,000 communities
-                  </p>
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* Key Market Stats */}
@@ -1253,8 +1108,8 @@ const PitchDeckPage: React.FC = () => {
                 fontFamily: 'Inter, sans-serif'
               }}>
                 <strong>Note:</strong> {businessModel === 'dayPassPlatform'
-                  ? 'Day Pass Platform: Revenue includes subscription fees ($2,000/year) plus 15-20% commission on day pass GTV. Based on $7-21B total GTV opportunity across 345,000 amenity-rich communities. Additional revenue from payment processing transaction fees (2.9% + $0.30 per reservation) not included.'
-                  : 'Amenity Management Platform: Revenue projections based on subscription fees only. Additional revenue from payment processing transaction fees (2.9% + $0.30 per reservation) not included in above calculations.'}
+                  ? 'Day Pass Platform: Revenue includes subscription fees ($2,000/year) plus 15-20% commission on day pass GTV. Based on $7-21B total GTV opportunity across 345,000 amenity-rich communities.'
+                  : 'Amenity Management Platform: Revenue projections based on subscription fees only.'}
               </p>
             </div>
           </div>
@@ -1285,7 +1140,7 @@ const PitchDeckPage: React.FC = () => {
                   fontFamily: 'Inter, sans-serif'
                 }}>
                   The core Neighbri platform provides comprehensive amenity reservation management exclusively for community residents. 
-                  This includes calendar-based booking, payment processing, janitorial scheduling, and administrative oversight.
+                  This includes calendar-based booking, janitorial scheduling, and administrative oversight.
                 </p>
                 <div style={{
                   padding: '1rem',
@@ -1308,7 +1163,6 @@ const PitchDeckPage: React.FC = () => {
                     fontFamily: 'Inter, sans-serif'
                   }}>
                     <li>SaaS subscription fees ($99-$299/month per community)</li>
-                    <li>Payment processing transaction fees (2.9% + $0.30 per reservation)</li>
                   </ul>
                 </div>
               </div>
@@ -1458,7 +1312,6 @@ const PitchDeckPage: React.FC = () => {
                   }}>
                     <li><strong>Day Pass Sales:</strong> HOAs set pricing for day passes (e.g., $25-75/day for pool access, $50-150 for clubroom rental)</li>
                     <li><strong>Revenue Share:</strong> Neighbri takes a percentage of day pass sales (e.g., 15-20%) as platform fee</li>
-                    <li><strong>Transaction Fees:</strong> Standard payment processing fees (2.9% + $0.30) on all guest bookings</li>
                     <li><strong>Premium Features:</strong> Advanced guest management, marketing tools, and analytics available as add-ons</li>
                   </ul>
                   <div style={{
@@ -2275,53 +2128,6 @@ const PitchDeckPage: React.FC = () => {
               </div>
             </div>
 
-            <div style={{
-              padding: '2rem',
-              borderRadius: '0.5rem',
-              backgroundColor: 'white',
-              border: '2px solid #355B45',
-              boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-            }}>
-              <h3 style={{
-                fontSize: '1.5rem',
-                fontWeight: 600,
-                color: '#355B45',
-                marginBottom: '1rem',
-                fontFamily: 'Inter, sans-serif'
-              }}>
-                Payment Processing
-              </h3>
-              <p style={{
-                color: '#6b7280',
-                lineHeight: '1.8',
-                marginBottom: '1.5rem',
-                fontFamily: 'Inter, sans-serif'
-              }}>
-                Small transaction fee on each reservation payment processed through the platform.
-              </p>
-              <div style={{
-                padding: '1rem',
-                backgroundColor: '#f0f4f1',
-                borderRadius: '0.25rem'
-              }}>
-                <p style={{
-                  fontSize: '1.125rem',
-                  color: '#1f2937',
-                  fontFamily: 'Inter, sans-serif'
-                }}>
-                  <strong>Revenue Stream:</strong>
-                </p>
-                <p style={{
-                  marginTop: '0.5rem',
-                  color: '#6b7280',
-                  lineHeight: '1.8',
-                  fontFamily: 'Inter, sans-serif'
-                }}>
-                  2.9% + $0.30 per transaction (industry standard)
-                </p>
-              </div>
-            </div>
-
             {businessModel === 'dayPassPlatform' && (
               <div style={{
                 padding: '2rem',
@@ -2545,7 +2351,7 @@ const PitchDeckPage: React.FC = () => {
                 lineHeight: '1.6',
                 fontFamily: 'Inter, sans-serif'
               }}>
-                Square payment processing fully integrated
+                Payment processing fully integrated
               </p>
             </div>
 
@@ -2722,7 +2528,7 @@ const PitchDeckPage: React.FC = () => {
                   lineHeight: '1.8',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  Square API integration for secure payment processing
+                  Secure payment processing integration
                 </p>
               </div>
             </div>
@@ -2825,7 +2631,7 @@ const PitchDeckPage: React.FC = () => {
                     fontFamily: 'Inter, sans-serif'
                   }}>
                     • Double-bookings<br/>
-                    • No payment integration<br/>
+                    • No integrated payments<br/>
                     • Time-consuming<br/>
                     • Error-prone
                   </td>
@@ -2899,7 +2705,7 @@ const PitchDeckPage: React.FC = () => {
                   }}>
                     • Not HOA-specific<br/>
                     • No janitorial workflows<br/>
-                    • Limited payment options<br/>
+                    • Limited payment capabilities<br/>
                     • No deposit management
                   </td>
                   <td style={{
@@ -3434,8 +3240,8 @@ const PitchDeckPage: React.FC = () => {
               marginBottom: '1rem'
             }}>
               <strong>Revenue Model:</strong> {businessModel === 'dayPassPlatform' 
-                ? 'With pricing tiers ranging from $99-299/month per community (average ~$180/month subscription) plus 15-20% commission on day pass bookings, 100 communities would generate approximately $216,000 in annual recurring subscription revenue, plus $315,000+ in commission revenue from day passes (assuming $3,150/year avg per community), plus transaction fees from reservation payments.'
-                : 'With pricing tiers ranging from $99-299/month per community (average ~$180/month), 100 communities would generate approximately $216,000 in annual recurring revenue, plus transaction fees from reservation payments.'}
+                ? 'With pricing tiers ranging from $99-299/month per community (average ~$180/month subscription) plus 15-20% commission on day pass bookings, 100 communities would generate approximately $216,000 in annual recurring subscription revenue, plus $315,000+ in commission revenue from day passes (assuming $3,150/year avg per community).'
+                : 'With pricing tiers ranging from $99-299/month per community (average ~$180/month), 100 communities would generate approximately $216,000 in annual recurring revenue.'}
             </p>
           </div>
 
