@@ -197,7 +197,7 @@ const PitchDeckPage: React.FC = () => {
             position: 'relative',
             zIndex: 1
           }}>
-            Premium Amenity Management for Luxury Communities
+            Amenity Management for Class A & Amenity-Rich Properties
           </p>
           <p style={{
             fontSize: '1.5rem',
@@ -211,7 +211,7 @@ const PitchDeckPage: React.FC = () => {
             zIndex: 1
           }}>
             {businessModel === 'amenityManagement'
-              ? 'A modern platform that streamlines reservations, payments, and management for luxury residential communities with premium amenities'
+              ? 'A modern platform that streamlines reservations, payments, and management for Class A and amenity-rich properties'
               : 'A modern platform that streamlines amenity management AND enables communities to monetize idle amenities through day passes for non-residents, creating new revenue streams'}
           </p>
         </section>
@@ -260,7 +260,7 @@ const PitchDeckPage: React.FC = () => {
                 lineHeight: '1.8',
                 fontFamily: 'Inter, sans-serif'
               }}>
-                Luxury communities rely on email chains, spreadsheets, and phone calls to manage premium amenities, 
+                Class A and amenity-rich properties rely on email chains, spreadsheets, and phone calls to manage premium amenities, 
                 leading to double-bookings and resident dissatisfaction.
               </p>
             </div>
@@ -359,7 +359,7 @@ const PitchDeckPage: React.FC = () => {
                 fontWeight: 600
               }}>
                 <strong>Result:</strong> {businessModel === 'amenityManagement' 
-                  ? 'Frustrated residents in luxury communities, overworked HOA staff, and inefficient use of premium amenities that residents pay significant fees to access.'
+                  ? 'Frustrated residents in Class A and amenity-rich properties, overworked HOA staff, and inefficient use of premium amenities that residents pay significant fees to access.'
                   : 'Frustrated residents, overworked HOA staff, inefficient amenity use, AND billions in unrealized revenue from idle premium amenities that could be monetized through day passes.'}
               </p>
             </div>
@@ -1184,7 +1184,7 @@ const PitchDeckPage: React.FC = () => {
                   fontFamily: 'Inter, sans-serif'
                 }}>
                   HOAPass extends Neighbri's platform to allow non-residents and guests to book day passes or reservations 
-                  for HOA amenities. Similar to ResortPass (which serves hospitality assets), HOAPass enables luxury communities 
+                  for HOA amenities. Similar to ResortPass (which serves hospitality assets), HOAPass enables Class A and amenity-rich properties 
                   to monetize their premium amenities by offering access to outsiders, creating a new revenue stream for HOAs 
                   while maintaining resident priority and access control.
                 </p>
@@ -1958,7 +1958,7 @@ const PitchDeckPage: React.FC = () => {
               fontFamily: 'Inter, sans-serif'
             }}>
               <strong>Expansion Plan:</strong> Build a strong foundation in initial markets, then expand systematically 
-              to adjacent regions and eventually nationwide, targeting luxury communities and Class A developments.
+              to adjacent regions and eventually nationwide, targeting Class A and amenity-rich properties.
             </p>
           </div>
         </section>
@@ -2871,7 +2871,7 @@ const PitchDeckPage: React.FC = () => {
                 textAlign: 'center',
                 fontFamily: 'Inter, sans-serif'
               }}>
-                Designed specifically for luxury community amenity management, not adapted from other use cases
+                Designed specifically for Class A and amenity-rich property management, not adapted from other use cases
               </p>
             </div>
 
@@ -3032,7 +3032,7 @@ const PitchDeckPage: React.FC = () => {
                 lineHeight: '1.8',
                 fontFamily: 'Inter, sans-serif'
               }}>
-                Pricing that reflects the value delivered to luxury communities, with ROI that justifies the investment 
+                Pricing that reflects the value delivered to Class A and amenity-rich properties, with ROI that justifies the investment 
                 in professional amenity management.
               </p>
             </div>
@@ -3415,7 +3415,7 @@ const PitchDeckPage: React.FC = () => {
                   lineHeight: '1.8',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  Built with deep understanding of luxury community needs, developed through direct engagement with 
+                  Built with deep understanding of Class A and amenity-rich property needs, developed through direct engagement with 
                   HOA administrators and residents.
                 </p>
               </div>
@@ -3463,7 +3463,7 @@ const PitchDeckPage: React.FC = () => {
                 lineHeight: '1.8',
                 fontFamily: 'Inter, sans-serif'
               }}>
-                Empowering luxury communities to better serve their residents and maximize the value of premium amenities 
+                Empowering Class A and amenity-rich properties to better serve their residents and maximize the value of premium amenities 
                 that justify high HOA fees.
               </p>
               </div>
@@ -3481,8 +3481,8 @@ const PitchDeckPage: React.FC = () => {
                 fontFamily: 'Inter, sans-serif',
                 fontWeight: 600
               }}>
-                Neighbri is committed to building a sustainable, scalable business that creates value for luxury 
-                communities while fostering innovation in property management technology.
+                Neighbri is committed to building a sustainable, scalable business that creates value for Class A and amenity-rich 
+                properties while fostering innovation in property management technology.
               </p>
             </div>
           </div>
@@ -3513,8 +3513,8 @@ const PitchDeckPage: React.FC = () => {
             margin: '0 auto 3rem',
             fontFamily: 'Inter, sans-serif'
           }}>
-            To become the leading platform for luxury and Class A community amenity management, serving premium 
-            residential developments nationwide and transforming how communities manage their shared amenities.
+            To become the leading platform for Class A and amenity-rich property amenity management, serving premium 
+            residential developments nationwide and transforming how properties manage their shared amenities.
           </p>
           <div style={{
             padding: '3rem',
