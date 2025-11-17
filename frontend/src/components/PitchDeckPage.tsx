@@ -1395,7 +1395,7 @@ const PitchDeckPage: React.FC = () => {
                       fontWeight: 600,
                       color: '#1f2937',
                       fontFamily: 'Inter, sans-serif'
-                    }}>TAM (Estimated)</td>
+                    }}>TAM - Platform Revenue</td>
                     <td style={{
                       padding: '1rem',
                       color: '#355B45',
@@ -1409,6 +1409,35 @@ const PitchDeckPage: React.FC = () => {
                     }}>$9-11B+ (estimated)<br/>
                       <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
                         Global luxury hotel amenities market
+                      </span>
+                    </td>
+                  </tr>
+                  <tr style={{
+                    borderBottom: '1px solid #e5e7eb'
+                  }}>
+                    <td style={{
+                      padding: '1rem',
+                      fontWeight: 600,
+                      color: '#1f2937',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>TAM - Total Market Size</td>
+                    <td style={{
+                      padding: '1rem',
+                      color: '#355B45',
+                      fontWeight: 600,
+                      fontFamily: 'Inter, sans-serif'
+                    }}>$9-14B+ (estimated)<br/>
+                      <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
+                        Global luxury residential amenity bookings
+                      </span>
+                    </td>
+                    <td style={{
+                      padding: '1rem',
+                      color: '#6b7280',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>$50-100B+ (estimated)<br/>
+                      <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
+                        Total luxury hotel amenity revenue
                       </span>
                     </td>
                   </tr>
@@ -1767,12 +1796,35 @@ const PitchDeckPage: React.FC = () => {
                 fontFamily: 'Inter, sans-serif',
                 marginBottom: '0.75rem'
               }}>
-                <li><strong>TAM ($9-11B):</strong> Based on global luxury hotel market ($93-238B) with 10% attributed to amenity/day-pass services</li>
+                <li><strong>TAM - Platform Revenue ($9-11B):</strong> Based on global luxury hotel market ($93-238B) with 10% attributed to amenity/day-pass services that platforms like ResortPass can capture</li>
+                <li><strong>TAM - Total Market ($50-100B):</strong> Total revenue from all luxury hotel amenities (spa, pool, fitness, events) across all luxury hotels globally</li>
                 <li><strong>SAM ($2-3B):</strong> US luxury hotel market (~$30B) with 10% for day-pass services</li>
                 <li><strong>SOM ($100-150M):</strong> 5-10% of SAM over 5 years, considering competition and market penetration</li>
                 <li><strong>GMV ($80-120M):</strong> Reverse-engineered from $16.8M revenue assuming 15-20% commission rate</li>
                 <li><strong>Revenue per Property ($18,700):</strong> $16.8M revenue ÷ 900 hotels</li>
                 <li><strong>Growth Rate (40-60%):</strong> Estimated based on Series B funding, expansion trajectory, and marketplace growth patterns</li>
+              </ul>
+              <p style={{
+                color: '#6b7280',
+                fontSize: '0.85rem',
+                lineHeight: '1.6',
+                fontFamily: 'Inter, sans-serif',
+                marginBottom: '0.75rem',
+                fontWeight: 600
+              }}>
+                HOAPass Market Size Calculations:
+              </p>
+              <ul style={{
+                color: '#6b7280',
+                fontSize: '0.85rem',
+                lineHeight: '1.6',
+                paddingLeft: '1.25rem',
+                fontFamily: 'Inter, sans-serif',
+                marginBottom: '0.75rem'
+              }}>
+                <li><strong>TAM - Platform Revenue ($227M):</strong> 65,000 US luxury HOAs × $3,500/year (Neighbri's revenue opportunity)</li>
+                <li><strong>TAM - Total Market ($9-14B):</strong> ~185,000 global luxury HOAs/condos × $50,000-75,000/year avg total amenity booking revenue (reservation fees, deposits, etc.) across all communities</li>
+                <li><strong>Calculation:</strong> If US represents ~35% of global luxury residential market, then ~185,000 luxury communities globally. Each community generates $50K-75K annually in total amenity booking revenue (fees + deposits), resulting in $9-14B total market</li>
               </ul>
               <p style={{
                 color: '#6b7280',
