@@ -7,7 +7,7 @@ const PitchDeckExecutiveSummary: React.FC = () => {
   };
 
   return (
-    <div style={{ 
+    <div className="exec-summary-container" style={{ 
       minHeight: '100vh', 
       backgroundColor: 'white',
       padding: '2rem 1rem'
@@ -46,7 +46,7 @@ const PitchDeckExecutiveSummary: React.FC = () => {
           </button>
         </div>
       </div>
-      <div style={{
+      <div className="print-content" style={{
         maxWidth: '8.5in',
         margin: '0 auto',
         padding: '0.75in',
@@ -56,34 +56,34 @@ const PitchDeckExecutiveSummary: React.FC = () => {
         lineHeight: 1.4
       }}>
         {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
+        <div style={{ textAlign: 'center', marginBottom: '0.75rem' }}>
           <img 
             src="/images/Neighbri_Wordmark_Final.png" 
             alt="Neighbri"
-            style={{ height: '40px', maxWidth: '200px', marginBottom: '0.25rem' }}
+            style={{ height: '35px', maxWidth: '180px', marginBottom: '0.2rem' }}
           />
           <h1 style={{
-            fontSize: '24pt',
+            fontSize: '22pt',
             fontWeight: 700,
             color: '#1f2937',
-            margin: '0.25rem 0',
+            margin: '0.2rem 0',
             fontFamily: 'Inter, sans-serif'
           }}>
             Neighbri
           </h1>
           <p style={{
-            fontSize: '12pt',
+            fontSize: '11pt',
             color: '#355B45',
             fontWeight: 600,
-            margin: '0.25rem 0',
+            margin: '0.2rem 0',
             fontFamily: 'Inter, sans-serif'
           }}>
             Premium Amenity Management for Luxury Communities
           </p>
           <p style={{
-            fontSize: '9pt',
+            fontSize: '8pt',
             color: '#6b7280',
-            marginTop: '0.25rem',
+            marginTop: '0.2rem',
             fontFamily: 'Inter, sans-serif'
           }}>
             Executive Summary | For detailed information, visit: <strong>www.neighbri.com/pitch</strong>
@@ -91,7 +91,7 @@ const PitchDeckExecutiveSummary: React.FC = () => {
         </div>
 
         {/* Problem */}
-        <div style={{ marginBottom: '0.75rem' }}>
+        <div style={{ marginBottom: '0.6rem' }}>
           <h2 style={{
             fontSize: '14pt',
             fontWeight: 700,
@@ -111,7 +111,7 @@ const PitchDeckExecutiveSummary: React.FC = () => {
         </div>
 
         {/* Solution */}
-        <div style={{ marginBottom: '0.75rem' }}>
+        <div style={{ marginBottom: '0.6rem' }}>
           <h2 style={{
             fontSize: '14pt',
             fontWeight: 700,
@@ -137,7 +137,7 @@ const PitchDeckExecutiveSummary: React.FC = () => {
         </div>
 
         {/* Market Opportunity */}
-        <div style={{ marginBottom: '0.75rem' }}>
+        <div style={{ marginBottom: '0.6rem' }}>
           <h2 style={{
             fontSize: '14pt',
             fontWeight: 700,
@@ -176,7 +176,7 @@ const PitchDeckExecutiveSummary: React.FC = () => {
         </div>
 
         {/* Business Model */}
-        <div style={{ marginBottom: '0.75rem' }}>
+        <div style={{ marginBottom: '0.6rem' }}>
           <h2 style={{
             fontSize: '14pt',
             fontWeight: 700,
@@ -214,7 +214,7 @@ const PitchDeckExecutiveSummary: React.FC = () => {
         </div>
 
         {/* Traction & Competitive Advantage */}
-        <div style={{ marginBottom: '0.75rem' }}>
+        <div style={{ marginBottom: '0.6rem' }}>
           <h2 style={{
             fontSize: '14pt',
             fontWeight: 700,
@@ -260,7 +260,7 @@ const PitchDeckExecutiveSummary: React.FC = () => {
         </div>
 
         {/* Financial Projections & Team */}
-        <div style={{ marginBottom: '0.75rem' }}>
+        <div style={{ marginBottom: '0.6rem' }}>
           <h2 style={{
             fontSize: '14pt',
             fontWeight: 700,
@@ -306,10 +306,10 @@ const PitchDeckExecutiveSummary: React.FC = () => {
             </div>
             <div>
               <p style={{ fontSize: '9pt', color: '#6b7280', marginBottom: '0.15rem', fontFamily: 'Inter, sans-serif' }}>
-                <strong style={{ color: '#1f2937' }}>Thomas Crosby</strong> - Founder & Developer
+                <strong style={{ color: '#1f2937' }}>Ryan Crosby</strong> - Founder
               </p>
               <p style={{ fontSize: '8pt', color: '#6b7280', marginBottom: '0.25rem', fontFamily: 'Inter, sans-serif' }}>
-                Full-stack developer with experience building scalable web applications. Passionate about solving real-world problems through technology.
+                Deep experience in product management and technical program management. Combined with a deep understanding of HOA management through family real estate development and management portfolio. Passionate about solving real-world problems with technology.
               </p>
               <p style={{ fontSize: '8pt', color: '#6b7280', fontFamily: 'Inter, sans-serif' }}>
                 <strong>Contact:</strong> thomas.ryan.crosby@gmail.com | (985) 373-2383
@@ -320,8 +320,8 @@ const PitchDeckExecutiveSummary: React.FC = () => {
 
         {/* Footer */}
         <div style={{
-          marginTop: '0.5rem',
-          paddingTop: '0.5rem',
+          marginTop: '0.4rem',
+          paddingTop: '0.4rem',
           borderTop: '1px solid #355B45',
           textAlign: 'center'
         }}>
@@ -337,19 +337,53 @@ const PitchDeckExecutiveSummary: React.FC = () => {
       {/* Print Styles */}
       <style>{`
         @media print {
-          body {
-            margin: 0;
-            padding: 0;
-          }
           @page {
             size: letter;
             margin: 0.5in;
           }
-          * {
-            page-break-inside: avoid;
+          
+          html, body {
+            margin: 0 !important;
+            padding: 0 !important;
+            height: 100% !important;
+            overflow: visible !important;
           }
-          .no-print {
+          
+          body * {
+            visibility: hidden;
+          }
+          
+          .print-content, .print-content * {
+            visibility: visible;
+          }
+          
+          .print-content {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            max-width: 100%;
+            margin: 0;
+            padding: 0.5in !important;
+            background: white;
+          }
+          
+          .no-print, .no-print * {
             display: none !important;
+            visibility: hidden !important;
+          }
+          
+          header, nav, footer, button, .exec-summary-container > .no-print {
+            display: none !important;
+            visibility: hidden !important;
+          }
+          
+          .print-content h1, .print-content h2 {
+            page-break-after: avoid;
+          }
+          
+          .print-content div {
+            page-break-inside: avoid;
           }
         }
       `}</style>
