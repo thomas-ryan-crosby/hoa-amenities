@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LandingHeader from './LandingHeader';
 
 const PitchDeckPage: React.FC = () => {
   const navigate = useNavigate();
+  const [showHOAPass, setShowHOAPass] = useState(false);
 
   useEffect(() => {
     // Check if user has access (from sessionStorage)
@@ -911,6 +912,322 @@ const PitchDeckPage: React.FC = () => {
                 processing transaction fees (2.9% + $0.30 per reservation) not included in above calculations.
               </p>
             </div>
+          </div>
+
+          {/* Revenue Stream Toggle */}
+          <div style={{
+            padding: '2rem',
+            borderRadius: '0.5rem',
+            backgroundColor: '#f9fafb',
+            border: '2px solid #355B45',
+            marginBottom: '2rem'
+          }}>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '2rem',
+              flexWrap: 'wrap',
+              gap: '1rem'
+            }}>
+              <h3 style={{
+                fontSize: '1.75rem',
+                fontWeight: 600,
+                color: '#1f2937',
+                fontFamily: 'Inter, sans-serif',
+                margin: 0
+              }}>
+                Revenue Stream Options
+              </h3>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '1rem',
+                backgroundColor: 'white',
+                padding: '0.5rem',
+                borderRadius: '0.5rem',
+                border: '2px solid #355B45'
+              }}>
+                <button
+                  onClick={() => setShowHOAPass(false)}
+                  style={{
+                    padding: '0.75rem 1.5rem',
+                    borderRadius: '0.25rem',
+                    border: 'none',
+                    backgroundColor: !showHOAPass ? '#355B45' : 'transparent',
+                    color: !showHOAPass ? 'white' : '#355B45',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    fontSize: '1rem',
+                    fontFamily: 'Inter, sans-serif',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  Standard System
+                </button>
+                <button
+                  onClick={() => setShowHOAPass(true)}
+                  style={{
+                    padding: '0.75rem 1.5rem',
+                    borderRadius: '0.25rem',
+                    border: 'none',
+                    backgroundColor: showHOAPass ? '#355B45' : 'transparent',
+                    color: showHOAPass ? 'white' : '#355B45',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    fontSize: '1rem',
+                    fontFamily: 'Inter, sans-serif',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  HOAPass System
+                </button>
+              </div>
+            </div>
+
+            {!showHOAPass ? (
+              <div>
+                <h4 style={{
+                  fontSize: '1.25rem',
+                  fontWeight: 600,
+                  color: '#355B45',
+                  marginBottom: '1rem',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  Standard Amenity Reservation System
+                </h4>
+                <p style={{
+                  color: '#6b7280',
+                  lineHeight: '1.8',
+                  marginBottom: '1rem',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  The core Neighbri platform provides comprehensive amenity reservation management exclusively for community residents. 
+                  This includes calendar-based booking, payment processing, janitorial scheduling, and administrative oversight.
+                </p>
+                <div style={{
+                  padding: '1rem',
+                  backgroundColor: '#f0f4f1',
+                  borderRadius: '0.25rem',
+                  marginTop: '1rem'
+                }}>
+                  <p style={{
+                    color: '#1f2937',
+                    fontWeight: 600,
+                    marginBottom: '0.5rem',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>
+                    Revenue Sources:
+                  </p>
+                  <ul style={{
+                    color: '#6b7280',
+                    lineHeight: '1.8',
+                    paddingLeft: '1.5rem',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>
+                    <li>SaaS subscription fees ($99-$299/month per community)</li>
+                    <li>Payment processing transaction fees (2.9% + $0.30 per reservation)</li>
+                  </ul>
+                </div>
+              </div>
+            ) : (
+              <div>
+                <h4 style={{
+                  fontSize: '1.25rem',
+                  fontWeight: 600,
+                  color: '#355B45',
+                  marginBottom: '1rem',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  HOAPass: Day Pass & Guest Reservation System
+                </h4>
+                <p style={{
+                  color: '#6b7280',
+                  lineHeight: '1.8',
+                  marginBottom: '1rem',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  HOAPass extends Neighbri's platform to allow non-residents and guests to book day passes or reservations 
+                  for HOA amenities. Similar to ResortPass (which serves hospitality assets), HOAPass enables luxury communities 
+                  to monetize their premium amenities by offering access to outsiders, creating a new revenue stream for HOAs 
+                  while maintaining resident priority and access control.
+                </p>
+                
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                  gap: '1.5rem',
+                  marginTop: '1.5rem',
+                  marginBottom: '1.5rem'
+                }}>
+                  <div style={{
+                    padding: '1.5rem',
+                    backgroundColor: '#f0f9ff',
+                    borderRadius: '0.5rem',
+                    border: '1px solid #bae6fd'
+                  }}>
+                    <div style={{
+                      fontSize: '2rem',
+                      marginBottom: '0.5rem'
+                    }}>💰</div>
+                    <h5 style={{
+                      fontSize: '1.125rem',
+                      fontWeight: 600,
+                      color: '#1f2937',
+                      marginBottom: '0.5rem',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>
+                      New Revenue Stream
+                    </h5>
+                    <p style={{
+                      color: '#6b7280',
+                      fontSize: '0.9rem',
+                      lineHeight: '1.6',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>
+                      HOAs can generate additional income by selling day passes to non-residents for pools, clubrooms, 
+                      fitness centers, and other premium amenities
+                    </p>
+                  </div>
+
+                  <div style={{
+                    padding: '1.5rem',
+                    backgroundColor: '#f0f9ff',
+                    borderRadius: '0.5rem',
+                    border: '1px solid #bae6fd'
+                  }}>
+                    <div style={{
+                      fontSize: '2rem',
+                      marginBottom: '0.5rem'
+                    }}>🎯</div>
+                    <h5 style={{
+                      fontSize: '1.125rem',
+                      fontWeight: 600,
+                      color: '#1f2937',
+                      marginBottom: '0.5rem',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>
+                      Resident Priority
+                    </h5>
+                    <p style={{
+                      color: '#6b7280',
+                      fontSize: '0.9rem',
+                      lineHeight: '1.6',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>
+                      System ensures residents always have priority access, with guest/day pass availability only during 
+                      non-peak times or designated slots
+                    </p>
+                  </div>
+
+                  <div style={{
+                    padding: '1.5rem',
+                    backgroundColor: '#f0f9ff',
+                    borderRadius: '0.5rem',
+                    border: '1px solid #bae6fd'
+                  }}>
+                    <div style={{
+                      fontSize: '2rem',
+                      marginBottom: '0.5rem'
+                    }}>🔒</div>
+                    <h5 style={{
+                      fontSize: '1.125rem',
+                      fontWeight: 600,
+                      color: '#1f2937',
+                      marginBottom: '0.5rem',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>
+                      Access Control
+                    </h5>
+                    <p style={{
+                      color: '#6b7280',
+                      fontSize: '0.9rem',
+                      lineHeight: '1.6',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>
+                      Built-in verification and check-in system ensures only authorized guests access amenities, with 
+                      digital passes and visitor management
+                    </p>
+                  </div>
+                </div>
+
+                <div style={{
+                  padding: '1.5rem',
+                  backgroundColor: '#f0f4f1',
+                  borderRadius: '0.5rem',
+                  marginTop: '1.5rem',
+                  border: '1px solid #355B45'
+                }}>
+                  <p style={{
+                    color: '#1f2937',
+                    fontWeight: 600,
+                    marginBottom: '0.75rem',
+                    fontSize: '1.125rem',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>
+                    HOAPass Revenue Model:
+                  </p>
+                  <ul style={{
+                    color: '#6b7280',
+                    lineHeight: '1.8',
+                    paddingLeft: '1.5rem',
+                    marginBottom: '1rem',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>
+                    <li><strong>Day Pass Sales:</strong> HOAs set pricing for day passes (e.g., $25-75/day for pool access, $50-150 for clubroom rental)</li>
+                    <li><strong>Revenue Share:</strong> Neighbri takes a percentage of day pass sales (e.g., 15-20%) as platform fee</li>
+                    <li><strong>Transaction Fees:</strong> Standard payment processing fees (2.9% + $0.30) on all guest bookings</li>
+                    <li><strong>Premium Features:</strong> Advanced guest management, marketing tools, and analytics available as add-ons</li>
+                  </ul>
+                  <div style={{
+                    marginTop: '1rem',
+                    padding: '1rem',
+                    backgroundColor: 'white',
+                    borderRadius: '0.25rem',
+                    border: '1px solid #cbd5e1'
+                  }}>
+                    <p style={{
+                      color: '#1f2937',
+                      fontWeight: 600,
+                      marginBottom: '0.5rem',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>
+                      Market Opportunity Example:
+                    </p>
+                    <p style={{
+                      color: '#6b7280',
+                      fontSize: '0.9rem',
+                      lineHeight: '1.6',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>
+                      A luxury community with a pool and clubroom could generate $5,000-15,000+ annually from day pass sales 
+                      (depending on capacity and pricing), creating a new revenue stream that helps offset HOA fees or fund 
+                      amenity improvements. With 65,000 target communities, this represents a significant additional market opportunity.
+                    </p>
+                  </div>
+                </div>
+
+                <div style={{
+                  marginTop: '1.5rem',
+                  padding: '1rem',
+                  backgroundColor: '#fef3c7',
+                  borderRadius: '0.5rem',
+                  border: '1px solid #fbbf24'
+                }}>
+                  <p style={{
+                    color: '#92400e',
+                    fontSize: '0.9rem',
+                    lineHeight: '1.6',
+                    fontFamily: 'Inter, sans-serif',
+                    margin: 0
+                  }}>
+                    <strong>Note:</strong> HOAPass is an optional add-on feature. Communities can use Neighbri's standard 
+                    reservation system exclusively for residents, or enable HOAPass to monetize amenities through guest access. 
+                    The platform supports both models seamlessly.
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
 
           <div style={{
