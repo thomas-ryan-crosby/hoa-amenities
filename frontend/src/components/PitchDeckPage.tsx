@@ -787,7 +787,7 @@ const PitchDeckPage: React.FC = () => {
                   fontFamily: 'Inter, sans-serif',
                   color: '#86efac'
                 }}>
-                  $130M+
+                  {showHOAPass ? '$227M+' : '$130M+'}
                 </div>
                 <p style={{
                   fontSize: '1rem',
@@ -804,7 +804,9 @@ const PitchDeckPage: React.FC = () => {
                   lineHeight: '1.6',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  65,000 luxury communities nationwide × $2,000/year avg subscription
+                  {showHOAPass 
+                    ? '65,000 luxury communities × $3,500/year avg (subscription + HOAPass platform fees)'
+                    : '65,000 luxury communities nationwide × $2,000/year avg subscription'}
                 </p>
               </div>
 
@@ -830,7 +832,7 @@ const PitchDeckPage: React.FC = () => {
                   fontFamily: 'Inter, sans-serif',
                   color: '#86efac'
                 }}>
-                  $16M+
+                  {showHOAPass ? '$28M+' : '$16M+'}
                 </div>
                 <p style={{
                   fontSize: '1rem',
@@ -847,7 +849,9 @@ const PitchDeckPage: React.FC = () => {
                   lineHeight: '1.6',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  ~8,000 luxury communities in target markets × $2,000/year avg
+                  {showHOAPass
+                    ? '~8,000 luxury communities in target markets × $3,500/year avg'
+                    : '~8,000 luxury communities in target markets × $2,000/year avg'}
                 </p>
               </div>
 
@@ -873,7 +877,7 @@ const PitchDeckPage: React.FC = () => {
                   fontFamily: 'Inter, sans-serif',
                   color: '#86efac'
                 }}>
-                  $800K+
+                  {showHOAPass ? '$1.4M+' : '$800K+'}
                 </div>
                 <p style={{
                   fontSize: '1rem',
@@ -890,7 +894,9 @@ const PitchDeckPage: React.FC = () => {
                   lineHeight: '1.6',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  ~400+ luxury communities in first 3 years × $2,000/year avg
+                  {showHOAPass
+                    ? '~400+ luxury communities in first 3 years × $3,500/year avg'
+                    : '~400+ luxury communities in first 3 years × $2,000/year avg'}
                 </p>
               </div>
             </div>
@@ -908,8 +914,9 @@ const PitchDeckPage: React.FC = () => {
                 lineHeight: '1.6',
                 fontFamily: 'Inter, sans-serif'
               }}>
-                <strong>Note:</strong> Revenue projections based on subscription fees only. Additional revenue from payment 
-                processing transaction fees (2.9% + $0.30 per reservation) not included in above calculations.
+                <strong>Note:</strong> {showHOAPass 
+                  ? 'Revenue projections include subscription fees ($2,000/year) plus HOAPass platform fees (~$1,500/year avg from 15-20% revenue share on day pass sales). Additional revenue from payment processing transaction fees (2.9% + $0.30 per reservation) not included in above calculations.'
+                  : 'Revenue projections based on subscription fees only. Additional revenue from payment processing transaction fees (2.9% + $0.30 per reservation) not included in above calculations.'}
               </p>
             </div>
           </div>
@@ -1228,6 +1235,358 @@ const PitchDeckPage: React.FC = () => {
                 </div>
               </div>
             )}
+          </div>
+
+          {/* HOAPass vs ResortPass Comparison */}
+          <div style={{
+            padding: '2rem',
+            borderRadius: '0.5rem',
+            backgroundColor: '#f0f9ff',
+            border: '2px solid #0ea5e9',
+            marginBottom: '2rem'
+          }}>
+            <h3 style={{
+              fontSize: '1.75rem',
+              fontWeight: 600,
+              color: '#1f2937',
+              marginBottom: '1.5rem',
+              fontFamily: 'Inter, sans-serif',
+              textAlign: 'center'
+            }}>
+              HOAPass vs. ResortPass: Market Comparison
+            </h3>
+            
+            <div style={{
+              overflowX: 'auto',
+              marginBottom: '1.5rem'
+            }}>
+              <table style={{
+                width: '100%',
+                borderCollapse: 'collapse',
+                backgroundColor: 'white',
+                borderRadius: '0.5rem',
+                overflow: 'hidden'
+              }}>
+                <thead>
+                  <tr style={{
+                    backgroundColor: '#0ea5e9',
+                    color: 'white'
+                  }}>
+                    <th style={{
+                      padding: '1rem',
+                      textAlign: 'left',
+                      fontWeight: 600,
+                      fontFamily: 'Inter, sans-serif',
+                      fontSize: '1rem'
+                    }}>Metric</th>
+                    <th style={{
+                      padding: '1rem',
+                      textAlign: 'left',
+                      fontWeight: 600,
+                      fontFamily: 'Inter, sans-serif',
+                      fontSize: '1rem'
+                    }}>HOAPass (Neighbri)</th>
+                    <th style={{
+                      padding: '1rem',
+                      textAlign: 'left',
+                      fontWeight: 600,
+                      fontFamily: 'Inter, sans-serif',
+                      fontSize: '1rem'
+                    }}>ResortPass</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style={{
+                    borderBottom: '1px solid #e5e7eb',
+                    backgroundColor: '#f9fafb'
+                  }}>
+                    <td style={{
+                      padding: '1rem',
+                      fontWeight: 600,
+                      color: '#1f2937',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>Market Focus</td>
+                    <td style={{
+                      padding: '1rem',
+                      color: '#6b7280',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>HOA/Residential Communities</td>
+                    <td style={{
+                      padding: '1rem',
+                      color: '#6b7280',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>Hotels & Resorts</td>
+                  </tr>
+                  <tr style={{
+                    borderBottom: '1px solid #e5e7eb'
+                  }}>
+                    <td style={{
+                      padding: '1rem',
+                      fontWeight: 600,
+                      color: '#1f2937',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>Target Properties</td>
+                    <td style={{
+                      padding: '1rem',
+                      color: '#6b7280',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>~65,000 luxury HOAs/condos</td>
+                    <td style={{
+                      padding: '1rem',
+                      color: '#6b7280',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>900+ hotels/resorts (growing)</td>
+                  </tr>
+                  <tr style={{
+                    borderBottom: '1px solid #e5e7eb',
+                    backgroundColor: '#f9fafb'
+                  }}>
+                    <td style={{
+                      padding: '1rem',
+                      fontWeight: 600,
+                      color: '#1f2937',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>Business Model</td>
+                    <td style={{
+                      padding: '1rem',
+                      color: '#6b7280',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>SaaS Subscription + Platform Fees</td>
+                    <td style={{
+                      padding: '1rem',
+                      color: '#6b7280',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>Transaction-Based (Commission)</td>
+                  </tr>
+                  <tr style={{
+                    borderBottom: '1px solid #e5e7eb'
+                  }}>
+                    <td style={{
+                      padding: '1rem',
+                      fontWeight: 600,
+                      color: '#1f2937',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>Revenue per Property</td>
+                    <td style={{
+                      padding: '1rem',
+                      color: '#6b7280',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>$3,500/year avg<br/>
+                      <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
+                        ($2,000 subscription + $1,500 HOAPass fees)
+                      </span>
+                    </td>
+                    <td style={{
+                      padding: '1rem',
+                      color: '#6b7280',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>Variable (commission-based)<br/>
+                      <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
+                        Depends on booking volume
+                      </span>
+                    </td>
+                  </tr>
+                  <tr style={{
+                    borderBottom: '1px solid #e5e7eb',
+                    backgroundColor: '#f9fafb'
+                  }}>
+                    <td style={{
+                      padding: '1rem',
+                      fontWeight: 600,
+                      color: '#1f2937',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>TAM (Estimated)</td>
+                    <td style={{
+                      padding: '1rem',
+                      color: '#355B45',
+                      fontWeight: 600,
+                      fontFamily: 'Inter, sans-serif'
+                    }}>$227M+</td>
+                    <td style={{
+                      padding: '1rem',
+                      color: '#6b7280',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>Not publicly disclosed<br/>
+                      <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
+                        (Larger global hospitality market)
+                      </span>
+                    </td>
+                  </tr>
+                  <tr style={{
+                    borderBottom: '1px solid #e5e7eb'
+                  }}>
+                    <td style={{
+                      padding: '1rem',
+                      fontWeight: 600,
+                      color: '#1f2937',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>Revenue Predictability</td>
+                    <td style={{
+                      padding: '1rem',
+                      color: '#355B45',
+                      fontWeight: 600,
+                      fontFamily: 'Inter, sans-serif'
+                    }}>✓ High (Recurring SaaS)</td>
+                    <td style={{
+                      padding: '1rem',
+                      color: '#6b7280',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>Variable (Usage-based)</td>
+                  </tr>
+                  <tr style={{
+                    borderBottom: '1px solid #e5e7eb',
+                    backgroundColor: '#f9fafb'
+                  }}>
+                    <td style={{
+                      padding: '1rem',
+                      fontWeight: 600,
+                      color: '#1f2937',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>Primary Revenue Source</td>
+                    <td style={{
+                      padding: '1rem',
+                      color: '#6b7280',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>Subscription fees (guaranteed)<br/>
+                      + Platform fees on day passes
+                    </td>
+                    <td style={{
+                      padding: '1rem',
+                      color: '#6b7280',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>Commission on bookings only</td>
+                  </tr>
+                  <tr style={{
+                    borderBottom: '1px solid #e5e7eb'
+                  }}>
+                    <td style={{
+                      padding: '1rem',
+                      fontWeight: 600,
+                      color: '#1f2937',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>Funding Raised</td>
+                    <td style={{
+                      padding: '1rem',
+                      color: '#6b7280',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>Pre-seed/Seed stage</td>
+                    <td style={{
+                      padding: '1rem',
+                      color: '#6b7280',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>$37.4M (Series B: $26M)</td>
+                  </tr>
+                  <tr style={{
+                    backgroundColor: '#f9fafb'
+                  }}>
+                    <td style={{
+                      padding: '1rem',
+                      fontWeight: 600,
+                      color: '#1f2937',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>Estimated Annual Revenue</td>
+                    <td style={{
+                      padding: '1rem',
+                      color: '#6b7280',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>Early stage</td>
+                    <td style={{
+                      padding: '1rem',
+                      color: '#6b7280',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>~$16.8M</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: '1.5rem',
+              marginTop: '1.5rem'
+            }}>
+              <div style={{
+                padding: '1.5rem',
+                backgroundColor: 'white',
+                borderRadius: '0.5rem',
+                border: '1px solid #0ea5e9'
+              }}>
+                <h4 style={{
+                  fontSize: '1.125rem',
+                  fontWeight: 600,
+                  color: '#1f2937',
+                  marginBottom: '0.75rem',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  HOAPass Advantages
+                </h4>
+                <ul style={{
+                  color: '#6b7280',
+                  lineHeight: '1.8',
+                  paddingLeft: '1.25rem',
+                  fontSize: '0.9rem',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  <li>Recurring subscription revenue (predictable)</li>
+                  <li>Dual revenue stream (subscription + platform fees)</li>
+                  <li>Resident-first model with guest monetization</li>
+                  <li>Lower customer acquisition cost (B2B sales)</li>
+                  <li>Higher customer lifetime value (sticky SaaS)</li>
+                </ul>
+              </div>
+
+              <div style={{
+                padding: '1.5rem',
+                backgroundColor: 'white',
+                borderRadius: '0.5rem',
+                border: '1px solid #0ea5e9'
+              }}>
+                <h4 style={{
+                  fontSize: '1.125rem',
+                  fontWeight: 600,
+                  color: '#1f2937',
+                  marginBottom: '0.75rem',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  Market Context
+                </h4>
+                <ul style={{
+                  color: '#6b7280',
+                  lineHeight: '1.8',
+                  paddingLeft: '1.25rem',
+                  fontSize: '0.9rem',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  <li>ResortPass validates day-pass model for amenities</li>
+                  <li>HOAs represent untapped market (65K+ properties)</li>
+                  <li>Different asset class = different dynamics</li>
+                  <li>Smaller market but higher per-property revenue</li>
+                  <li>Less competition in HOA space</li>
+                </ul>
+              </div>
+            </div>
+
+            <div style={{
+              marginTop: '1.5rem',
+              padding: '1rem',
+              backgroundColor: '#fef3c7',
+              borderRadius: '0.5rem',
+              border: '1px solid #fbbf24'
+            }}>
+              <p style={{
+                color: '#92400e',
+                fontSize: '0.9rem',
+                lineHeight: '1.6',
+                fontFamily: 'Inter, sans-serif',
+                margin: 0
+              }}>
+                <strong>Note:</strong> This comparison is for market analysis purposes. ResortPass operates in the hospitality 
+                sector (hotels/resorts), while HOAPass targets residential communities (HOAs/condos). The markets have different 
+                dynamics, customer acquisition costs, and revenue models. HOAPass benefits from a subscription-based model 
+                that provides more predictable revenue than pure transaction-based models.
+              </p>
+            </div>
           </div>
 
           <div style={{
