@@ -1406,9 +1406,166 @@ const PitchDeckPage: React.FC = () => {
                       padding: '1rem',
                       color: '#6b7280',
                       fontFamily: 'Inter, sans-serif'
-                    }}>Not publicly disclosed<br/>
+                    }}>$9-11B+ (estimated)<br/>
                       <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
-                        (Larger global hospitality market)
+                        Global luxury hotel amenities market
+                      </span>
+                    </td>
+                  </tr>
+                  <tr style={{
+                    borderBottom: '1px solid #e5e7eb'
+                  }}>
+                    <td style={{
+                      padding: '1rem',
+                      fontWeight: 600,
+                      color: '#1f2937',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>SAM (Estimated)</td>
+                    <td style={{
+                      padding: '1rem',
+                      color: '#355B45',
+                      fontWeight: 600,
+                      fontFamily: 'Inter, sans-serif'
+                    }}>$28M+</td>
+                    <td style={{
+                      padding: '1rem',
+                      color: '#6b7280',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>$2-3B+ (estimated)<br/>
+                      <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
+                        US luxury hotel day-pass market
+                      </span>
+                    </td>
+                  </tr>
+                  <tr style={{
+                    borderBottom: '1px solid #e5e7eb',
+                    backgroundColor: '#f9fafb'
+                  }}>
+                    <td style={{
+                      padding: '1rem',
+                      fontWeight: 600,
+                      color: '#1f2937',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>SOM (Estimated)</td>
+                    <td style={{
+                      padding: '1rem',
+                      color: '#355B45',
+                      fontWeight: 600,
+                      fontFamily: 'Inter, sans-serif'
+                    }}>$1.4M+</td>
+                    <td style={{
+                      padding: '1rem',
+                      color: '#6b7280',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>$100-150M+ (estimated)<br/>
+                      <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
+                        5-10% of SAM over 5 years
+                      </span>
+                    </td>
+                  </tr>
+                  <tr style={{
+                    borderBottom: '1px solid #e5e7eb'
+                  }}>
+                    <td style={{
+                      padding: '1rem',
+                      fontWeight: 600,
+                      color: '#1f2937',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>Growth Rate (YoY)</td>
+                    <td style={{
+                      padding: '1rem',
+                      color: '#6b7280',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>Early stage</td>
+                    <td style={{
+                      padding: '1rem',
+                      color: '#6b7280',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>~40-60% (estimated)<br/>
+                      <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
+                        Based on Series B funding & expansion
+                      </span>
+                    </td>
+                  </tr>
+                  <tr style={{
+                    borderBottom: '1px solid #e5e7eb',
+                    backgroundColor: '#f9fafb'
+                  }}>
+                    <td style={{
+                      padding: '1rem',
+                      fontWeight: 600,
+                      color: '#1f2937',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>GMV (Gross Merchandise Value)</td>
+                    <td style={{
+                      padding: '1rem',
+                      color: '#6b7280',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>N/A (SaaS model)</td>
+                    <td style={{
+                      padding: '1rem',
+                      color: '#6b7280',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>$80-120M+ (estimated)<br/>
+                      <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
+                        Assuming 15-20% commission on $16.8M revenue
+                      </span>
+                    </td>
+                  </tr>
+                  <tr style={{
+                    borderBottom: '1px solid #e5e7eb'
+                  }}>
+                    <td style={{
+                      padding: '1rem',
+                      fontWeight: 600,
+                      color: '#1f2937',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>Revenue per Property</td>
+                    <td style={{
+                      padding: '1rem',
+                      color: '#6b7280',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>$3,500/year avg<br/>
+                      <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
+                        ($2,000 subscription + $1,500 HOAPass fees)
+                      </span>
+                    </td>
+                    <td style={{
+                      padding: '1rem',
+                      color: '#6b7280',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>$18,700/year avg (estimated)<br/>
+                      <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
+                        ($16.8M revenue ÷ 900 hotels)
+                      </span>
+                    </td>
+                  </tr>
+                  <tr style={{
+                    borderBottom: '1px solid #e5e7eb',
+                    backgroundColor: '#f9fafb'
+                  }}>
+                    <td style={{
+                      padding: '1rem',
+                      fontWeight: 600,
+                      color: '#1f2937',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>Commission/Take Rate</td>
+                    <td style={{
+                      padding: '1rem',
+                      color: '#6b7280',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>15-20% on day passes<br/>
+                      <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
+                        Plus subscription revenue
+                      </span>
+                    </td>
+                    <td style={{
+                      padding: '1rem',
+                      color: '#6b7280',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>15-20% (estimated)<br/>
+                      <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
+                        Industry standard for marketplace
                       </span>
                     </td>
                   </tr>
@@ -1569,6 +1726,68 @@ const PitchDeckPage: React.FC = () => {
 
             <div style={{
               marginTop: '1.5rem',
+              padding: '1.5rem',
+              backgroundColor: '#f0f9ff',
+              borderRadius: '0.5rem',
+              border: '1px solid #0ea5e9'
+            }}>
+              <h4 style={{
+                fontSize: '1rem',
+                fontWeight: 600,
+                color: '#1f2937',
+                marginBottom: '0.75rem',
+                fontFamily: 'Inter, sans-serif'
+              }}>
+                ResortPass Financial Estimates - Methodology
+              </h4>
+              <p style={{
+                color: '#6b7280',
+                fontSize: '0.85rem',
+                lineHeight: '1.6',
+                fontFamily: 'Inter, sans-serif',
+                marginBottom: '0.75rem'
+              }}>
+                <strong>Known Facts:</strong> ResortPass has raised $37.4M (Series B: $26M in Nov 2022), has 900+ hotel 
+                partnerships, estimated annual revenue of ~$16.8M, and 100+ employees.
+              </p>
+              <p style={{
+                color: '#6b7280',
+                fontSize: '0.85rem',
+                lineHeight: '1.6',
+                fontFamily: 'Inter, sans-serif',
+                marginBottom: '0.75rem'
+              }}>
+                <strong>Derived Estimates:</strong>
+              </p>
+              <ul style={{
+                color: '#6b7280',
+                fontSize: '0.85rem',
+                lineHeight: '1.6',
+                paddingLeft: '1.25rem',
+                fontFamily: 'Inter, sans-serif',
+                marginBottom: '0.75rem'
+              }}>
+                <li><strong>TAM ($9-11B):</strong> Based on global luxury hotel market ($93-238B) with 10% attributed to amenity/day-pass services</li>
+                <li><strong>SAM ($2-3B):</strong> US luxury hotel market (~$30B) with 10% for day-pass services</li>
+                <li><strong>SOM ($100-150M):</strong> 5-10% of SAM over 5 years, considering competition and market penetration</li>
+                <li><strong>GMV ($80-120M):</strong> Reverse-engineered from $16.8M revenue assuming 15-20% commission rate</li>
+                <li><strong>Revenue per Property ($18,700):</strong> $16.8M revenue ÷ 900 hotels</li>
+                <li><strong>Growth Rate (40-60%):</strong> Estimated based on Series B funding, expansion trajectory, and marketplace growth patterns</li>
+              </ul>
+              <p style={{
+                color: '#6b7280',
+                fontSize: '0.85rem',
+                lineHeight: '1.6',
+                fontFamily: 'Inter, sans-serif',
+                fontStyle: 'italic'
+              }}>
+                <strong>Note:</strong> These are estimates derived from public information and industry benchmarks. Actual figures 
+                may vary. ResortPass does not publicly disclose detailed financial metrics.
+              </p>
+            </div>
+
+            <div style={{
+              marginTop: '1.5rem',
               padding: '1rem',
               backgroundColor: '#fef3c7',
               borderRadius: '0.5rem',
@@ -1581,10 +1800,10 @@ const PitchDeckPage: React.FC = () => {
                 fontFamily: 'Inter, sans-serif',
                 margin: 0
               }}>
-                <strong>Note:</strong> This comparison is for market analysis purposes. ResortPass operates in the hospitality 
-                sector (hotels/resorts), while HOAPass targets residential communities (HOAs/condos). The markets have different 
-                dynamics, customer acquisition costs, and revenue models. HOAPass benefits from a subscription-based model 
-                that provides more predictable revenue than pure transaction-based models.
+                <strong>Key Insight:</strong> This comparison highlights different market dynamics. ResortPass operates in the hospitality 
+                sector (hotels/resorts) with a larger TAM but transaction-based revenue. HOAPass targets residential communities 
+                (HOAs/condos) with a smaller but more focused market, benefiting from subscription-based recurring revenue that provides 
+                more predictable cash flow and higher customer lifetime value.
               </p>
             </div>
           </div>
