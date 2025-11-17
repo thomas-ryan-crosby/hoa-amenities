@@ -33,8 +33,8 @@ const PitchDeckExecutiveSummary: React.FC = () => {
         format: [pdfWidth, pdfHeight]
       });
 
-      // Calculate available space (with 0.5in margins)
-      const margin = 0.5;
+      // Calculate available space (with smaller margins for better page fill)
+      const margin = 0.25;
       const availableWidth = pdfWidth - (margin * 2);
       const availableHeight = pdfHeight - (margin * 2);
 
@@ -123,14 +123,14 @@ const PitchDeckExecutiveSummary: React.FC = () => {
       <div ref={contentRef} className="print-content" style={{
         maxWidth: '8.5in',
         margin: '0 auto',
-        padding: '0.75in',
+        padding: '0.5in',
         backgroundColor: 'white',
         color: '#1f2937',
         fontFamily: 'Inter, sans-serif',
-        lineHeight: 1.4
+        lineHeight: 1.35
       }}>
         {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: '0.75rem' }}>
+        <div style={{ textAlign: 'center', marginBottom: '0.6rem' }}>
           <img 
             src="/images/Neighbri_Wordmark_Final.png" 
             alt="Neighbri"
@@ -165,7 +165,7 @@ const PitchDeckExecutiveSummary: React.FC = () => {
         </div>
 
         {/* Problem */}
-        <div style={{ marginBottom: '0.6rem' }}>
+        <div style={{ marginBottom: '0.5rem' }}>
           <h2 style={{
             fontSize: '14pt',
             fontWeight: 700,
@@ -185,7 +185,7 @@ const PitchDeckExecutiveSummary: React.FC = () => {
         </div>
 
         {/* Solution */}
-        <div style={{ marginBottom: '0.6rem' }}>
+        <div style={{ marginBottom: '0.5rem' }}>
           <h2 style={{
             fontSize: '14pt',
             fontWeight: 700,
@@ -211,7 +211,7 @@ const PitchDeckExecutiveSummary: React.FC = () => {
         </div>
 
         {/* Market Opportunity */}
-        <div style={{ marginBottom: '0.6rem' }}>
+        <div style={{ marginBottom: '0.5rem' }}>
           <h2 style={{
             fontSize: '14pt',
             fontWeight: 700,
@@ -250,7 +250,7 @@ const PitchDeckExecutiveSummary: React.FC = () => {
         </div>
 
         {/* Business Model */}
-        <div style={{ marginBottom: '0.6rem' }}>
+        <div style={{ marginBottom: '0.5rem' }}>
           <h2 style={{
             fontSize: '14pt',
             fontWeight: 700,
@@ -288,7 +288,7 @@ const PitchDeckExecutiveSummary: React.FC = () => {
         </div>
 
         {/* Traction & Competitive Advantage */}
-        <div style={{ marginBottom: '0.6rem' }}>
+        <div style={{ marginBottom: '0.5rem' }}>
           <h2 style={{
             fontSize: '14pt',
             fontWeight: 700,
@@ -334,7 +334,7 @@ const PitchDeckExecutiveSummary: React.FC = () => {
         </div>
 
         {/* Financial Projections & Team */}
-        <div style={{ marginBottom: '0.6rem' }}>
+        <div style={{ marginBottom: '0.5rem' }}>
           <h2 style={{
             fontSize: '14pt',
             fontWeight: 700,
@@ -394,8 +394,8 @@ const PitchDeckExecutiveSummary: React.FC = () => {
 
         {/* Footer */}
         <div style={{
-          marginTop: '0.4rem',
-          paddingTop: '0.4rem',
+          marginTop: '0.3rem',
+          paddingTop: '0.3rem',
           borderTop: '1px solid #355B45',
           textAlign: 'center'
         }}>
