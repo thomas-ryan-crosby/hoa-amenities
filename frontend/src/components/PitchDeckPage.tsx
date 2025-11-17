@@ -118,51 +118,97 @@ const PitchDeckPage: React.FC = () => {
 
         {/* Title Slide */}
         <section style={{
-          padding: '6rem 1rem',
+          padding: '8rem 1rem',
           maxWidth: '1200px',
           margin: '0 auto',
           textAlign: 'center',
-          minHeight: '80vh',
+          minHeight: '85vh',
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'center'
+          justifyContent: 'center',
+          background: 'linear-gradient(135deg, #f0f9ff 0%, #f0f4f1 50%, #ffffff 100%)',
+          borderRadius: '1rem',
+          marginTop: '2rem',
+          marginBottom: '4rem',
+          boxShadow: '0 10px 40px rgba(0,0,0,0.08)',
+          position: 'relative',
+          overflow: 'hidden'
         }}>
-          <div style={{ marginBottom: '2rem' }}>
+          {/* Decorative background elements */}
+          <div style={{
+            position: 'absolute',
+            top: '-50px',
+            right: '-50px',
+            width: '300px',
+            height: '300px',
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(53, 91, 69, 0.1) 0%, transparent 70%)',
+            zIndex: 0
+          }} />
+          <div style={{
+            position: 'absolute',
+            bottom: '-50px',
+            left: '-50px',
+            width: '250px',
+            height: '250px',
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(53, 91, 69, 0.08) 0%, transparent 70%)',
+            zIndex: 0
+          }} />
+          
+          <div style={{ 
+            marginBottom: '3rem',
+            position: 'relative',
+            zIndex: 1
+          }}>
             <img 
               src="/images/Neighbri_Wordmark_Final.png" 
               alt="Neighbri"
               style={{ 
-                height: '80px', 
-                maxWidth: '400px',
-                margin: '0 auto 2rem'
+                height: '100px', 
+                maxWidth: '450px',
+                margin: '0 auto',
+                filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.1))'
               }}
             />
           </div>
           <h1 style={{
-            fontSize: '3.5rem',
-            fontWeight: 700,
+            fontSize: '5.5rem',
+            fontWeight: 800,
             color: '#1f2937',
-            marginBottom: '1rem',
-            fontFamily: 'Inter, sans-serif'
+            marginBottom: '1.5rem',
+            fontFamily: 'Inter, sans-serif',
+            letterSpacing: '-0.02em',
+            lineHeight: '1.1',
+            position: 'relative',
+            zIndex: 1,
+            textShadow: '0 2px 4px rgba(0,0,0,0.05)'
           }}>
             Neighbri
           </h1>
           <p style={{
-            fontSize: '1.75rem',
+            fontSize: '2.5rem',
             color: '#355B45',
-            marginBottom: '2rem',
-            fontWeight: 600,
-            fontFamily: 'Inter, sans-serif'
+            marginBottom: '2.5rem',
+            fontWeight: 700,
+            fontFamily: 'Inter, sans-serif',
+            letterSpacing: '-0.01em',
+            lineHeight: '1.2',
+            position: 'relative',
+            zIndex: 1
           }}>
             Premium Amenity Management for Luxury Communities
           </p>
           <p style={{
-            fontSize: '1.25rem',
-            color: '#6b7280',
-            maxWidth: '700px',
+            fontSize: '1.5rem',
+            color: '#4b5563',
+            maxWidth: '800px',
             margin: '0 auto',
-            lineHeight: '1.8',
-            fontFamily: 'Inter, sans-serif'
+            lineHeight: '1.9',
+            fontFamily: 'Inter, sans-serif',
+            fontWeight: 400,
+            position: 'relative',
+            zIndex: 1
           }}>
             {businessModel === 'amenityManagement'
               ? 'A modern platform that streamlines reservations, payments, and management for luxury residential communities with premium amenities'
