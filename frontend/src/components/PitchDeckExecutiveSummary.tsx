@@ -22,7 +22,7 @@ const PitchDeckExecutiveSummary: React.FC = () => {
         height: contentRef.current.scrollHeight,
         windowWidth: contentRef.current.scrollWidth,
         windowHeight: contentRef.current.scrollHeight,
-      });
+      } as any);
 
       // Calculate PDF dimensions (8.5 x 11 inches in points)
       const pdfWidth = 8.5;
