@@ -778,7 +778,16 @@ const PitchDeckPage: React.FC = () => {
                     marginTop: '0.5rem',
                     fontFamily: 'Inter, sans-serif'
                   }}>
-                    ~200,000 properties
+                    ~345,000 amenity-rich communities
+                  </p>
+                  <p style={{
+                    color: '#6b7280',
+                    fontSize: '0.85rem',
+                    marginTop: '0.25rem',
+                    fontStyle: 'italic',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>
+                    (60% of 370K HOAs + 60% of 210K multifamily)
                   </p>
                 </div>
 
@@ -812,81 +821,54 @@ const PitchDeckPage: React.FC = () => {
                     marginTop: '0.5rem',
                     fontFamily: 'Inter, sans-serif'
                   }}>
-                    {businessModel === 'dayPassPlatform' ? '~345,000 amenity-rich communities' : '~65,000-75,000 luxury properties'}
+                    ~345,000 amenity-rich communities
+                  </p>
+                  <p style={{
+                    color: '#6b7280',
+                    fontSize: '0.85rem',
+                    marginTop: '0.25rem',
+                    fontStyle: 'italic',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>
+                    (220,000 HOAs + 125,000 multifamily properties with shared amenities)
                   </p>
                 </div>
 
-                {businessModel === 'amenityManagement' && (
+                <div style={{
+                  padding: '1rem',
+                  backgroundColor: 'white',
+                  borderRadius: '0.25rem',
+                  border: '1px solid #cbd5e1'
+                }}>
                   <div style={{
-                    padding: '1rem',
-                    backgroundColor: 'white',
-                    borderRadius: '0.25rem',
-                    border: '1px solid #cbd5e1'
+                    fontSize: '1.5rem',
+                    fontWeight: 700,
+                    color: '#355B45',
+                    marginBottom: '0.5rem',
+                    fontFamily: 'Inter, sans-serif'
                   }}>
-                    <div style={{
-                      fontSize: '1.5rem',
-                      fontWeight: 700,
-                      color: '#355B45',
-                      marginBottom: '0.5rem',
-                      fontFamily: 'Inter, sans-serif'
-                    }}>
-                      Step 3
-                    </div>
-                    <p style={{
-                      color: '#6b7280',
-                      fontSize: '0.9rem',
-                      lineHeight: '1.5',
-                      fontFamily: 'Inter, sans-serif'
-                    }}>
-                      <strong>Neighbri Target Market:</strong><br/>
-                      Properties requiring sophisticated reservation & payment management
-                    </p>
-                    <p style={{
-                      color: '#355B45',
-                      fontWeight: 600,
-                      marginTop: '0.5rem',
-                      fontFamily: 'Inter, sans-serif'
-                    }}>
-                      ~65,000-75,000 properties
-                    </p>
+                    Step 3
                   </div>
-                )}
-                
-                {businessModel === 'dayPassPlatform' && (
-                  <div style={{
-                    padding: '1rem',
-                    backgroundColor: 'white',
-                    borderRadius: '0.25rem',
-                    border: '1px solid #cbd5e1'
+                  <p style={{
+                    color: '#6b7280',
+                    fontSize: '0.9rem',
+                    lineHeight: '1.5',
+                    fontFamily: 'Inter, sans-serif'
                   }}>
-                    <div style={{
-                      fontSize: '1.5rem',
-                      fontWeight: 700,
-                      color: '#355B45',
-                      marginBottom: '0.5rem',
-                      fontFamily: 'Inter, sans-serif'
-                    }}>
-                      Step 3
-                    </div>
-                    <p style={{
-                      color: '#6b7280',
-                      fontSize: '0.9rem',
-                      lineHeight: '1.5',
-                      fontFamily: 'Inter, sans-serif'
-                    }}>
-                      <strong>Neighbri Target Market:</strong><br/>
-                      Amenity-rich communities (220k HOAs + 125k multifamily) with day pass monetization potential
-                    </p>
-                    <p style={{
-                      color: '#355B45',
-                      fontWeight: 600,
-                      marginTop: '0.5rem',
-                      fontFamily: 'Inter, sans-serif'
-                    }}>
-                      ~345,000 communities
-                    </p>
-                  </div>
-                )}
+                    <strong>Neighbri Target Market:</strong><br/>
+                    {businessModel === 'dayPassPlatform' 
+                      ? 'All 345,000 amenity-rich communities with day pass monetization potential'
+                      : 'All 345,000 amenity-rich communities requiring sophisticated reservation & payment management'}
+                  </p>
+                  <p style={{
+                    color: '#355B45',
+                    fontWeight: 600,
+                    marginTop: '0.5rem',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>
+                    ~345,000 communities
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -911,7 +893,7 @@ const PitchDeckPage: React.FC = () => {
                 marginBottom: '0.5rem',
                 fontFamily: 'Inter, sans-serif'
               }}>
-                {businessModel === 'dayPassPlatform' ? '345K' : '65K-75K'}
+                345K
               </div>
               <p style={{
                 fontSize: '1.125rem',
@@ -929,7 +911,7 @@ const PitchDeckPage: React.FC = () => {
               }}>
                 {businessModel === 'dayPassPlatform' 
                   ? 'Amenity-rich communities (220k HOAs + 125k multifamily) with day pass monetization potential'
-                  : 'Luxury HOAs, condos, and multifamily properties with premium reservable amenities'}
+                  : 'Amenity-rich communities (220k HOAs + 125k multifamily) requiring reservation & payment management'}
               </p>
             </div>
 
@@ -1044,7 +1026,7 @@ const PitchDeckPage: React.FC = () => {
                   fontFamily: 'Inter, sans-serif',
                   color: '#86efac'
                 }}>
-                  {businessModel === 'dayPassPlatform' ? '$2.8B' : '$130M+'}
+                  {businessModel === 'dayPassPlatform' ? '$2.8B' : '$690M+'}
                 </div>
                 <p style={{
                   fontSize: '1rem',
@@ -1063,7 +1045,7 @@ const PitchDeckPage: React.FC = () => {
                 }}>
                   {businessModel === 'dayPassPlatform'
                     ? '345,000 amenity-rich communities × $40K/year avg GTV → $2.8B platform revenue (20% take rate)'
-                    : '65,000 luxury communities nationwide × $2,000/year avg subscription'}
+                    : '345,000 amenity-rich communities × $2,000/year avg subscription'}
                 </p>
               </div>
 
@@ -1089,7 +1071,7 @@ const PitchDeckPage: React.FC = () => {
                   fontFamily: 'Inter, sans-serif',
                   color: '#86efac'
                 }}>
-                  {businessModel === 'dayPassPlatform' ? '$1.4B' : '$16M+'}
+                  {businessModel === 'dayPassPlatform' ? '$1.4B' : '$340M+'}
                 </div>
                 <p style={{
                   fontSize: '1rem',
@@ -1108,7 +1090,7 @@ const PitchDeckPage: React.FC = () => {
                 }}>
                   {businessModel === 'dayPassPlatform'
                     ? '170,000 communities in top 50 MSAs × $40K/year GTV → $1.4B platform revenue'
-                    : '~8,000 luxury communities in target markets × $2,000/year avg'}
+                    : '170,000 communities in top 50 MSAs × $2,000/year avg subscription'}
                 </p>
               </div>
 
@@ -1134,7 +1116,7 @@ const PitchDeckPage: React.FC = () => {
                   fontFamily: 'Inter, sans-serif',
                   color: '#86efac'
                 }}>
-                  {businessModel === 'dayPassPlatform' ? '$70-140M' : '$800K+'}
+                  {businessModel === 'dayPassPlatform' ? '$70-140M' : '$17-34M'}
                 </div>
                 <p style={{
                   fontSize: '1rem',
@@ -1153,7 +1135,7 @@ const PitchDeckPage: React.FC = () => {
                 }}>
                   {businessModel === 'dayPassPlatform'
                     ? '5-10% of SAM over 5-7 years → $70-140M annual platform revenue'
-                    : '~400+ luxury communities in first 3 years × $2,000/year avg'}
+                    : '5-10% of SAM over 5-7 years → $17-34M annual platform revenue'}
                 </p>
               </div>
             </div>
@@ -1403,7 +1385,7 @@ const PitchDeckPage: React.FC = () => {
                     }}>
                       A luxury community with a pool and clubroom could generate $5,000-15,000+ annually from day pass sales 
                       (depending on capacity and pricing), creating a new revenue stream that helps offset HOA fees or fund 
-                      amenity improvements. With 65,000 target communities, this represents a significant additional market opportunity.
+                      amenity improvements. With 345,000 target communities, this represents a significant additional market opportunity.
                     </p>
                   </div>
                 </div>
@@ -1525,7 +1507,7 @@ const PitchDeckPage: React.FC = () => {
                       padding: '1rem',
                       color: '#6b7280',
                       fontFamily: 'Inter, sans-serif'
-                    }}>~65,000 luxury HOAs/condos</td>
+                    }}>~345,000 amenity-rich communities</td>
                     <td style={{
                       padding: '1rem',
                       color: '#6b7280',
@@ -1978,9 +1960,9 @@ const PitchDeckPage: React.FC = () => {
                   fontFamily: 'Inter, sans-serif'
                 }}>
                   <li>ResortPass validates day-pass model for amenities</li>
-                  <li>HOAs represent untapped market (65K+ properties)</li>
+                  <li>HOAs represent untapped market (345K+ amenity-rich communities)</li>
                   <li>Different asset class = different dynamics</li>
-                  <li>Smaller market but higher per-property revenue</li>
+                  <li>Large market with high per-property revenue potential</li>
                   <li>Less competition in HOA space</li>
                 </ul>
               </div>
@@ -2055,9 +2037,9 @@ const PitchDeckPage: React.FC = () => {
                 fontFamily: 'Inter, sans-serif',
                 marginBottom: '0.75rem'
               }}>
-                <li><strong>TAM - Platform Revenue ($227M):</strong> 65,000 US luxury HOAs × $3,500/year (Neighbri's revenue opportunity)</li>
-                <li><strong>TAM - Total Market ($9-14B):</strong> ~185,000 global luxury HOAs/condos × $50,000-75,000/year avg total amenity booking revenue (reservation fees, deposits, etc.) across all communities</li>
-                <li><strong>Calculation:</strong> If US represents ~35% of global luxury residential market, then ~185,000 luxury communities globally. Each community generates $50K-75K annually in total amenity booking revenue (fees + deposits), resulting in $9-14B total market</li>
+                <li><strong>TAM - Platform Revenue ($2.8B):</strong> 345,000 amenity-rich communities × $40K/year avg GTV → $2.8B platform revenue (20% take rate)</li>
+                <li><strong>TAM - Total Market ($7-21B):</strong> 345,000 amenity-rich communities × $20K-60K/year avg GTV per community (low to high scenario)</li>
+                <li><strong>Calculation:</strong> Based on 220,000 HOAs + 125,000 multifamily properties with shared amenities. Each community generates $20K-60K annually in day pass GTV, resulting in $7-21B total market opportunity</li>
               </ul>
               <p style={{
                 color: '#6b7280',
