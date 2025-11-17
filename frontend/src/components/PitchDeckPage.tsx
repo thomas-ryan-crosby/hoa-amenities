@@ -1570,9 +1570,9 @@ const PitchDeckPage: React.FC = () => {
                       padding: '1rem',
                       color: '#6b7280',
                       fontFamily: 'Inter, sans-serif'
-                    }}>Variable (commission-based)<br/>
+                    }}>$18,700/year avg (estimated)<br/>
                       <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
-                        Depends on booking volume
+                        ($16.8M revenue ÷ 900 hotels)
                       </span>
                     </td>
                   </tr>
@@ -1753,132 +1753,6 @@ const PitchDeckPage: React.FC = () => {
                         Assuming 15-20% commission on $16.8M revenue
                       </span>
                     </td>
-                  </tr>
-                  <tr style={{
-                    borderBottom: '1px solid #e5e7eb'
-                  }}>
-                    <td style={{
-                      padding: '1rem',
-                      fontWeight: 600,
-                      color: '#1f2937',
-                      fontFamily: 'Inter, sans-serif'
-                    }}>Revenue per Property</td>
-                    <td style={{
-                      padding: '1rem',
-                      color: '#6b7280',
-                      fontFamily: 'Inter, sans-serif'
-                    }}>
-                      {businessModel === 'dayPassPlatform' ? (
-                        <>
-                          $8,000/year avg<br/>
-                          <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
-                            $2,000 subscription + $6,000 commission (15-20% of $40K GTV)
-                          </span>
-                          <br/>
-                          <span style={{ fontSize: '0.8rem', color: '#9ca3af', fontStyle: 'italic' }}>
-                            Range: $4,000-12,000/year based on volume & pricing
-                          </span>
-                        </>
-                      ) : (
-                        <>
-                          $2,000-2,400/year avg<br/>
-                          <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
-                            ($99-$299/month subscription)
-                          </span>
-                        </>
-                      )}
-                    </td>
-                    <td style={{
-                      padding: '1rem',
-                      color: '#6b7280',
-                      fontFamily: 'Inter, sans-serif'
-                    }}>$18,700/year avg (estimated)<br/>
-                      <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
-                        ($16.8M revenue ÷ 900 hotels)
-                      </span>
-                    </td>
-                  </tr>
-                  <tr style={{
-                    borderBottom: '1px solid #e5e7eb',
-                    backgroundColor: '#f9fafb'
-                  }}>
-                    <td style={{
-                      padding: '1rem',
-                      fontWeight: 600,
-                      color: '#1f2937',
-                      fontFamily: 'Inter, sans-serif'
-                    }}>Commission/Take Rate</td>
-                    <td style={{
-                      padding: '1rem',
-                      color: '#6b7280',
-                      fontFamily: 'Inter, sans-serif'
-                    }}>15-20% on day passes<br/>
-                      <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
-                        Plus subscription revenue
-                      </span>
-                    </td>
-                    <td style={{
-                      padding: '1rem',
-                      color: '#6b7280',
-                      fontFamily: 'Inter, sans-serif'
-                    }}>15-20% (estimated)<br/>
-                      <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
-                        Industry standard for marketplace
-                      </span>
-                    </td>
-                  </tr>
-                  <tr style={{
-                    borderBottom: '1px solid #e5e7eb'
-                  }}>
-                    <td style={{
-                      padding: '1rem',
-                      fontWeight: 600,
-                      color: '#1f2937',
-                      fontFamily: 'Inter, sans-serif'
-                    }}>Revenue Predictability</td>
-                    <td style={{
-                      padding: '1rem',
-                      color: businessModel === 'dayPassPlatform' ? '#6b7280' : '#355B45',
-                      fontWeight: 600,
-                      fontFamily: 'Inter, sans-serif'
-                    }}>
-                      {businessModel === 'dayPassPlatform' ? 'Conditional: High (SaaS) or Variable (Usage-based)' : '✓ High (Recurring SaaS)'}
-                    </td>
-                    <td style={{
-                      padding: '1rem',
-                      color: '#6b7280',
-                      fontFamily: 'Inter, sans-serif'
-                    }}>Variable (Usage-based)</td>
-                  </tr>
-                  <tr style={{
-                    borderBottom: '1px solid #e5e7eb',
-                    backgroundColor: '#f9fafb'
-                  }}>
-                    <td style={{
-                      padding: '1rem',
-                      fontWeight: 600,
-                      color: '#1f2937',
-                      fontFamily: 'Inter, sans-serif'
-                    }}>Primary Revenue Source</td>
-                    <td style={{
-                      padding: '1rem',
-                      color: '#6b7280',
-                      fontFamily: 'Inter, sans-serif'
-                    }}>
-                      {businessModel === 'dayPassPlatform' ? (
-                        <>
-                          Subscription fees (guaranteed)<br/>
-                          + 15-20% commission on day pass bookings
-                        </>
-                      ) : (
-                        'Subscription fees (guaranteed)'
-                      )}
-                    </td>
-                    <td style={{
-                      padding: '1rem',
-                      color: '#6b7280',
-                      fontFamily: 'Inter, sans-serif'
-                    }}>Commission on bookings only</td>
                   </tr>
                   <tr style={{
                     borderBottom: '1px solid #e5e7eb'
