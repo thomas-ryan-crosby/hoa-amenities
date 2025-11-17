@@ -5,6 +5,7 @@ import LandingHeader from './LandingHeader';
 const PitchDeckPage: React.FC = () => {
   const navigate = useNavigate();
   const [businessModel, setBusinessModel] = useState<'amenityManagement' | 'dayPassPlatform'>('amenityManagement');
+  const [showGTVTooltip, setShowGTVTooltip] = useState(false);
 
   useEffect(() => {
     // Check if user has access (from sessionStorage)
@@ -1054,9 +1055,50 @@ const PitchDeckPage: React.FC = () => {
                   lineHeight: '1.6',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  {businessModel === 'dayPassPlatform'
-                    ? '345,000 amenity-rich communities × $40K/year avg GTV → $2.8B platform revenue (20% take rate)'
-                    : '345,000 amenity-rich communities × $2,000/year avg subscription'}
+                  {businessModel === 'dayPassPlatform' ? (
+                    <>
+                      345,000 amenity-rich communities × $40K/year avg{' '}
+                      <span 
+                        style={{ 
+                          textDecoration: 'underline',
+                          cursor: 'help',
+                          color: '#86efac',
+                          fontWeight: 600,
+                          position: 'relative'
+                        }}
+                        onMouseEnter={() => setShowGTVTooltip(true)}
+                        onMouseLeave={() => setShowGTVTooltip(false)}
+                      >
+                        GTV
+                      </span>
+                      {showGTVTooltip && (
+                        <div style={{
+                          position: 'absolute',
+                          backgroundColor: '#1f2937',
+                          color: 'white',
+                          padding: '1rem',
+                          borderRadius: '0.5rem',
+                          fontSize: '0.85rem',
+                          maxWidth: '300px',
+                          zIndex: 1000,
+                          boxShadow: '0 4px 6px rgba(0,0,0,0.3)',
+                          marginTop: '0.5rem',
+                          marginLeft: '-150px',
+                          lineHeight: '1.6',
+                          fontFamily: 'Inter, sans-serif'
+                        }}>
+                          <strong>GTV (Gross Transaction Value):</strong><br/>
+                          The total dollar value of all day pass bookings processed through the platform before platform fees are deducted.<br/><br/>
+                          <strong>Calculation:</strong> Number of bookings × Average booking price = GTV<br/>
+                          <strong>Example:</strong> 30 bookings/month × $50/day × 12 months = $18,000/year GTV per community<br/><br/>
+                          Platform revenue = GTV × Commission rate (15-20%)
+                        </div>
+                      )}
+                      {' '}→ $2.8B platform revenue (20% take rate)
+                    </>
+                  ) : (
+                    '345,000 amenity-rich communities × $2,000/year avg subscription'
+                  )}
                 </p>
               </div>
 
@@ -1394,8 +1436,8 @@ const PitchDeckPage: React.FC = () => {
                       lineHeight: '1.6',
                       fontFamily: 'Inter, sans-serif'
                     }}>
-                      A luxury community with a pool and clubroom could generate $5,000-15,000+ annually from day pass sales 
-                      (depending on capacity and pricing), creating a new revenue stream that helps offset HOA fees or fund 
+                      A luxury community with a pool and clubroom could generate $20,000-60,000+ annually in day pass GTV 
+                      (depending on capacity, pricing, and booking volume), creating a new revenue stream that helps offset HOA fees or fund 
                       amenity improvements. With 345,000 target communities, this represents a significant additional market opportunity.
                     </p>
                   </div>
@@ -1865,468 +1907,6 @@ const PitchDeckPage: React.FC = () => {
               </div>
             </div>
 
-            <div style={{
-              marginTop: '1.5rem',
-              padding: '1.5rem',
-              backgroundColor: '#f0f9ff',
-              borderRadius: '0.5rem',
-              border: '1px solid #0ea5e9'
-            }}>
-              <h4 style={{
-                fontSize: '1rem',
-                fontWeight: 600,
-                color: '#1f2937',
-                marginBottom: '0.75rem',
-                fontFamily: 'Inter, sans-serif'
-              }}>
-                ResortPass Financial Estimates - Methodology
-              </h4>
-              <p style={{
-                color: '#6b7280',
-                fontSize: '0.85rem',
-                lineHeight: '1.6',
-                fontFamily: 'Inter, sans-serif',
-                marginBottom: '0.75rem'
-              }}>
-                <strong>Known Facts:</strong> ResortPass has raised $37.4M (Series B: $26M in Nov 2022), has 900+ hotel 
-                partnerships, estimated annual revenue of ~$16.8M, and 100+ employees.
-              </p>
-              <p style={{
-                color: '#6b7280',
-                fontSize: '0.85rem',
-                lineHeight: '1.6',
-                fontFamily: 'Inter, sans-serif',
-                marginBottom: '0.75rem'
-              }}>
-                <strong>Derived Estimates:</strong>
-              </p>
-              <ul style={{
-                color: '#6b7280',
-                fontSize: '0.85rem',
-                lineHeight: '1.6',
-                paddingLeft: '1.25rem',
-                fontFamily: 'Inter, sans-serif',
-                marginBottom: '0.75rem'
-              }}>
-                <li><strong>TAM - Platform Revenue ($9-11B):</strong> Based on global luxury hotel market ($93-238B) with 10% attributed to amenity/day-pass services that platforms like ResortPass can capture</li>
-                <li><strong>TAM - Total Market ($50-100B):</strong> Total revenue from all luxury hotel amenities (spa, pool, fitness, events) across all luxury hotels globally</li>
-                <li><strong>SAM ($2-3B):</strong> US luxury hotel market (~$30B) with 10% for day-pass services</li>
-                <li><strong>SOM ($100-150M):</strong> 5-10% of SAM over 5 years, considering competition and market penetration</li>
-                <li><strong>GMV ($80-120M):</strong> Reverse-engineered from $16.8M revenue assuming 15-20% commission rate</li>
-                <li><strong>Revenue per Property ($18,700):</strong> $16.8M revenue ÷ 900 hotels</li>
-                <li><strong>Growth Rate (40-60%):</strong> Estimated based on Series B funding, expansion trajectory, and marketplace growth patterns</li>
-              </ul>
-              <p style={{
-                color: '#6b7280',
-                fontSize: '0.85rem',
-                lineHeight: '1.6',
-                fontFamily: 'Inter, sans-serif',
-                marginBottom: '0.75rem',
-                fontWeight: 600
-              }}>
-                HOAPass Market Size Calculations:
-              </p>
-              <ul style={{
-                color: '#6b7280',
-                fontSize: '0.85rem',
-                lineHeight: '1.6',
-                paddingLeft: '1.25rem',
-                fontFamily: 'Inter, sans-serif',
-                marginBottom: '0.75rem'
-              }}>
-                <li><strong>TAM - Total Market Size (GTV):</strong> 345,000 amenity-rich communities × $20K-60K/year avg GTV = $7-21B annual GTV</li>
-                <li><strong>TAM - Platform Revenue ($2.8B):</strong> $14B mid-case GTV × 20% take rate = $2.8B platform revenue</li>
-                <li><strong>SAM - Platform Revenue ($1.4B):</strong> 170,000 communities in top 50 MSAs × $40K/year GTV × 20% take rate = $1.4B</li>
-                <li><strong>SOM - Platform Revenue ($70-140M):</strong> 5-10% of SAM over 5-7 years = $70-140M annual platform revenue</li>
-                <li><strong>Calculation Basis:</strong> Based on 220,000 HOAs + 125,000 multifamily properties with shared amenities. Mid-case assumes $40K/year GTV per community with 20% platform take rate.</li>
-              </ul>
-              <p style={{
-                color: '#6b7280',
-                fontSize: '0.85rem',
-                lineHeight: '1.6',
-                fontFamily: 'Inter, sans-serif',
-                marginBottom: '0.75rem',
-                marginTop: '1rem',
-                fontWeight: 600
-              }}>
-                HOAPass Revenue per Property Calculation (Commission-Based Model):
-              </p>
-              <div style={{
-                padding: '1rem',
-                backgroundColor: 'white',
-                borderRadius: '0.25rem',
-                border: '1px solid #cbd5e1',
-                marginBottom: '0.75rem'
-              }}>
-                <p style={{
-                  color: '#1f2937',
-                  fontSize: '0.85rem',
-                  lineHeight: '1.6',
-                  fontFamily: 'Inter, sans-serif',
-                  marginBottom: '0.5rem',
-                  fontWeight: 600
-                }}>
-                  Assumptions:
-                </p>
-                <ul style={{
-                  color: '#6b7280',
-                  fontSize: '0.85rem',
-                  lineHeight: '1.6',
-                  paddingLeft: '1.25rem',
-                  fontFamily: 'Inter, sans-serif',
-                  marginBottom: '0.75rem'
-                }}>
-                  <li><strong>Day Pass Pricing:</strong> $25-75/day for pool access, $50-150/day for clubroom rental (varies by amenity type and market)</li>
-                  <li><strong>Average Day Pass Price:</strong> $50/day (mid-range estimate)</li>
-                  <li><strong>Booking Volume:</strong> 20-40 day pass bookings per month per community (conservative estimate for luxury communities with desirable amenities)</li>
-                  <li><strong>Average Monthly Bookings:</strong> 30 bookings/month</li>
-                  <li><strong>Commission Rate:</strong> 15-20% of day pass sales (industry standard for marketplace platforms)</li>
-                  <li><strong>Average Commission Rate:</strong> 17.5% (mid-point)</li>
-                </ul>
-                <p style={{
-                  color: '#1f2937',
-                  fontSize: '0.85rem',
-                  lineHeight: '1.6',
-                  fontFamily: 'Inter, sans-serif',
-                  marginBottom: '0.5rem',
-                  fontWeight: 600
-                }}>
-                  Calculation:
-                </p>
-                <div style={{
-                  padding: '0.75rem',
-                  backgroundColor: '#f0f4f1',
-                  borderRadius: '0.25rem',
-                  fontFamily: 'Inter, sans-serif',
-                  fontSize: '0.85rem',
-                  color: '#1f2937',
-                  marginBottom: '0.5rem'
-                }}>
-                  <p style={{ margin: '0.25rem 0' }}>
-                    <strong>Monthly GMV per Community:</strong> 30 bookings × $50/day = $1,500/month
-                  </p>
-                  <p style={{ margin: '0.25rem 0' }}>
-                    <strong>Annual GMV per Community:</strong> $1,500 × 12 months = $18,000/year
-                  </p>
-                  <p style={{ margin: '0.25rem 0' }}>
-                    <strong>Platform Revenue per Community:</strong> $18,000 × 17.5% commission = <strong>$3,150/year</strong>
-                  </p>
-                </div>
-                <p style={{
-                  color: '#6b7280',
-                  fontSize: '0.8rem',
-                  lineHeight: '1.6',
-                  fontFamily: 'Inter, sans-serif',
-                  fontStyle: 'italic',
-                  marginTop: '0.5rem',
-                  marginBottom: 0
-                }}>
-                  <strong>Range:</strong> With 20-40 bookings/month and $25-75 pricing, revenue per property ranges from $900-6,000/year. 
-                  Average of $3,150/year represents a conservative estimate for active luxury communities.
-                </p>
-              </div>
-              <p style={{
-                color: '#6b7280',
-                fontSize: '0.85rem',
-                lineHeight: '1.6',
-                fontFamily: 'Inter, sans-serif',
-                marginBottom: '0.75rem',
-                marginTop: '0.75rem'
-              }}>
-                <strong>Note on Asset Value & Demand:</strong> Revenue varies significantly based on:
-              </p>
-              <ul style={{
-                color: '#6b7280',
-                fontSize: '0.85rem',
-                lineHeight: '1.6',
-                paddingLeft: '1.25rem',
-                fontFamily: 'Inter, sans-serif',
-                marginBottom: '0.75rem'
-              }}>
-                <li><strong>Asset Quality:</strong> Premium amenities (Olympic pools, high-end clubrooms) command higher day pass prices ($75-150/day)</li>
-                <li><strong>Location:</strong> Urban/suburban markets with high demand see 40-60 bookings/month vs. 15-25 in less dense areas</li>
-                <li><strong>Seasonality:</strong> Pool amenities peak in summer (50-80 bookings/month) vs. year-round clubrooms (20-30/month)</li>
-                <li><strong>Community Size:</strong> Larger communities (300+ units) generate more bookings than smaller ones (50-100 units)</li>
-                <li><strong>Marketing & Visibility:</strong> Communities actively promoting day passes see 2-3x higher booking volumes</li>
-              </ul>
-              <p style={{
-                color: '#6b7280',
-                fontSize: '0.85rem',
-                lineHeight: '1.6',
-                fontFamily: 'Inter, sans-serif',
-                fontStyle: 'italic'
-              }}>
-                <strong>Note:</strong> These are estimates derived from public information and industry benchmarks. Actual figures 
-                may vary. ResortPass does not publicly disclose detailed financial metrics.
-              </p>
-            </div>
-
-            <div style={{
-              marginTop: '1.5rem',
-              padding: '1.5rem',
-              backgroundColor: '#f0f9ff',
-              borderRadius: '0.5rem',
-              border: '2px solid #0ea5e9'
-            }}>
-              <h4 style={{
-                fontSize: '1rem',
-                fontWeight: 600,
-                color: '#1f2937',
-                marginBottom: '0.75rem',
-                fontFamily: 'Inter, sans-serif'
-              }}>
-                Platform Revenue TAM vs. Total Market Size: Why the Discrepancy?
-              </h4>
-              <p style={{
-                color: '#6b7280',
-                fontSize: '0.85rem',
-                lineHeight: '1.6',
-                fontFamily: 'Inter, sans-serif',
-                marginBottom: '0.75rem'
-              }}>
-                You've identified an important discrepancy: <strong>Total Market Size</strong> shows residential at ~10-20% of hotels 
-                ($9-14B vs $50-100B), but <strong>Platform Revenue TAM</strong> shows residential at only ~2% ($227M vs $9-11B). 
-                Here's the detailed reasoning:
-              </p>
-              
-              <div style={{
-                padding: '1rem',
-                backgroundColor: 'white',
-                borderRadius: '0.25rem',
-                border: '1px solid #cbd5e1',
-                marginBottom: '0.75rem'
-              }}>
-                <p style={{
-                  color: '#1f2937',
-                  fontSize: '0.85rem',
-                  lineHeight: '1.6',
-                  fontFamily: 'Inter, sans-serif',
-                  marginBottom: '0.5rem',
-                  fontWeight: 600
-                }}>
-                  Platform Revenue Capture Rate Analysis:
-                </p>
-                <ul style={{
-                  color: '#6b7280',
-                  fontSize: '0.85rem',
-                  lineHeight: '1.6',
-                  paddingLeft: '1.25rem',
-                  fontFamily: 'Inter, sans-serif',
-                  marginBottom: '0.5rem'
-                }}>
-                  <li><strong>Hotels (ResortPass):</strong> $9-11B platform TAM ÷ $50-100B total market = <strong>~10-20% capture rate</strong></li>
-                  <li><strong>Residential (HOAPass):</strong> $227M platform TAM ÷ $9-14B total market = <strong>~1.6-2.5% capture rate</strong></li>
-                </ul>
-                <p style={{
-                  color: '#1f2937',
-                  fontSize: '0.85rem',
-                  lineHeight: '1.6',
-                  fontFamily: 'Inter, sans-serif',
-                  marginTop: '0.75rem',
-                  marginBottom: '0.5rem',
-                  fontWeight: 600
-                }}>
-                  Why Lower Platform Capture in Residential Market?
-                </p>
-              </div>
-
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                gap: '1rem',
-                marginBottom: '0.75rem'
-              }}>
-                <div style={{
-                  padding: '1rem',
-                  backgroundColor: 'white',
-                  borderRadius: '0.25rem',
-                  border: '1px solid #cbd5e1'
-                }}>
-                  <p style={{
-                    color: '#1f2937',
-                    fontSize: '0.85rem',
-                    fontWeight: 600,
-                    marginBottom: '0.5rem',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>
-                    1. Market Maturity & Culture
-                  </p>
-                  <p style={{
-                    color: '#6b7280',
-                    fontSize: '0.8rem',
-                    lineHeight: '1.5',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>
-                    <strong>Hotels:</strong> Established marketplace culture. Hotels actively monetize amenities and guests expect to pay. 
-                    Day-pass concept is normalized.<br/><br/>
-                    <strong>HOAs:</strong> Amenities are primarily for residents (included in HOA fees). Opening to outsiders is a new concept 
-                    requiring cultural shift. Many HOAs may never adopt day-pass model.
-                  </p>
-                </div>
-
-                <div style={{
-                  padding: '1rem',
-                  backgroundColor: 'white',
-                  borderRadius: '0.25rem',
-                  border: '1px solid #cbd5e1'
-                }}>
-                  <p style={{
-                    color: '#1f2937',
-                    fontSize: '0.85rem',
-                    fontWeight: 600,
-                    marginBottom: '0.5rem',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>
-                    2. Adoption Rate Differences
-                  </p>
-                  <p style={{
-                    color: '#6b7280',
-                    fontSize: '0.8rem',
-                    lineHeight: '1.5',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>
-                    <strong>Hotels:</strong> ~900+ hotels on ResortPass out of ~50,000+ luxury hotels globally = <strong>~2% adoption</strong>, 
-                    but those that adopt are highly active.<br/><br/>
-                    <strong>HOAs:</strong> Estimated 5-10% of luxury communities would adopt day-pass model (vs. 20-30% for hotels) due to 
-                    resident concerns, privacy, and governance complexity.
-                  </p>
-                </div>
-
-                <div style={{
-                  padding: '1rem',
-                  backgroundColor: 'white',
-                  borderRadius: '0.25rem',
-                  border: '1px solid #cbd5e1'
-                }}>
-                  <p style={{
-                    color: '#1f2937',
-                    fontSize: '0.85rem',
-                    fontWeight: 600,
-                    marginBottom: '0.5rem',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>
-                    3. Revenue Model Differences
-                  </p>
-                  <p style={{
-                    color: '#6b7280',
-                    fontSize: '0.8rem',
-                    lineHeight: '1.5',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>
-                    <strong>Hotels:</strong> Pure commission model (15-20% of all bookings). High booking volume per property 
-                    ($18,700/year platform revenue).<br/><br/>
-                    <strong>HOAs:</strong> Lower booking volume per community ($3,150/year in commission model). Many communities may 
-                    prefer subscription model ($2,000/year) over commission, reducing platform revenue from day passes.
-                  </p>
-                </div>
-
-                <div style={{
-                  padding: '1rem',
-                  backgroundColor: 'white',
-                  borderRadius: '0.25rem',
-                  border: '1px solid #cbd5e1'
-                }}>
-                  <p style={{
-                    color: '#1f2937',
-                    fontSize: '0.85rem',
-                    fontWeight: 600,
-                    marginBottom: '0.5rem',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>
-                    4. Governance & Decision-Making
-                  </p>
-                  <p style={{
-                    color: '#6b7280',
-                    fontSize: '0.8rem',
-                    lineHeight: '1.5',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>
-                    <strong>Hotels:</strong> Centralized decision-making. Hotel management can quickly adopt new revenue streams.<br/><br/>
-                    <strong>HOAs:</strong> Requires board approval, resident votes, and often bylaw changes. Slower adoption, more resistance 
-                    to change. Many boards prioritize resident exclusivity over revenue.
-                  </p>
-                </div>
-              </div>
-
-              <div style={{
-                padding: '1rem',
-                backgroundColor: '#f0f4f1',
-                borderRadius: '0.25rem',
-                border: '1px solid #355B45',
-                marginTop: '0.75rem'
-              }}>
-                <p style={{
-                  color: '#1f2937',
-                  fontSize: '0.85rem',
-                  fontWeight: 600,
-                  marginBottom: '0.5rem',
-                  fontFamily: 'Inter, sans-serif'
-                }}>
-                  Revised Platform Revenue TAM Calculation:
-                </p>
-                <div style={{
-                  padding: '0.75rem',
-                  backgroundColor: 'white',
-                  borderRadius: '0.25rem',
-                  fontFamily: 'Inter, sans-serif',
-                  fontSize: '0.85rem',
-                  color: '#1f2937'
-                }}>
-                  <p style={{ margin: '0.25rem 0' }}>
-                    <strong>Total Market:</strong> $9-14B (all amenity booking revenue across all luxury HOAs)
-                  </p>
-                  <p style={{ margin: '0.25rem 0' }}>
-                    <strong>Adoption Rate:</strong> 5-10% of communities adopt day-pass model = $450M-1.4B addressable
-                  </p>
-                  <p style={{ margin: '0.25rem 0' }}>
-                    <strong>Platform Revenue Capture:</strong> 
-                  </p>
-                  <ul style={{ margin: '0.25rem 0', paddingLeft: '1.25rem' }}>
-                    <li>Option A (Commission Model): 15-20% of day-pass bookings = <strong>$68M-280M</strong></li>
-                    <li>Option B (Subscription + Commission): $2,000 subscription + 15-20% commission = <strong>$227M+</strong> (current estimate)</li>
-                  </ul>
-                  <p style={{ margin: '0.5rem 0 0 0', fontStyle: 'italic', color: '#6b7280' }}>
-                    The $227M estimate assumes a hybrid model where communities pay subscription fees AND generate commission revenue 
-                    from day passes, resulting in higher platform revenue than pure commission model.
-                  </p>
-                </div>
-              </div>
-
-              <p style={{
-                color: '#6b7280',
-                fontSize: '0.85rem',
-                lineHeight: '1.6',
-                fontFamily: 'Inter, sans-serif',
-                marginTop: '0.75rem',
-                marginBottom: 0
-              }}>
-                <strong>Key Insight:</strong> The lower platform revenue TAM reflects realistic adoption constraints in the residential market. 
-                While the total market opportunity is substantial ($9-14B), platform capture is limited by cultural resistance, governance 
-                complexity, and lower per-property booking volumes compared to hotels. However, the subscription model provides more 
-                predictable revenue than pure commission, which is why HOAPass can achieve $227M+ even with lower adoption rates.
-              </p>
-            </div>
-
-            <div style={{
-              marginTop: '1.5rem',
-              padding: '1rem',
-              backgroundColor: '#fef3c7',
-              borderRadius: '0.5rem',
-              border: '1px solid #fbbf24'
-            }}>
-              <p style={{
-                color: '#92400e',
-                fontSize: '0.9rem',
-                lineHeight: '1.6',
-                fontFamily: 'Inter, sans-serif',
-                margin: 0
-              }}>
-                <strong>Key Insight:</strong> This comparison highlights different market dynamics. ResortPass operates in the hospitality 
-                sector (hotels/resorts) with a larger TAM but transaction-based revenue. HOAPass targets residential communities 
-                (HOAs/condos) with a smaller but more focused market, benefiting from subscription-based recurring revenue that provides 
-                more predictable cash flow and higher customer lifetime value.
-              </p>
-            </div>
           </div>
           )}
 
