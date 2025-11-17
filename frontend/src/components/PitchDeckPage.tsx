@@ -27,106 +27,91 @@ const PitchDeckPage: React.FC = () => {
       <main>
         {/* Business Model Selector */}
         <section style={{
-          padding: '2rem 1rem',
-          backgroundColor: 'white',
-          borderBottom: '2px solid #355B45',
+          padding: '0.75rem 1rem',
+          backgroundColor: '#f9fafb',
+          borderBottom: '1px solid #e5e7eb',
           position: 'sticky',
           top: 0,
           zIndex: 100,
-          boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+          boxShadow: '0 1px 2px rgba(0,0,0,0.05)'
         }}>
           <div style={{
             maxWidth: '1200px',
             margin: '0 auto',
             display: 'flex',
-            flexDirection: 'column',
+            flexDirection: 'row',
             alignItems: 'center',
-            gap: '1rem'
+            justifyContent: 'center',
+            gap: '0.75rem'
           }}>
-            <h3 style={{
-              fontSize: '1.25rem',
-              fontWeight: 600,
-              color: '#1f2937',
-              marginBottom: '0.5rem',
-              fontFamily: 'Inter, sans-serif'
-            }}>
-              Select Business Model:
-            </h3>
-            <div style={{
-              display: 'flex',
-              gap: '1rem',
-              flexWrap: 'wrap',
-              justifyContent: 'center'
-            }}>
-              <button
-                onClick={() => setBusinessModel('amenityManagement')}
-                style={{
-                  padding: '1rem 2rem',
-                  fontSize: '1.1rem',
-                  fontWeight: 600,
-                  fontFamily: 'Inter, sans-serif',
-                  borderRadius: '0.5rem',
-                  border: '2px solid',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  backgroundColor: businessModel === 'amenityManagement' ? '#355B45' : 'white',
-                  color: businessModel === 'amenityManagement' ? 'white' : '#355B45',
-                  borderColor: '#355B45'
-                }}
-                onMouseEnter={(e) => {
-                  if (businessModel !== 'amenityManagement') {
-                    e.currentTarget.style.backgroundColor = '#f0fdf4';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (businessModel !== 'amenityManagement') {
-                    e.currentTarget.style.backgroundColor = 'white';
-                  }
-                }}
-              >
-                A) Amenity Management Platform
-              </button>
-              <button
-                onClick={() => setBusinessModel('dayPassPlatform')}
-                style={{
-                  padding: '1rem 2rem',
-                  fontSize: '1.1rem',
-                  fontWeight: 600,
-                  fontFamily: 'Inter, sans-serif',
-                  borderRadius: '0.5rem',
-                  border: '2px solid',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  backgroundColor: businessModel === 'dayPassPlatform' ? '#355B45' : 'white',
-                  color: businessModel === 'dayPassPlatform' ? 'white' : '#355B45',
-                  borderColor: '#355B45'
-                }}
-                onMouseEnter={(e) => {
-                  if (businessModel !== 'dayPassPlatform') {
-                    e.currentTarget.style.backgroundColor = '#f0fdf4';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (businessModel !== 'dayPassPlatform') {
-                    e.currentTarget.style.backgroundColor = 'white';
-                  }
-                }}
-              >
-                B) HOA Day Amenity Pass Platform
-              </button>
-            </div>
-            <p style={{
-              fontSize: '0.9rem',
+            <span style={{
+              fontSize: '0.875rem',
               color: '#6b7280',
-              textAlign: 'center',
-              maxWidth: '800px',
               fontFamily: 'Inter, sans-serif',
-              marginTop: '0.5rem'
+              marginRight: '0.25rem'
             }}>
-              {businessModel === 'amenityManagement' 
-                ? 'Subscription-based SaaS for internal community amenity management'
-                : 'Subscription + Commission model: Internal management + 15-20% commission on external day pass bookings'}
-            </p>
+              Model:
+            </span>
+            <button
+              onClick={() => setBusinessModel('amenityManagement')}
+              style={{
+                padding: '0.4rem 0.75rem',
+                fontSize: '0.875rem',
+                fontWeight: 500,
+                fontFamily: 'Inter, sans-serif',
+                borderRadius: '0.375rem',
+                border: '1px solid',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                backgroundColor: businessModel === 'amenityManagement' ? '#355B45' : 'white',
+                color: businessModel === 'amenityManagement' ? 'white' : '#6b7280',
+                borderColor: businessModel === 'amenityManagement' ? '#355B45' : '#d1d5db'
+              }}
+              onMouseEnter={(e) => {
+                if (businessModel !== 'amenityManagement') {
+                  e.currentTarget.style.backgroundColor = '#f3f4f6';
+                  e.currentTarget.style.borderColor = '#9ca3af';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (businessModel !== 'amenityManagement') {
+                  e.currentTarget.style.backgroundColor = 'white';
+                  e.currentTarget.style.borderColor = '#d1d5db';
+                }
+              }}
+            >
+              A) Amenity Management
+            </button>
+            <button
+              onClick={() => setBusinessModel('dayPassPlatform')}
+              style={{
+                padding: '0.4rem 0.75rem',
+                fontSize: '0.875rem',
+                fontWeight: 500,
+                fontFamily: 'Inter, sans-serif',
+                borderRadius: '0.375rem',
+                border: '1px solid',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                backgroundColor: businessModel === 'dayPassPlatform' ? '#355B45' : 'white',
+                color: businessModel === 'dayPassPlatform' ? 'white' : '#6b7280',
+                borderColor: businessModel === 'dayPassPlatform' ? '#355B45' : '#d1d5db'
+              }}
+              onMouseEnter={(e) => {
+                if (businessModel !== 'dayPassPlatform') {
+                  e.currentTarget.style.backgroundColor = '#f3f4f6';
+                  e.currentTarget.style.borderColor = '#9ca3af';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (businessModel !== 'dayPassPlatform') {
+                  e.currentTarget.style.backgroundColor = 'white';
+                  e.currentTarget.style.borderColor = '#d1d5db';
+                }
+              }}
+            >
+              B) Day Pass Platform
+            </button>
           </div>
         </section>
 
@@ -1576,9 +1561,9 @@ const PitchDeckPage: React.FC = () => {
                       padding: '1rem',
                       color: '#6b7280',
                       fontFamily: 'Inter, sans-serif'
-                    }}>$3,500/year avg<br/>
+                    }}>$8,000/year avg<br/>
                       <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
-                        ($2,000 subscription + $1,500 HOAPass fees)
+                        ($2,000 subscription + $6,000 commission on $40K GTV)
                       </span>
                     </td>
                     <td style={{
@@ -1600,15 +1585,15 @@ const PitchDeckPage: React.FC = () => {
                       fontWeight: 600,
                       color: '#1f2937',
                       fontFamily: 'Inter, sans-serif'
-                    }}>TAM - Total Market Size</td>
+                    }}>TAM - Total Market Size (GTV)</td>
                     <td style={{
                       padding: '1rem',
                       color: '#355B45',
                       fontWeight: 600,
                       fontFamily: 'Inter, sans-serif'
-                    }}>$9-14B+ (estimated)<br/>
+                    }}>$7-21B<br/>
                       <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
-                        Global luxury residential amenity bookings
+                        345K communities × $20K-60K/year avg GTV
                       </span>
                     </td>
                     <td style={{
@@ -1635,7 +1620,11 @@ const PitchDeckPage: React.FC = () => {
                       color: '#355B45',
                       fontWeight: 600,
                       fontFamily: 'Inter, sans-serif'
-                    }}>$227M+</td>
+                    }}>$2.8B<br/>
+                      <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
+                        $14B mid-case GTV × 20% take rate
+                      </span>
+                    </td>
                     <td style={{
                       padding: '1rem',
                       color: '#6b7280',
@@ -1654,13 +1643,17 @@ const PitchDeckPage: React.FC = () => {
                       fontWeight: 600,
                       color: '#1f2937',
                       fontFamily: 'Inter, sans-serif'
-                    }}>SAM (Estimated)</td>
+                    }}>SAM - Platform Revenue</td>
                     <td style={{
                       padding: '1rem',
                       color: '#355B45',
                       fontWeight: 600,
                       fontFamily: 'Inter, sans-serif'
-                    }}>$28M+</td>
+                    }}>$1.4B<br/>
+                      <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
+                        170K communities × $40K GTV × 20% take rate
+                      </span>
+                    </td>
                     <td style={{
                       padding: '1rem',
                       color: '#6b7280',
@@ -1680,13 +1673,17 @@ const PitchDeckPage: React.FC = () => {
                       fontWeight: 600,
                       color: '#1f2937',
                       fontFamily: 'Inter, sans-serif'
-                    }}>SOM (Estimated)</td>
+                    }}>SOM - Platform Revenue</td>
                     <td style={{
                       padding: '1rem',
                       color: '#355B45',
                       fontWeight: 600,
                       fontFamily: 'Inter, sans-serif'
-                    }}>$1.4M+</td>
+                    }}>$70-140M<br/>
+                      <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
+                        5-10% of SAM over 5-7 years
+                      </span>
+                    </td>
                     <td style={{
                       padding: '1rem',
                       color: '#6b7280',
@@ -1738,9 +1735,9 @@ const PitchDeckPage: React.FC = () => {
                     }}>
                       {businessModel === 'dayPassPlatform' ? (
                         <>
-                          $3,150/year avg (estimated)<br/>
+                          $40,000/year avg<br/>
                           <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
-                            Depends on day pass booking volume
+                            Mid-case GTV per community (range: $20K-60K)
                           </span>
                         </>
                       ) : (
@@ -1773,13 +1770,13 @@ const PitchDeckPage: React.FC = () => {
                     }}>
                       {businessModel === 'dayPassPlatform' ? (
                         <>
-                          $3,150/year avg (estimated)<br/>
+                          $8,000/year avg<br/>
                           <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
-                            Commission-based: 30 bookings/mo × $50/day × 17.5% = $3,150/yr
+                            $2,000 subscription + $6,000 commission (15-20% of $40K GTV)
                           </span>
                           <br/>
                           <span style={{ fontSize: '0.8rem', color: '#9ca3af', fontStyle: 'italic' }}>
-                            Range: $900-6,000/year based on volume & pricing
+                            Range: $4,000-12,000/year based on volume & pricing
                           </span>
                         </>
                       ) : (
@@ -2063,9 +2060,11 @@ const PitchDeckPage: React.FC = () => {
                 fontFamily: 'Inter, sans-serif',
                 marginBottom: '0.75rem'
               }}>
-                <li><strong>TAM - Platform Revenue ($2.8B):</strong> 345,000 amenity-rich communities × $40K/year avg GTV → $2.8B platform revenue (20% take rate)</li>
-                <li><strong>TAM - Total Market ($7-21B):</strong> 345,000 amenity-rich communities × $20K-60K/year avg GTV per community (low to high scenario)</li>
-                <li><strong>Calculation:</strong> Based on 220,000 HOAs + 125,000 multifamily properties with shared amenities. Each community generates $20K-60K annually in day pass GTV, resulting in $7-21B total market opportunity</li>
+                <li><strong>TAM - Total Market Size (GTV):</strong> 345,000 amenity-rich communities × $20K-60K/year avg GTV = $7-21B annual GTV</li>
+                <li><strong>TAM - Platform Revenue ($2.8B):</strong> $14B mid-case GTV × 20% take rate = $2.8B platform revenue</li>
+                <li><strong>SAM - Platform Revenue ($1.4B):</strong> 170,000 communities in top 50 MSAs × $40K/year GTV × 20% take rate = $1.4B</li>
+                <li><strong>SOM - Platform Revenue ($70-140M):</strong> 5-10% of SAM over 5-7 years = $70-140M annual platform revenue</li>
+                <li><strong>Calculation Basis:</strong> Based on 220,000 HOAs + 125,000 multifamily properties with shared amenities. Mid-case assumes $40K/year GTV per community with 20% platform take rate.</li>
               </ul>
               <p style={{
                 color: '#6b7280',
