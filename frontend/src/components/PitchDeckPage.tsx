@@ -4,7 +4,7 @@ import LandingHeader from './LandingHeader';
 
 const PitchDeckPage: React.FC = () => {
   const navigate = useNavigate();
-  const [showHOAPass, setShowHOAPass] = useState(false);
+  const [businessModel, setBusinessModel] = useState<'amenityManagement' | 'dayPassPlatform'>('amenityManagement');
 
   useEffect(() => {
     // Check if user has access (from sessionStorage)
@@ -25,6 +25,111 @@ const PitchDeckPage: React.FC = () => {
     <div style={{ minHeight: '100vh', backgroundColor: '#f9fafb' }}>
       <LandingHeader />
       <main>
+        {/* Business Model Selector */}
+        <section style={{
+          padding: '2rem 1rem',
+          backgroundColor: 'white',
+          borderBottom: '2px solid #355B45',
+          position: 'sticky',
+          top: 0,
+          zIndex: 100,
+          boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+        }}>
+          <div style={{
+            maxWidth: '1200px',
+            margin: '0 auto',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '1rem'
+          }}>
+            <h3 style={{
+              fontSize: '1.25rem',
+              fontWeight: 600,
+              color: '#1f2937',
+              marginBottom: '0.5rem',
+              fontFamily: 'Inter, sans-serif'
+            }}>
+              Select Business Model:
+            </h3>
+            <div style={{
+              display: 'flex',
+              gap: '1rem',
+              flexWrap: 'wrap',
+              justifyContent: 'center'
+            }}>
+              <button
+                onClick={() => setBusinessModel('amenityManagement')}
+                style={{
+                  padding: '1rem 2rem',
+                  fontSize: '1.1rem',
+                  fontWeight: 600,
+                  fontFamily: 'Inter, sans-serif',
+                  borderRadius: '0.5rem',
+                  border: '2px solid',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  backgroundColor: businessModel === 'amenityManagement' ? '#355B45' : 'white',
+                  color: businessModel === 'amenityManagement' ? 'white' : '#355B45',
+                  borderColor: '#355B45'
+                }}
+                onMouseEnter={(e) => {
+                  if (businessModel !== 'amenityManagement') {
+                    e.currentTarget.style.backgroundColor = '#f0fdf4';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (businessModel !== 'amenityManagement') {
+                    e.currentTarget.style.backgroundColor = 'white';
+                  }
+                }}
+              >
+                A) Amenity Management Platform
+              </button>
+              <button
+                onClick={() => setBusinessModel('dayPassPlatform')}
+                style={{
+                  padding: '1rem 2rem',
+                  fontSize: '1.1rem',
+                  fontWeight: 600,
+                  fontFamily: 'Inter, sans-serif',
+                  borderRadius: '0.5rem',
+                  border: '2px solid',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  backgroundColor: businessModel === 'dayPassPlatform' ? '#355B45' : 'white',
+                  color: businessModel === 'dayPassPlatform' ? 'white' : '#355B45',
+                  borderColor: '#355B45'
+                }}
+                onMouseEnter={(e) => {
+                  if (businessModel !== 'dayPassPlatform') {
+                    e.currentTarget.style.backgroundColor = '#f0fdf4';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (businessModel !== 'dayPassPlatform') {
+                    e.currentTarget.style.backgroundColor = 'white';
+                  }
+                }}
+              >
+                B) HOA Day Amenity Pass Platform
+              </button>
+            </div>
+            <p style={{
+              fontSize: '0.9rem',
+              color: '#6b7280',
+              textAlign: 'center',
+              maxWidth: '800px',
+              fontFamily: 'Inter, sans-serif',
+              marginTop: '0.5rem'
+            }}>
+              {businessModel === 'amenityManagement' 
+                ? 'Subscription-based SaaS for internal community amenity management'
+                : 'Subscription + Commission model: Internal management + 15-20% commission on external day pass bookings'}
+            </p>
+          </div>
+        </section>
+
         {/* Title Slide */}
         <section style={{
           padding: '6rem 1rem',
@@ -73,8 +178,9 @@ const PitchDeckPage: React.FC = () => {
             lineHeight: '1.8',
             fontFamily: 'Inter, sans-serif'
           }}>
-            A modern platform that streamlines reservations, payments, and management for luxury residential communities 
-            with premium amenities
+            {businessModel === 'amenityManagement'
+              ? 'A modern platform that streamlines reservations, payments, and management for luxury residential communities with premium amenities'
+              : 'A modern platform that streamlines amenity management AND enables communities to monetize idle amenities through day passes for non-residents, creating new revenue streams'}
           </p>
         </section>
 
@@ -177,6 +283,35 @@ const PitchDeckPage: React.FC = () => {
               </p>
             </div>
           </div>
+            {businessModel === 'dayPassPlatform' && (
+              <div style={{
+                padding: '2rem',
+                borderRadius: '0.5rem',
+                backgroundColor: '#fef2f2',
+                border: '1px solid #fecaca',
+                marginBottom: '2rem'
+              }}>
+                <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>💰</div>
+                <h3 style={{
+                  fontSize: '1.5rem',
+                  fontWeight: 600,
+                  color: '#1f2937',
+                  marginBottom: '1rem',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  Untapped Revenue Opportunity
+                </h3>
+                <p style={{
+                  color: '#6b7280',
+                  lineHeight: '1.8',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  Premium amenities sit idle 80-90% of the time, representing billions in unrealized revenue. Communities 
+                  lack the infrastructure to safely monetize day passes to non-residents, missing out on a proven market 
+                  validated by Swimply ($160k+ annual earnings for top hosts) and the $15.2B racquet facility rental market.
+                </p>
+              </div>
+            )}
             <div style={{
               padding: '2rem',
               borderRadius: '0.5rem',
@@ -191,8 +326,9 @@ const PitchDeckPage: React.FC = () => {
                 fontFamily: 'Inter, sans-serif',
                 fontWeight: 600
               }}>
-                <strong>Result:</strong> Frustrated residents in luxury communities, overworked HOA staff, and inefficient 
-                use of premium amenities that residents pay significant fees to access.
+                <strong>Result:</strong> {businessModel === 'amenityManagement' 
+                  ? 'Frustrated residents in luxury communities, overworked HOA staff, and inefficient use of premium amenities that residents pay significant fees to access.'
+                  : 'Frustrated residents, overworked HOA staff, inefficient amenity use, AND billions in unrealized revenue from idle premium amenities that could be monetized through day passes.'}
               </p>
             </div>
         </section>
@@ -314,6 +450,85 @@ const PitchDeckPage: React.FC = () => {
                   Separate interfaces for residents, janitorial staff, and administrators with appropriate permissions.
                 </p>
               </div>
+              
+              {businessModel === 'dayPassPlatform' && (
+                <>
+                  <div style={{
+                    padding: '2rem',
+                    borderRadius: '0.5rem',
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)'
+                  }}>
+                    <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>🎫</div>
+                    <h3 style={{
+                      fontSize: '1.5rem',
+                      fontWeight: 600,
+                      marginBottom: '1rem',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>
+                      Day Pass Marketplace
+                    </h3>
+                    <p style={{
+                      lineHeight: '1.8',
+                      opacity: '0.9',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>
+                      Enable non-residents to book day passes to premium amenities. Built-in access control, guest management, 
+                      and automated revenue sharing (15-20% commission) for communities.
+                    </p>
+                  </div>
+
+                  <div style={{
+                    padding: '2rem',
+                    borderRadius: '0.5rem',
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)'
+                  }}>
+                    <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>🔒</div>
+                    <h3 style={{
+                      fontSize: '1.5rem',
+                      fontWeight: 600,
+                      marginBottom: '1rem',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>
+                      Resident Priority & Access Control
+                    </h3>
+                    <p style={{
+                      lineHeight: '1.8',
+                      opacity: '0.9',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>
+                      Residents always get first priority. Day passes only available when residents haven't booked, with 
+                      automated access verification and guest management.
+                    </p>
+                  </div>
+
+                  <div style={{
+                    padding: '2rem',
+                    borderRadius: '0.5rem',
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)'
+                  }}>
+                    <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>📈</div>
+                    <h3 style={{
+                      fontSize: '1.5rem',
+                      fontWeight: 600,
+                      marginBottom: '1rem',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>
+                      New Revenue Stream
+                    </h3>
+                    <p style={{
+                      lineHeight: '1.8',
+                      opacity: '0.9',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>
+                      Monetize idle amenity time. Communities earn revenue from day passes while maintaining resident 
+                      priority and control over pricing and availability.
+                    </p>
+                  </div>
+                </>
+              )}
             </div>
             <div style={{
               padding: '2rem',
@@ -328,7 +543,9 @@ const PitchDeckPage: React.FC = () => {
                 fontFamily: 'Inter, sans-serif',
                 fontWeight: 600
               }}>
-                Neighbri transforms amenity management from a time-consuming burden into a streamlined, automated process.
+                {businessModel === 'amenityManagement' 
+                  ? 'Neighbri transforms amenity management from a time-consuming burden into a streamlined, automated process.'
+                  : 'Neighbri transforms amenity management into a streamlined, automated process AND unlocks new revenue streams through day pass monetization, validated by Swimply ($160k+ annual earnings) and the $15.2B racquet facility market.'}
               </p>
             </div>
           </div>
@@ -595,43 +812,81 @@ const PitchDeckPage: React.FC = () => {
                     marginTop: '0.5rem',
                     fontFamily: 'Inter, sans-serif'
                   }}>
-                    ~65,000-75,000 properties
+                    {businessModel === 'dayPassPlatform' ? '~345,000 amenity-rich communities' : '~65,000-75,000 luxury properties'}
                   </p>
                 </div>
 
-                <div style={{
-                  padding: '1rem',
-                  backgroundColor: 'white',
-                  borderRadius: '0.25rem',
-                  border: '1px solid #cbd5e1'
-                }}>
+                {businessModel === 'amenityManagement' && (
                   <div style={{
-                    fontSize: '1.5rem',
-                    fontWeight: 700,
-                    color: '#355B45',
-                    marginBottom: '0.5rem',
-                    fontFamily: 'Inter, sans-serif'
+                    padding: '1rem',
+                    backgroundColor: 'white',
+                    borderRadius: '0.25rem',
+                    border: '1px solid #cbd5e1'
                   }}>
-                    Step 3
+                    <div style={{
+                      fontSize: '1.5rem',
+                      fontWeight: 700,
+                      color: '#355B45',
+                      marginBottom: '0.5rem',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>
+                      Step 3
+                    </div>
+                    <p style={{
+                      color: '#6b7280',
+                      fontSize: '0.9rem',
+                      lineHeight: '1.5',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>
+                      <strong>Neighbri Target Market:</strong><br/>
+                      Properties requiring sophisticated reservation & payment management
+                    </p>
+                    <p style={{
+                      color: '#355B45',
+                      fontWeight: 600,
+                      marginTop: '0.5rem',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>
+                      ~65,000-75,000 properties
+                    </p>
                   </div>
-                  <p style={{
-                    color: '#6b7280',
-                    fontSize: '0.9rem',
-                    lineHeight: '1.5',
-                    fontFamily: 'Inter, sans-serif'
+                )}
+                
+                {businessModel === 'dayPassPlatform' && (
+                  <div style={{
+                    padding: '1rem',
+                    backgroundColor: 'white',
+                    borderRadius: '0.25rem',
+                    border: '1px solid #cbd5e1'
                   }}>
-                    <strong>Neighbri Target Market:</strong><br/>
-                    Properties requiring sophisticated reservation & payment management
-                  </p>
-                  <p style={{
-                    color: '#355B45',
-                    fontWeight: 600,
-                    marginTop: '0.5rem',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>
-                    ~65,000-75,000 properties
-                  </p>
-                </div>
+                    <div style={{
+                      fontSize: '1.5rem',
+                      fontWeight: 700,
+                      color: '#355B45',
+                      marginBottom: '0.5rem',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>
+                      Step 3
+                    </div>
+                    <p style={{
+                      color: '#6b7280',
+                      fontSize: '0.9rem',
+                      lineHeight: '1.5',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>
+                      <strong>Neighbri Target Market:</strong><br/>
+                      Amenity-rich communities (220k HOAs + 125k multifamily) with day pass monetization potential
+                    </p>
+                    <p style={{
+                      color: '#355B45',
+                      fontWeight: 600,
+                      marginTop: '0.5rem',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>
+                      ~345,000 communities
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -656,7 +911,7 @@ const PitchDeckPage: React.FC = () => {
                 marginBottom: '0.5rem',
                 fontFamily: 'Inter, sans-serif'
               }}>
-                65K-75K
+                {businessModel === 'dayPassPlatform' ? '345K' : '65K-75K'}
               </div>
               <p style={{
                 fontSize: '1.125rem',
@@ -672,7 +927,9 @@ const PitchDeckPage: React.FC = () => {
                 lineHeight: '1.6',
                 fontFamily: 'Inter, sans-serif'
               }}>
-                Luxury HOAs, condos, and multifamily properties with premium reservable amenities
+                {businessModel === 'dayPassPlatform' 
+                  ? 'Amenity-rich communities (220k HOAs + 125k multifamily) with day pass monetization potential'
+                  : 'Luxury HOAs, condos, and multifamily properties with premium reservable amenities'}
               </p>
             </div>
 
@@ -787,7 +1044,7 @@ const PitchDeckPage: React.FC = () => {
                   fontFamily: 'Inter, sans-serif',
                   color: '#86efac'
                 }}>
-                  {showHOAPass ? '$227M+' : '$130M+'}
+                  {businessModel === 'dayPassPlatform' ? '$2.8B' : '$130M+'}
                 </div>
                 <p style={{
                   fontSize: '1rem',
@@ -804,8 +1061,8 @@ const PitchDeckPage: React.FC = () => {
                   lineHeight: '1.6',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  {showHOAPass 
-                    ? '65,000 luxury communities × $3,500/year avg (subscription + HOAPass platform fees)'
+                  {businessModel === 'dayPassPlatform'
+                    ? '345,000 amenity-rich communities × $40K/year avg GTV → $2.8B platform revenue (20% take rate)'
                     : '65,000 luxury communities nationwide × $2,000/year avg subscription'}
                 </p>
               </div>
@@ -832,7 +1089,7 @@ const PitchDeckPage: React.FC = () => {
                   fontFamily: 'Inter, sans-serif',
                   color: '#86efac'
                 }}>
-                  {showHOAPass ? '$28M+' : '$16M+'}
+                  {businessModel === 'dayPassPlatform' ? '$1.4B' : '$16M+'}
                 </div>
                 <p style={{
                   fontSize: '1rem',
@@ -849,8 +1106,8 @@ const PitchDeckPage: React.FC = () => {
                   lineHeight: '1.6',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  {showHOAPass
-                    ? '~8,000 luxury communities in target markets × $3,500/year avg'
+                  {businessModel === 'dayPassPlatform'
+                    ? '170,000 communities in top 50 MSAs × $40K/year GTV → $1.4B platform revenue'
                     : '~8,000 luxury communities in target markets × $2,000/year avg'}
                 </p>
               </div>
@@ -877,7 +1134,7 @@ const PitchDeckPage: React.FC = () => {
                   fontFamily: 'Inter, sans-serif',
                   color: '#86efac'
                 }}>
-                  {showHOAPass ? '$1.4M+' : '$800K+'}
+                  {businessModel === 'dayPassPlatform' ? '$70-140M' : '$800K+'}
                 </div>
                 <p style={{
                   fontSize: '1rem',
@@ -894,8 +1151,8 @@ const PitchDeckPage: React.FC = () => {
                   lineHeight: '1.6',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  {showHOAPass
-                    ? '~400+ luxury communities in first 3 years × $3,500/year avg'
+                  {businessModel === 'dayPassPlatform'
+                    ? '5-10% of SAM over 5-7 years → $70-140M annual platform revenue'
                     : '~400+ luxury communities in first 3 years × $2,000/year avg'}
                 </p>
               </div>
@@ -914,14 +1171,14 @@ const PitchDeckPage: React.FC = () => {
                 lineHeight: '1.6',
                 fontFamily: 'Inter, sans-serif'
               }}>
-                <strong>Note:</strong> {showHOAPass 
-                  ? 'Revenue projections include subscription fees ($2,000/year) plus HOAPass platform fees (~$1,500/year avg from 15-20% revenue share on day pass sales). Additional revenue from payment processing transaction fees (2.9% + $0.30 per reservation) not included in above calculations.'
-                  : 'Revenue projections based on subscription fees only. Additional revenue from payment processing transaction fees (2.9% + $0.30 per reservation) not included in above calculations.'}
+                <strong>Note:</strong> {businessModel === 'dayPassPlatform'
+                  ? 'Day Pass Platform: Revenue includes subscription fees ($2,000/year) plus 15-20% commission on day pass GTV. Based on $7-21B total GTV opportunity across 345,000 amenity-rich communities. Additional revenue from payment processing transaction fees (2.9% + $0.30 per reservation) not included.'
+                  : 'Amenity Management Platform: Revenue projections based on subscription fees only. Additional revenue from payment processing transaction fees (2.9% + $0.30 per reservation) not included in above calculations.'}
               </p>
             </div>
           </div>
 
-          {/* Revenue Stream Toggle */}
+          {/* Business Model Details */}
           <div style={{
             padding: '2rem',
             borderRadius: '0.5rem',
@@ -929,70 +1186,7 @@ const PitchDeckPage: React.FC = () => {
             border: '2px solid #355B45',
             marginBottom: '2rem'
           }}>
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: '2rem',
-              flexWrap: 'wrap',
-              gap: '1rem'
-            }}>
-              <h3 style={{
-                fontSize: '1.75rem',
-                fontWeight: 600,
-                color: '#1f2937',
-                fontFamily: 'Inter, sans-serif',
-                margin: 0
-              }}>
-                Revenue Stream Options
-              </h3>
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '1rem',
-                backgroundColor: 'white',
-                padding: '0.5rem',
-                borderRadius: '0.5rem',
-                border: '2px solid #355B45'
-              }}>
-                <button
-                  onClick={() => setShowHOAPass(false)}
-                  style={{
-                    padding: '0.75rem 1.5rem',
-                    borderRadius: '0.25rem',
-                    border: 'none',
-                    backgroundColor: !showHOAPass ? '#355B45' : 'transparent',
-                    color: !showHOAPass ? 'white' : '#355B45',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    fontSize: '1rem',
-                    fontFamily: 'Inter, sans-serif',
-                    transition: 'all 0.2s'
-                  }}
-                >
-                  Standard System
-                </button>
-                <button
-                  onClick={() => setShowHOAPass(true)}
-                  style={{
-                    padding: '0.75rem 1.5rem',
-                    borderRadius: '0.25rem',
-                    border: 'none',
-                    backgroundColor: showHOAPass ? '#355B45' : 'transparent',
-                    color: showHOAPass ? 'white' : '#355B45',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    fontSize: '1rem',
-                    fontFamily: 'Inter, sans-serif',
-                    transition: 'all 0.2s'
-                  }}
-                >
-                  HOAPass System
-                </button>
-              </div>
-            </div>
-
-            {!showHOAPass ? (
+            {businessModel === 'amenityManagement' ? (
               <div>
                 <h4 style={{
                   fontSize: '1.25rem',
@@ -1237,7 +1431,8 @@ const PitchDeckPage: React.FC = () => {
             )}
           </div>
 
-          {/* HOAPass vs ResortPass Comparison */}
+          {/* HOAPass vs ResortPass Comparison - Only show for Day Pass Platform */}
+          {businessModel === 'dayPassPlatform' && (
           <div style={{
             padding: '2rem',
             borderRadius: '0.5rem',
@@ -1352,7 +1547,7 @@ const PitchDeckPage: React.FC = () => {
                       color: '#6b7280',
                       fontFamily: 'Inter, sans-serif'
                     }}>
-                      {showHOAPass ? 'Transaction-Based (Commission)' : 'SaaS Subscription + Platform Fees'}
+                      {businessModel === 'dayPassPlatform' ? 'SaaS Subscription + Commission (15-20%)' : 'SaaS Subscription'}
                     </td>
                     <td style={{
                       padding: '1rem',
@@ -1533,9 +1728,9 @@ const PitchDeckPage: React.FC = () => {
                       color: '#6b7280',
                       fontFamily: 'Inter, sans-serif'
                     }}>
-                      {showHOAPass ? (
+                      {businessModel === 'dayPassPlatform' ? (
                         <>
-                          Variable (estimated)<br/>
+                          $3,150/year avg (estimated)<br/>
                           <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
                             Depends on day pass booking volume
                           </span>
@@ -1568,7 +1763,7 @@ const PitchDeckPage: React.FC = () => {
                       color: '#6b7280',
                       fontFamily: 'Inter, sans-serif'
                     }}>
-                      {showHOAPass ? (
+                      {businessModel === 'dayPassPlatform' ? (
                         <>
                           $3,150/year avg (estimated)<br/>
                           <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
@@ -1581,9 +1776,9 @@ const PitchDeckPage: React.FC = () => {
                         </>
                       ) : (
                         <>
-                          $3,500/year avg<br/>
+                          $2,000-2,400/year avg<br/>
                           <span style={{ fontSize: '0.85rem', color: '#9ca3af' }}>
-                            ($2,000 subscription + $1,500 HOAPass fees)
+                            ($99-$299/month subscription)
                           </span>
                         </>
                       )}
@@ -1638,11 +1833,11 @@ const PitchDeckPage: React.FC = () => {
                     }}>Revenue Predictability</td>
                     <td style={{
                       padding: '1rem',
-                      color: showHOAPass ? '#6b7280' : '#355B45',
+                      color: businessModel === 'dayPassPlatform' ? '#6b7280' : '#355B45',
                       fontWeight: 600,
                       fontFamily: 'Inter, sans-serif'
                     }}>
-                      {showHOAPass ? 'Variable (Usage-based)' : '✓ High (Recurring SaaS)'}
+                      {businessModel === 'dayPassPlatform' ? 'Conditional: High (SaaS) or Variable (Usage-based)' : '✓ High (Recurring SaaS)'}
                     </td>
                     <td style={{
                       padding: '1rem',
@@ -1665,13 +1860,13 @@ const PitchDeckPage: React.FC = () => {
                       color: '#6b7280',
                       fontFamily: 'Inter, sans-serif'
                     }}>
-                      {showHOAPass ? (
-                        'Commission on bookings only'
-                      ) : (
+                      {businessModel === 'dayPassPlatform' ? (
                         <>
                           Subscription fees (guaranteed)<br/>
-                          + Platform fees on day passes
+                          + 15-20% commission on day pass bookings
                         </>
+                      ) : (
+                        'Subscription fees (guaranteed)'
                       )}
                     </td>
                     <td style={{
@@ -2252,6 +2447,7 @@ const PitchDeckPage: React.FC = () => {
               </p>
             </div>
           </div>
+          )}
 
           <div style={{
             padding: '2rem',
@@ -2619,6 +2815,57 @@ const PitchDeckPage: React.FC = () => {
               </div>
             </div>
 
+            {businessModel === 'dayPassPlatform' && (
+              <div style={{
+                padding: '2rem',
+                borderRadius: '0.5rem',
+                backgroundColor: 'white',
+                border: '2px solid #355B45',
+                boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+              }}>
+                <h3 style={{
+                  fontSize: '1.5rem',
+                  fontWeight: 600,
+                  color: '#355B45',
+                  marginBottom: '1rem',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  Day Pass Commission
+                </h3>
+                <p style={{
+                  color: '#6b7280',
+                  lineHeight: '1.8',
+                  marginBottom: '1.5rem',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  15-20% commission on all day pass bookings from non-residents, creating a scalable revenue stream 
+                  that grows with community adoption and booking volume.
+                </p>
+                <div style={{
+                  padding: '1rem',
+                  backgroundColor: '#f0f4f1',
+                  borderRadius: '0.25rem'
+                }}>
+                  <p style={{
+                    fontSize: '1.125rem',
+                    color: '#1f2937',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>
+                    <strong>Revenue Model:</strong>
+                  </p>
+                  <p style={{
+                    marginTop: '0.5rem',
+                    color: '#6b7280',
+                    lineHeight: '1.8',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>
+                    Subscription ($2,000/year) + Commission (15-20% of day pass GTV). Average community generates 
+                    $3,150/year in commission revenue from day passes.
+                  </p>
+                </div>
+              </div>
+            )}
+
             <div style={{
               padding: '2rem',
               borderRadius: '0.5rem',
@@ -2661,7 +2908,9 @@ const PitchDeckPage: React.FC = () => {
                   lineHeight: '1.8',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  High customer lifetime value with low churn in the HOA market
+                  {businessModel === 'dayPassPlatform'
+                    ? 'High customer lifetime value with low churn + scalable commission revenue from day pass bookings'
+                    : 'High customer lifetime value with low churn in the HOA market'}
                 </p>
               </div>
             </div>
@@ -3194,6 +3443,82 @@ const PitchDeckPage: React.FC = () => {
                     ✓ Easy to use
                   </td>
                 </tr>
+                {businessModel === 'dayPassPlatform' && (
+                  <>
+                    <tr style={{
+                      borderBottom: '1px solid #e5e7eb'
+                    }}>
+                      <td style={{
+                        padding: '1rem',
+                        fontWeight: 600,
+                        color: '#1f2937',
+                        fontFamily: 'Inter, sans-serif'
+                      }}>Swimply (Private Pools)</td>
+                      <td style={{
+                        padding: '1rem',
+                        color: '#6b7280',
+                        fontFamily: 'Inter, sans-serif'
+                      }}>Private Pool Marketplace</td>
+                      <td style={{
+                        padding: '1rem',
+                        color: '#6b7280',
+                        fontFamily: 'Inter, sans-serif'
+                      }}>
+                        • Individual homeowners only<br/>
+                        • No HOA/multifamily focus<br/>
+                        • Limited to pools/courts<br/>
+                        • No internal management tools
+                      </td>
+                      <td style={{
+                        padding: '1rem',
+                        color: '#355B45',
+                        fontFamily: 'Inter, sans-serif',
+                        fontWeight: 600
+                      }}>
+                        ✓ HOA/multifamily focus<br/>
+                        ✓ Internal + external booking<br/>
+                        ✓ Full amenity suite<br/>
+                        ✓ Integrated management
+                      </td>
+                    </tr>
+                    <tr style={{
+                      backgroundColor: '#f9fafb'
+                    }}>
+                      <td style={{
+                        padding: '1rem',
+                        fontWeight: 600,
+                        color: '#1f2937',
+                        fontFamily: 'Inter, sans-serif'
+                      }}>ResortPass</td>
+                      <td style={{
+                        padding: '1rem',
+                        color: '#6b7280',
+                        fontFamily: 'Inter, sans-serif'
+                      }}>Hotel Day Pass Platform</td>
+                      <td style={{
+                        padding: '1rem',
+                        color: '#6b7280',
+                        fontFamily: 'Inter, sans-serif'
+                      }}>
+                        • Hospitality assets only<br/>
+                        • No residential focus<br/>
+                        • Different market dynamics<br/>
+                        • No internal management
+                      </td>
+                      <td style={{
+                        padding: '1rem',
+                        color: '#355B45',
+                        fontFamily: 'Inter, sans-serif',
+                        fontWeight: 600
+                      }}>
+                        ✓ Residential focus<br/>
+                        ✓ HOA-specific features<br/>
+                        ✓ Resident priority model<br/>
+                        ✓ Subscription + commission
+                      </td>
+                    </tr>
+                  </>
+                )}
               </tbody>
             </table>
           </div>
@@ -3434,7 +3759,7 @@ const PitchDeckPage: React.FC = () => {
               marginBottom: '1rem',
               fontFamily: 'Inter, sans-serif'
             }}>
-              Thomas Crosby
+              Ryan Crosby
             </h3>
             <p style={{
               fontSize: '1.125rem',
@@ -3443,7 +3768,7 @@ const PitchDeckPage: React.FC = () => {
               fontWeight: 600,
               fontFamily: 'Inter, sans-serif'
             }}>
-              Founder & Developer
+              Founder
             </p>
             <p style={{
               color: '#6b7280',
@@ -3451,8 +3776,9 @@ const PitchDeckPage: React.FC = () => {
               marginBottom: '1.5rem',
               fontFamily: 'Inter, sans-serif'
             }}>
-              Full-stack developer with experience building scalable web applications. 
-              Passionate about solving real-world problems through technology.
+              Deep experience in product management and technical program management. Combined with a deep understanding 
+              of HOA management through family real estate development and management portfolio. Passionate about solving 
+              real-world problems with technology.
             </p>
             <p style={{
               color: '#6b7280',
@@ -3600,9 +3926,9 @@ const PitchDeckPage: React.FC = () => {
               textAlign: 'center',
               marginBottom: '1rem'
             }}>
-              <strong>Revenue Model:</strong> With pricing tiers ranging from $99-299/month per community 
-              (average ~$180/month), 100 communities would generate approximately $216,000 in annual recurring 
-              revenue, plus transaction fees from reservation payments.
+              <strong>Revenue Model:</strong> {businessModel === 'dayPassPlatform' 
+                ? 'With pricing tiers ranging from $99-299/month per community (average ~$180/month subscription) plus 15-20% commission on day pass bookings, 100 communities would generate approximately $216,000 in annual recurring subscription revenue, plus $315,000+ in commission revenue from day passes (assuming $3,150/year avg per community), plus transaction fees from reservation payments.'
+                : 'With pricing tiers ranging from $99-299/month per community (average ~$180/month), 100 communities would generate approximately $216,000 in annual recurring revenue, plus transaction fees from reservation payments.'}
             </p>
           </div>
 
