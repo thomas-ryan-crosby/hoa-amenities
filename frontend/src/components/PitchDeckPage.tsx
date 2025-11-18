@@ -184,8 +184,21 @@ const PitchDeckPage: React.FC = () => {
             zIndex: 1,
             textShadow: '0 2px 4px rgba(0,0,0,0.05)'
           }}>
-            Neighborhood Amenities, Simplified
+            Neighbri
           </h1>
+          <p style={{
+            fontSize: '2.5rem',
+            color: '#355B45',
+            marginBottom: '1.5rem',
+            fontWeight: 700,
+            fontFamily: 'Inter, sans-serif',
+            letterSpacing: '-0.01em',
+            lineHeight: '1.2',
+            position: 'relative',
+            zIndex: 1
+          }}>
+            Neighborhood Amenities, Simplified
+          </p>
           <p style={{
             fontSize: '1.5rem',
             color: '#4b5563',
