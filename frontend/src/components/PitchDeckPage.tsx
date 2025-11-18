@@ -803,6 +803,170 @@ const PitchDeckPage: React.FC = () => {
             From Total Market to Target Segment
           </p>
 
+          {/* Target Market Definition */}
+          <div style={{
+            padding: '2rem',
+            borderRadius: '0.5rem',
+            backgroundColor: '#f9fafb',
+            border: '2px solid #355B45',
+            marginBottom: '3rem'
+          }}>
+            <h3 style={{
+              fontSize: '1.5rem',
+              fontWeight: 600,
+              color: '#1f2937',
+              marginBottom: '1.5rem',
+              fontFamily: 'Inter, sans-serif'
+            }}>
+              Target Market Definition
+            </h3>
+            <p style={{
+              color: '#6b7280',
+              lineHeight: '1.8',
+              marginBottom: '1.5rem',
+              fontFamily: 'Inter, sans-serif'
+            }}>
+              <strong>Neighbri serves luxury/Class A properties with reservable amenities:</strong>
+            </p>
+            
+            {/* Community Graphics */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: '2rem',
+              marginBottom: '2rem'
+            }}>
+              {/* Residential Community */}
+              <div style={{
+                padding: '1.5rem',
+                borderRadius: '0.5rem',
+                backgroundColor: 'white',
+                border: '2px solid #86efac',
+                boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+              }}>
+                <div style={{
+                  width: '100%',
+                  height: '200px',
+                  backgroundColor: '#e0f2fe',
+                  borderRadius: '0.5rem',
+                  marginBottom: '1rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundImage: 'linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #7dd3fc 100%)',
+                  position: 'relative',
+                  overflow: 'hidden'
+                }}>
+                  {/* Simple illustration of residential community */}
+                  <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '0.5rem'
+                  }}>
+                    <div style={{
+                      fontSize: '4rem',
+                      marginBottom: '0.5rem'
+                    }}>🏘️</div>
+                    <div style={{
+                      fontSize: '2rem',
+                      opacity: 0.7
+                    }}>🏊</div>
+                    <div style={{
+                      fontSize: '1.5rem',
+                      opacity: 0.6
+                    }}>🏋️</div>
+                  </div>
+                </div>
+                <h4 style={{
+                  fontSize: '1.125rem',
+                  fontWeight: 600,
+                  color: '#1f2937',
+                  marginBottom: '0.5rem',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  <strong>HOAs:</strong> Single-family home communities with shared amenities
+                </h4>
+              </div>
+
+              {/* Condo/Multifamily Community */}
+              <div style={{
+                padding: '1.5rem',
+                borderRadius: '0.5rem',
+                backgroundColor: 'white',
+                border: '2px solid #86efac',
+                boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+              }}>
+                <div style={{
+                  width: '100%',
+                  height: '200px',
+                  backgroundColor: '#f0f9ff',
+                  borderRadius: '0.5rem',
+                  marginBottom: '1rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundImage: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #bae6fd 100%)',
+                  position: 'relative',
+                  overflow: 'hidden'
+                }}>
+                  {/* Simple illustration of condo/multifamily community */}
+                  <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '0.5rem'
+                  }}>
+                    <div style={{
+                      fontSize: '4rem',
+                      marginBottom: '0.5rem'
+                    }}>🏢</div>
+                    <div style={{
+                      fontSize: '2rem',
+                      opacity: 0.7
+                    }}>🎾</div>
+                    <div style={{
+                      fontSize: '1.5rem',
+                      opacity: 0.6
+                    }}>🏛️</div>
+                  </div>
+                </div>
+                <h4 style={{
+                  fontSize: '1.125rem',
+                  fontWeight: 600,
+                  color: '#1f2937',
+                  marginBottom: '0.5rem',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  <strong>Condo Complexes & Multifamily Properties:</strong> Condominium buildings and apartment communities with common spaces and amenities
+                </h4>
+              </div>
+            </div>
+
+            <p style={{
+              color: '#6b7280',
+              lineHeight: '1.8',
+              marginBottom: '1rem',
+              fontFamily: 'Inter, sans-serif'
+            }}>
+              <strong>Key Characteristics:</strong>
+            </p>
+            <ul style={{
+              color: '#6b7280',
+              lineHeight: '1.8',
+              paddingLeft: '1.5rem',
+              marginBottom: '1rem',
+              fontFamily: 'Inter, sans-serif'
+            }}>
+              <li>Higher HOA/condo fees ($300+/month)</li>
+              <li>Professional property management</li>
+              <li>Significant amenity budgets</li>
+              <li>Residents with high expectations for service quality</li>
+              <li>Complex reservation and payment requirements</li>
+              <li>Premium amenities: pools, clubrooms, tennis courts, fitness centers, event spaces</li>
+            </ul>
+          </div>
+
           {/* Market Funnel */}
           <div style={{
             padding: '2rem',
@@ -1205,51 +1369,7 @@ const PitchDeckPage: React.FC = () => {
             border: '2px solid #355B45',
             marginBottom: '2rem'
           }}>
-            {businessModel === 'amenityManagement' ? (
-              <div>
-                <h4 style={{
-                  fontSize: '1.25rem',
-                  fontWeight: 600,
-                  color: '#355B45',
-                  marginBottom: '1rem',
-                  fontFamily: 'Inter, sans-serif'
-                }}>
-                  Standard Amenity Reservation System
-                </h4>
-                <p style={{
-                  color: '#6b7280',
-                  lineHeight: '1.8',
-                  marginBottom: '1rem',
-                  fontFamily: 'Inter, sans-serif'
-                }}>
-                  The core Neighbri platform provides comprehensive amenity reservation management exclusively for community residents. 
-                  This includes calendar-based booking, janitorial scheduling, and administrative oversight.
-                </p>
-                <div style={{
-                  padding: '1rem',
-                  backgroundColor: '#f0f4f1',
-                  borderRadius: '0.25rem',
-                  marginTop: '1rem'
-                }}>
-                  <p style={{
-                    color: '#1f2937',
-                    fontWeight: 600,
-                    marginBottom: '0.5rem',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>
-                    Revenue Sources:
-                  </p>
-                  <ul style={{
-                    color: '#6b7280',
-                    lineHeight: '1.8',
-                    paddingLeft: '1.5rem',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>
-                    <li>SaaS subscription fees ($99-$299/month per community)</li>
-                  </ul>
-                </div>
-              </div>
-            ) : (
+            {businessModel === 'dayPassPlatform' && (
               <div>
                 <h4 style={{
                   fontSize: '1.25rem',
@@ -1892,64 +2012,6 @@ const PitchDeckPage: React.FC = () => {
           </div>
           )}
 
-          <div style={{
-            padding: '2rem',
-            borderRadius: '0.5rem',
-            backgroundColor: '#f9fafb',
-            border: '2px solid #355B45',
-            marginBottom: '2rem'
-          }}>
-            <h3 style={{
-              fontSize: '1.5rem',
-              fontWeight: 600,
-              color: '#1f2937',
-              marginBottom: '1rem',
-              fontFamily: 'Inter, sans-serif'
-            }}>
-              Target Market Definition
-            </h3>
-            <p style={{
-              color: '#6b7280',
-              lineHeight: '1.8',
-              marginBottom: '1rem',
-              fontFamily: 'Inter, sans-serif'
-            }}>
-              <strong>Neighbri serves luxury/Class A properties with reservable amenities:</strong>
-            </p>
-            <ul style={{
-              color: '#6b7280',
-              lineHeight: '1.8',
-              paddingLeft: '1.5rem',
-              marginBottom: '1rem',
-              fontFamily: 'Inter, sans-serif'
-            }}>
-              <li><strong>HOAs:</strong> Single-family home communities with shared amenities</li>
-              <li><strong>Condo Complexes:</strong> Condominium buildings with common spaces and amenities</li>
-              <li><strong>Multifamily Properties:</strong> Apartment communities and residential developments with reservable amenities</li>
-            </ul>
-            <p style={{
-              color: '#6b7280',
-              lineHeight: '1.8',
-              marginBottom: '1rem',
-              fontFamily: 'Inter, sans-serif'
-            }}>
-              <strong>Key Characteristics:</strong>
-            </p>
-            <ul style={{
-              color: '#6b7280',
-              lineHeight: '1.8',
-              paddingLeft: '1.5rem',
-              marginBottom: '1rem',
-              fontFamily: 'Inter, sans-serif'
-            }}>
-              <li>Higher HOA/condo fees ($300+/month)</li>
-              <li>Professional property management</li>
-              <li>Significant amenity budgets</li>
-              <li>Residents with high expectations for service quality</li>
-              <li>Complex reservation and payment requirements</li>
-              <li>Premium amenities: pools, clubrooms, tennis courts, fitness centers, event spaces</li>
-            </ul>
-          </div>
           {/* Sources Section */}
           <div style={{
             padding: '1.5rem',
