@@ -758,285 +758,809 @@ const PitchDeckPage: React.FC = () => {
             {/* Before/After Diagram */}
             <div style={{
               marginTop: '4rem',
-              marginBottom: '2rem'
+              marginBottom: '2rem',
+              padding: '3rem 2rem',
+              backgroundColor: 'white',
+              borderRadius: '1.5rem',
+              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.1)'
             }}>
-              <h3 style={{
-                fontSize: '1.75rem',
-                fontWeight: 600,
-                marginBottom: '3rem',
-                textAlign: 'center',
-                fontFamily: 'Inter, sans-serif'
-              }}>
-                Before vs. After
-              </h3>
-              
               <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))',
-                gap: '3rem',
-                marginBottom: '2rem'
+                textAlign: 'center',
+                marginBottom: '3rem'
               }}>
-                {/* Before */}
-                <div style={{
-                  padding: '2rem',
-                  borderRadius: '0.75rem',
-                  backgroundColor: 'rgba(254, 242, 242, 0.3)',
-                  border: '2px solid rgba(254, 202, 202, 0.5)'
+                <h3 style={{
+                  fontSize: '2.625rem',
+                  fontWeight: 800,
+                  color: '#1a202c',
+                  margin: '0 0 0.75rem 0',
+                  lineHeight: 1.2,
+                  fontFamily: 'Inter, sans-serif'
                 }}>
-                  <h4 style={{
-                    fontSize: '1.5rem',
-                    fontWeight: 700,
-                    marginBottom: '2rem',
+                  One Platform. Everything Integrated.
+                </h3>
+                <p style={{
+                  fontSize: '1.25rem',
+                  color: '#718096',
+                  margin: 0,
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  From fragmented chaos to seamless simplicity
+                </p>
+              </div>
+
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '3rem'
+              }}>
+                {/* Old Way Section */}
+                <div style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '1rem'
+                }}>
+                  <div style={{
                     textAlign: 'center',
-                    fontFamily: 'Inter, sans-serif',
-                    color: '#dc2626'
+                    fontSize: '1.75rem',
+                    fontWeight: 700,
+                    color: '#e53e3e',
+                    marginBottom: '1rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.75rem',
+                    fontFamily: 'Inter, sans-serif'
                   }}>
-                    Before
-                  </h4>
-                  
-                  {/* Residents */}
+                    <span>❌</span>
+                    <span>The Old Fragmented Way</span>
+                  </div>
+
                   <div style={{
-                    padding: '1.25rem',
-                    borderRadius: '0.5rem',
-                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                    marginBottom: '1.5rem',
-                    border: '1px solid rgba(255, 255, 255, 0.3)'
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(2, 1fr)',
+                    gap: '1rem'
                   }}>
+                    {/* Availability Check */}
                     <div style={{
-                      fontSize: '1.5rem',
-                      fontWeight: 600,
-                      marginBottom: '0.75rem',
-                      fontFamily: 'Inter, sans-serif'
+                      background: '#fff5f5',
+                      border: '2px dashed #fc8181',
+                      borderRadius: '0.75rem',
+                      padding: '1.25rem',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '0.5rem'
                     }}>
-                      👥 Residents
+                      <div style={{
+                        fontSize: '1.125rem',
+                        fontWeight: 700,
+                        color: '#742a2a',
+                        marginBottom: '0.25rem',
+                        fontFamily: 'Inter, sans-serif'
+                      }}>
+                        📅 Availability Check
+                      </div>
+                      <div style={{
+                        fontSize: '0.875rem',
+                        color: '#9b2c2c',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        fontFamily: 'Inter, sans-serif'
+                      }}>
+                        <span>📞</span>
+                        <span>Phone tag with residents</span>
+                      </div>
+                      <div style={{
+                        fontSize: '0.875rem',
+                        color: '#9b2c2c',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        fontFamily: 'Inter, sans-serif'
+                      }}>
+                        <span>✉️</span>
+                        <span>Email back and forth</span>
+                      </div>
+                      <div style={{
+                        fontSize: '0.875rem',
+                        color: '#9b2c2c',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        fontFamily: 'Inter, sans-serif'
+                      }}>
+                        <span>💬</span>
+                        <span>Text message chains</span>
+                      </div>
+                      <div style={{
+                        fontSize: '0.875rem',
+                        color: '#9b2c2c',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        fontFamily: 'Inter, sans-serif'
+                      }}>
+                        <span>📒</span>
+                        <span>Private physical calendar</span>
+                      </div>
                     </div>
+
+                    {/* Cleaning Coordination */}
                     <div style={{
-                      fontSize: '0.9rem',
-                      opacity: 0.9,
-                      lineHeight: '1.6',
-                      fontFamily: 'Inter, sans-serif',
-                      marginLeft: '1.5rem'
+                      background: '#fff5f5',
+                      border: '2px dashed #fc8181',
+                      borderRadius: '0.75rem',
+                      padding: '1.25rem',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '0.5rem'
                     }}>
-                      • 📞 Calls to check availability<br/>
-                      • 📧 Emails for reservations<br/>
-                      • 💬 Text messages for updates
+                      <div style={{
+                        fontSize: '1.125rem',
+                        fontWeight: 700,
+                        color: '#742a2a',
+                        marginBottom: '0.25rem',
+                        fontFamily: 'Inter, sans-serif'
+                      }}>
+                        🧹 Cleaning Coordination
+                      </div>
+                      <div style={{
+                        fontSize: '0.875rem',
+                        color: '#9b2c2c',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        fontFamily: 'Inter, sans-serif'
+                      }}>
+                        <span>📞</span>
+                        <span>Calls to janitorial staff</span>
+                      </div>
+                      <div style={{
+                        fontSize: '0.875rem',
+                        color: '#9b2c2c',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        fontFamily: 'Inter, sans-serif'
+                      }}>
+                        <span>✉️</span>
+                        <span>Email confirmations</span>
+                      </div>
+                      <div style={{
+                        fontSize: '0.875rem',
+                        color: '#9b2c2c',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        fontFamily: 'Inter, sans-serif'
+                      }}>
+                        <span>💬</span>
+                        <span>Text reminders</span>
+                      </div>
+                      <div style={{
+                        fontSize: '0.875rem',
+                        color: '#9b2c2c',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        fontFamily: 'Inter, sans-serif'
+                      }}>
+                        <span>❓</span>
+                        <span>Manual status tracking</span>
+                      </div>
+                    </div>
+
+                    {/* Booking Management */}
+                    <div style={{
+                      background: '#fff5f5',
+                      border: '2px dashed #fc8181',
+                      borderRadius: '0.75rem',
+                      padding: '1.25rem',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '0.5rem'
+                    }}>
+                      <div style={{
+                        fontSize: '1.125rem',
+                        fontWeight: 700,
+                        color: '#742a2a',
+                        marginBottom: '0.25rem',
+                        fontFamily: 'Inter, sans-serif'
+                      }}>
+                        📝 Booking Management
+                      </div>
+                      <div style={{
+                        fontSize: '0.875rem',
+                        color: '#9b2c2c',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        fontFamily: 'Inter, sans-serif'
+                      }}>
+                        <span>📞</span>
+                        <span>Callback confirmations</span>
+                      </div>
+                      <div style={{
+                        fontSize: '0.875rem',
+                        color: '#9b2c2c',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        fontFamily: 'Inter, sans-serif'
+                      }}>
+                        <span>✉️</span>
+                        <span>Email confirmations</span>
+                      </div>
+                      <div style={{
+                        fontSize: '0.875rem',
+                        color: '#9b2c2c',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        fontFamily: 'Inter, sans-serif'
+                      }}>
+                        <span>📝</span>
+                        <span>Manual calendar updates</span>
+                      </div>
+                      <div style={{
+                        fontSize: '0.875rem',
+                        color: '#9b2c2c',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        fontFamily: 'Inter, sans-serif'
+                      }}>
+                        <span>🔄</span>
+                        <span>Multiple system updates</span>
+                      </div>
+                    </div>
+
+                    {/* Payment Processing */}
+                    <div style={{
+                      background: '#fff5f5',
+                      border: '2px dashed #fc8181',
+                      borderRadius: '0.75rem',
+                      padding: '1.25rem',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '0.5rem'
+                    }}>
+                      <div style={{
+                        fontSize: '1.125rem',
+                        fontWeight: 700,
+                        color: '#742a2a',
+                        marginBottom: '0.25rem',
+                        fontFamily: 'Inter, sans-serif'
+                      }}>
+                        💳 Payment Processing
+                      </div>
+                      <div style={{
+                        fontSize: '0.875rem',
+                        color: '#9b2c2c',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        fontFamily: 'Inter, sans-serif'
+                      }}>
+                        <span>💰</span>
+                        <span>Physical check collection</span>
+                      </div>
+                      <div style={{
+                        fontSize: '0.875rem',
+                        color: '#9b2c2c',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        fontFamily: 'Inter, sans-serif'
+                      }}>
+                        <span>📧</span>
+                        <span>Payment reminder emails</span>
+                      </div>
+                      <div style={{
+                        fontSize: '0.875rem',
+                        color: '#9b2c2c',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        fontFamily: 'Inter, sans-serif'
+                      }}>
+                        <span>💳</span>
+                        <span>Manual Square charges</span>
+                      </div>
+                      <div style={{
+                        fontSize: '0.875rem',
+                        color: '#9b2c2c',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        fontFamily: 'Inter, sans-serif'
+                      }}>
+                        <span>📊</span>
+                        <span>Manual payment tracking</span>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Property Management */}
+                  {/* Problems Section */}
                   <div style={{
-                    padding: '1.25rem',
-                    borderRadius: '0.5rem',
-                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                    marginBottom: '1.5rem',
-                    border: '1px solid rgba(255, 255, 255, 0.3)',
-                    textAlign: 'center'
+                    background: 'linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%)',
+                    borderRadius: '1rem',
+                    padding: '2rem',
+                    marginTop: '1.5rem'
                   }}>
-                    <div style={{
+                    <h4 style={{
                       fontSize: '1.5rem',
-                      fontWeight: 600,
-                      marginBottom: '0.75rem',
+                      fontWeight: 700,
+                      color: '#742a2a',
+                      margin: '0 0 1.25rem 0',
+                      textAlign: 'center',
                       fontFamily: 'Inter, sans-serif'
                     }}>
-                      🏢 Property Management
-                    </div>
+                      ⚠️ The Problems
+                    </h4>
                     <div style={{
-                      fontSize: '0.9rem',
-                      opacity: 0.9,
-                      lineHeight: '1.6',
-                      fontFamily: 'Inter, sans-serif'
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(2, 1fr)',
+                      gap: '1rem'
                     }}>
-                      📅 Physical/Private Calendar<br/>
-                      💳 Manual Square Payments<br/>
-                      📞 Calls/Emails to Janitorial
-                    </div>
-                  </div>
-
-                  {/* Janitorial */}
-                  <div style={{
-                    padding: '1.25rem',
-                    borderRadius: '0.5rem',
-                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                    border: '1px solid rgba(255, 255, 255, 0.3)'
-                  }}>
-                    <div style={{
-                      fontSize: '1.5rem',
-                      fontWeight: 600,
-                      marginBottom: '0.75rem',
-                      fontFamily: 'Inter, sans-serif'
-                    }}>
-                      🧹 Janitorial
-                    </div>
-                    <div style={{
-                      fontSize: '0.9rem',
-                      opacity: 0.9,
-                      lineHeight: '1.6',
-                      fontFamily: 'Inter, sans-serif',
-                      marginLeft: '1.5rem'
-                    }}>
-                      • 📞 Calls for scheduling<br/>
-                      • 📧 Emails for updates<br/>
-                      • 💬 Text messages for changes
-                    </div>
-                  </div>
-
-                  {/* Chaos indicator */}
-                  <div style={{
-                    marginTop: '1.5rem',
-                    padding: '1rem',
-                    borderRadius: '0.5rem',
-                    backgroundColor: 'rgba(220, 38, 38, 0.2)',
-                    border: '1px solid rgba(220, 38, 38, 0.4)',
-                    textAlign: 'center'
-                  }}>
-                    <div style={{
-                      fontSize: '0.85rem',
-                      opacity: 0.9,
-                      fontFamily: 'Inter, sans-serif',
-                      fontStyle: 'italic'
-                    }}>
-                      ❌ Disconnected • Manual • Error-Prone
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: '0.75rem',
+                        background: 'white',
+                        padding: '1rem',
+                        borderRadius: '0.5rem'
+                      }}>
+                        <div style={{
+                          fontSize: '1.5rem',
+                          flexShrink: 0
+                        }}>⏰</div>
+                        <div style={{
+                          fontSize: '0.9375rem',
+                          color: '#742a2a',
+                          fontWeight: 500,
+                          fontFamily: 'Inter, sans-serif'
+                        }}>
+                          Hours wasted on back-and-forth communication
+                        </div>
+                      </div>
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: '0.75rem',
+                        background: 'white',
+                        padding: '1rem',
+                        borderRadius: '0.5rem'
+                      }}>
+                        <div style={{
+                          fontSize: '1.5rem',
+                          flexShrink: 0
+                        }}>❌</div>
+                        <div style={{
+                          fontSize: '0.9375rem',
+                          color: '#742a2a',
+                          fontWeight: 500,
+                          fontFamily: 'Inter, sans-serif'
+                        }}>
+                          Double bookings from calendar mismanagement
+                        </div>
+                      </div>
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: '0.75rem',
+                        background: 'white',
+                        padding: '1rem',
+                        borderRadius: '0.5rem'
+                      }}>
+                        <div style={{
+                          fontSize: '1.5rem',
+                          flexShrink: 0
+                        }}>😤</div>
+                        <div style={{
+                          fontSize: '0.9375rem',
+                          color: '#742a2a',
+                          fontWeight: 500,
+                          fontFamily: 'Inter, sans-serif'
+                        }}>
+                          Frustrated residents with slow response times
+                        </div>
+                      </div>
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: '0.75rem',
+                        background: 'white',
+                        padding: '1rem',
+                        borderRadius: '0.5rem'
+                      }}>
+                        <div style={{
+                          fontSize: '1.5rem',
+                          flexShrink: 0
+                        }}>💸</div>
+                        <div style={{
+                          fontSize: '0.9375rem',
+                          color: '#742a2a',
+                          fontWeight: 500,
+                          fontFamily: 'Inter, sans-serif'
+                        }}>
+                          Lost revenue from payment tracking errors
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                {/* After */}
+                {/* Arrow Divider */}
                 <div style={{
-                  padding: '2rem',
-                  borderRadius: '0.75rem',
-                  backgroundColor: 'rgba(240, 253, 244, 0.3)',
-                  border: '2px solid rgba(134, 239, 172, 0.5)'
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  margin: '1.5rem 0',
+                  position: 'relative'
                 }}>
-                  <h4 style={{
-                    fontSize: '1.5rem',
+                  <div style={{
+                    flex: 1,
+                    height: '2px',
+                    background: 'linear-gradient(90deg, transparent, #cbd5e0, transparent)'
+                  }}></div>
+                  <div style={{
+                    background: '#48bb78',
+                    color: 'white',
+                    width: '60px',
+                    height: '60px',
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '2rem',
+                    margin: '0 1.5rem',
+                    boxShadow: '0 4px 12px rgba(72, 187, 120, 0.4)'
+                  }}>
+                    ⬇️
+                  </div>
+                  <div style={{
+                    flex: 1,
+                    height: '2px',
+                    background: 'linear-gradient(90deg, transparent, #cbd5e0, transparent)'
+                  }}></div>
+                </div>
+
+                {/* New Way Section */}
+                <div style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '1rem'
+                }}>
+                  <div style={{
+                    textAlign: 'center',
+                    fontSize: '1.75rem',
                     fontWeight: 700,
-                    marginBottom: '2rem',
-                    textAlign: 'center',
-                    fontFamily: 'Inter, sans-serif',
-                    color: '#16a34a'
+                    color: '#38a169',
+                    marginBottom: '1rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.75rem',
+                    fontFamily: 'Inter, sans-serif'
                   }}>
-                    After
-                  </h4>
-                  
-                  {/* Neighbri Hub */}
-                  <div style={{
-                    padding: '2rem',
-                    borderRadius: '0.75rem',
-                    backgroundColor: 'rgba(53, 91, 69, 0.9)',
-                    border: '3px solid #86efac',
-                    marginBottom: '2rem',
-                    textAlign: 'center',
-                    boxShadow: '0 8px 16px rgba(0,0,0,0.2)'
-                  }}>
-                    <div style={{
-                      fontSize: '2rem',
-                      fontWeight: 700,
-                      marginBottom: '0.5rem',
-                      fontFamily: 'Inter, sans-serif',
-                      color: 'white'
-                    }}>
-                      Neighbri
-                    </div>
-                    <div style={{
-                      fontSize: '1rem',
-                      opacity: 0.9,
-                      fontFamily: 'Inter, sans-serif',
-                      color: '#86efac',
-                      fontWeight: 600
-                    }}>
-                      Centralized Hub
-                    </div>
-                    <div style={{
-                      marginTop: '1rem',
-                      fontSize: '0.85rem',
-                      opacity: 0.85,
-                      fontFamily: 'Inter, sans-serif',
-                      color: 'white',
-                      lineHeight: '1.6'
-                    }}>
-                      📅 Real-time Calendar<br/>
-                      💳 Automated Payments<br/>
-                      🔔 Automated Notifications<br/>
-                      🧹 Integrated Scheduling
-                    </div>
+                    <span>✅</span>
+                    <span>The Unified Platform</span>
                   </div>
 
-                  {/* Connected parties */}
                   <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(3, 1fr)',
-                    gap: '1rem',
-                    marginTop: '1.5rem'
+                    background: 'linear-gradient(135deg, #f0fff4 0%, #c6f6d5 100%)',
+                    border: '4px solid #48bb78',
+                    borderRadius: '1.25rem',
+                    padding: '3rem',
+                    position: 'relative',
+                    boxShadow: '0 8px 24px rgba(72, 187, 120, 0.2)'
                   }}>
                     <div style={{
-                      padding: '1rem',
-                      borderRadius: '0.5rem',
-                      backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                      border: '1px solid rgba(255, 255, 255, 0.3)',
-                      textAlign: 'center'
+                      textAlign: 'center',
+                      marginBottom: '2rem'
                     }}>
-                      <div style={{
-                        fontSize: '1.25rem',
-                        marginBottom: '0.5rem'
-                      }}>👥</div>
-                      <div style={{
-                        fontSize: '0.75rem',
-                        opacity: 0.9,
+                      <h2 style={{
+                        fontSize: '3rem',
+                        fontWeight: 900,
+                        color: '#22543d',
+                        margin: 0,
+                        textTransform: 'lowercase',
                         fontFamily: 'Inter, sans-serif'
-                      }}>Residents</div>
-                    </div>
-                    <div style={{
-                      padding: '1rem',
-                      borderRadius: '0.5rem',
-                      backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                      border: '1px solid rgba(255, 255, 255, 0.3)',
-                      textAlign: 'center'
-                    }}>
-                      <div style={{
-                        fontSize: '1.25rem',
-                        marginBottom: '0.5rem'
-                      }}>🏢</div>
-                      <div style={{
-                        fontSize: '0.75rem',
-                        opacity: 0.9,
+                      }}>
+                        neighbri
+                      </h2>
+                      <p style={{
+                        fontSize: '1.125rem',
+                        color: '#2f855a',
+                        margin: '0.5rem 0 0 0',
+                        fontWeight: 500,
                         fontFamily: 'Inter, sans-serif'
-                      }}>Property Mgmt</div>
+                      }}>
+                        All-in-One HOA Management
+                      </p>
                     </div>
-                    <div style={{
-                      padding: '1rem',
-                      borderRadius: '0.5rem',
-                      backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                      border: '1px solid rgba(255, 255, 255, 0.3)',
-                      textAlign: 'center'
-                    }}>
-                      <div style={{
-                        fontSize: '1.25rem',
-                        marginBottom: '0.5rem'
-                      }}>🧹</div>
-                      <div style={{
-                        fontSize: '0.75rem',
-                        opacity: 0.9,
-                        fontFamily: 'Inter, sans-serif'
-                      }}>Janitorial</div>
-                    </div>
-                  </div>
 
-                  {/* Success indicator */}
-                  <div style={{
-                    marginTop: '1.5rem',
-                    padding: '1rem',
-                    borderRadius: '0.5rem',
-                    backgroundColor: 'rgba(22, 163, 74, 0.2)',
-                    border: '1px solid rgba(22, 163, 74, 0.4)',
-                    textAlign: 'center'
-                  }}>
                     <div style={{
-                      fontSize: '0.85rem',
-                      opacity: 0.9,
-                      fontFamily: 'Inter, sans-serif',
-                      fontStyle: 'italic'
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(2, 1fr)',
+                      gap: '1.25rem',
+                      marginTop: '2rem'
                     }}>
-                      ✅ Centralized • Automated • Streamlined
+                      <div style={{
+                        background: 'white',
+                        borderRadius: '0.75rem',
+                        padding: '1.5rem',
+                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                        transition: 'all 0.3s ease'
+                      }}>
+                        <div style={{
+                          fontSize: '2rem',
+                          marginBottom: '0.75rem'
+                        }}>📅</div>
+                        <h4 style={{
+                          fontSize: '1.125rem',
+                          fontWeight: 700,
+                          color: '#1a202c',
+                          margin: '0 0 0.5rem 0',
+                          fontFamily: 'Inter, sans-serif'
+                        }}>
+                          Real-Time Calendar
+                        </h4>
+                        <p style={{
+                          fontSize: '0.875rem',
+                          color: '#4a5568',
+                          margin: 0,
+                          lineHeight: 1.5,
+                          fontFamily: 'Inter, sans-serif'
+                        }}>
+                          Residents see live availability and book instantly—no calls needed
+                        </p>
+                      </div>
+
+                      <div style={{
+                        background: 'white',
+                        borderRadius: '0.75rem',
+                        padding: '1.5rem',
+                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                        transition: 'all 0.3s ease'
+                      }}>
+                        <div style={{
+                          fontSize: '2rem',
+                          marginBottom: '0.75rem'
+                        }}>🧹</div>
+                        <h4 style={{
+                          fontSize: '1.125rem',
+                          fontWeight: 700,
+                          color: '#1a202c',
+                          margin: '0 0 0.5rem 0',
+                          fontFamily: 'Inter, sans-serif'
+                        }}>
+                          Automated Cleaning
+                        </h4>
+                        <p style={{
+                          fontSize: '0.875rem',
+                          color: '#4a5568',
+                          margin: 0,
+                          lineHeight: 1.5,
+                          fontFamily: 'Inter, sans-serif'
+                        }}>
+                          Janitorial staff get automatic notifications with all booking details
+                        </p>
+                      </div>
+
+                      <div style={{
+                        background: 'white',
+                        borderRadius: '0.75rem',
+                        padding: '1.5rem',
+                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                        transition: 'all 0.3s ease'
+                      }}>
+                        <div style={{
+                          fontSize: '2rem',
+                          marginBottom: '0.75rem'
+                        }}>✅</div>
+                        <h4 style={{
+                          fontSize: '1.125rem',
+                          fontWeight: 700,
+                          color: '#1a202c',
+                          margin: '0 0 0.5rem 0',
+                          fontFamily: 'Inter, sans-serif'
+                        }}>
+                          Instant Confirmation
+                        </h4>
+                        <p style={{
+                          fontSize: '0.875rem',
+                          color: '#4a5568',
+                          margin: 0,
+                          lineHeight: 1.5,
+                          fontFamily: 'Inter, sans-serif'
+                        }}>
+                          Automatic confirmations sent to all parties—zero manual work
+                        </p>
+                      </div>
+
+                      <div style={{
+                        background: 'white',
+                        borderRadius: '0.75rem',
+                        padding: '1.5rem',
+                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                        transition: 'all 0.3s ease'
+                      }}>
+                        <div style={{
+                          fontSize: '2rem',
+                          marginBottom: '0.75rem'
+                        }}>💳</div>
+                        <h4 style={{
+                          fontSize: '1.125rem',
+                          fontWeight: 700,
+                          color: '#1a202c',
+                          margin: '0 0 0.5rem 0',
+                          fontFamily: 'Inter, sans-serif'
+                        }}>
+                          Integrated Payments
+                        </h4>
+                        <p style={{
+                          fontSize: '0.875rem',
+                          color: '#4a5568',
+                          margin: 0,
+                          lineHeight: 1.5,
+                          fontFamily: 'Inter, sans-serif'
+                        }}>
+                          Secure payment processing at booking—no chasing checks
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Benefits Section */}
+                    <div style={{
+                      background: 'linear-gradient(135deg, #e6fffa 0%, #b2f5ea 100%)',
+                      borderRadius: '1rem',
+                      padding: '2rem',
+                      marginTop: '2rem'
+                    }}>
+                      <h4 style={{
+                        fontSize: '1.5rem',
+                        fontWeight: 700,
+                        color: '#234e52',
+                        margin: '0 0 1.25rem 0',
+                        textAlign: 'center',
+                        fontFamily: 'Inter, sans-serif'
+                      }}>
+                        🎯 The Results
+                      </h4>
+                      <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(2, 1fr)',
+                        gap: '1rem'
+                      }}>
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.75rem',
+                          background: 'white',
+                          padding: '1rem',
+                          borderRadius: '0.5rem'
+                        }}>
+                          <div style={{
+                            fontSize: '1.5rem',
+                            flexShrink: 0
+                          }}>⚡</div>
+                          <div style={{
+                            fontSize: '0.9375rem',
+                            color: '#234e52',
+                            fontWeight: 500,
+                            fontFamily: 'Inter, sans-serif'
+                          }}>
+                            Booking takes 2 minutes, not 2 days
+                          </div>
+                        </div>
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.75rem',
+                          background: 'white',
+                          padding: '1rem',
+                          borderRadius: '0.5rem'
+                        }}>
+                          <div style={{
+                            fontSize: '1.5rem',
+                            flexShrink: 0
+                          }}>🎉</div>
+                          <div style={{
+                            fontSize: '0.9375rem',
+                            color: '#234e52',
+                            fontWeight: 500,
+                            fontFamily: 'Inter, sans-serif'
+                          }}>
+                            Zero double bookings or conflicts
+                          </div>
+                        </div>
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.75rem',
+                          background: 'white',
+                          padding: '1rem',
+                          borderRadius: '0.5rem'
+                        }}>
+                          <div style={{
+                            fontSize: '1.5rem',
+                            flexShrink: 0
+                          }}>😊</div>
+                          <div style={{
+                            fontSize: '0.9375rem',
+                            color: '#234e52',
+                            fontWeight: 500,
+                            fontFamily: 'Inter, sans-serif'
+                          }}>
+                            Happy residents with 24/7 self-service
+                          </div>
+                        </div>
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.75rem',
+                          background: 'white',
+                          padding: '1rem',
+                          borderRadius: '0.5rem'
+                        }}>
+                          <div style={{
+                            fontSize: '1.5rem',
+                            flexShrink: 0
+                          }}>💰</div>
+                          <div style={{
+                            fontSize: '0.9375rem',
+                            color: '#234e52',
+                            fontWeight: 500,
+                            fontFamily: 'Inter, sans-serif'
+                          }}>
+                            100% payment collection rate
+                          </div>
+                        </div>
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.75rem',
+                          background: 'white',
+                          padding: '1rem',
+                          borderRadius: '0.5rem'
+                        }}>
+                          <div style={{
+                            fontSize: '1.5rem',
+                            flexShrink: 0
+                          }}>⏰</div>
+                          <div style={{
+                            fontSize: '0.9375rem',
+                            color: '#234e52',
+                            fontWeight: 500,
+                            fontFamily: 'Inter, sans-serif'
+                          }}>
+                            Staff saves 10+ hours per week
+                          </div>
+                        </div>
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.75rem',
+                          background: 'white',
+                          padding: '1rem',
+                          borderRadius: '0.5rem'
+                        }}>
+                          <div style={{
+                            fontSize: '1.5rem',
+                            flexShrink: 0
+                          }}>📊</div>
+                          <div style={{
+                            fontSize: '0.9375rem',
+                            color: '#234e52',
+                            fontWeight: 500,
+                            fontFamily: 'Inter, sans-serif'
+                          }}>
+                            Complete transparency and reporting
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -4141,5 +4665,6 @@ const PitchDeckPage: React.FC = () => {
 };
 
 export default PitchDeckPage;
+
 
 
