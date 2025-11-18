@@ -1241,15 +1241,16 @@ const PitchDeckPage: React.FC = () => {
                 </div>
               </div>
             </div>
+          </div>
 
-            <div style={{
-              padding: '2rem',
-              borderRadius: '0.5rem',
-              backgroundColor: '#f9fafb',
-              border: '2px solid #355B45',
-              textAlign: 'center',
-              marginTop: '2rem'
-            }}>
+          <div style={{
+            padding: '2rem',
+            borderRadius: '0.5rem',
+            backgroundColor: '#f9fafb',
+            border: '2px solid #355B45',
+            textAlign: 'center',
+            marginTop: '2rem'
+          }}>
               <p style={{
                 fontSize: '1.125rem',
                 lineHeight: '1.8',
