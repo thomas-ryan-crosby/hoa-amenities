@@ -1,6 +1,6 @@
 import express from 'express';
 import multer from 'multer';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { Community, CommunityUser, User } from '../models';
 import { authenticateToken, requireAdmin } from '../middleware/auth';
 import { sendEmail } from '../services/emailService';
