@@ -2590,7 +2590,7 @@ const PitchDeckPage: React.FC = () => {
                 marginBottom: '0.5rem',
                 fontFamily: 'Inter, sans-serif'
               }}>
-                30-50
+                200
               </div>
               <p style={{
                 color: '#6b7280',
@@ -2620,7 +2620,7 @@ const PitchDeckPage: React.FC = () => {
                   fontSize: '1.125rem',
                   fontWeight: 700
                 }}>
-                  {businessModel === 'dayPassPlatform' ? '$155K-$258K' : '$65K-$108K'}
+                  {businessModel === 'dayPassPlatform' ? '$1.0M' : '$432K'}
                 </p>
               </div>
             </div>
@@ -2987,10 +2987,14 @@ const PitchDeckPage: React.FC = () => {
                   fontFamily: 'Inter, sans-serif'
                 }}>
                   <li>Dedicated sales leader on board</li>
-                  <li>30-60 day sales cycle</li>
-                  <li>5-8% lead conversion rate</li>
-                  <li>Structured sales process</li>
-                  <li>Focus on target markets</li>
+                  <li>Aggressive promotional strategy</li>
+                  <li>Free software offers for early adopters</li>
+                  <li>Extended free trial periods (3-6 months)</li>
+                  <li>Referral incentives and partner programs</li>
+                  <li>Targeted marketing campaigns</li>
+                  <li>Industry conference presence</li>
+                  <li>Content marketing and thought leadership</li>
+                  <li>Focus on rapid user acquisition</li>
                 </ul>
               </div>
               <div style={{
