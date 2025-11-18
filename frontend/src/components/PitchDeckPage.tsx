@@ -184,20 +184,20 @@ const PitchDeckPage: React.FC = () => {
             zIndex: 1,
             textShadow: '0 2px 4px rgba(0,0,0,0.05)'
           }}>
-            Neighbri
+            Neighborhood Amenities, Simplified
           </h1>
           <p style={{
-            fontSize: '2.5rem',
-            color: '#355B45',
-            marginBottom: '2.5rem',
-            fontWeight: 700,
+            fontSize: '1.5rem',
+            color: '#4b5563',
+            maxWidth: '800px',
+            margin: '0 auto 2.5rem',
+            lineHeight: '1.9',
             fontFamily: 'Inter, sans-serif',
-            letterSpacing: '-0.01em',
-            lineHeight: '1.2',
+            fontWeight: 400,
             position: 'relative',
             zIndex: 1
           }}>
-            Amenity Management for Class A & Amenity-Rich Properties
+            Neighbri streamlines amenity reservations and management for communities. Amenities such as clubrooms, pools, and more can be booked, cleaned, and managed with ease.
           </p>
           {/* Feature Bubbles */}
           <div style={{
