@@ -1239,6 +1239,7 @@ const PitchDeckPage: React.FC = () => {
                     </div>
                   </div>
                 </div>
+              </div>
 
               <div style={{
                 padding: '2rem',
