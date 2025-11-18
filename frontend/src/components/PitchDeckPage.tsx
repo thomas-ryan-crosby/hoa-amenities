@@ -1136,36 +1136,23 @@ const PitchDeckPage: React.FC = () => {
                 <div style={{
                   width: '100%',
                   height: '200px',
-                  backgroundColor: '#e0f2fe',
                   borderRadius: '0.5rem',
                   marginBottom: '1rem',
+                  overflow: 'hidden',
+                  backgroundColor: '#f0f9ff',
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundImage: 'linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #7dd3fc 100%)',
-                  position: 'relative',
-                  overflow: 'hidden'
+                  justifyContent: 'center'
                 }}>
-                  {/* Simple illustration of residential community */}
-                  <div style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: '0.5rem'
-                  }}>
-                    <div style={{
-                      fontSize: '4rem',
-                      marginBottom: '0.5rem'
-                    }}>🏘️</div>
-                    <div style={{
-                      fontSize: '2rem',
-                      opacity: 0.7
-                    }}>🏊</div>
-                    <div style={{
-                      fontSize: '1.5rem',
-                      opacity: 0.6
-                    }}>🏋️</div>
-                  </div>
+                  <img 
+                    src="/images/residential-community.png" 
+                    alt="HOA residential community with pool and tennis court"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover'
+                    }}
+                  />
                 </div>
                 <h4 style={{
                   fontSize: '1.125rem',
@@ -1189,36 +1176,23 @@ const PitchDeckPage: React.FC = () => {
                 <div style={{
                   width: '100%',
                   height: '200px',
-                  backgroundColor: '#f0f9ff',
                   borderRadius: '0.5rem',
                   marginBottom: '1rem',
+                  overflow: 'hidden',
+                  backgroundColor: '#e0f2fe',
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundImage: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #bae6fd 100%)',
-                  position: 'relative',
-                  overflow: 'hidden'
+                  justifyContent: 'center'
                 }}>
-                  {/* Simple illustration of condo/multifamily community */}
-                  <div style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: '0.5rem'
-                  }}>
-                    <div style={{
-                      fontSize: '4rem',
-                      marginBottom: '0.5rem'
-                    }}>🏢</div>
-                    <div style={{
-                      fontSize: '2rem',
-                      opacity: 0.7
-                    }}>🎾</div>
-                    <div style={{
-                      fontSize: '1.5rem',
-                      opacity: 0.6
-                    }}>🏛️</div>
-                  </div>
+                  <img 
+                    src="/images/multifamily-community.png" 
+                    alt="Multifamily apartment building with pools and amenities"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover'
+                    }}
+                  />
                 </div>
                 <h4 style={{
                   fontSize: '1.125rem',
@@ -3999,4 +3973,5 @@ const PitchDeckPage: React.FC = () => {
 };
 
 export default PitchDeckPage;
+
 
