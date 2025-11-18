@@ -2648,7 +2648,7 @@ const PitchDeckPage: React.FC = () => {
                 marginBottom: '0.5rem',
                 fontFamily: 'Inter, sans-serif'
               }}>
-                150-200
+                800-1,000
               </div>
               <p style={{
                 color: '#6b7280',
@@ -2678,7 +2678,7 @@ const PitchDeckPage: React.FC = () => {
                   fontSize: '1.125rem',
                   fontWeight: 700
                 }}>
-                  {businessModel === 'dayPassPlatform' ? '$773K-$1.0M' : '$324K-$432K'}
+                  {businessModel === 'dayPassPlatform' ? '$4.1M-$5.2M' : '$1.7M-$2.2M'}
                 </p>
               </div>
             </div>
