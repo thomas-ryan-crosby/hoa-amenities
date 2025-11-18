@@ -754,6 +754,295 @@ const PitchDeckPage: React.FC = () => {
                 </>
               )}
             </div>
+
+            {/* Before/After Diagram */}
+            <div style={{
+              marginTop: '4rem',
+              marginBottom: '2rem'
+            }}>
+              <h3 style={{
+                fontSize: '1.75rem',
+                fontWeight: 600,
+                marginBottom: '3rem',
+                textAlign: 'center',
+                fontFamily: 'Inter, sans-serif'
+              }}>
+                Before vs. After
+              </h3>
+              
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))',
+                gap: '3rem',
+                marginBottom: '2rem'
+              }}>
+                {/* Before */}
+                <div style={{
+                  padding: '2rem',
+                  borderRadius: '0.75rem',
+                  backgroundColor: 'rgba(254, 242, 242, 0.3)',
+                  border: '2px solid rgba(254, 202, 202, 0.5)'
+                }}>
+                  <h4 style={{
+                    fontSize: '1.5rem',
+                    fontWeight: 700,
+                    marginBottom: '2rem',
+                    textAlign: 'center',
+                    fontFamily: 'Inter, sans-serif',
+                    color: '#dc2626'
+                  }}>
+                    Before
+                  </h4>
+                  
+                  {/* Residents */}
+                  <div style={{
+                    padding: '1.25rem',
+                    borderRadius: '0.5rem',
+                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                    marginBottom: '1.5rem',
+                    border: '1px solid rgba(255, 255, 255, 0.3)'
+                  }}>
+                    <div style={{
+                      fontSize: '1.5rem',
+                      fontWeight: 600,
+                      marginBottom: '0.75rem',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>
+                      👥 Residents
+                    </div>
+                    <div style={{
+                      fontSize: '0.9rem',
+                      opacity: 0.9,
+                      lineHeight: '1.6',
+                      fontFamily: 'Inter, sans-serif',
+                      marginLeft: '1.5rem'
+                    }}>
+                      • 📞 Calls to check availability<br/>
+                      • 📧 Emails for reservations<br/>
+                      • 💬 Text messages for updates
+                    </div>
+                  </div>
+
+                  {/* Property Management */}
+                  <div style={{
+                    padding: '1.25rem',
+                    borderRadius: '0.5rem',
+                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                    marginBottom: '1.5rem',
+                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    textAlign: 'center'
+                  }}>
+                    <div style={{
+                      fontSize: '1.5rem',
+                      fontWeight: 600,
+                      marginBottom: '0.75rem',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>
+                      🏢 Property Management
+                    </div>
+                    <div style={{
+                      fontSize: '0.9rem',
+                      opacity: 0.9,
+                      lineHeight: '1.6',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>
+                      📅 Physical/Private Calendar<br/>
+                      💳 Manual Square Payments<br/>
+                      📞 Calls/Emails to Janitorial
+                    </div>
+                  </div>
+
+                  {/* Janitorial */}
+                  <div style={{
+                    padding: '1.25rem',
+                    borderRadius: '0.5rem',
+                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                    border: '1px solid rgba(255, 255, 255, 0.3)'
+                  }}>
+                    <div style={{
+                      fontSize: '1.5rem',
+                      fontWeight: 600,
+                      marginBottom: '0.75rem',
+                      fontFamily: 'Inter, sans-serif'
+                    }}>
+                      🧹 Janitorial
+                    </div>
+                    <div style={{
+                      fontSize: '0.9rem',
+                      opacity: 0.9,
+                      lineHeight: '1.6',
+                      fontFamily: 'Inter, sans-serif',
+                      marginLeft: '1.5rem'
+                    }}>
+                      • 📞 Calls for scheduling<br/>
+                      • 📧 Emails for updates<br/>
+                      • 💬 Text messages for changes
+                    </div>
+                  </div>
+
+                  {/* Chaos indicator */}
+                  <div style={{
+                    marginTop: '1.5rem',
+                    padding: '1rem',
+                    borderRadius: '0.5rem',
+                    backgroundColor: 'rgba(220, 38, 38, 0.2)',
+                    border: '1px solid rgba(220, 38, 38, 0.4)',
+                    textAlign: 'center'
+                  }}>
+                    <div style={{
+                      fontSize: '0.85rem',
+                      opacity: 0.9,
+                      fontFamily: 'Inter, sans-serif',
+                      fontStyle: 'italic'
+                    }}>
+                      ❌ Disconnected • Manual • Error-Prone
+                    </div>
+                  </div>
+                </div>
+
+                {/* After */}
+                <div style={{
+                  padding: '2rem',
+                  borderRadius: '0.75rem',
+                  backgroundColor: 'rgba(240, 253, 244, 0.3)',
+                  border: '2px solid rgba(134, 239, 172, 0.5)'
+                }}>
+                  <h4 style={{
+                    fontSize: '1.5rem',
+                    fontWeight: 700,
+                    marginBottom: '2rem',
+                    textAlign: 'center',
+                    fontFamily: 'Inter, sans-serif',
+                    color: '#16a34a'
+                  }}>
+                    After
+                  </h4>
+                  
+                  {/* Neighbri Hub */}
+                  <div style={{
+                    padding: '2rem',
+                    borderRadius: '0.75rem',
+                    backgroundColor: 'rgba(53, 91, 69, 0.9)',
+                    border: '3px solid #86efac',
+                    marginBottom: '2rem',
+                    textAlign: 'center',
+                    boxShadow: '0 8px 16px rgba(0,0,0,0.2)'
+                  }}>
+                    <div style={{
+                      fontSize: '2rem',
+                      fontWeight: 700,
+                      marginBottom: '0.5rem',
+                      fontFamily: 'Inter, sans-serif',
+                      color: 'white'
+                    }}>
+                      Neighbri
+                    </div>
+                    <div style={{
+                      fontSize: '1rem',
+                      opacity: 0.9,
+                      fontFamily: 'Inter, sans-serif',
+                      color: '#86efac',
+                      fontWeight: 600
+                    }}>
+                      Centralized Hub
+                    </div>
+                    <div style={{
+                      marginTop: '1rem',
+                      fontSize: '0.85rem',
+                      opacity: 0.85,
+                      fontFamily: 'Inter, sans-serif',
+                      color: 'white',
+                      lineHeight: '1.6'
+                    }}>
+                      📅 Real-time Calendar<br/>
+                      💳 Automated Payments<br/>
+                      🔔 Automated Notifications<br/>
+                      🧹 Integrated Scheduling
+                    </div>
+                  </div>
+
+                  {/* Connected parties */}
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(3, 1fr)',
+                    gap: '1rem',
+                    marginTop: '1.5rem'
+                  }}>
+                    <div style={{
+                      padding: '1rem',
+                      borderRadius: '0.5rem',
+                      backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      textAlign: 'center'
+                    }}>
+                      <div style={{
+                        fontSize: '1.25rem',
+                        marginBottom: '0.5rem'
+                      }}>👥</div>
+                      <div style={{
+                        fontSize: '0.75rem',
+                        opacity: 0.9,
+                        fontFamily: 'Inter, sans-serif'
+                      }}>Residents</div>
+                    </div>
+                    <div style={{
+                      padding: '1rem',
+                      borderRadius: '0.5rem',
+                      backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      textAlign: 'center'
+                    }}>
+                      <div style={{
+                        fontSize: '1.25rem',
+                        marginBottom: '0.5rem'
+                      }}>🏢</div>
+                      <div style={{
+                        fontSize: '0.75rem',
+                        opacity: 0.9,
+                        fontFamily: 'Inter, sans-serif'
+                      }}>Property Mgmt</div>
+                    </div>
+                    <div style={{
+                      padding: '1rem',
+                      borderRadius: '0.5rem',
+                      backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                      border: '1px solid rgba(255, 255, 255, 0.3)',
+                      textAlign: 'center'
+                    }}>
+                      <div style={{
+                        fontSize: '1.25rem',
+                        marginBottom: '0.5rem'
+                      }}>🧹</div>
+                      <div style={{
+                        fontSize: '0.75rem',
+                        opacity: 0.9,
+                        fontFamily: 'Inter, sans-serif'
+                      }}>Janitorial</div>
+                    </div>
+                  </div>
+
+                  {/* Success indicator */}
+                  <div style={{
+                    marginTop: '1.5rem',
+                    padding: '1rem',
+                    borderRadius: '0.5rem',
+                    backgroundColor: 'rgba(22, 163, 74, 0.2)',
+                    border: '1px solid rgba(22, 163, 74, 0.4)',
+                    textAlign: 'center'
+                  }}>
+                    <div style={{
+                      fontSize: '0.85rem',
+                      opacity: 0.9,
+                      fontFamily: 'Inter, sans-serif',
+                      fontStyle: 'italic'
+                    }}>
+                      ✅ Centralized • Automated • Streamlined
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div style={{
               padding: '2rem',
               borderRadius: '0.5rem',
