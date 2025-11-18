@@ -1598,8 +1598,8 @@ const PitchDeckPage: React.FC = () => {
                   fontFamily: 'Inter, sans-serif'
                 }}>
                   {businessModel === 'dayPassPlatform'
-                    ? '5-10% of SAM over 5-7 years → $70-140M annual platform revenue'
-                    : '5-10% of SAM over 5-7 years → $17-34M annual platform revenue'}
+                    ? '5-10% of SAM (8,500-17,000 communities) over 5-7 years → $70-140M annual platform revenue'
+                    : '5-10% of SAM (8,500-17,000 communities) over 5-7 years → $17-34M annual platform revenue'}
                 </p>
               </div>
             </div>
@@ -2563,8 +2563,8 @@ const PitchDeckPage: React.FC = () => {
           </h2>
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-            gap: '2rem',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: '1.5rem',
             marginBottom: '3rem'
           }}>
             <div style={{
@@ -2594,7 +2594,8 @@ const PitchDeckPage: React.FC = () => {
               </div>
               <p style={{
                 color: '#6b7280',
-                fontFamily: 'Inter, sans-serif'
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '0.9rem'
               }}>
                 Communities
               </p>
@@ -2627,7 +2628,8 @@ const PitchDeckPage: React.FC = () => {
               </div>
               <p style={{
                 color: '#6b7280',
-                fontFamily: 'Inter, sans-serif'
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '0.9rem'
               }}>
                 Communities
               </p>
@@ -2656,13 +2658,116 @@ const PitchDeckPage: React.FC = () => {
                 marginBottom: '0.5rem',
                 fontFamily: 'Inter, sans-serif'
               }}>
-                400+
+                400-600
               </div>
               <p style={{
                 color: '#6b7280',
-                fontFamily: 'Inter, sans-serif'
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '0.9rem'
               }}>
                 Communities
+              </p>
+            </div>
+
+            <div style={{
+              padding: '2rem',
+              borderRadius: '0.5rem',
+              backgroundColor: '#f0fdf4',
+              border: '1px solid #86efac',
+              textAlign: 'center'
+            }}>
+              <h3 style={{
+                fontSize: '1.25rem',
+                fontWeight: 600,
+                color: '#1f2937',
+                marginBottom: '1rem',
+                fontFamily: 'Inter, sans-serif'
+              }}>
+                Year 4
+              </h3>
+              <div style={{
+                fontSize: '2rem',
+                fontWeight: 700,
+                color: '#355B45',
+                marginBottom: '0.5rem',
+                fontFamily: 'Inter, sans-serif'
+              }}>
+                1,000-1,500
+              </div>
+              <p style={{
+                color: '#6b7280',
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '0.9rem'
+              }}>
+                Communities
+              </p>
+            </div>
+
+            <div style={{
+              padding: '2rem',
+              borderRadius: '0.5rem',
+              backgroundColor: '#f0fdf4',
+              border: '1px solid #86efac',
+              textAlign: 'center'
+            }}>
+              <h3 style={{
+                fontSize: '1.25rem',
+                fontWeight: 600,
+                color: '#1f2937',
+                marginBottom: '1rem',
+                fontFamily: 'Inter, sans-serif'
+              }}>
+                Year 5
+              </h3>
+              <div style={{
+                fontSize: '2rem',
+                fontWeight: 700,
+                color: '#355B45',
+                marginBottom: '0.5rem',
+                fontFamily: 'Inter, sans-serif'
+              }}>
+                2,500-3,500
+              </div>
+              <p style={{
+                color: '#6b7280',
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '0.9rem'
+              }}>
+                Communities
+              </p>
+            </div>
+
+            <div style={{
+              padding: '2rem',
+              borderRadius: '0.5rem',
+              backgroundColor: '#f0fdf4',
+              border: '1px solid #86efac',
+              textAlign: 'center'
+            }}>
+              <h3 style={{
+                fontSize: '1.25rem',
+                fontWeight: 600,
+                color: '#1f2937',
+                marginBottom: '1rem',
+                fontFamily: 'Inter, sans-serif'
+              }}>
+                Year 6-7
+              </h3>
+              <div style={{
+                fontSize: '2rem',
+                fontWeight: 700,
+                color: '#355B45',
+                marginBottom: '0.5rem',
+                fontFamily: 'Inter, sans-serif'
+              }}>
+                8,500-17,000
+              </div>
+              <p style={{
+                color: '#6b7280',
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '0.9rem'
+              }}>
+                Communities (SOM)
               </p>
             </div>
           </div>
@@ -2712,7 +2817,7 @@ const PitchDeckPage: React.FC = () => {
             </p>
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
               gap: '1rem',
               marginBottom: '1rem'
             }}>
@@ -2784,7 +2889,7 @@ const PitchDeckPage: React.FC = () => {
                   marginBottom: '0.5rem',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  Year 3 Assumptions
+                  Year 3-5 Assumptions
                 </p>
                 <ul style={{
                   color: '#6b7280',
@@ -2797,7 +2902,37 @@ const PitchDeckPage: React.FC = () => {
                   <li>12-18% conversion rates</li>
                   <li>Established partnership channels</li>
                   <li>Full marketing automation</li>
+                  <li>Multi-region expansion</li>
+                  <li>Accelerated growth through referrals</li>
+                </ul>
+              </div>
+              <div style={{
+                padding: '1rem',
+                backgroundColor: 'white',
+                borderRadius: '0.25rem',
+                border: '1px solid #cbd5e1'
+              }}>
+                <p style={{
+                  color: '#1f2937',
+                  fontWeight: 600,
+                  marginBottom: '0.5rem',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  Year 6-7 Assumptions
+                </p>
+                <ul style={{
+                  color: '#6b7280',
+                  fontSize: '0.9rem',
+                  lineHeight: '1.6',
+                  paddingLeft: '1.25rem',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  <li>Expanded sales team (10-15 reps)</li>
+                  <li>15-20% conversion rates</li>
+                  <li>Strong partnership network</li>
+                  <li>Market leadership position</li>
                   <li>Nationwide presence</li>
+                  <li>Reaching SOM target (8,500-17,000 communities)</li>
                 </ul>
               </div>
             </div>
@@ -2809,7 +2944,8 @@ const PitchDeckPage: React.FC = () => {
               fontFamily: 'Inter, sans-serif'
             }}>
               <strong>Note:</strong> These projections assume successful execution of go-to-market strategy, 
-              adequate funding for sales/marketing, and strong product-market fit. Actual results may vary 
+              adequate funding for sales/marketing, and strong product-market fit. Projections align with reaching 
+              the SOM target of 8,500-17,000 communities (5-10% of SAM) over 5-7 years. Actual results may vary 
               based on market conditions, competition, and execution capabilities.
             </p>
           </div>
