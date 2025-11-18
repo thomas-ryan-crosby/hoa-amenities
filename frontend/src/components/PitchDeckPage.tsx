@@ -2595,10 +2595,34 @@ const PitchDeckPage: React.FC = () => {
               <p style={{
                 color: '#6b7280',
                 fontFamily: 'Inter, sans-serif',
-                fontSize: '0.9rem'
+                fontSize: '0.9rem',
+                marginBottom: '0.75rem'
               }}>
                 Communities
               </p>
+              <div style={{
+                paddingTop: '0.75rem',
+                borderTop: '1px solid #86efac',
+                marginTop: '0.75rem'
+              }}>
+                <p style={{
+                  color: '#355B45',
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '0.85rem',
+                  fontWeight: 600,
+                  marginBottom: '0.25rem'
+                }}>
+                  Projected Revenue
+                </p>
+                <p style={{
+                  color: '#1f2937',
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '1.125rem',
+                  fontWeight: 700
+                }}>
+                  {businessModel === 'dayPassPlatform' ? '$155K-$258K' : '$65K-$108K'}
+                </p>
+              </div>
             </div>
 
             <div style={{
@@ -2629,10 +2653,34 @@ const PitchDeckPage: React.FC = () => {
               <p style={{
                 color: '#6b7280',
                 fontFamily: 'Inter, sans-serif',
-                fontSize: '0.9rem'
+                fontSize: '0.9rem',
+                marginBottom: '0.75rem'
               }}>
                 Communities
               </p>
+              <div style={{
+                paddingTop: '0.75rem',
+                borderTop: '1px solid #86efac',
+                marginTop: '0.75rem'
+              }}>
+                <p style={{
+                  color: '#355B45',
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '0.85rem',
+                  fontWeight: 600,
+                  marginBottom: '0.25rem'
+                }}>
+                  Projected Revenue
+                </p>
+                <p style={{
+                  color: '#1f2937',
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '1.125rem',
+                  fontWeight: 700
+                }}>
+                  {businessModel === 'dayPassPlatform' ? '$773K-$1.0M' : '$324K-$432K'}
+                </p>
+              </div>
             </div>
 
             <div style={{
@@ -2663,10 +2711,34 @@ const PitchDeckPage: React.FC = () => {
               <p style={{
                 color: '#6b7280',
                 fontFamily: 'Inter, sans-serif',
-                fontSize: '0.9rem'
+                fontSize: '0.9rem',
+                marginBottom: '0.75rem'
               }}>
                 Communities
               </p>
+              <div style={{
+                paddingTop: '0.75rem',
+                borderTop: '1px solid #86efac',
+                marginTop: '0.75rem'
+              }}>
+                <p style={{
+                  color: '#355B45',
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '0.85rem',
+                  fontWeight: 600,
+                  marginBottom: '0.25rem'
+                }}>
+                  Projected Revenue
+                </p>
+                <p style={{
+                  color: '#1f2937',
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '1.125rem',
+                  fontWeight: 700
+                }}>
+                  {businessModel === 'dayPassPlatform' ? '$2.1M-$3.1M' : '$864K-$1.3M'}
+                </p>
+              </div>
             </div>
 
             <div style={{
@@ -2697,10 +2769,34 @@ const PitchDeckPage: React.FC = () => {
               <p style={{
                 color: '#6b7280',
                 fontFamily: 'Inter, sans-serif',
-                fontSize: '0.9rem'
+                fontSize: '0.9rem',
+                marginBottom: '0.75rem'
               }}>
                 Communities
               </p>
+              <div style={{
+                paddingTop: '0.75rem',
+                borderTop: '1px solid #86efac',
+                marginTop: '0.75rem'
+              }}>
+                <p style={{
+                  color: '#355B45',
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '0.85rem',
+                  fontWeight: 600,
+                  marginBottom: '0.25rem'
+                }}>
+                  Projected Revenue
+                </p>
+                <p style={{
+                  color: '#1f2937',
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '1.125rem',
+                  fontWeight: 700
+                }}>
+                  {businessModel === 'dayPassPlatform' ? '$5.2M-$7.7M' : '$2.2M-$3.2M'}
+                </p>
+              </div>
             </div>
 
             <div style={{
@@ -2731,10 +2827,34 @@ const PitchDeckPage: React.FC = () => {
               <p style={{
                 color: '#6b7280',
                 fontFamily: 'Inter, sans-serif',
-                fontSize: '0.9rem'
+                fontSize: '0.9rem',
+                marginBottom: '0.75rem'
               }}>
                 Communities
               </p>
+              <div style={{
+                paddingTop: '0.75rem',
+                borderTop: '1px solid #86efac',
+                marginTop: '0.75rem'
+              }}>
+                <p style={{
+                  color: '#355B45',
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '0.85rem',
+                  fontWeight: 600,
+                  marginBottom: '0.25rem'
+                }}>
+                  Projected Revenue
+                </p>
+                <p style={{
+                  color: '#1f2937',
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '1.125rem',
+                  fontWeight: 700
+                }}>
+                  {businessModel === 'dayPassPlatform' ? '$12.9M-$18.0M' : '$5.4M-$7.6M'}
+                </p>
+              </div>
             </div>
 
             <div style={{
@@ -2765,10 +2885,34 @@ const PitchDeckPage: React.FC = () => {
               <p style={{
                 color: '#6b7280',
                 fontFamily: 'Inter, sans-serif',
-                fontSize: '0.9rem'
+                fontSize: '0.9rem',
+                marginBottom: '0.75rem'
               }}>
                 Communities (SOM)
               </p>
+              <div style={{
+                paddingTop: '0.75rem',
+                borderTop: '1px solid #86efac',
+                marginTop: '0.75rem'
+              }}>
+                <p style={{
+                  color: '#355B45',
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '0.85rem',
+                  fontWeight: 600,
+                  marginBottom: '0.25rem'
+                }}>
+                  Projected Revenue
+                </p>
+                <p style={{
+                  color: '#1f2937',
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '1.125rem',
+                  fontWeight: 700
+                }}>
+                  {businessModel === 'dayPassPlatform' ? '$43.8M-$87.6M' : '$18.4M-$36.7M'}
+                </p>
+              </div>
             </div>
           </div>
           <div style={{
