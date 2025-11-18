@@ -2544,6 +2544,277 @@ const PitchDeckPage: React.FC = () => {
           </div>
         </section>
 
+        {/* Financial Projections */}
+        <section style={{
+          padding: '6rem 1rem',
+          backgroundColor: 'white',
+          maxWidth: '1200px',
+          margin: '0 auto'
+        }}>
+          <h2 style={{
+            fontSize: '2.5rem',
+            fontWeight: 700,
+            color: '#1f2937',
+            marginBottom: '3rem',
+            textAlign: 'center',
+            fontFamily: 'Inter, sans-serif'
+          }}>
+            Financial Projections
+          </h2>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+            gap: '2rem',
+            marginBottom: '3rem'
+          }}>
+            <div style={{
+              padding: '2rem',
+              borderRadius: '0.5rem',
+              backgroundColor: '#f0fdf4',
+              border: '1px solid #86efac',
+              textAlign: 'center'
+            }}>
+              <h3 style={{
+                fontSize: '1.25rem',
+                fontWeight: 600,
+                color: '#1f2937',
+                marginBottom: '1rem',
+                fontFamily: 'Inter, sans-serif'
+              }}>
+                Year 1
+              </h3>
+              <div style={{
+                fontSize: '2rem',
+                fontWeight: 700,
+                color: '#355B45',
+                marginBottom: '0.5rem',
+                fontFamily: 'Inter, sans-serif'
+              }}>
+                30-50
+              </div>
+              <p style={{
+                color: '#6b7280',
+                fontFamily: 'Inter, sans-serif'
+              }}>
+                Communities
+              </p>
+            </div>
+
+            <div style={{
+              padding: '2rem',
+              borderRadius: '0.5rem',
+              backgroundColor: '#f0fdf4',
+              border: '1px solid #86efac',
+              textAlign: 'center'
+            }}>
+              <h3 style={{
+                fontSize: '1.25rem',
+                fontWeight: 600,
+                color: '#1f2937',
+                marginBottom: '1rem',
+                fontFamily: 'Inter, sans-serif'
+              }}>
+                Year 2
+              </h3>
+              <div style={{
+                fontSize: '2rem',
+                fontWeight: 700,
+                color: '#355B45',
+                marginBottom: '0.5rem',
+                fontFamily: 'Inter, sans-serif'
+              }}>
+                150-200
+              </div>
+              <p style={{
+                color: '#6b7280',
+                fontFamily: 'Inter, sans-serif'
+              }}>
+                Communities
+              </p>
+            </div>
+
+            <div style={{
+              padding: '2rem',
+              borderRadius: '0.5rem',
+              backgroundColor: '#f0fdf4',
+              border: '1px solid #86efac',
+              textAlign: 'center'
+            }}>
+              <h3 style={{
+                fontSize: '1.25rem',
+                fontWeight: 600,
+                color: '#1f2937',
+                marginBottom: '1rem',
+                fontFamily: 'Inter, sans-serif'
+              }}>
+                Year 3
+              </h3>
+              <div style={{
+                fontSize: '2rem',
+                fontWeight: 700,
+                color: '#355B45',
+                marginBottom: '0.5rem',
+                fontFamily: 'Inter, sans-serif'
+              }}>
+                400+
+              </div>
+              <p style={{
+                color: '#6b7280',
+                fontFamily: 'Inter, sans-serif'
+              }}>
+                Communities
+              </p>
+            </div>
+          </div>
+          <div style={{
+            padding: '2rem',
+            borderRadius: '0.5rem',
+            backgroundColor: '#f9fafb',
+            border: '2px solid #355B45',
+            marginBottom: '2rem'
+          }}>
+            <p style={{
+              color: '#6b7280',
+              lineHeight: '1.8',
+              fontFamily: 'Inter, sans-serif',
+              textAlign: 'center',
+              marginBottom: '1rem'
+            }}>
+              <strong>Revenue Model:</strong> {businessModel === 'dayPassPlatform' 
+                ? 'With pricing tiers ranging from $99-299/month per community (average ~$180/month subscription) plus 15-20% commission on day pass bookings, 100 communities would generate approximately $216,000 in annual recurring subscription revenue, plus $315,000+ in commission revenue from day passes (assuming $3,150/year avg per community).'
+                : 'With pricing tiers ranging from $99-299/month per community (average ~$180/month), 100 communities would generate approximately $216,000 in annual recurring revenue.'}
+            </p>
+          </div>
+
+          {/* Growth Methodology */}
+          <div style={{
+            padding: '2rem',
+            borderRadius: '0.5rem',
+            backgroundColor: '#f0f4f1',
+            border: '1px solid #355B45'
+          }}>
+            <h4 style={{
+              fontSize: '1.25rem',
+              fontWeight: 600,
+              color: '#1f2937',
+              marginBottom: '1rem',
+              fontFamily: 'Inter, sans-serif'
+            }}>
+              Growth Projection Methodology
+            </h4>
+            <p style={{
+              color: '#6b7280',
+              lineHeight: '1.8',
+              marginBottom: '1rem',
+              fontFamily: 'Inter, sans-serif'
+            }}>
+              Projections are based on accelerated growth assumptions with dedicated sales leadership from launch:
+            </p>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+              gap: '1rem',
+              marginBottom: '1rem'
+            }}>
+              <div style={{
+                padding: '1rem',
+                backgroundColor: 'white',
+                borderRadius: '0.25rem',
+                border: '1px solid #cbd5e1'
+              }}>
+                <p style={{
+                  color: '#1f2937',
+                  fontWeight: 600,
+                  marginBottom: '0.5rem',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  Year 1 Assumptions
+                </p>
+                <ul style={{
+                  color: '#6b7280',
+                  fontSize: '0.9rem',
+                  lineHeight: '1.6',
+                  paddingLeft: '1.25rem',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  <li>Dedicated sales leader on board</li>
+                  <li>30-60 day sales cycle</li>
+                  <li>5-8% lead conversion rate</li>
+                  <li>Structured sales process</li>
+                  <li>Focus on target markets</li>
+                </ul>
+              </div>
+              <div style={{
+                padding: '1rem',
+                backgroundColor: 'white',
+                borderRadius: '0.25rem',
+                border: '1px solid #cbd5e1'
+              }}>
+                <p style={{
+                  color: '#1f2937',
+                  fontWeight: 600,
+                  marginBottom: '0.5rem',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  Year 2 Assumptions
+                </p>
+                <ul style={{
+                  color: '#6b7280',
+                  fontSize: '0.9rem',
+                  lineHeight: '1.6',
+                  paddingLeft: '1.25rem',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  <li>Expand sales team (2-3 reps)</li>
+                  <li>Improved conversion (8-12%)</li>
+                  <li>Strong word-of-mouth referrals</li>
+                  <li>Property management partnerships</li>
+                  <li>Multi-region expansion</li>
+                </ul>
+              </div>
+              <div style={{
+                padding: '1rem',
+                backgroundColor: 'white',
+                borderRadius: '0.25rem',
+                border: '1px solid #cbd5e1'
+              }}>
+                <p style={{
+                  color: '#1f2937',
+                  fontWeight: 600,
+                  marginBottom: '0.5rem',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  Year 3 Assumptions
+                </p>
+                <ul style={{
+                  color: '#6b7280',
+                  fontSize: '0.9rem',
+                  lineHeight: '1.6',
+                  paddingLeft: '1.25rem',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  <li>Full sales team (5-7 reps)</li>
+                  <li>12-18% conversion rates</li>
+                  <li>Established partnership channels</li>
+                  <li>Full marketing automation</li>
+                  <li>Nationwide presence</li>
+                </ul>
+              </div>
+            </div>
+            <p style={{
+              color: '#6b7280',
+              fontSize: '0.9rem',
+              lineHeight: '1.6',
+              fontStyle: 'italic',
+              fontFamily: 'Inter, sans-serif'
+            }}>
+              <strong>Note:</strong> These projections assume successful execution of go-to-market strategy, 
+              adequate funding for sales/marketing, and strong product-market fit. Actual results may vary 
+              based on market conditions, competition, and execution capabilities.
+            </p>
+          </div>
+        </section>
+
         {/* Traction */}
         <section style={{
           padding: '6rem 1rem',
@@ -3413,277 +3684,6 @@ const PitchDeckPage: React.FC = () => {
               fontFamily: 'Inter, sans-serif'
             }}>
               <strong>Contact:</strong> thomas.ryan.crosby@gmail.com | (985) 373-2383
-            </p>
-          </div>
-        </section>
-
-        {/* Financial Projections */}
-        <section style={{
-          padding: '6rem 1rem',
-          backgroundColor: 'white',
-          maxWidth: '1200px',
-          margin: '0 auto'
-        }}>
-          <h2 style={{
-            fontSize: '2.5rem',
-            fontWeight: 700,
-            color: '#1f2937',
-            marginBottom: '3rem',
-            textAlign: 'center',
-            fontFamily: 'Inter, sans-serif'
-          }}>
-            Financial Projections
-          </h2>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-            gap: '2rem',
-            marginBottom: '3rem'
-          }}>
-            <div style={{
-              padding: '2rem',
-              borderRadius: '0.5rem',
-              backgroundColor: '#f0fdf4',
-              border: '1px solid #86efac',
-              textAlign: 'center'
-            }}>
-              <h3 style={{
-                fontSize: '1.25rem',
-                fontWeight: 600,
-                color: '#1f2937',
-                marginBottom: '1rem',
-                fontFamily: 'Inter, sans-serif'
-              }}>
-                Year 1
-              </h3>
-              <div style={{
-                fontSize: '2rem',
-                fontWeight: 700,
-                color: '#355B45',
-                marginBottom: '0.5rem',
-                fontFamily: 'Inter, sans-serif'
-              }}>
-                30-50
-              </div>
-              <p style={{
-                color: '#6b7280',
-                fontFamily: 'Inter, sans-serif'
-              }}>
-                Communities
-              </p>
-            </div>
-
-            <div style={{
-              padding: '2rem',
-              borderRadius: '0.5rem',
-              backgroundColor: '#f0fdf4',
-              border: '1px solid #86efac',
-              textAlign: 'center'
-            }}>
-              <h3 style={{
-                fontSize: '1.25rem',
-                fontWeight: 600,
-                color: '#1f2937',
-                marginBottom: '1rem',
-                fontFamily: 'Inter, sans-serif'
-              }}>
-                Year 2
-              </h3>
-              <div style={{
-                fontSize: '2rem',
-                fontWeight: 700,
-                color: '#355B45',
-                marginBottom: '0.5rem',
-                fontFamily: 'Inter, sans-serif'
-              }}>
-                150-200
-              </div>
-              <p style={{
-                color: '#6b7280',
-                fontFamily: 'Inter, sans-serif'
-              }}>
-                Communities
-              </p>
-            </div>
-
-            <div style={{
-              padding: '2rem',
-              borderRadius: '0.5rem',
-              backgroundColor: '#f0fdf4',
-              border: '1px solid #86efac',
-              textAlign: 'center'
-            }}>
-              <h3 style={{
-                fontSize: '1.25rem',
-                fontWeight: 600,
-                color: '#1f2937',
-                marginBottom: '1rem',
-                fontFamily: 'Inter, sans-serif'
-              }}>
-                Year 3
-              </h3>
-              <div style={{
-                fontSize: '2rem',
-                fontWeight: 700,
-                color: '#355B45',
-                marginBottom: '0.5rem',
-                fontFamily: 'Inter, sans-serif'
-              }}>
-                400+
-              </div>
-              <p style={{
-                color: '#6b7280',
-                fontFamily: 'Inter, sans-serif'
-              }}>
-                Communities
-              </p>
-            </div>
-          </div>
-          <div style={{
-            padding: '2rem',
-            borderRadius: '0.5rem',
-            backgroundColor: '#f9fafb',
-            border: '2px solid #355B45',
-            marginBottom: '2rem'
-          }}>
-            <p style={{
-              color: '#6b7280',
-              lineHeight: '1.8',
-              fontFamily: 'Inter, sans-serif',
-              textAlign: 'center',
-              marginBottom: '1rem'
-            }}>
-              <strong>Revenue Model:</strong> {businessModel === 'dayPassPlatform' 
-                ? 'With pricing tiers ranging from $99-299/month per community (average ~$180/month subscription) plus 15-20% commission on day pass bookings, 100 communities would generate approximately $216,000 in annual recurring subscription revenue, plus $315,000+ in commission revenue from day passes (assuming $3,150/year avg per community).'
-                : 'With pricing tiers ranging from $99-299/month per community (average ~$180/month), 100 communities would generate approximately $216,000 in annual recurring revenue.'}
-            </p>
-          </div>
-
-          {/* Growth Methodology */}
-          <div style={{
-            padding: '2rem',
-            borderRadius: '0.5rem',
-            backgroundColor: '#f0f4f1',
-            border: '1px solid #355B45'
-          }}>
-            <h4 style={{
-              fontSize: '1.25rem',
-              fontWeight: 600,
-              color: '#1f2937',
-              marginBottom: '1rem',
-              fontFamily: 'Inter, sans-serif'
-            }}>
-              Growth Projection Methodology
-            </h4>
-            <p style={{
-              color: '#6b7280',
-              lineHeight: '1.8',
-              marginBottom: '1rem',
-              fontFamily: 'Inter, sans-serif'
-            }}>
-              Projections are based on accelerated growth assumptions with dedicated sales leadership from launch:
-            </p>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-              gap: '1rem',
-              marginBottom: '1rem'
-            }}>
-              <div style={{
-                padding: '1rem',
-                backgroundColor: 'white',
-                borderRadius: '0.25rem',
-                border: '1px solid #cbd5e1'
-              }}>
-                <p style={{
-                  color: '#1f2937',
-                  fontWeight: 600,
-                  marginBottom: '0.5rem',
-                  fontFamily: 'Inter, sans-serif'
-                }}>
-                  Year 1 Assumptions
-                </p>
-                <ul style={{
-                  color: '#6b7280',
-                  fontSize: '0.9rem',
-                  lineHeight: '1.6',
-                  paddingLeft: '1.25rem',
-                  fontFamily: 'Inter, sans-serif'
-                }}>
-                  <li>Dedicated sales leader on board</li>
-                  <li>30-60 day sales cycle</li>
-                  <li>5-8% lead conversion rate</li>
-                  <li>Structured sales process</li>
-                  <li>Focus on target markets</li>
-                </ul>
-              </div>
-              <div style={{
-                padding: '1rem',
-                backgroundColor: 'white',
-                borderRadius: '0.25rem',
-                border: '1px solid #cbd5e1'
-              }}>
-                <p style={{
-                  color: '#1f2937',
-                  fontWeight: 600,
-                  marginBottom: '0.5rem',
-                  fontFamily: 'Inter, sans-serif'
-                }}>
-                  Year 2 Assumptions
-                </p>
-                <ul style={{
-                  color: '#6b7280',
-                  fontSize: '0.9rem',
-                  lineHeight: '1.6',
-                  paddingLeft: '1.25rem',
-                  fontFamily: 'Inter, sans-serif'
-                }}>
-                  <li>Expand sales team (2-3 reps)</li>
-                  <li>Improved conversion (8-12%)</li>
-                  <li>Strong word-of-mouth referrals</li>
-                  <li>Property management partnerships</li>
-                  <li>Multi-region expansion</li>
-                </ul>
-              </div>
-              <div style={{
-                padding: '1rem',
-                backgroundColor: 'white',
-                borderRadius: '0.25rem',
-                border: '1px solid #cbd5e1'
-              }}>
-                <p style={{
-                  color: '#1f2937',
-                  fontWeight: 600,
-                  marginBottom: '0.5rem',
-                  fontFamily: 'Inter, sans-serif'
-                }}>
-                  Year 3 Assumptions
-                </p>
-                <ul style={{
-                  color: '#6b7280',
-                  fontSize: '0.9rem',
-                  lineHeight: '1.6',
-                  paddingLeft: '1.25rem',
-                  fontFamily: 'Inter, sans-serif'
-                }}>
-                  <li>Full sales team (5-7 reps)</li>
-                  <li>12-18% conversion rates</li>
-                  <li>Established partnership channels</li>
-                  <li>Full marketing automation</li>
-                  <li>Nationwide presence</li>
-                </ul>
-              </div>
-            </div>
-            <p style={{
-              color: '#6b7280',
-              fontSize: '0.9rem',
-              lineHeight: '1.6',
-              fontStyle: 'italic',
-              fontFamily: 'Inter, sans-serif'
-            }}>
-              <strong>Note:</strong> These projections assume successful execution of go-to-market strategy, 
-              adequate funding for sales/marketing, and strong product-market fit. Actual results may vary 
-              based on market conditions, competition, and execution capabilities.
             </p>
           </div>
         </section>
