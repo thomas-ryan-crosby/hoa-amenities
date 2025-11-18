@@ -1251,19 +1251,19 @@ const PitchDeckPage: React.FC = () => {
             textAlign: 'center',
             marginTop: '2rem'
           }}>
-              <p style={{
-                fontSize: '1.125rem',
-                lineHeight: '1.8',
-                fontFamily: 'Inter, sans-serif',
-                fontWeight: 600,
-                color: '#1f2937'
-              }}>
-                {businessModel === 'amenityManagement' 
-                  ? 'Neighbri transforms amenity management from a time-consuming burden into a streamlined, automated process.'
-                  : 'Neighbri transforms amenity management into a streamlined, automated process AND unlocks new revenue streams through day pass monetization, validated by Swimply ($160k+ annual earnings) and the $15.2B racquet facility market.'}
-              </p>
-            </div>
+            <p style={{
+              fontSize: '1.125rem',
+              lineHeight: '1.8',
+              fontFamily: 'Inter, sans-serif',
+              fontWeight: 600,
+              color: '#1f2937'
+            }}>
+              {businessModel === 'amenityManagement' 
+                ? 'Neighbri transforms amenity management from a time-consuming burden into a streamlined, automated process.'
+                : 'Neighbri transforms amenity management into a streamlined, automated process AND unlocks new revenue streams through day pass monetization, validated by Swimply ($160k+ annual earnings) and the $15.2B racquet facility market.'}
+            </p>
           </div>
+        </div>
         </section>
 
         {/* Market Opportunity */}
