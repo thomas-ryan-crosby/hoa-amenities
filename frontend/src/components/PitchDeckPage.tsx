@@ -761,17 +761,18 @@ const PitchDeckPage: React.FC = () => {
               marginBottom: '2rem',
               padding: '3rem 2rem',
               backgroundColor: 'white',
-              borderRadius: '1.5rem',
-              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.1)'
+              borderRadius: '0.75rem',
+              boxShadow: '0 8px 24px rgba(53, 91, 69, 0.15)',
+              border: '1px solid #e5e7eb'
             }}>
               <div style={{
                 textAlign: 'center',
                 marginBottom: '3rem'
               }}>
                 <h3 style={{
-                  fontSize: '2.625rem',
-                  fontWeight: 800,
-                  color: '#1a202c',
+                  fontSize: '2.5rem',
+                  fontWeight: 700,
+                  color: '#1f2937',
                   margin: '0 0 0.75rem 0',
                   lineHeight: 1.2,
                   fontFamily: 'Inter, sans-serif'
@@ -779,8 +780,8 @@ const PitchDeckPage: React.FC = () => {
                   One Platform. Everything Integrated.
                 </h3>
                 <p style={{
-                  fontSize: '1.25rem',
-                  color: '#718096',
+                  fontSize: '1.125rem',
+                  color: '#6b7280',
                   margin: 0,
                   fontFamily: 'Inter, sans-serif'
                 }}>
@@ -801,10 +802,10 @@ const PitchDeckPage: React.FC = () => {
                 }}>
                   <div style={{
                     textAlign: 'center',
-                    fontSize: '1.75rem',
-                    fontWeight: 700,
-                    color: '#e53e3e',
-                    marginBottom: '1rem',
+                    fontSize: '1.5rem',
+                    fontWeight: 600,
+                    color: '#dc2626',
+                    marginBottom: '1.5rem',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -822,26 +823,26 @@ const PitchDeckPage: React.FC = () => {
                   }}>
                     {/* Availability Check */}
                     <div style={{
-                      background: '#fff5f5',
-                      border: '2px dashed #fc8181',
-                      borderRadius: '0.75rem',
-                      padding: '1.25rem',
+                      background: '#fef2f2',
+                      border: '1px solid #fecaca',
+                      borderRadius: '0.5rem',
+                      padding: '1.5rem',
                       display: 'flex',
                       flexDirection: 'column',
-                      gap: '0.5rem'
+                      gap: '0.75rem'
                     }}>
                       <div style={{
-                        fontSize: '1.125rem',
-                        fontWeight: 700,
-                        color: '#742a2a',
-                        marginBottom: '0.25rem',
+                        fontSize: '1.25rem',
+                        fontWeight: 600,
+                        color: '#1f2937',
+                        marginBottom: '0.5rem',
                         fontFamily: 'Inter, sans-serif'
                       }}>
                         📅 Availability Check
                       </div>
                       <div style={{
-                        fontSize: '0.875rem',
-                        color: '#9b2c2c',
+                        fontSize: '0.9rem',
+                        color: '#6b7280',
                         display: 'flex',
                         alignItems: 'center',
                         gap: '0.5rem',
@@ -851,8 +852,8 @@ const PitchDeckPage: React.FC = () => {
                         <span>Phone tag with residents</span>
                       </div>
                       <div style={{
-                        fontSize: '0.875rem',
-                        color: '#9b2c2c',
+                        fontSize: '0.9rem',
+                        color: '#6b7280',
                         display: 'flex',
                         alignItems: 'center',
                         gap: '0.5rem',
@@ -862,8 +863,8 @@ const PitchDeckPage: React.FC = () => {
                         <span>Email back and forth</span>
                       </div>
                       <div style={{
-                        fontSize: '0.875rem',
-                        color: '#9b2c2c',
+                        fontSize: '0.9rem',
+                        color: '#6b7280',
                         display: 'flex',
                         alignItems: 'center',
                         gap: '0.5rem',
@@ -873,8 +874,8 @@ const PitchDeckPage: React.FC = () => {
                         <span>Text message chains</span>
                       </div>
                       <div style={{
-                        fontSize: '0.875rem',
-                        color: '#9b2c2c',
+                        fontSize: '0.9rem',
+                        color: '#6b7280',
                         display: 'flex',
                         alignItems: 'center',
                         gap: '0.5rem',
@@ -887,26 +888,26 @@ const PitchDeckPage: React.FC = () => {
 
                     {/* Cleaning Coordination */}
                     <div style={{
-                      background: '#fff5f5',
-                      border: '2px dashed #fc8181',
-                      borderRadius: '0.75rem',
-                      padding: '1.25rem',
+                      background: '#fef2f2',
+                      border: '1px solid #fecaca',
+                      borderRadius: '0.5rem',
+                      padding: '1.5rem',
                       display: 'flex',
                       flexDirection: 'column',
-                      gap: '0.5rem'
+                      gap: '0.75rem'
                     }}>
                       <div style={{
-                        fontSize: '1.125rem',
-                        fontWeight: 700,
-                        color: '#742a2a',
-                        marginBottom: '0.25rem',
+                        fontSize: '1.25rem',
+                        fontWeight: 600,
+                        color: '#1f2937',
+                        marginBottom: '0.5rem',
                         fontFamily: 'Inter, sans-serif'
                       }}>
                         🧹 Cleaning Coordination
                       </div>
                       <div style={{
-                        fontSize: '0.875rem',
-                        color: '#9b2c2c',
+                        fontSize: '0.9rem',
+                        color: '#6b7280',
                         display: 'flex',
                         alignItems: 'center',
                         gap: '0.5rem',
@@ -916,8 +917,8 @@ const PitchDeckPage: React.FC = () => {
                         <span>Calls to janitorial staff</span>
                       </div>
                       <div style={{
-                        fontSize: '0.875rem',
-                        color: '#9b2c2c',
+                        fontSize: '0.9rem',
+                        color: '#6b7280',
                         display: 'flex',
                         alignItems: 'center',
                         gap: '0.5rem',
@@ -927,8 +928,8 @@ const PitchDeckPage: React.FC = () => {
                         <span>Email confirmations</span>
                       </div>
                       <div style={{
-                        fontSize: '0.875rem',
-                        color: '#9b2c2c',
+                        fontSize: '0.9rem',
+                        color: '#6b7280',
                         display: 'flex',
                         alignItems: 'center',
                         gap: '0.5rem',
@@ -938,8 +939,8 @@ const PitchDeckPage: React.FC = () => {
                         <span>Text reminders</span>
                       </div>
                       <div style={{
-                        fontSize: '0.875rem',
-                        color: '#9b2c2c',
+                        fontSize: '0.9rem',
+                        color: '#6b7280',
                         display: 'flex',
                         alignItems: 'center',
                         gap: '0.5rem',
@@ -952,26 +953,26 @@ const PitchDeckPage: React.FC = () => {
 
                     {/* Booking Management */}
                     <div style={{
-                      background: '#fff5f5',
-                      border: '2px dashed #fc8181',
-                      borderRadius: '0.75rem',
-                      padding: '1.25rem',
+                      background: '#fef2f2',
+                      border: '1px solid #fecaca',
+                      borderRadius: '0.5rem',
+                      padding: '1.5rem',
                       display: 'flex',
                       flexDirection: 'column',
-                      gap: '0.5rem'
+                      gap: '0.75rem'
                     }}>
                       <div style={{
-                        fontSize: '1.125rem',
-                        fontWeight: 700,
-                        color: '#742a2a',
-                        marginBottom: '0.25rem',
+                        fontSize: '1.25rem',
+                        fontWeight: 600,
+                        color: '#1f2937',
+                        marginBottom: '0.5rem',
                         fontFamily: 'Inter, sans-serif'
                       }}>
                         📝 Booking Management
                       </div>
                       <div style={{
-                        fontSize: '0.875rem',
-                        color: '#9b2c2c',
+                        fontSize: '0.9rem',
+                        color: '#6b7280',
                         display: 'flex',
                         alignItems: 'center',
                         gap: '0.5rem',
@@ -981,8 +982,8 @@ const PitchDeckPage: React.FC = () => {
                         <span>Callback confirmations</span>
                       </div>
                       <div style={{
-                        fontSize: '0.875rem',
-                        color: '#9b2c2c',
+                        fontSize: '0.9rem',
+                        color: '#6b7280',
                         display: 'flex',
                         alignItems: 'center',
                         gap: '0.5rem',
@@ -992,8 +993,8 @@ const PitchDeckPage: React.FC = () => {
                         <span>Email confirmations</span>
                       </div>
                       <div style={{
-                        fontSize: '0.875rem',
-                        color: '#9b2c2c',
+                        fontSize: '0.9rem',
+                        color: '#6b7280',
                         display: 'flex',
                         alignItems: 'center',
                         gap: '0.5rem',
@@ -1003,8 +1004,8 @@ const PitchDeckPage: React.FC = () => {
                         <span>Manual calendar updates</span>
                       </div>
                       <div style={{
-                        fontSize: '0.875rem',
-                        color: '#9b2c2c',
+                        fontSize: '0.9rem',
+                        color: '#6b7280',
                         display: 'flex',
                         alignItems: 'center',
                         gap: '0.5rem',
@@ -1017,26 +1018,26 @@ const PitchDeckPage: React.FC = () => {
 
                     {/* Payment Processing */}
                     <div style={{
-                      background: '#fff5f5',
-                      border: '2px dashed #fc8181',
-                      borderRadius: '0.75rem',
-                      padding: '1.25rem',
+                      background: '#fef2f2',
+                      border: '1px solid #fecaca',
+                      borderRadius: '0.5rem',
+                      padding: '1.5rem',
                       display: 'flex',
                       flexDirection: 'column',
-                      gap: '0.5rem'
+                      gap: '0.75rem'
                     }}>
                       <div style={{
-                        fontSize: '1.125rem',
-                        fontWeight: 700,
-                        color: '#742a2a',
-                        marginBottom: '0.25rem',
+                        fontSize: '1.25rem',
+                        fontWeight: 600,
+                        color: '#1f2937',
+                        marginBottom: '0.5rem',
                         fontFamily: 'Inter, sans-serif'
                       }}>
                         💳 Payment Processing
                       </div>
                       <div style={{
-                        fontSize: '0.875rem',
-                        color: '#9b2c2c',
+                        fontSize: '0.9rem',
+                        color: '#6b7280',
                         display: 'flex',
                         alignItems: 'center',
                         gap: '0.5rem',
@@ -1046,8 +1047,8 @@ const PitchDeckPage: React.FC = () => {
                         <span>Physical check collection</span>
                       </div>
                       <div style={{
-                        fontSize: '0.875rem',
-                        color: '#9b2c2c',
+                        fontSize: '0.9rem',
+                        color: '#6b7280',
                         display: 'flex',
                         alignItems: 'center',
                         gap: '0.5rem',
@@ -1057,8 +1058,8 @@ const PitchDeckPage: React.FC = () => {
                         <span>Payment reminder emails</span>
                       </div>
                       <div style={{
-                        fontSize: '0.875rem',
-                        color: '#9b2c2c',
+                        fontSize: '0.9rem',
+                        color: '#6b7280',
                         display: 'flex',
                         alignItems: 'center',
                         gap: '0.5rem',
@@ -1068,8 +1069,8 @@ const PitchDeckPage: React.FC = () => {
                         <span>Manual Square charges</span>
                       </div>
                       <div style={{
-                        fontSize: '0.875rem',
-                        color: '#9b2c2c',
+                        fontSize: '0.9rem',
+                        color: '#6b7280',
                         display: 'flex',
                         alignItems: 'center',
                         gap: '0.5rem',
@@ -1083,15 +1084,16 @@ const PitchDeckPage: React.FC = () => {
 
                   {/* Problems Section */}
                   <div style={{
-                    background: 'linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%)',
-                    borderRadius: '1rem',
+                    background: '#fef2f2',
+                    border: '1px solid #fecaca',
+                    borderRadius: '0.5rem',
                     padding: '2rem',
                     marginTop: '1.5rem'
                   }}>
                     <h4 style={{
                       fontSize: '1.5rem',
-                      fontWeight: 700,
-                      color: '#742a2a',
+                      fontWeight: 600,
+                      color: '#1f2937',
                       margin: '0 0 1.25rem 0',
                       textAlign: 'center',
                       fontFamily: 'Inter, sans-serif'
@@ -1116,10 +1118,11 @@ const PitchDeckPage: React.FC = () => {
                           flexShrink: 0
                         }}>⏰</div>
                         <div style={{
-                          fontSize: '0.9375rem',
-                          color: '#742a2a',
+                          fontSize: '0.9rem',
+                          color: '#6b7280',
                           fontWeight: 500,
-                          fontFamily: 'Inter, sans-serif'
+                          fontFamily: 'Inter, sans-serif',
+                          lineHeight: '1.6'
                         }}>
                           Hours wasted on back-and-forth communication
                         </div>
@@ -1137,10 +1140,11 @@ const PitchDeckPage: React.FC = () => {
                           flexShrink: 0
                         }}>❌</div>
                         <div style={{
-                          fontSize: '0.9375rem',
-                          color: '#742a2a',
+                          fontSize: '0.9rem',
+                          color: '#6b7280',
                           fontWeight: 500,
-                          fontFamily: 'Inter, sans-serif'
+                          fontFamily: 'Inter, sans-serif',
+                          lineHeight: '1.6'
                         }}>
                           Double bookings from calendar mismanagement
                         </div>
@@ -1158,10 +1162,11 @@ const PitchDeckPage: React.FC = () => {
                           flexShrink: 0
                         }}>😤</div>
                         <div style={{
-                          fontSize: '0.9375rem',
-                          color: '#742a2a',
+                          fontSize: '0.9rem',
+                          color: '#6b7280',
                           fontWeight: 500,
-                          fontFamily: 'Inter, sans-serif'
+                          fontFamily: 'Inter, sans-serif',
+                          lineHeight: '1.6'
                         }}>
                           Frustrated residents with slow response times
                         </div>
@@ -1179,10 +1184,11 @@ const PitchDeckPage: React.FC = () => {
                           flexShrink: 0
                         }}>💸</div>
                         <div style={{
-                          fontSize: '0.9375rem',
-                          color: '#742a2a',
+                          fontSize: '0.9rem',
+                          color: '#6b7280',
                           fontWeight: 500,
-                          fontFamily: 'Inter, sans-serif'
+                          fontFamily: 'Inter, sans-serif',
+                          lineHeight: '1.6'
                         }}>
                           Lost revenue from payment tracking errors
                         </div>
@@ -1205,7 +1211,7 @@ const PitchDeckPage: React.FC = () => {
                     background: 'linear-gradient(90deg, transparent, #cbd5e0, transparent)'
                   }}></div>
                   <div style={{
-                    background: '#48bb78',
+                    background: '#355B45',
                     color: 'white',
                     width: '60px',
                     height: '60px',
@@ -1215,7 +1221,7 @@ const PitchDeckPage: React.FC = () => {
                     justifyContent: 'center',
                     fontSize: '2rem',
                     margin: '0 1.5rem',
-                    boxShadow: '0 4px 12px rgba(72, 187, 120, 0.4)'
+                    boxShadow: '0 4px 12px rgba(53, 91, 69, 0.4)'
                   }}>
                     ⬇️
                   </div>
@@ -1234,10 +1240,10 @@ const PitchDeckPage: React.FC = () => {
                 }}>
                   <div style={{
                     textAlign: 'center',
-                    fontSize: '1.75rem',
-                    fontWeight: 700,
-                    color: '#38a169',
-                    marginBottom: '1rem',
+                    fontSize: '1.5rem',
+                    fontWeight: 600,
+                    color: '#355B45',
+                    marginBottom: '1.5rem',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -1249,30 +1255,29 @@ const PitchDeckPage: React.FC = () => {
                   </div>
 
                   <div style={{
-                    background: 'linear-gradient(135deg, #f0fff4 0%, #c6f6d5 100%)',
-                    border: '4px solid #48bb78',
-                    borderRadius: '1.25rem',
+                    background: 'linear-gradient(135deg, #f0f4f1 0%, #e6f5ed 100%)',
+                    border: '2px solid #355B45',
+                    borderRadius: '0.75rem',
                     padding: '3rem',
                     position: 'relative',
-                    boxShadow: '0 8px 24px rgba(72, 187, 120, 0.2)'
+                    boxShadow: '0 8px 24px rgba(53, 91, 69, 0.15)'
                   }}>
                     <div style={{
                       textAlign: 'center',
                       marginBottom: '2rem'
                     }}>
                       <h2 style={{
-                        fontSize: '3rem',
-                        fontWeight: 900,
-                        color: '#22543d',
+                        fontSize: '2.5rem',
+                        fontWeight: 700,
+                        color: '#355B45',
                         margin: 0,
-                        textTransform: 'lowercase',
                         fontFamily: 'Inter, sans-serif'
                       }}>
-                        neighbri
+                        Neighbri
                       </h2>
                       <p style={{
                         fontSize: '1.125rem',
-                        color: '#2f855a',
+                        color: '#355B45',
                         margin: '0.5rem 0 0 0',
                         fontWeight: 500,
                         fontFamily: 'Inter, sans-serif'
@@ -1284,34 +1289,34 @@ const PitchDeckPage: React.FC = () => {
                     <div style={{
                       display: 'grid',
                       gridTemplateColumns: 'repeat(2, 1fr)',
-                      gap: '1.25rem',
+                      gap: '1.5rem',
                       marginTop: '2rem'
                     }}>
                       <div style={{
                         background: 'white',
-                        borderRadius: '0.75rem',
+                        borderRadius: '0.5rem',
                         padding: '1.5rem',
                         boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-                        transition: 'all 0.3s ease'
+                        border: '1px solid #e5e7eb'
                       }}>
                         <div style={{
-                          fontSize: '2rem',
-                          marginBottom: '0.75rem'
+                          fontSize: '2.5rem',
+                          marginBottom: '1rem'
                         }}>📅</div>
                         <h4 style={{
-                          fontSize: '1.125rem',
-                          fontWeight: 700,
-                          color: '#1a202c',
-                          margin: '0 0 0.5rem 0',
+                          fontSize: '1.25rem',
+                          fontWeight: 600,
+                          color: '#1f2937',
+                          margin: '0 0 0.75rem 0',
                           fontFamily: 'Inter, sans-serif'
                         }}>
                           Real-Time Calendar
                         </h4>
                         <p style={{
-                          fontSize: '0.875rem',
-                          color: '#4a5568',
+                          fontSize: '0.9rem',
+                          color: '#6b7280',
                           margin: 0,
-                          lineHeight: 1.5,
+                          lineHeight: 1.8,
                           fontFamily: 'Inter, sans-serif'
                         }}>
                           Residents see live availability and book instantly—no calls needed
@@ -1320,29 +1325,29 @@ const PitchDeckPage: React.FC = () => {
 
                       <div style={{
                         background: 'white',
-                        borderRadius: '0.75rem',
+                        borderRadius: '0.5rem',
                         padding: '1.5rem',
                         boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-                        transition: 'all 0.3s ease'
+                        border: '1px solid #e5e7eb'
                       }}>
                         <div style={{
-                          fontSize: '2rem',
-                          marginBottom: '0.75rem'
+                          fontSize: '2.5rem',
+                          marginBottom: '1rem'
                         }}>🧹</div>
                         <h4 style={{
-                          fontSize: '1.125rem',
-                          fontWeight: 700,
-                          color: '#1a202c',
-                          margin: '0 0 0.5rem 0',
+                          fontSize: '1.25rem',
+                          fontWeight: 600,
+                          color: '#1f2937',
+                          margin: '0 0 0.75rem 0',
                           fontFamily: 'Inter, sans-serif'
                         }}>
                           Automated Cleaning
                         </h4>
                         <p style={{
-                          fontSize: '0.875rem',
-                          color: '#4a5568',
+                          fontSize: '0.9rem',
+                          color: '#6b7280',
                           margin: 0,
-                          lineHeight: 1.5,
+                          lineHeight: 1.8,
                           fontFamily: 'Inter, sans-serif'
                         }}>
                           Janitorial staff get automatic notifications with all booking details
@@ -1351,29 +1356,29 @@ const PitchDeckPage: React.FC = () => {
 
                       <div style={{
                         background: 'white',
-                        borderRadius: '0.75rem',
+                        borderRadius: '0.5rem',
                         padding: '1.5rem',
                         boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-                        transition: 'all 0.3s ease'
+                        border: '1px solid #e5e7eb'
                       }}>
                         <div style={{
-                          fontSize: '2rem',
-                          marginBottom: '0.75rem'
+                          fontSize: '2.5rem',
+                          marginBottom: '1rem'
                         }}>✅</div>
                         <h4 style={{
-                          fontSize: '1.125rem',
-                          fontWeight: 700,
-                          color: '#1a202c',
-                          margin: '0 0 0.5rem 0',
+                          fontSize: '1.25rem',
+                          fontWeight: 600,
+                          color: '#1f2937',
+                          margin: '0 0 0.75rem 0',
                           fontFamily: 'Inter, sans-serif'
                         }}>
                           Instant Confirmation
                         </h4>
                         <p style={{
-                          fontSize: '0.875rem',
-                          color: '#4a5568',
+                          fontSize: '0.9rem',
+                          color: '#6b7280',
                           margin: 0,
-                          lineHeight: 1.5,
+                          lineHeight: 1.8,
                           fontFamily: 'Inter, sans-serif'
                         }}>
                           Automatic confirmations sent to all parties—zero manual work
@@ -1382,29 +1387,29 @@ const PitchDeckPage: React.FC = () => {
 
                       <div style={{
                         background: 'white',
-                        borderRadius: '0.75rem',
+                        borderRadius: '0.5rem',
                         padding: '1.5rem',
                         boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-                        transition: 'all 0.3s ease'
+                        border: '1px solid #e5e7eb'
                       }}>
                         <div style={{
-                          fontSize: '2rem',
-                          marginBottom: '0.75rem'
+                          fontSize: '2.5rem',
+                          marginBottom: '1rem'
                         }}>💳</div>
                         <h4 style={{
-                          fontSize: '1.125rem',
-                          fontWeight: 700,
-                          color: '#1a202c',
-                          margin: '0 0 0.5rem 0',
+                          fontSize: '1.25rem',
+                          fontWeight: 600,
+                          color: '#1f2937',
+                          margin: '0 0 0.75rem 0',
                           fontFamily: 'Inter, sans-serif'
                         }}>
                           Integrated Payments
                         </h4>
                         <p style={{
-                          fontSize: '0.875rem',
-                          color: '#4a5568',
+                          fontSize: '0.9rem',
+                          color: '#6b7280',
                           margin: 0,
-                          lineHeight: 1.5,
+                          lineHeight: 1.8,
                           fontFamily: 'Inter, sans-serif'
                         }}>
                           Secure payment processing at booking—no chasing checks
@@ -1414,15 +1419,16 @@ const PitchDeckPage: React.FC = () => {
 
                     {/* Benefits Section */}
                     <div style={{
-                      background: 'linear-gradient(135deg, #e6fffa 0%, #b2f5ea 100%)',
-                      borderRadius: '1rem',
+                      background: '#f0f4f1',
+                      border: '1px solid #86efac',
+                      borderRadius: '0.5rem',
                       padding: '2rem',
                       marginTop: '2rem'
                     }}>
                       <h4 style={{
                         fontSize: '1.5rem',
-                        fontWeight: 700,
-                        color: '#234e52',
+                        fontWeight: 600,
+                        color: '#1f2937',
                         margin: '0 0 1.25rem 0',
                         textAlign: 'center',
                         fontFamily: 'Inter, sans-serif'
@@ -1440,17 +1446,19 @@ const PitchDeckPage: React.FC = () => {
                           gap: '0.75rem',
                           background: 'white',
                           padding: '1rem',
-                          borderRadius: '0.5rem'
+                          borderRadius: '0.5rem',
+                          border: '1px solid #e5e7eb'
                         }}>
                           <div style={{
                             fontSize: '1.5rem',
                             flexShrink: 0
                           }}>⚡</div>
                           <div style={{
-                            fontSize: '0.9375rem',
-                            color: '#234e52',
+                            fontSize: '0.9rem',
+                            color: '#6b7280',
                             fontWeight: 500,
-                            fontFamily: 'Inter, sans-serif'
+                            fontFamily: 'Inter, sans-serif',
+                            lineHeight: '1.6'
                           }}>
                             Booking takes 2 minutes, not 2 days
                           </div>
@@ -1461,17 +1469,19 @@ const PitchDeckPage: React.FC = () => {
                           gap: '0.75rem',
                           background: 'white',
                           padding: '1rem',
-                          borderRadius: '0.5rem'
+                          borderRadius: '0.5rem',
+                          border: '1px solid #e5e7eb'
                         }}>
                           <div style={{
                             fontSize: '1.5rem',
                             flexShrink: 0
                           }}>🎉</div>
                           <div style={{
-                            fontSize: '0.9375rem',
-                            color: '#234e52',
+                            fontSize: '0.9rem',
+                            color: '#6b7280',
                             fontWeight: 500,
-                            fontFamily: 'Inter, sans-serif'
+                            fontFamily: 'Inter, sans-serif',
+                            lineHeight: '1.6'
                           }}>
                             Zero double bookings or conflicts
                           </div>
@@ -1482,17 +1492,19 @@ const PitchDeckPage: React.FC = () => {
                           gap: '0.75rem',
                           background: 'white',
                           padding: '1rem',
-                          borderRadius: '0.5rem'
+                          borderRadius: '0.5rem',
+                          border: '1px solid #e5e7eb'
                         }}>
                           <div style={{
                             fontSize: '1.5rem',
                             flexShrink: 0
                           }}>😊</div>
                           <div style={{
-                            fontSize: '0.9375rem',
-                            color: '#234e52',
+                            fontSize: '0.9rem',
+                            color: '#6b7280',
                             fontWeight: 500,
-                            fontFamily: 'Inter, sans-serif'
+                            fontFamily: 'Inter, sans-serif',
+                            lineHeight: '1.6'
                           }}>
                             Happy residents with 24/7 self-service
                           </div>
@@ -1503,17 +1515,19 @@ const PitchDeckPage: React.FC = () => {
                           gap: '0.75rem',
                           background: 'white',
                           padding: '1rem',
-                          borderRadius: '0.5rem'
+                          borderRadius: '0.5rem',
+                          border: '1px solid #e5e7eb'
                         }}>
                           <div style={{
                             fontSize: '1.5rem',
                             flexShrink: 0
                           }}>💰</div>
                           <div style={{
-                            fontSize: '0.9375rem',
-                            color: '#234e52',
+                            fontSize: '0.9rem',
+                            color: '#6b7280',
                             fontWeight: 500,
-                            fontFamily: 'Inter, sans-serif'
+                            fontFamily: 'Inter, sans-serif',
+                            lineHeight: '1.6'
                           }}>
                             100% payment collection rate
                           </div>
@@ -1524,17 +1538,19 @@ const PitchDeckPage: React.FC = () => {
                           gap: '0.75rem',
                           background: 'white',
                           padding: '1rem',
-                          borderRadius: '0.5rem'
+                          borderRadius: '0.5rem',
+                          border: '1px solid #e5e7eb'
                         }}>
                           <div style={{
                             fontSize: '1.5rem',
                             flexShrink: 0
                           }}>⏰</div>
                           <div style={{
-                            fontSize: '0.9375rem',
-                            color: '#234e52',
+                            fontSize: '0.9rem',
+                            color: '#6b7280',
                             fontWeight: 500,
-                            fontFamily: 'Inter, sans-serif'
+                            fontFamily: 'Inter, sans-serif',
+                            lineHeight: '1.6'
                           }}>
                             Staff saves 10+ hours per week
                           </div>
@@ -1545,17 +1561,19 @@ const PitchDeckPage: React.FC = () => {
                           gap: '0.75rem',
                           background: 'white',
                           padding: '1rem',
-                          borderRadius: '0.5rem'
+                          borderRadius: '0.5rem',
+                          border: '1px solid #e5e7eb'
                         }}>
                           <div style={{
                             fontSize: '1.5rem',
                             flexShrink: 0
                           }}>📊</div>
                           <div style={{
-                            fontSize: '0.9375rem',
-                            color: '#234e52',
+                            fontSize: '0.9rem',
+                            color: '#6b7280',
                             fontWeight: 500,
-                            fontFamily: 'Inter, sans-serif'
+                            fontFamily: 'Inter, sans-serif',
+                            lineHeight: '1.6'
                           }}>
                             Complete transparency and reporting
                           </div>
@@ -1570,15 +1588,17 @@ const PitchDeckPage: React.FC = () => {
             <div style={{
               padding: '2rem',
               borderRadius: '0.5rem',
-              backgroundColor: 'rgba(255, 255, 255, 0.15)',
-              border: '2px solid rgba(255, 255, 255, 0.3)',
-              textAlign: 'center'
+              backgroundColor: '#f9fafb',
+              border: '2px solid #355B45',
+              textAlign: 'center',
+              marginTop: '2rem'
             }}>
               <p style={{
-                fontSize: '1.25rem',
+                fontSize: '1.125rem',
                 lineHeight: '1.8',
                 fontFamily: 'Inter, sans-serif',
-                fontWeight: 600
+                fontWeight: 600,
+                color: '#1f2937'
               }}>
                 {businessModel === 'amenityManagement' 
                   ? 'Neighbri transforms amenity management from a time-consuming burden into a streamlined, automated process.'
