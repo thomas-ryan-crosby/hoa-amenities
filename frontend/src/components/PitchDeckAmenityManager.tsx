@@ -809,7 +809,7 @@ const PitchDeckAmenityManager: React.FC = () => {
         {/* Market Potential */}
         <section style={{
           padding: '6rem 1rem',
-          backgroundColor: '#f9fafb',
+          backgroundColor: 'white',
           maxWidth: '1200px',
           margin: '0 auto'
         }}>
@@ -823,157 +823,383 @@ const PitchDeckAmenityManager: React.FC = () => {
           }}>
             Market Potential
           </h2>
+          <p style={{
+            fontSize: '1.25rem',
+            color: '#355B45',
+            fontWeight: 600,
+            textAlign: 'center',
+            marginBottom: '3rem',
+            fontFamily: 'Inter, sans-serif'
+          }}>
+            From Total Market to Target Segment
+          </p>
+
+          {/* Target Market Definition */}
           <div style={{
-            maxWidth: '900px',
-            margin: '0 auto 3rem',
             padding: '2rem',
-            backgroundColor: '#f0f4f1',
             borderRadius: '0.5rem',
-            border: '1px solid #86efac'
+            backgroundColor: '#f9fafb',
+            border: '2px solid #355B45',
+            marginBottom: '3rem'
           }}>
             <h3 style={{
-              fontSize: '1.25rem',
+              fontSize: '1.5rem',
               fontWeight: 600,
               color: '#1f2937',
+              marginBottom: '1.5rem',
+              fontFamily: 'Inter, sans-serif'
+            }}>
+              Target Market Definition
+            </h3>
+            <p style={{
+              color: '#6b7280',
+              lineHeight: '1.8',
+              marginBottom: '1.5rem',
+              fontFamily: 'Inter, sans-serif'
+            }}>
+              <strong>Neighbri serves Class A and amenity-rich properties with reservable amenities:</strong>
+            </p>
+            <ul style={{
+              color: '#6b7280',
+              lineHeight: '1.8',
+              paddingLeft: '1.5rem',
               marginBottom: '1rem',
               fontFamily: 'Inter, sans-serif'
             }}>
-              Total Market to Target Segment
-            </h3>
-            <p style={{
-              fontSize: '1rem',
-              color: '#6b7280',
-              lineHeight: '1.8',
-              fontFamily: 'Inter, sans-serif',
-              margin: 0
-            }}>
-              <strong>Total Market:</strong> 580,000 properties (370,000 HOAs + 210,000 multifamily properties) across the United States.
-            </p>
-            <p style={{
-              fontSize: '1rem',
-              color: '#6b7280',
-              lineHeight: '1.8',
-              fontFamily: 'Inter, sans-serif',
-              marginTop: '0.75rem',
-              marginBottom: 0
-            }}>
-              <strong>Target Segment:</strong> ~345,000 amenity-rich communities (220,000 HOAs + 125,000 multifamily properties) with shared amenities requiring reservation management. These Class A and amenity-rich properties represent communities with premium amenities, higher HOA fees ($500+ monthly average), and residents with elevated service expectations.
-            </p>
+              <li>Higher HOA/condo fees ($500+/month average)</li>
+              <li>Professional property management</li>
+              <li>Significant amenity budgets</li>
+              <li>Residents with high expectations for service quality</li>
+              <li>Complex reservation and payment requirements</li>
+              <li>Premium amenities: pools, clubrooms, tennis courts, fitness centers, event spaces</li>
+            </ul>
           </div>
+
+          {/* Market Funnel */}
           <div style={{
-            padding: '3rem 2rem',
-            backgroundColor: 'white',
-            borderRadius: '0.75rem',
-            boxShadow: '0 8px 24px rgba(53, 91, 69, 0.15)',
-            border: '1px solid #e5e7eb',
+            padding: '2rem',
+            borderRadius: '0.5rem',
+            backgroundColor: '#f9fafb',
+            border: '2px solid #355B45',
             marginBottom: '3rem'
           }}>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(3, 1fr)',
-              gap: '2rem',
-              textAlign: 'center'
+            <h3 style={{
+              fontSize: '1.75rem',
+              fontWeight: 600,
+              color: '#1f2937',
+              marginBottom: '2rem',
+              textAlign: 'center',
+              fontFamily: 'Inter, sans-serif'
             }}>
-              <div>
-                <div style={{
-                  fontSize: '3rem',
-                  fontWeight: 700,
-                  color: '#355B45',
-                  marginBottom: '0.5rem',
-                  fontFamily: 'Inter, sans-serif'
-                }}>
-                  $690M+
+              Total Addressable Landscape
+            </h3>
+            
+            {/* Total Market */}
+            <div style={{
+              padding: '1.5rem',
+              borderRadius: '0.5rem',
+              backgroundColor: '#e0f2fe',
+              border: '1px solid #7dd3fc',
+              marginBottom: '1.5rem'
+            }}>
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                gap: '1rem'
+              }}>
+                <div>
+                  <div style={{
+                    fontSize: '2.5rem',
+                    fontWeight: 700,
+                    color: '#355B45',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>
+                    370,000+
+                  </div>
+                  <p style={{
+                    fontSize: '1.125rem',
+                    color: '#1f2937',
+                    fontWeight: 600,
+                    marginTop: '0.5rem',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>
+                    Total HOAs in the United States
+                  </p>
+                  <p style={{
+                    color: '#6b7280',
+                    fontSize: '0.9rem',
+                    marginTop: '0.25rem',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>
+                    Source:{' '}
+                    <a 
+                      href="https://www.caionline.org/AboutCommunityAssociations/Pages/StatisticalInformation.aspx"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        color: '#355B45',
+                        textDecoration: 'underline',
+                        fontWeight: 500
+                      }}
+                    >
+                      Community Associations Institute
+                    </a>
+                  </p>
                 </div>
                 <div style={{
-                  fontSize: '1.125rem',
-                  fontWeight: 600,
+                  fontSize: '1.5rem',
+                  color: '#355B45',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  +
+                </div>
+                <div>
+                  <div style={{
+                    fontSize: '2.5rem',
+                    fontWeight: 700,
+                    color: '#355B45',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>
+                    210,000
+                  </div>
+                  <p style={{
+                    fontSize: '1.125rem',
+                    color: '#1f2937',
+                    fontWeight: 600,
+                    marginTop: '0.5rem',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>
+                    Total Multifamily Properties
+                  </p>
+                  <p style={{
+                    color: '#6b7280',
+                    fontSize: '0.9rem',
+                    marginTop: '0.25rem',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>
+                    Apartment communities and rental properties
+                  </p>
+                  <p style={{
+                    color: '#6b7280',
+                    fontSize: '0.85rem',
+                    marginTop: '0.25rem',
+                    fontStyle: 'italic',
+                    fontFamily: 'Inter, sans-serif'
+                  }}>
+                    Estimate based on{' '}
+                    <a 
+                      href="https://www.census.gov/data/tables/time-series/demo/construction/housing-characteristics.html"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        color: '#355B45',
+                        textDecoration: 'underline',
+                        fontWeight: 500
+                      }}
+                    >
+                      U.S. Census data
+                    </a>
+                    {' '}and industry analysis
+                  </p>
+                </div>
+              </div>
+              <div style={{
+                marginTop: '1rem',
+                paddingTop: '1rem',
+                borderTop: '1px solid #bae6fd',
+                textAlign: 'center'
+              }}>
+                <p style={{
+                  fontSize: '1.25rem',
                   color: '#1f2937',
+                  fontWeight: 600,
+                  fontFamily: 'Inter, sans-serif',
+                  marginBottom: '0.5rem'
+                }}>
+                  <strong>Total Market: 580,000 properties</strong>
+                </p>
+                <p style={{
+                  fontSize: '1rem',
+                  color: '#6b7280',
+                  fontFamily: 'Inter, sans-serif',
+                  fontStyle: 'italic'
+                }}>
+                  (370,000 HOAs + 210,000 multifamily)
+                </p>
+                <p style={{
+                  fontSize: '1.125rem',
+                  color: '#355B45',
+                  fontWeight: 600,
+                  marginTop: '0.75rem',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  <strong>Amenity-Rich Subset: 345,000 communities</strong>
+                </p>
+                <p style={{
+                  fontSize: '0.9rem',
+                  color: '#6b7280',
+                  fontFamily: 'Inter, sans-serif',
+                  fontStyle: 'italic'
+                }}>
+                  (220,000 HOAs + 125,000 multifamily with shared amenities)
+                </p>
+              </div>
+            </div>
+
+          </div>
+
+          {/* TAM, SAM, SOM */}
+          <div style={{
+            padding: '3rem 2rem',
+            borderRadius: '0.5rem',
+            backgroundColor: '#355B45',
+            color: 'white',
+            marginBottom: '2rem'
+          }}>
+            <h3 style={{
+              fontSize: '2rem',
+              fontWeight: 700,
+              marginBottom: '2rem',
+              textAlign: 'center',
+              fontFamily: 'Inter, sans-serif'
+            }}>
+              Market Sizing
+            </h3>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gap: '2rem'
+            }}>
+              <div style={{
+                padding: '2rem',
+                borderRadius: '0.5rem',
+                backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                textAlign: 'center'
+              }}>
+                <div style={{
+                  fontSize: '2.5rem',
+                  fontWeight: 700,
                   marginBottom: '0.5rem',
                   fontFamily: 'Inter, sans-serif'
                 }}>
                   TAM
                 </div>
                 <div style={{
-                  fontSize: '0.9rem',
-                  color: '#6b7280',
-                  fontFamily: 'Inter, sans-serif'
+                  fontSize: '2rem',
+                  fontWeight: 700,
+                  marginBottom: '0.5rem',
+                  fontFamily: 'Inter, sans-serif',
+                  color: '#86efac'
+                }}>
+                  $690M+
+                </div>
+                <p style={{
+                  fontSize: '1rem',
+                  opacity: 0.9,
+                  marginBottom: '0.5rem',
+                  fontFamily: 'Inter, sans-serif',
+                  fontWeight: 600
                 }}>
                   Total Addressable Market
-                </div>
-              </div>
-              <div>
-                <div style={{
-                  fontSize: '3rem',
-                  fontWeight: 700,
-                  color: '#355B45',
-                  marginBottom: '0.5rem',
+                </p>
+                <p style={{
+                  fontSize: '0.9rem',
+                  opacity: 0.8,
+                  lineHeight: '1.6',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  $340M+
-                </div>
+                  345,000 amenity-rich communities × $2,000/year avg subscription
+                </p>
+              </div>
+
+              <div style={{
+                padding: '2rem',
+                borderRadius: '0.5rem',
+                backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                textAlign: 'center'
+              }}>
                 <div style={{
-                  fontSize: '1.125rem',
-                  fontWeight: 600,
-                  color: '#1f2937',
+                  fontSize: '2.5rem',
+                  fontWeight: 700,
                   marginBottom: '0.5rem',
                   fontFamily: 'Inter, sans-serif'
                 }}>
                   SAM
                 </div>
                 <div style={{
-                  fontSize: '0.9rem',
-                  color: '#6b7280',
-                  fontFamily: 'Inter, sans-serif'
+                  fontSize: '2rem',
+                  fontWeight: 700,
+                  marginBottom: '0.5rem',
+                  fontFamily: 'Inter, sans-serif',
+                  color: '#86efac'
+                }}>
+                  $340M+
+                </div>
+                <p style={{
+                  fontSize: '1rem',
+                  opacity: 0.9,
+                  marginBottom: '0.5rem',
+                  fontFamily: 'Inter, sans-serif',
+                  fontWeight: 600
                 }}>
                   Serviceable Addressable Market
-                </div>
-              </div>
-              <div>
-                <div style={{
-                  fontSize: '3rem',
-                  fontWeight: 700,
-                  color: '#355B45',
-                  marginBottom: '0.5rem',
+                </p>
+                <p style={{
+                  fontSize: '0.9rem',
+                  opacity: 0.8,
+                  lineHeight: '1.6',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  $17-34M
-                </div>
+                  170,000 communities in top 50 MSAs × $2,000/year avg subscription
+                </p>
+              </div>
+
+              <div style={{
+                padding: '2rem',
+                borderRadius: '0.5rem',
+                backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                textAlign: 'center'
+              }}>
                 <div style={{
-                  fontSize: '1.125rem',
-                  fontWeight: 600,
-                  color: '#1f2937',
+                  fontSize: '2.5rem',
+                  fontWeight: 700,
                   marginBottom: '0.5rem',
                   fontFamily: 'Inter, sans-serif'
                 }}>
                   SOM
                 </div>
                 <div style={{
+                  fontSize: '2rem',
+                  fontWeight: 700,
+                  marginBottom: '0.5rem',
+                  fontFamily: 'Inter, sans-serif',
+                  color: '#86efac'
+                }}>
+                  $17-34M
+                </div>
+                <p style={{
+                  fontSize: '1rem',
+                  opacity: 0.9,
+                  marginBottom: '0.5rem',
+                  fontFamily: 'Inter, sans-serif',
+                  fontWeight: 600
+                }}>
+                  Serviceable Obtainable Market
+                </p>
+                <p style={{
                   fontSize: '0.9rem',
-                  color: '#6b7280',
+                  opacity: 0.8,
+                  lineHeight: '1.6',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  Serviceable Obtainable Market (5-10% of SAM over 5-7 years)
-                </div>
+                  5-10% of SAM over 5-7 years → 8,500-17,000 communities → $17-34M annual platform revenue
+                </p>
               </div>
-            </div>
-            <div style={{
-              marginTop: '2rem',
-              padding: '1.5rem',
-              backgroundColor: '#f0f4f1',
-              borderRadius: '0.5rem',
-              border: '1px solid #86efac'
-            }}>
-              <p style={{
-                fontSize: '0.95rem',
-                color: '#1f2937',
-                lineHeight: '1.8',
-                fontFamily: 'Inter, sans-serif',
-                margin: 0,
-                textAlign: 'center'
-              }}>
-                <strong>Target Market:</strong> ~345,000 amenity-rich communities (220,000 HOAs + 125,000 multifamily properties) 
-                with shared amenities requiring reservation management. Revenue model based on subscription fees ranging from $99-299/month per community.
-              </p>
             </div>
           </div>
         </section>
