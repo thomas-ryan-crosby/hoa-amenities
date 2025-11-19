@@ -409,9 +409,11 @@ const PitchDeckAmenityManager: React.FC = () => {
           <p style={{
             fontSize: '1.125rem',
             color: '#6b7280',
-            margin: '0 0 3rem 0',
+            margin: '0 auto 3rem',
+            maxWidth: '800px',
             textAlign: 'center',
-            fontFamily: 'Inter, sans-serif'
+            fontFamily: 'Inter, sans-serif',
+            lineHeight: '1.8'
           }}>
             Neighbri. One Platform. Everything Integrated.
           </p>
@@ -428,21 +430,6 @@ const PitchDeckAmenityManager: React.FC = () => {
               gap: '3rem'
             }}>
               <div>
-                <div style={{
-                  textAlign: 'center',
-                  fontSize: '1.5rem',
-                  fontWeight: 600,
-                  color: '#355B45',
-                  marginBottom: '1.5rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '0.75rem',
-                  fontFamily: 'Inter, sans-serif'
-                }}>
-                  <span>✅</span>
-                  <span>The Unified Platform</span>
-                </div>
                 <div style={{
                   background: 'linear-gradient(135deg, #f0f4f1 0%, #e6f5ed 100%)',
                   border: '2px solid #355B45',
