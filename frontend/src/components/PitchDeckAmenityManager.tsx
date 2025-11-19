@@ -141,12 +141,23 @@ const PitchDeckAmenityManager: React.FC = () => {
             fontSize: '2.5rem',
             fontWeight: 700,
             color: '#1f2937',
-            marginBottom: '3rem',
+            marginBottom: '1rem',
             textAlign: 'center',
             fontFamily: 'Inter, sans-serif'
           }}>
             The Problem
           </h2>
+          <p style={{
+            fontSize: '1.125rem',
+            color: '#6b7280',
+            margin: '0 auto 3rem',
+            maxWidth: '800px',
+            textAlign: 'center',
+            fontFamily: 'Inter, sans-serif',
+            lineHeight: '1.8'
+          }}>
+            Multiple communication systems and methods, offline or disconnected calendars, missed payments, no interconnected solutions
+          </p>
           <div style={{
             padding: '3rem 2rem',
             backgroundColor: 'white',
@@ -402,7 +413,7 @@ const PitchDeckAmenityManager: React.FC = () => {
             textAlign: 'center',
             fontFamily: 'Inter, sans-serif'
           }}>
-            One Platform. Everything Integrated.
+            Neighbri. One Platform. Everything Integrated.
           </p>
           <div style={{
             padding: '3rem 2rem',
@@ -806,12 +817,49 @@ const PitchDeckAmenityManager: React.FC = () => {
             fontSize: '2.5rem',
             fontWeight: 700,
             color: '#1f2937',
-            marginBottom: '3rem',
+            marginBottom: '1rem',
             textAlign: 'center',
             fontFamily: 'Inter, sans-serif'
           }}>
             Market Potential
           </h2>
+          <div style={{
+            maxWidth: '900px',
+            margin: '0 auto 3rem',
+            padding: '2rem',
+            backgroundColor: '#f0f4f1',
+            borderRadius: '0.5rem',
+            border: '1px solid #86efac'
+          }}>
+            <h3 style={{
+              fontSize: '1.25rem',
+              fontWeight: 600,
+              color: '#1f2937',
+              marginBottom: '1rem',
+              fontFamily: 'Inter, sans-serif'
+            }}>
+              Total Market to Target Segment
+            </h3>
+            <p style={{
+              fontSize: '1rem',
+              color: '#6b7280',
+              lineHeight: '1.8',
+              fontFamily: 'Inter, sans-serif',
+              margin: 0
+            }}>
+              <strong>Total Market:</strong> 580,000 properties (370,000 HOAs + 210,000 multifamily properties) across the United States.
+            </p>
+            <p style={{
+              fontSize: '1rem',
+              color: '#6b7280',
+              lineHeight: '1.8',
+              fontFamily: 'Inter, sans-serif',
+              marginTop: '0.75rem',
+              marginBottom: 0
+            }}>
+              <strong>Target Segment:</strong> ~345,000 amenity-rich communities (220,000 HOAs + 125,000 multifamily properties) with shared amenities requiring reservation management. These Class A and amenity-rich properties represent communities with premium amenities, higher HOA fees ($500+ monthly average), and residents with elevated service expectations.
+            </p>
+          </div>
           <div style={{
             padding: '3rem 2rem',
             backgroundColor: 'white',
