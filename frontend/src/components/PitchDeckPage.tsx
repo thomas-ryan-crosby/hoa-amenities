@@ -2999,25 +2999,6 @@ const PitchDeckPage: React.FC = () => {
               </div>
             </div>
           </div>
-          <div style={{
-            padding: '2rem',
-            borderRadius: '0.5rem',
-            backgroundColor: '#f9fafb',
-            border: '2px solid #355B45',
-            marginBottom: '2rem'
-          }}>
-            <p style={{
-              color: '#6b7280',
-              lineHeight: '1.8',
-              fontFamily: 'Inter, sans-serif',
-              textAlign: 'center',
-              marginBottom: '1rem'
-            }}>
-              <strong>Revenue Model:</strong> {businessModel === 'dayPassPlatform' 
-                ? 'With pricing tiers ranging from $99-299/month per community (average ~$180/month subscription) plus 15-20% commission on day pass bookings, 100 communities would generate approximately $216,000 in annual recurring subscription revenue, plus $315,000+ in commission revenue from day passes (assuming $3,150/year avg per community).'
-                : 'With pricing tiers ranging from $99-299/month per community (average ~$180/month), 100 communities would generate approximately $216,000 in annual recurring revenue.'}
-            </p>
-          </div>
 
           {/* Growth Methodology */}
           <div style={{
