@@ -1795,6 +1795,7 @@ const PitchDeckPage: React.FC = () => {
           </div>
 
           {/* Business Model Details */}
+          {businessModel === 'dayPassPlatform' && (
           <div style={{
             padding: '2rem',
             borderRadius: '0.5rem',
@@ -1802,8 +1803,7 @@ const PitchDeckPage: React.FC = () => {
             border: '2px solid #355B45',
             marginBottom: '2rem'
           }}>
-            {businessModel === 'dayPassPlatform' && (
-              <div>
+            <div>
                 <h4 style={{
                   fontSize: '1.25rem',
                   fontWeight: 600,
@@ -1997,9 +1997,9 @@ const PitchDeckPage: React.FC = () => {
                     The platform supports both models seamlessly.
                   </p>
                 </div>
-              </div>
-            )}
+            </div>
           </div>
+          )}
 
           {/* HOAPass vs ResortPass Comparison - Only show for Day Pass Platform */}
           {businessModel === 'dayPassPlatform' && (
