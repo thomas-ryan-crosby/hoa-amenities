@@ -873,7 +873,7 @@ const PitchDeckAmenityManager: React.FC = () => {
             <h3 style={{
               fontSize: '2rem',
               fontWeight: 700,
-              marginBottom: '2rem',
+              marginBottom: '2.5rem',
               textAlign: 'center',
               fontFamily: 'Inter, sans-serif'
             }}>
@@ -884,11 +884,11 @@ const PitchDeckAmenityManager: React.FC = () => {
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
               gap: '2rem',
-              marginBottom: '2rem'
+              marginBottom: '2.5rem'
             }}>
               {/* HOAs Card */}
               <div style={{
-                padding: '2rem',
+                padding: '1.75rem',
                 borderRadius: '0.5rem',
                 backgroundColor: 'rgba(255, 255, 255, 0.15)',
                 border: '1px solid rgba(255, 255, 255, 0.3)',
@@ -897,7 +897,7 @@ const PitchDeckAmenityManager: React.FC = () => {
                 <div style={{
                   fontSize: '2.5rem',
                   fontWeight: 700,
-                  marginBottom: '0.5rem',
+                  marginBottom: '0.75rem',
                   fontFamily: 'Inter, sans-serif'
                 }}>
                   370,000+
@@ -914,8 +914,9 @@ const PitchDeckAmenityManager: React.FC = () => {
                 <p style={{
                   fontSize: '0.9rem',
                   opacity: 0.8,
-                  lineHeight: '1.6',
-                  fontFamily: 'Inter, sans-serif'
+                  lineHeight: '1.5',
+                  fontFamily: 'Inter, sans-serif',
+                  margin: 0
                 }}>
                   Source:{' '}
                   <a 
@@ -935,7 +936,7 @@ const PitchDeckAmenityManager: React.FC = () => {
 
               {/* Multifamily Card */}
               <div style={{
-                padding: '2rem',
+                padding: '1.75rem',
                 borderRadius: '0.5rem',
                 backgroundColor: 'rgba(255, 255, 255, 0.15)',
                 border: '1px solid rgba(255, 255, 255, 0.3)',
@@ -944,7 +945,7 @@ const PitchDeckAmenityManager: React.FC = () => {
                 <div style={{
                   fontSize: '2.5rem',
                   fontWeight: 700,
-                  marginBottom: '0.5rem',
+                  marginBottom: '0.75rem',
                   fontFamily: 'Inter, sans-serif'
                 }}>
                   210,000
@@ -961,18 +962,19 @@ const PitchDeckAmenityManager: React.FC = () => {
                 <p style={{
                   fontSize: '0.9rem',
                   opacity: 0.8,
-                  lineHeight: '1.6',
-                  fontFamily: 'Inter, sans-serif'
+                  lineHeight: '1.5',
+                  fontFamily: 'Inter, sans-serif',
+                  marginBottom: '0.25rem'
                 }}>
                   Apartment communities and rental properties
                 </p>
                 <p style={{
                   fontSize: '0.85rem',
                   opacity: 0.7,
-                  lineHeight: '1.6',
+                  lineHeight: '1.5',
                   fontStyle: 'italic',
-                  marginTop: '0.5rem',
-                  fontFamily: 'Inter, sans-serif'
+                  fontFamily: 'Inter, sans-serif',
+                  margin: 0
                 }}>
                   Estimate based on{' '}
                   <a 
@@ -999,7 +1001,7 @@ const PitchDeckAmenityManager: React.FC = () => {
               gap: '2rem'
             }}>
               <div style={{
-                padding: '2rem',
+                padding: '1.75rem',
                 borderRadius: '0.5rem',
                 backgroundColor: 'rgba(255, 255, 255, 0.15)',
                 border: '1px solid rgba(255, 255, 255, 0.3)',
@@ -1008,7 +1010,7 @@ const PitchDeckAmenityManager: React.FC = () => {
                 <div style={{
                   fontSize: '2rem',
                   fontWeight: 700,
-                  marginBottom: '0.5rem',
+                  marginBottom: '0.75rem',
                   fontFamily: 'Inter, sans-serif',
                   color: '#93c5fd'
                 }}>
@@ -1026,15 +1028,16 @@ const PitchDeckAmenityManager: React.FC = () => {
                 <p style={{
                   fontSize: '0.9rem',
                   opacity: 0.8,
-                  lineHeight: '1.6',
-                  fontFamily: 'Inter, sans-serif'
+                  lineHeight: '1.5',
+                  fontFamily: 'Inter, sans-serif',
+                  margin: 0
                 }}>
                   (370,000 HOAs + 210,000 multifamily)
                 </p>
               </div>
 
               <div style={{
-                padding: '2rem',
+                padding: '1.75rem',
                 borderRadius: '0.5rem',
                 backgroundColor: 'rgba(255, 255, 255, 0.15)',
                 border: '1px solid rgba(255, 255, 255, 0.3)',
@@ -1043,7 +1046,7 @@ const PitchDeckAmenityManager: React.FC = () => {
                 <div style={{
                   fontSize: '2rem',
                   fontWeight: 700,
-                  marginBottom: '0.5rem',
+                  marginBottom: '0.75rem',
                   fontFamily: 'Inter, sans-serif',
                   color: '#93c5fd'
                 }}>
@@ -1061,8 +1064,9 @@ const PitchDeckAmenityManager: React.FC = () => {
                 <p style={{
                   fontSize: '0.9rem',
                   opacity: 0.8,
-                  lineHeight: '1.6',
-                  fontFamily: 'Inter, sans-serif'
+                  lineHeight: '1.5',
+                  fontFamily: 'Inter, sans-serif',
+                  margin: 0
                 }}>
                   (220,000 HOAs + 125,000 multifamily with shared amenities)
                 </p>
