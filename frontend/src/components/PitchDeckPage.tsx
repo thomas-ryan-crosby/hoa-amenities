@@ -210,7 +210,7 @@ const PitchDeckPage: React.FC = () => {
             position: 'relative',
             zIndex: 1
           }}>
-            Neighbri streamlines amenity reservations and management for communities. Amenities such as clubrooms, pools, and more can be booked, cleaned, and managed with ease.
+            Neighbri <strong>streamlines amenity reservations and management</strong> for communities. Amenities such as clubrooms, pools, and more can be <strong>booked, cleaned, and managed with ease</strong>.
           </p>
           {/* Feature Bubbles */}
           <div style={{
@@ -230,18 +230,8 @@ const PitchDeckPage: React.FC = () => {
               boxShadow: '0 8px 24px rgba(53, 91, 69, 0.15)',
               border: '2px solid #86efac',
               textAlign: 'center',
-              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
               cursor: 'default'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-8px)';
-              e.currentTarget.style.boxShadow = '0 12px 32px rgba(53, 91, 69, 0.25)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 8px 24px rgba(53, 91, 69, 0.15)';
-            }}
-            >
+            }}>
               <div style={{
                 fontSize: '3.5rem',
                 marginBottom: '1rem',
@@ -280,18 +270,8 @@ const PitchDeckPage: React.FC = () => {
               boxShadow: '0 8px 24px rgba(53, 91, 69, 0.15)',
               border: '2px solid #86efac',
               textAlign: 'center',
-              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
               cursor: 'default'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-8px)';
-              e.currentTarget.style.boxShadow = '0 12px 32px rgba(53, 91, 69, 0.25)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 8px 24px rgba(53, 91, 69, 0.15)';
-            }}
-            >
+            }}>
               <div style={{
                 fontSize: '3.5rem',
                 marginBottom: '1rem',
@@ -330,18 +310,8 @@ const PitchDeckPage: React.FC = () => {
               boxShadow: '0 8px 24px rgba(53, 91, 69, 0.15)',
               border: '2px solid #86efac',
               textAlign: 'center',
-              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
               cursor: 'default'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-8px)';
-              e.currentTarget.style.boxShadow = '0 12px 32px rgba(53, 91, 69, 0.25)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 8px 24px rgba(53, 91, 69, 0.15)';
-            }}
-            >
+            }}>
               <div style={{
                 fontSize: '3.5rem',
                 marginBottom: '1rem',
