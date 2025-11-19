@@ -864,16 +864,15 @@ const PitchDeckAmenityManager: React.FC = () => {
 
           {/* Market Funnel */}
           <div style={{
-            padding: '2rem',
+            padding: '3rem 2rem',
             borderRadius: '0.5rem',
-            backgroundColor: '#f9fafb',
-            border: '2px solid #355B45',
-            marginBottom: '3rem'
+            backgroundColor: '#1e3a8a',
+            color: 'white',
+            marginBottom: '2rem'
           }}>
             <h3 style={{
-              fontSize: '1.75rem',
-              fontWeight: 600,
-              color: '#1f2937',
+              fontSize: '2rem',
+              fontWeight: 700,
               marginBottom: '2rem',
               textAlign: 'center',
               fontFamily: 'Inter, sans-serif'
@@ -881,160 +880,194 @@ const PitchDeckAmenityManager: React.FC = () => {
               Total Addressable Landscape
             </h3>
             
-            {/* Total Market */}
             <div style={{
-              padding: '1.5rem',
-              borderRadius: '0.5rem',
-              backgroundColor: '#e0f2fe',
-              border: '1px solid #7dd3fc',
-              marginBottom: '1.5rem'
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gap: '2rem',
+              marginBottom: '2rem'
             }}>
+              {/* HOAs Card */}
               <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                flexWrap: 'wrap',
-                gap: '1rem'
-              }}>
-                <div>
-                  <div style={{
-                    fontSize: '2.5rem',
-                    fontWeight: 700,
-                    color: '#355B45',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>
-                    370,000+
-                  </div>
-                  <p style={{
-                    fontSize: '1.125rem',
-                    color: '#1f2937',
-                    fontWeight: 600,
-                    marginTop: '0.5rem',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>
-                    Total HOAs in the United States
-                  </p>
-                  <p style={{
-                    color: '#6b7280',
-                    fontSize: '0.9rem',
-                    marginTop: '0.25rem',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>
-                    Source:{' '}
-                    <a 
-                      href="https://www.caionline.org/AboutCommunityAssociations/Pages/StatisticalInformation.aspx"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        color: '#355B45',
-                        textDecoration: 'underline',
-                        fontWeight: 500
-                      }}
-                    >
-                      Community Associations Institute
-                    </a>
-                  </p>
-                </div>
-                <div style={{
-                  fontSize: '1.5rem',
-                  color: '#355B45',
-                  fontFamily: 'Inter, sans-serif'
-                }}>
-                  +
-                </div>
-                <div>
-                  <div style={{
-                    fontSize: '2.5rem',
-                    fontWeight: 700,
-                    color: '#355B45',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>
-                    210,000
-                  </div>
-                  <p style={{
-                    fontSize: '1.125rem',
-                    color: '#1f2937',
-                    fontWeight: 600,
-                    marginTop: '0.5rem',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>
-                    Total Multifamily Properties
-                  </p>
-                  <p style={{
-                    color: '#6b7280',
-                    fontSize: '0.9rem',
-                    marginTop: '0.25rem',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>
-                    Apartment communities and rental properties
-                  </p>
-                  <p style={{
-                    color: '#6b7280',
-                    fontSize: '0.85rem',
-                    marginTop: '0.25rem',
-                    fontStyle: 'italic',
-                    fontFamily: 'Inter, sans-serif'
-                  }}>
-                    Estimate based on{' '}
-                    <a 
-                      href="https://www.census.gov/data/tables/time-series/demo/construction/housing-characteristics.html"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        color: '#355B45',
-                        textDecoration: 'underline',
-                        fontWeight: 500
-                      }}
-                    >
-                      U.S. Census data
-                    </a>
-                    {' '}and industry analysis
-                  </p>
-                </div>
-              </div>
-              <div style={{
-                marginTop: '1rem',
-                paddingTop: '1rem',
-                borderTop: '1px solid #bae6fd',
+                padding: '2rem',
+                borderRadius: '0.5rem',
+                backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
                 textAlign: 'center'
               }}>
-                <p style={{
-                  fontSize: '1.25rem',
-                  color: '#1f2937',
-                  fontWeight: 600,
-                  fontFamily: 'Inter, sans-serif',
-                  marginBottom: '0.5rem'
-                }}>
-                  <strong>Total Market: 580,000 properties</strong>
-                </p>
-                <p style={{
-                  fontSize: '1rem',
-                  color: '#6b7280',
-                  fontFamily: 'Inter, sans-serif',
-                  fontStyle: 'italic'
-                }}>
-                  (370,000 HOAs + 210,000 multifamily)
-                </p>
-                <p style={{
-                  fontSize: '1.125rem',
-                  color: '#355B45',
-                  fontWeight: 600,
-                  marginTop: '0.75rem',
+                <div style={{
+                  fontSize: '2.5rem',
+                  fontWeight: 700,
+                  marginBottom: '0.5rem',
                   fontFamily: 'Inter, sans-serif'
                 }}>
-                  <strong>Amenity-Rich Subset: 345,000 communities</strong>
+                  370,000+
+                </div>
+                <p style={{
+                  fontSize: '1rem',
+                  opacity: 0.9,
+                  marginBottom: '0.5rem',
+                  fontFamily: 'Inter, sans-serif',
+                  fontWeight: 600
+                }}>
+                  Total HOAs in the United States
                 </p>
                 <p style={{
                   fontSize: '0.9rem',
-                  color: '#6b7280',
+                  opacity: 0.8,
+                  lineHeight: '1.6',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  Source:{' '}
+                  <a 
+                    href="https://www.caionline.org/AboutCommunityAssociations/Pages/StatisticalInformation.aspx"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      color: '#93c5fd',
+                      textDecoration: 'underline',
+                      fontWeight: 500
+                    }}
+                  >
+                    Community Associations Institute
+                  </a>
+                </p>
+              </div>
+
+              {/* Multifamily Card */}
+              <div style={{
+                padding: '2rem',
+                borderRadius: '0.5rem',
+                backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                textAlign: 'center'
+              }}>
+                <div style={{
+                  fontSize: '2.5rem',
+                  fontWeight: 700,
+                  marginBottom: '0.5rem',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  210,000
+                </div>
+                <p style={{
+                  fontSize: '1rem',
+                  opacity: 0.9,
+                  marginBottom: '0.5rem',
                   fontFamily: 'Inter, sans-serif',
-                  fontStyle: 'italic'
+                  fontWeight: 600
+                }}>
+                  Total Multifamily Properties
+                </p>
+                <p style={{
+                  fontSize: '0.9rem',
+                  opacity: 0.8,
+                  lineHeight: '1.6',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  Apartment communities and rental properties
+                </p>
+                <p style={{
+                  fontSize: '0.85rem',
+                  opacity: 0.7,
+                  lineHeight: '1.6',
+                  fontStyle: 'italic',
+                  marginTop: '0.5rem',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  Estimate based on{' '}
+                  <a 
+                    href="https://www.census.gov/data/tables/time-series/demo/construction/housing-characteristics.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      color: '#93c5fd',
+                      textDecoration: 'underline',
+                      fontWeight: 500
+                    }}
+                  >
+                    U.S. Census data
+                  </a>
+                  {' '}and industry analysis
+                </p>
+              </div>
+            </div>
+
+            {/* Summary Cards */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gap: '2rem'
+            }}>
+              <div style={{
+                padding: '2rem',
+                borderRadius: '0.5rem',
+                backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                textAlign: 'center'
+              }}>
+                <div style={{
+                  fontSize: '2rem',
+                  fontWeight: 700,
+                  marginBottom: '0.5rem',
+                  fontFamily: 'Inter, sans-serif',
+                  color: '#93c5fd'
+                }}>
+                  580,000
+                </div>
+                <p style={{
+                  fontSize: '1rem',
+                  opacity: 0.9,
+                  marginBottom: '0.5rem',
+                  fontFamily: 'Inter, sans-serif',
+                  fontWeight: 600
+                }}>
+                  Total Market
+                </p>
+                <p style={{
+                  fontSize: '0.9rem',
+                  opacity: 0.8,
+                  lineHeight: '1.6',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  (370,000 HOAs + 210,000 multifamily)
+                </p>
+              </div>
+
+              <div style={{
+                padding: '2rem',
+                borderRadius: '0.5rem',
+                backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                textAlign: 'center'
+              }}>
+                <div style={{
+                  fontSize: '2rem',
+                  fontWeight: 700,
+                  marginBottom: '0.5rem',
+                  fontFamily: 'Inter, sans-serif',
+                  color: '#93c5fd'
+                }}>
+                  345,000
+                </div>
+                <p style={{
+                  fontSize: '1rem',
+                  opacity: 0.9,
+                  marginBottom: '0.5rem',
+                  fontFamily: 'Inter, sans-serif',
+                  fontWeight: 600
+                }}>
+                  Amenity-Rich Subset
+                </p>
+                <p style={{
+                  fontSize: '0.9rem',
+                  opacity: 0.8,
+                  lineHeight: '1.6',
+                  fontFamily: 'Inter, sans-serif'
                 }}>
                   (220,000 HOAs + 125,000 multifamily with shared amenities)
                 </p>
               </div>
             </div>
-
           </div>
 
           {/* TAM, SAM, SOM */}
